@@ -67,7 +67,7 @@ export const SIDE_NAV_ITEMS: SideNavItem[] = [
   },
   {
     title: 'Armamento',
-    path: '/dashboard/armament',
+    path: '/dashboard/weapons',
     icon: (color = '#666', size = 20) => <Bomb size={size} color={color} />,
   },
   {
