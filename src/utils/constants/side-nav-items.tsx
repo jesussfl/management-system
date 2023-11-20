@@ -24,41 +24,41 @@ export const SIDE_NAV_ITEMS: SideNavItem[] = [
   },
   {
     title: 'Abastecimiento',
-    path: '/dashboard/supplies',
+    path: '/dashboard/abastecimiento',
     icon: (color = '#666', size = 20) => <Package size={size} color={color} />,
     submenu: true,
     submenuItems: [
       {
-        title: 'Renglones',
-        path: '/dashboard/supplies/items',
+        title: 'Inventario',
+        path: '/dashboard/abastecimiento/inventario',
         icon: (color = '#666', size = 20) => (
           <Boxes size={size} color={color} />
         ),
       },
       {
         title: 'Recibimientos',
-        path: '/dashboard/supplies/entrances',
+        path: '/dashboard/abastecimiento/recibimientos',
         icon: (color = '#666', size = 20) => (
           <PackagePlus size={size} color={color} />
         ),
       },
       {
         title: 'Despachos',
-        path: '/dashboard/supplies/dispatches',
+        path: '/dashboard/abastecimiento/despachos',
         icon: (color = '#666', size = 20) => (
           <PackageMinus size={size} color={color} />
         ),
       },
       {
         title: 'Almacenes',
-        path: '/dashboard/supplies/deposits',
+        path: '/dashboard/abastecimiento/almacenes',
         icon: (color = '#666', size = 20) => (
           <Warehouse size={size} color={color} />
         ),
       },
       {
-        title: 'Profesionales',
-        path: '/dashboard/supplies/professionals',
+        title: 'Destinatarios',
+        path: '/dashboard/abastecimiento/destinatarios',
         icon: (color = '#666', size = 20) => (
           <UserSquare2 size={size} color={color} />
         ),
@@ -67,18 +67,18 @@ export const SIDE_NAV_ITEMS: SideNavItem[] = [
   },
   {
     title: 'Armamento',
-    path: '/dashboard/weapons',
+    path: '/dashboard/armamento',
     icon: (color = '#666', size = 20) => <Bomb size={size} color={color} />,
   },
   {
     title: 'Personal',
-    path: '/dashboard/personnel',
+    path: '/dashboard/personal',
     icon: (color = '#666', size = 20) => <Users2 size={size} color={color} />,
     submenu: true,
     submenuItems: [
       {
         title: 'Asistencias',
-        path: '/dashboard/personnel/attendances',
+        path: '/dashboard/personal/asistencias',
         icon: (color = '#666', size = 20) => (
           <Contact2 size={size} color={color} />
         ),
@@ -87,29 +87,29 @@ export const SIDE_NAV_ITEMS: SideNavItem[] = [
   },
   {
     title: 'Estadísticas',
-    path: '/dashboard/analytics',
+    path: '/dashboard/estadisticas',
     icon: (color = '#666', size = 20) => <PieChart size={size} color={color} />,
   },
   {
     title: 'Auditoria',
-    path: '/dashboard/audit',
+    path: '/dashboard/auditoria',
     icon: (color = '#666', size = 20) => (
       <FolderSearch size={size} color={color} />
     ),
   },
   {
     title: 'Reportes',
-    path: '/dashboard/reports',
+    path: '/dashboard/reportes',
     icon: (color = '#666', size = 20) => <FileText size={size} color={color} />,
   },
   {
     title: 'Configuraciones',
-    path: '/dashboard/settings',
+    path: '/dashboard/configuracion',
     icon: (color = '#666', size = 20) => <Settings size={size} color={color} />,
   },
   {
     title: 'Ayuda',
-    path: '/dashboard/help',
+    path: '/dashboard/ayuda',
     icon: (color = '#666', size = 20) => (
       <HelpCircle size={size} color={color} />
     ),

@@ -2,7 +2,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Payment } from '@/utils/types/types'
 import { ColumnDef } from '@tanstack/react-table'
 
-export const SELECT_COLUMN: ColumnDef<Payment> = {
+export const SELECT_COLUMN: any = {
   id: 'select',
   header: ({ table }) => (
     <Checkbox

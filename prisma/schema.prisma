@@ -11,28 +11,210 @@ datasource db {
   // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+model usuarios {
+  id String @id
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model sistemas {
+  id                     String                   @id
+  nombre                 String
+  descripcion            String
+  existencia             Int
+  estado                 String
+  id_almacen             Int
+  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
+  despachos_detalles     despachos_detalles[]
+  recibimientos_detalles recibimientos_detalles[]
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+model subsistemas {
+  id                     String                   @id
+  nombre                 String
+  descripcion            String
+  existencia             Int
+  estado                 String
+  sistema                String
+  id_almacen             Int
+  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
+  despachos_detalles     despachos_detalles[]
+  recibimientos_detalles recibimientos_detalles[]
+}
+
+model renglones {
+  id                     String                   @id
+  nombre                 String
+  descripcion            String
+  tipo                   String
+  serial                 String
+  presentacion           String
+  numero_parte           String
+  estado                 String
+  existencia             Int
+  stock_minimo           Int
+  stock_maximo           Int
+  inventariable          Boolean
+  ubicacion              String
+  id_almacen             Int
+  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
+  despachos_detalles     despachos_detalles[]
+  recibimientos_detalles recibimientos_detalles[]
+}
+
+model almacenes {
+  id          Int           @id
+  nombre      String
+  ubicacion   String
+  sistemas    sistemas[]
+  subsistemas subsistemas[]
+  renglones   renglones[]
+}
+
+model despachos {
+  id                  String                  @id
+  motivo              String
+  cedula_destinatario String
+  destinatarios       destinatarios_militares @relation(fields: [cedula_destinatario], references: [cedula])
+  detalles            despachos_detalles[]
+}
+
+model despachos_detalles {
+  id            String      @id
+  cantidad      Int
+  id_despacho   String
+  id_renglon    String
+  id_subsistema String
+  id_sistema    String
+  despachos     despachos   @relation(fields: [id_despacho], references: [id])
+  renglones     renglones   @relation(fields: [id_renglon], references: [id])
+  subsistemas   subsistemas @relation(fields: [id_subsistema], references: [id])
+  sistemas      sistemas    @relation(fields: [id_sistema], references: [id])
+}
+
+model destinatarios_militares {
+  cedula                String                @id
+  nombres               String
+  apellidos             String
+  telefono              String
+  correo                String
+  cargo                 String
+  direccion_domicilio   String
+  id_grado              String
+  id_categoria          String
+  id_componente         String
+  id_unidad             String
+  despachos             despachos[]
+  grados_militares      grados_militares      @relation(fields: [id_grado], references: [id])
+  categorias_militares  categorias_militares  @relation(fields: [id_categoria], references: [id])
+  componentes_militares componentes_militares @relation(fields: [id_componente], references: [id])
+  unidades_militares    unidades_militares    @relation(fields: [id_unidad], references: [id])
+}
+
+model recibimientos {
+  id           String                   @id
+  fecha        DateTime
+  motivo       String
+  detalles     recibimientos_detalles[]
+  devoluciones devoluciones[]
+}
+
+model recibimientos_detalles {
+  id              String        @id
+  id_recibimiento String
+  cantidad        Int
+  id_renglon      String
+  id_subsistema   String
+  id_sistema      String
+  recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
+  renglones       renglones     @relation(fields: [id_renglon], references: [id])
+  subsistemas     subsistemas   @relation(fields: [id_subsistema], references: [id])
+  sistemas        sistemas      @relation(fields: [id_sistema], references: [id])
+}
+
+model devoluciones {
+  id              String        @id
+  id_recibimiento String
+  recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
+}
+
+model componentes_militares {
+  id                      String                    @id
+  nombre                  String
+  descripcion             String
+  estado                  String
+  ultima_edicion          DateTime
+  fecha_eliminado         DateTime
+  destinatarios_militares destinatarios_militares[]
+  personal_militar        personal_militar[]
+}
+
+model grados_militares {
+  id                      String                    @id
+  nombre                  String
+  abreviatura             String
+  orden                   Int
+  estado                  String
+  ultima_edicion          DateTime
+  fecha_eliminado         DateTime
+  destinatarios_militares destinatarios_militares[]
+  personal_militar        personal_militar[]
+}
+
+model categorias_militares {
+  id                      String                    @id
+  nombre                  String
+  abreviatura             String
+  estado                  String
+  destinatarios_militares destinatarios_militares[]
+  personal_militar        personal_militar[]
+}
+
+model unidades_militares {
+  id                      String                    @id
+  nombre                  String
+  descripcion             String
+  ubicacion               String
+  id_zodi                 String
+  zodis                   zodis                     @relation(fields: [id_zodi], references: [id])
+  destinatarios_militares destinatarios_militares[]
+  personal_militar        personal_militar[]
+}
+
+model zodis {
+  id                 String               @id
+  nombre             String
+  descripcion        String
+  ubicacion          String
+  id_redi            String
+  unidades_militares unidades_militares[]
+  redis              redis                @relation(fields: [id_redi], references: [id])
+}
+
+model redis {
+  id          String  @id
+  nombre      String
+  descripcion String
+  ubicacion   String
+  zodis       zodis[]
+}
+
+model personal_militar {
+  cedula                String                @id
+  nombres               String
+  apellidos             String
+  estado_civil          String
+  id_armamento          String
+  situacion_profesional String
+  estado                String
+  id_unidad             String
+  id_categoria          String
+  id_grado              String
+  id_componente         String
+  unidades_militares    unidades_militares    @relation(fields: [id_unidad], references: [id])
+  categorias_militares  categorias_militares  @relation(fields: [id_categoria], references: [id])
+  grados_militares      grados_militares      @relation(fields: [id_grado], references: [id])
+  componentes_militares componentes_militares @relation(fields: [id_componente], references: [id])
+}
+
+model reposos {
+  id String @id
 }
