@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/modules/common/components/avatar/avatar'
 import { LogOut } from 'lucide-react'
 
 function SidenavAvatar() {

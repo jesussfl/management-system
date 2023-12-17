@@ -1,4 +1,4 @@
-import { Checkbox } from '@/components/ui/checkbox'
+import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Payment } from '@/utils/types/types'
 import { ColumnDef } from '@tanstack/react-table'
 

@@ -2,7 +2,7 @@
 import React from 'react'
 import { useTheme } from 'next-themes'
 import { Sun, Moon, LogOut } from 'lucide-react'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@/modules/common/components/switch/switch'
 
 const ToogleTheme = () => {
   const { setTheme, theme } = useTheme()
