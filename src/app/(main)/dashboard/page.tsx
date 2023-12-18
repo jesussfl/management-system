@@ -14,32 +14,14 @@ import { CalendarDateRangePicker } from '../../../modules/common/components/date
 
 import { Overview } from '../../../modules/common/components/overview'
 import { RecentSales } from '../../../modules/common/components/recent-users'
-import { Boxes } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
-  description: 'Example dashboard app built using the components.',
+  title: 'Administrador',
+  description: 'Gestiona toda la logística del CESERLODAI',
 }
-
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <>
-      <div className="md:hidden">
-        <Image
-          src="/examples/dashboard-light.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/dashboard-dark.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="hidden dark:block"
-        />
-      </div>
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">

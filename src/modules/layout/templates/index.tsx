@@ -1,5 +1,5 @@
 import React from 'react'
-import Nav from '@/modules/layout/templates/nav'
+import Nav from '@/modules/layout/templates/side-menu'
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>

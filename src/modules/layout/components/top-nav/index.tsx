@@ -11,7 +11,7 @@ import { Search } from '@/modules/common/components/search/search'
 import { UserNav } from '@/modules/common/components/user-nav'
 import ToogleTheme from '@/components/ui/toogle-theme'
 
-const Header = () => {
+const TopNav = () => {
   const scrolled = useScroll(5)
   const selectedLayout = useSelectedLayoutSegment()
 
@@ -36,4 +36,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default TopNav

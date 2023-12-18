@@ -1,6 +1,8 @@
-import Header from '@/modules/layout/components/top-menu'
+import TopNav from '@/modules/layout/components/top-nav'
 
-import Nav from '@/modules/layout/templates/nav'
+import SideMenu from '@/modules/layout/templates/side-menu'
+import Loading from './loading'
+import { Suspense } from 'react'
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }: {
@@ -8,10 +10,10 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden">
-      <Nav />
+      <SideMenu />
       <div className="flex flex-1 flex-col h-full overflow-hidden">
-        <Header />
-        {children}
+        <TopNav />
+        <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>
     </div>
   )
