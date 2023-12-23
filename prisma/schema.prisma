@@ -59,7 +59,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model sistemas {
+model Sistemas {
   id                     String                   @id
   nombre                 String
   descripcion            String
@@ -71,7 +71,7 @@ model sistemas {
   recibimientos_detalles recibimientos_detalles[]
 }
 
-model subsistemas {
+model Subsistemas {
   id                     String                   @id
   nombre                 String
   descripcion            String
@@ -84,33 +84,24 @@ model subsistemas {
   recibimientos_detalles recibimientos_detalles[]
 }
 
-model renglones {
-  id                     String                   @id
-  nombre                 String
-  descripcion            String
-  tipo                   String
-  serial                 String
-  presentacion           String
-  numero_parte           String
-  estado                 String
-  existencia             Int
-  stock_minimo           Int
-  stock_maximo           Int
-  inventariable          Boolean
-  ubicacion              String
-  id_almacen             Int
-  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
-  despachos_detalles     despachos_detalles[]
-  recibimientos_detalles recibimientos_detalles[]
+model Renglones {
+  id               String @id
+  nombre           String
+  descripcion      String
+  clasificacion    String
+  categoria        String
+  tipo             String
+  presentacion     String
+  numero_parte     String
+  unidad_de_medida String
 }
 
 model almacenes {
   id          Int           @id
   nombre      String
   ubicacion   String
-  sistemas    sistemas[]
-  subsistemas subsistemas[]
-  renglones   renglones[]
+  Sistemas    Sistemas[]
+  Subsistemas Subsistemas[]
 }
 
 model despachos {
@@ -122,16 +113,20 @@ model despachos {
 }
 
 model despachos_detalles {
-  id            String      @id
+  id            String       @id
   cantidad      Int
   id_despacho   String
   id_renglon    String
   id_subsistema String
   id_sistema    String
-  despachos     despachos   @relation(fields: [id_despacho], references: [id])
-  renglones     renglones   @relation(fields: [id_renglon], references: [id])
-  subsistemas   subsistemas @relation(fields: [id_subsistema], references: [id])
-  sistemas      sistemas    @relation(fields: [id_sistema], references: [id])
+  despachos     despachos    @relation(fields: [id_despacho], references: [id])
+  // renglones     renglones   @relation(fields: [id_renglon], references: [id])
+  // subsistemas   subsistemas @relation(fields: [id_subsistema], references: [id])
+  // sistemas      sistemas    @relation(fields: [id_sistema], references: [id])
+  Sistemas      Sistemas?    @relation(fields: [sistemasId], references: [id])
+  sistemasId    String?
+  Subsistemas   Subsistemas? @relation(fields: [subsistemasId], references: [id])
+  subsistemasId String?
 }
 
 model destinatarios_militares {
@@ -169,9 +164,13 @@ model recibimientos_detalles {
   id_subsistema   String
   id_sistema      String
   recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
-  renglones       renglones     @relation(fields: [id_renglon], references: [id])
-  subsistemas     subsistemas   @relation(fields: [id_subsistema], references: [id])
-  sistemas        sistemas      @relation(fields: [id_sistema], references: [id])
+  // renglones       renglones     @relation(fields: [id_renglon], references: [id])
+  // subsistemas     subsistemas   @relation(fields: [id_subsistema], references: [id])
+  // sistemas        sistemas      @relation(fields: [id_sistema], references: [id])
+  Sistemas        Sistemas?     @relation(fields: [sistemasId], references: [id])
+  sistemasId      String?
+  Subsistemas     Subsistemas?  @relation(fields: [subsistemasId], references: [id])
+  subsistemasId   String?
 }
 
 model devoluciones {

@@ -11,7 +11,7 @@ export default function DataTableFilters({ table }: { table: any }) {
   return (
     <div className="flex flex-1 items-center py-4">
       <Input
-        placeholder="Filter emails..."
+        placeholder="Filtrar..."
         value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
         onChange={(event) =>
           table.getColumn('email')?.setFilterValue(event.target.value)
@@ -21,7 +21,7 @@ export default function DataTableFilters({ table }: { table: any }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="ml-auto">
-            Columns
+            Columnas
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

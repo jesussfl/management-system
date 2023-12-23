@@ -18,26 +18,6 @@ import { SELECT_COLUMN } from '@/utils/constants/columns'
 // You can use a Zod schema here if you want.
 // Follow this model
 
-// model renglones {
-//   id                     String                   @id
-//   nombre                 String
-//   descripcion            String
-//   tipo                   String
-//   serial                 String
-//   presentacion           String
-//   numero_parte           String
-//   estado                 String
-//   existencia             Int
-//   stock_minimo           Int
-//   stock_maximo           Int
-//   inventariable          Boolean
-//   ubicacion              String
-//   id_almacen             Int
-//   almacen                almacenes                @relation(fields: [id_almacen], references: [id])
-//   despachos_detalles     despachos_detalles[]
-//   recibimientos_detalles recibimientos_detalles[]
-// }
-
 export const columns: ColumnDef<Renglon>[] = [
   SELECT_COLUMN,
   {
@@ -74,6 +54,34 @@ export const columns: ColumnDef<Renglon>[] = [
     },
   },
   {
+    accessorKey: 'clasificacion',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Clasificacion
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: 'tipo',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Categoria
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: 'tipo',
     header: ({ column }) => {
       return (
@@ -82,21 +90,6 @@ export const columns: ColumnDef<Renglon>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Tipo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'serial',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Serial
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -134,74 +127,14 @@ export const columns: ColumnDef<Renglon>[] = [
   },
 
   {
-    accessorKey: 'estado',
+    accessorKey: 'unidad_de_medida',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Estado
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'existencia',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Existencia
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'stock_minimo',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Stock Minimo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'stock_maximo',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Stock Maximo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'id_almacen',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Almacen
+          Unidad de Medida
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
