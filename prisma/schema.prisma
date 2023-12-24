@@ -85,15 +85,16 @@ model Subsistemas {
 }
 
 model Renglones {
-  id               String @id
-  nombre           String
-  descripcion      String
-  clasificacion    String
-  categoria        String
-  tipo             String
-  presentacion     String
-  numero_parte     String
-  unidad_de_medida String
+  id                     Int                      @id @default(autoincrement())
+  nombre                 String                   @unique
+  descripcion            String
+  clasificacion          String
+  categoria              String
+  tipo                   String
+  presentacion           String
+  numero_parte           String
+  unidad_de_medida       String
+  recibimientos_detalles recibimientos_detalles[]
 }
 
 model almacenes {
@@ -148,35 +149,36 @@ model destinatarios_militares {
   unidades_militares    unidades_militares    @relation(fields: [id_unidad], references: [id])
 }
 
-model recibimientos {
-  id           String                   @id
-  fecha        DateTime
-  motivo       String
-  detalles     recibimientos_detalles[]
-  devoluciones devoluciones[]
+model Recibimientos {
+  id                 Int                      @id @default(autoincrement())
+  fecha_recibimiento DateTime
+  motivo             String
+  renglones          recibimientos_detalles[]
+  devoluciones       devoluciones[]
 }
 
 model recibimientos_detalles {
-  id              String        @id
-  id_recibimiento String
-  cantidad        Int
-  id_renglon      String
-  id_subsistema   String
-  id_sistema      String
-  recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
-  // renglones       renglones     @relation(fields: [id_renglon], references: [id])
-  // subsistemas     subsistemas   @relation(fields: [id_subsistema], references: [id])
-  // sistemas        sistemas      @relation(fields: [id_sistema], references: [id])
-  Sistemas        Sistemas?     @relation(fields: [sistemasId], references: [id])
-  sistemasId      String?
-  Subsistemas     Subsistemas?  @relation(fields: [subsistemasId], references: [id])
-  subsistemasId   String?
+  id                Int           @id @default(autoincrement())
+  id_recibimiento   Int
+  id_renglon        Int
+  cantidad          Int
+  presentacion      String
+  fecha_fabricacion DateTime
+  fecha_vencimiento DateTime
+  recibimiento      Recibimientos @relation(fields: [id_recibimiento], references: [id])
+  renglon           Renglones     @relation(fields: [id_renglon], references: [id])
+  Sistemas          Sistemas?     @relation(fields: [sistemasId], references: [id])
+  sistemasId        String?
+  Subsistemas       Subsistemas?  @relation(fields: [subsistemasId], references: [id])
+  subsistemasId     String?
 }
 
 model devoluciones {
-  id              String        @id
+  id              String         @id
   id_recibimiento String
-  recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
+  // recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
+  Recibimientos   Recibimientos? @relation(fields: [recibimientosId], references: [id])
+  recibimientosId Int?
 }
 
 model componentes_militares {

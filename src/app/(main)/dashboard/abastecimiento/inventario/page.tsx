@@ -18,17 +18,18 @@ type SearchParamProps = {
 }
 async function getData(): Promise<Renglon[]> {
   const data = await prisma.renglones.findMany()
+  console.log(data)
   return data
 }
 export default async function Page({ searchParams }: SearchParamProps) {
   const data = await getData()
   const show = searchParams?.show === 'true'
   return (
-    <main className="flex-1 max-h-full p-5 overflow-hidden overflow-y-scroll">
+    <main className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-md font-medium">Inventario</h1>
         <Link href="/dashboard/abastecimiento/inventario?show=true">
-          <Button variant="outline">
+          <Button variant="outline" size={'sm'}>
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Renglon
           </Button>

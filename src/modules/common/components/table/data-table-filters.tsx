@@ -12,9 +12,9 @@ export default function DataTableFilters({ table }: { table: any }) {
     <div className="flex flex-1 items-center py-4">
       <Input
         placeholder="Filtrar..."
-        value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+        value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
         onChange={(event) =>
-          table.getColumn('email')?.setFilterValue(event.target.value)
+          table.getColumn('nombre')?.setFilterValue(event.target.value)
         }
         className="max-w-sm"
       />

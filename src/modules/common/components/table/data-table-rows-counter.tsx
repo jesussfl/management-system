@@ -8,7 +8,7 @@ export default function DataTableRowsCounter({
   totalRows: number
 }) {
   return (
-    <div className=" text-sm text-muted-foreground">
+    <div className=" text-xs text-muted-foreground">
       {selectedRows} de {totalRows} filas(s) seleccionadas.
     </div>
   )

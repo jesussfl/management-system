@@ -30,13 +30,18 @@ export const columns: ColumnDef<Renglon>[] = [
       return (
         <Button
           variant="ghost"
+          size={'sm'}
+          className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Nombre
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
+    // cell: ({ row }) => {
+    //   return <div className="w-24">{row.getValue<string>('nombre')}</div>
+    // },
   },
   {
     accessorKey: 'descripcion',
@@ -44,11 +49,12 @@ export const columns: ColumnDef<Renglon>[] = [
       return (
         <Button
           variant="ghost"
+          size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="w-[350px]"
+          className="text-xs"
         >
           Descripcion
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
@@ -59,21 +65,25 @@ export const columns: ColumnDef<Renglon>[] = [
       return (
         <Button
           variant="ghost"
+          className="text-xs"
+          size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Clasificacion
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
   },
   {
-    accessorKey: 'tipo',
+    accessorKey: 'categoria',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
         >
           Categoria
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -88,9 +98,11 @@ export const columns: ColumnDef<Renglon>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
         >
           Tipo
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
@@ -103,9 +115,11 @@ export const columns: ColumnDef<Renglon>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
         >
           Presentacion
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
@@ -118,9 +132,11 @@ export const columns: ColumnDef<Renglon>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
         >
           Parte
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
@@ -133,9 +149,11 @@ export const columns: ColumnDef<Renglon>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
         >
           Unidad de Medida
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
@@ -157,7 +175,7 @@ export const columns: ColumnDef<Renglon>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const payment = row.original
+      const renglon = row.original
 
       return (
         <DropdownMenu>
@@ -170,9 +188,9 @@ export const columns: ColumnDef<Renglon>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(String(renglon.id))}
             >
-              Copy payment ID
+              Copiar código
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>View customer</DropdownMenuItem>

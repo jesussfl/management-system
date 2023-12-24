@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 }
 export default async function DashboardPage() {
   return (
-    <>
+    <div>
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-6">
           <div className="flex items-center justify-between space-y-2">
@@ -165,6 +165,6 @@ export default async function DashboardPage() {
           </Tabs>
         </div>
       </div>
-    </>
+    </div>
   )
 }

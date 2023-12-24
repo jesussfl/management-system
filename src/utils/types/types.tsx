@@ -13,7 +13,7 @@ export type Payment = {
 }
 
 export type Renglon = {
-  id: string
+  id: number
   nombre: string
   descripcion: string
   clasificacion: string

@@ -1,11 +1,9 @@
 'use client'
 
-import * as React from 'react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 
-import { Button } from '@/modules/common/components/button/button'
-
 import { cn } from '@/lib/utils'
+import { Button } from '@/modules/common/components/button/button'
 import {
   Command,
   CommandEmpty,
@@ -13,72 +11,51 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
+import { FormControl } from '@/modules/common/components/form'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-]
 
-export function ComboboxDemo() {
-  const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState('')
-
+export function Combobox({ name, data, field, form }) {
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-[200px] justify-between"
-        >
-          {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : 'Seleccionar...'}
-          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+        <FormControl>
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn(
+              'w-[200px] justify-between',
+              !field.value && 'text-muted-foreground'
+            )}
+          >
+            {field.value
+              ? data.find((info) => info.value === field.value)?.label
+              : 'Seleccionar...'}
+            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </FormControl>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Seleccionar..." className="h-9" />
+          <CommandInput placeholder="Buscar..." className="h-9" />
           <CommandEmpty>Sin resultados.</CommandEmpty>
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {data.map((info) => (
               <CommandItem
-                key={framework.value}
-                value={framework.value}
-                onSelect={(currentValue) => {
-                  setValue(currentValue === value ? '' : currentValue)
-                  setOpen(false)
+                value={info.label}
+                key={info.value}
+                onSelect={() => {
+                  form.setValue(name, info.value)
                 }}
               >
-                {framework.label}
+                {info.label}
                 <CheckIcon
                   className={cn(
                     'ml-auto h-4 w-4',
-                    value === framework.value ? 'opacity-100' : 'opacity-0'
+                    info.value === field.value ? 'opacity-100' : 'opacity-0'
                   )}
                 />
               </CommandItem>

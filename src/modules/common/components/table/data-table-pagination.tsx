@@ -17,7 +17,7 @@ export const DataTablePagination = ({ table }: { table: any }) => {
   return (
     <div className="flex items-center justify-end space-x-6 lg:space-x-8">
       <div className="flex items-center space-x-2">
-        <p className="text-sm font-medium">Filas por página</p>
+        <p className="text-xs font-regular">Filas por página</p>
         <Select
           value={`${table.getState().pagination.pageSize}`}
           onValueChange={(value) => {
@@ -36,7 +36,7 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+      <div className="flex w-[100px] items-center justify-center text-xs font-regular">
         Página {table.getState().pagination.pageIndex + 1} de{' '}
         {table.getPageCount()}
       </div>

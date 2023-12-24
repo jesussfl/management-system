@@ -2,7 +2,7 @@
 import React, { useRef, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/modules/common/components/button/button'
+
 export default function ModalBase({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   let completeButtonRef = useRef(null)
@@ -43,12 +43,6 @@ export default function ModalBase({ children }: { children: React.ReactNode }) {
           <div className="flex min-h-full items-center justify-center p-4">
             {/* The actual dialog panel  */}
             <Dialog.Panel className="w-full max-w-screen-md transform overflow-hidden rounded-2xl bg-background p-6 px-12 text-left align-middle shadow-xl transition-all">
-              <div className=" border-b border-border pb-6 mt-6 flex items-center justify-end gap-x-6 ">
-                <Button variant="outline" onClick={router.back}>
-                  Publicar borrador
-                </Button>
-                <Button onClick={router.back}>Publicar renglón</Button>
-              </div>
               {children}
             </Dialog.Panel>
           </div>

@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden">
       <SideMenu />
-      <div className="flex flex-1 flex-col h-full overflow-hidden">
+      <div className="flex flex-1 flex-col h-full overflow-hidden bg-muted">
         <TopNav />
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>

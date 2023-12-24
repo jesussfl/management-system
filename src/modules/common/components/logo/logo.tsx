@@ -8,7 +8,7 @@ function Logo() {
     >
       <span className="h-8 w-8 bg-border rounded-lg" />
       <div className="flex flex-col gap-0">
-        <p className="text-foreground font-regular text-xs">
+        <p className="text-muted-foreground font-regular text-xs">
           {' '}
           Sistema de Gestión{' '}
         </p>
