@@ -4,11 +4,15 @@ import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button/button'
 import { Plus } from 'lucide-react'
-import { Dialog } from '@headlessui/react'
-import { useRouter } from 'next/navigation'
+
 import Link from 'next/link'
 import Modal from '@/modules/renglones/components/renglones-modal'
+import { Metadata } from 'next'
 
+export const metadata: Metadata = {
+  title: 'Inventario',
+  description: 'Desde aquí puedes ver todos tus renglones',
+}
 type SearchParamProps = {
   searchParams: Record<string, string> | null | undefined
 }

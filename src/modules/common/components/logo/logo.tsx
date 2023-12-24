@@ -4,10 +4,16 @@ function Logo() {
   return (
     <Link
       href="/dashboard"
-      className="flex flex-row space-x-3 items-center justify-center md:justify-start md:px-6 md:py-3 w-full"
+      className="flex flex-col gap-4 justify-center w-full pt-4 mb-8"
     >
-      <span className="h-16 w-16 bg-border rounded-lg" />
-      <span className="text-foreground font-medium">Sistema de Gestión</span>
+      <span className="h-8 w-8 bg-border rounded-lg" />
+      <div className="flex flex-col gap-0">
+        <p className="text-foreground font-regular text-xs">
+          {' '}
+          Sistema de Gestión{' '}
+        </p>
+        <span className="text-foreground font-medium text-sm">CESERLODAI</span>
+      </div>
     </Link>
   )
 }

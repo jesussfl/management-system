@@ -8,8 +8,8 @@ import { useSelectedLayoutSegment } from 'next/navigation'
 import useScroll from '@/hooks/use-scroll'
 import { cn } from '@/lib/utils'
 import { Search } from '@/modules/common/components/search/search'
-import { UserNav } from '@/modules/common/components/user-nav'
-import ToogleTheme from '@/components/ui/toogle-theme'
+import { UserNav } from '@/modules/common/components/user-nav/user-nav'
+import ToogleTheme from '@/modules/common/components/toogle-theme/toogle-theme'
 
 const TopNav = () => {
   const scrolled = useScroll(5)

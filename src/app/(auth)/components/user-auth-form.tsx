@@ -3,7 +3,7 @@
 import * as React from 'react'
 
 import { cn } from '@/lib/utils'
-import { Icons } from '@/components/ui/icons'
+import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button/button'
 import { Input } from '@/modules/common/components/input/input'
 import { Label } from '@/modules/common/components/label/label'

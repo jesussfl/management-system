@@ -9,11 +9,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CalendarDateRangePicker } from '../../../modules/common/components/date-range-picker'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/modules/common/components/tabs/tabs'
+import { CalendarDateRangePicker } from '../../../modules/common/components/date-range-picker/date-range-picker'
 
-import { Overview } from '../../../modules/common/components/overview'
-import { RecentSales } from '../../../modules/common/components/recent-users'
+import { Overview } from '../../../modules/common/components/overview/overview'
+import { RecentSales } from '../../../modules/common/components/recent-users/recent-users'
 
 export const metadata: Metadata = {
   title: 'Administrador',

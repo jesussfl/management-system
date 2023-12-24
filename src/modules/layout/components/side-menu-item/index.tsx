@@ -7,16 +7,16 @@ import { ChevronDown, LogOut } from 'lucide-react'
 import { Button } from '@/modules/common/components/button/button'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
-import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
+
+const ICON_SIZE = 18
+
 export const SideMenuItems = () => {
   return (
-    <ScrollArea className=" md:py-5">
-      <div className="flex flex-col space-y-2 pl-3 md:pr-6 ">
-        {SIDE_NAV_ITEMS.map((item, idx) => {
-          return <MenuItem key={idx} item={item} />
-        })}
-      </div>
-    </ScrollArea>
+    <div className="flex flex-col space-y-1 ">
+      {SIDE_NAV_ITEMS.map((item, idx) => {
+        return <MenuItem key={idx} item={item} />
+      })}
+    </div>
   )
 }
 export const MenuItem = ({ item }: { item: SideNavItem }) => {
@@ -36,13 +36,13 @@ export const MenuItem = ({ item }: { item: SideNavItem }) => {
           <Button
             onClick={toggleSubMenu}
             variant={pathname?.includes(item.path) ? 'outline' : 'ghost'}
-            className="w-full justify-between flex gap-2  items-center "
+            className="w-full justify-between flex gap-2  items-center text-sm "
           >
             <div className="flex justify-start gap-2 items-center ">
               {item.icon &&
                 item.icon(
                   item.path === pathname ? selectedColor : defaultForeColor,
-                  24
+                  ICON_SIZE
                 )}
               <span
                 style={{
@@ -67,12 +67,12 @@ export const MenuItem = ({ item }: { item: SideNavItem }) => {
                   <Link key={idx} href={subItem.path}>
                     <Button
                       variant={subItem.path === pathname ? 'default' : 'ghost'}
-                      className="w-full justify-start flex gap-2 "
+                      className="w-full text-sm justify-start flex gap-2 "
                     >
                       {subItem.icon &&
                         subItem.icon(
                           subItem.path === pathname ? selectedColor : 'gray',
-                          24
+                          ICON_SIZE
                         )}
                       <span
                         style={{
@@ -93,10 +93,13 @@ export const MenuItem = ({ item }: { item: SideNavItem }) => {
         <Link href={item.path}>
           <Button
             variant={item.path === pathname ? 'default' : 'ghost'}
-            className="w-full justify-start flex gap-2 hover:text-primary"
+            className="flex text-sm w-full justify-start gap-2 hover:text-primary"
           >
             {item.icon &&
-              item.icon(item.path === pathname ? selectedColor : 'gray', 24)}
+              item.icon(
+                item.path === pathname ? selectedColor : 'gray',
+                ICON_SIZE
+              )}
             <span
               className={[
                 item.path === pathname ? 'text-white' : 'text-gray-500',
