@@ -783,17 +783,9 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-compose-refs" "1.0.0"
 
-"@radix-ui/react-slot@1.0.2":
+"@radix-ui/react-slot@1.0.2", "@radix-ui/react-slot@^1.0.2":
   version "1.0.2"
   resolved "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.0.2.tgz"
-  integrity sha512-YeTpuq4deV+6DusvVUW4ivBgnkHwECUu0BiN43L5UCDFgdhsRUWAghhTF5MbvNTPzmiFOx90asDSUjWuCNapwg==
-  dependencies:
-    "@babel/runtime" "^7.13.10"
-    "@radix-ui/react-compose-refs" "1.0.1"
-
-"@radix-ui/react-slot@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.0.2.tgz#a9ff4423eade67f501ffb32ec22064bc9d3099ab"
   integrity sha512-YeTpuq4deV+6DusvVUW4ivBgnkHwECUu0BiN43L5UCDFgdhsRUWAghhTF5MbvNTPzmiFOx90asDSUjWuCNapwg==
   dependencies:
     "@babel/runtime" "^7.13.10"
@@ -937,6 +929,30 @@
   integrity sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==
   dependencies:
     tslib "^2.4.0"
+
+"@tanstack/query-core@5.14.2":
+  version "5.14.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.14.2.tgz#ef0c1a93e142d5cce90b0ac2d0333a88fc0fbb95"
+  integrity sha512-QmoJvC72sSWs3hgGis8JdmlDvqLfYGWUK4UG6OR9Q6t28JMN9m2FDwKPqoSJ9YVocELCSjMt/FGjEiLfk8000Q==
+
+"@tanstack/query-devtools@5.14.7":
+  version "5.14.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-devtools/-/query-devtools-5.14.7.tgz#9a1802a22e8fbe000b3a980a01dd8204d1fa7e92"
+  integrity sha512-pLATV0VOGR0UrnxiA/yw0DACvCxTnH3Y1MNb61NOMfsuHOXw9W96tUqo2wlXaK7fWgIjA+SPb+YcjUsp5geAYQ==
+
+"@tanstack/react-query-devtools@^5.14.7":
+  version "5.14.7"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query-devtools/-/react-query-devtools-5.14.7.tgz#25389a9dc93e6028d9096a34270da186ef821940"
+  integrity sha512-nZeKPB66AZJJYqxybV5fEs3VsKwxCtpxGcXJXxEILmhnd3RHEoNLWRLW9Uv1E38C7Vgncv0DZHGrnYM1EARYTg==
+  dependencies:
+    "@tanstack/query-devtools" "5.14.7"
+
+"@tanstack/react-query@^5.14.6":
+  version "5.14.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.14.6.tgz#40d51832d1ca6c9e28d3e48fd44c116d9ce28296"
+  integrity sha512-+INnJdq/904d+K2XQjqdIC58glpNGfQ8Xz93M6WBeJs5FPGFV8SEuFVzPtW/bKZ/Hu7hAiJpbFLDg5Lysvwmuw==
+  dependencies:
+    "@tanstack/query-core" "5.14.2"
 
 "@tanstack/react-table@^8.10.7":
   version "8.10.7"

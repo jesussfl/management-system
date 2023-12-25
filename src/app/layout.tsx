@@ -1,4 +1,3 @@
-import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import { Poppins as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
@@ -8,7 +7,6 @@ export const fontSans = FontSans({
   subsets: ['latin-ext'],
   variable: '--font-sans',
 })
-
 export default function RootLayout({
   children,
 }: {

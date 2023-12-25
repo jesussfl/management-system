@@ -1,12 +1,9 @@
 'use client'
 import * as React from 'react'
 import { Input } from '@/modules/common/components/input/input'
-import { Label } from '@/modules/common/components/label/label'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/modules/common/components/button/button'
-import { X } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -17,7 +14,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 import { Renglon } from '@/utils/types/types'
-import { useParams } from 'next/navigation'
+import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 const classifications = [
   {
     value: 'Consumible',
@@ -29,56 +26,66 @@ const classifications = [
   },
 ]
 
-export default function RenglonesForm() {
+interface Props {
+  id?: number
+  defaultValues?: Renglon
+}
+const createRenglon = async (data: Renglon) => {
+  const response = await fetch('http://localhost:3000/api/renglon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  if (response.ok) {
+    console.log('success')
+  }
+}
+const editRenglon = async (data: Renglon, id: number) => {
+  const response = await fetch(`http://localhost:3000/api/renglon/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  if (response.ok) {
+    console.log('success')
+  }
+}
+export default function RenglonesForm({ id, defaultValues }: Props) {
   const form = useForm({
     defaultValues: {
-      name: '',
-      description: '',
-      classification: '',
-      category: '',
-      type: '',
-      presentation: '',
-      modelNumber: '',
-      measureUnit: '',
+      name: defaultValues?.nombre || '',
+      description: defaultValues?.descripcion || '',
+      classification: defaultValues?.clasificacion || '',
+      category: defaultValues?.categoria || '',
+      type: defaultValues?.tipo || '',
+      presentation: defaultValues?.presentacion || '',
+      modelNumber: defaultValues?.numero_parte || '',
+      measureUnit: defaultValues?.unidad_de_medida || '',
     },
   })
-  const router = useRouter()
 
   const onSubmit: SubmitHandler<Renglon> = async (data) => {
-    const response = await fetch('http://localhost:3000/api/renglon', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-
-    if (response.ok) {
-      console.log('success')
+    if (!id) {
+      await createRenglon(data)
+      return
+    } else {
+      await editRenglon(data, id)
+      return
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit as any)}>
-        <div className="flex justify-between items-center border-b border-border pb-6 my-6 gap-x-6">
-          <div className="h-8 w-8 cursor-pointer">
-            <X onClick={router.back} />
-          </div>
-          <div className="flex gap-x-4">
-            <Button variant="outline" onClick={router.back}>
-              Publicar borrador
-            </Button>
-            <Button type="submit">Publicar renglón</Button>
-          </div>
-        </div>
+      <form
+        className='className="flex-1 overflow-y-auto px-6 py-6"'
+        onSubmit={form.handleSubmit(onSubmit as any)}
+      >
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              This information will be displayed publicly so be careful what you
-              share.
-            </p>
-
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <FormField
                 control={form.control}
@@ -263,6 +270,11 @@ export default function RenglonesForm() {
               </div>
             </div>
           </div>
+          <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t border-border">
+            <Button variant="outline">Cancelar</Button>
+
+            <Button type="submit">Guardar</Button>
+          </DialogFooter>
         </div>
       </form>
     </Form>

@@ -16,27 +16,22 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import RenglonesForm from '@/modules/renglones/components/renglones-form'
 export const metadata: Metadata = {
-  title: 'Recibimientos',
+  title: 'Renglones',
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
-type SearchParamProps = {
-  searchParams: Record<string, string> | null | undefined
-}
-async function getData() {
-  const data = await prisma.recibimientos.findMany()
-  return data
-}
+
 export default async function Page() {
-  const data = await getData()
+  const data = await prisma.renglones.findMany()
+
   return (
     <main className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-md font-medium">Recibimientos</h1>
+        <h1 className="text-md font-medium">Renglones</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size={'sm'}>
               <Plus className="mr-2 h-4 w-4" />
-              Nuevo Recibimiento
+              Nuevo Renglón
             </Button>
           </DialogTrigger>
 
@@ -44,10 +39,9 @@ export default async function Page() {
             className={'lg:max-w-screen-lg overflow-auto max-h-[90vh]'}
           >
             <DialogHeader>
-              <DialogTitle>Nuevo Recibimiento</DialogTitle>
+              <DialogTitle>Nuevo Renglón</DialogTitle>
               <DialogDescription>
-                Agrega un nuevo recibimiento a la base de datos de
-                abastecimiento
+                Agrega un nuevo renglón a la base de datos de abastecimiento
               </DialogDescription>
             </DialogHeader>
             <RenglonesForm />
