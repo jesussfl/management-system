@@ -2,7 +2,7 @@ import { columns } from './columns'
 
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { Metadata } from 'next'

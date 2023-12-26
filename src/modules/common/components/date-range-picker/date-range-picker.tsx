@@ -6,7 +6,7 @@ import { addDays, format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Calendar } from '@/modules/common/components/calendar/calendar'
 import {
   Popover,

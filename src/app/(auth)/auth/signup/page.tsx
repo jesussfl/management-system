@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/modules/common/components/button/button'
+import { buttonVariants } from '@/modules/common/components/button'
 import { SignupForm } from '@/modules/auth/templates/signup-form'
 export const metadata: Metadata = {
   title: 'Registro',

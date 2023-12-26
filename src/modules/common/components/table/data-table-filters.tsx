@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
 import {
   DropdownMenu,

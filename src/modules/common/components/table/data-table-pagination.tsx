@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 export const DataTablePagination = ({ table }: { table: any }) => {
   return (
     <div className="flex items-center justify-end space-x-6 lg:space-x-8">

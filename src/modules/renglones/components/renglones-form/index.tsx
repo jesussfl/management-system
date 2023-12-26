@@ -3,7 +3,7 @@ import * as React from 'react'
 import { Input } from '@/modules/common/components/input/input'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,

@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
 import RenglonesForm from '@/modules/renglones/components/renglones-form'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Edit } from 'lucide-react'
 
 type Props = {

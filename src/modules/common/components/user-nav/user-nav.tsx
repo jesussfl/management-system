@@ -1,9 +1,11 @@
+'use client'
+import { prisma } from '@/lib/prisma'
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@/modules/common/components/avatar/avatar'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +18,9 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 
 import { signOut } from 'next-auth/react'
-export function UserNav() {
+import { getSession } from 'next-auth/react'
+export async function UserNav() {
+  const session = await getSession()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,31 +34,28 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">shadcn</p>
+            <p className="text-sm font-medium leading-none">
+              {session?.user?.name}
+            </p>
             <p className="text-xs leading-none text-muted-foreground">
-              m@example.com
+              {session?.user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            Profile
+            Perfil
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
+            Configuraciones
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>
-          Log out
+          Cerrar Sesión
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

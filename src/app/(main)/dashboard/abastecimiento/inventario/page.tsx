@@ -2,7 +2,7 @@ import { columns } from './columns'
 import { Renglon } from '@/utils/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Plus } from 'lucide-react'
 
 import { Metadata } from 'next'

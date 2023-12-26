@@ -2,10 +2,10 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/modules/common/components/button/button'
+import { buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
 import { Label } from '@/modules/common/components/label/label'
 import { signIn } from 'next-auth/react'

@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { SIDE_NAV_ITEMS } from '@/utils/constants/side-nav-items'
+import { SIDE_MENU_ITEMS } from '@/utils/constants/side-menu-items'
 import { SideNavItem } from '@/utils/types/types'
 import { motion, useCycle } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
@@ -57,8 +57,8 @@ const HeaderMobile = () => {
         variants={variants}
         className="absolute grid w-full gap-3 px-10 py-16"
       >
-        {SIDE_NAV_ITEMS.map((item, idx) => {
-          const isLastItem = idx === SIDE_NAV_ITEMS.length - 1 // Check if it's the last item
+        {SIDE_MENU_ITEMS.map((item, idx) => {
+          const isLastItem = idx === SIDE_MENU_ITEMS.length - 1 // Check if it's the last item
 
           return (
             <div key={idx}>

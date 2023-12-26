@@ -13,7 +13,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/modules/common/components/avatar/avatar'
-import { Button } from '@/modules/common/components/button/button'
+import { Button } from '@/modules/common/components/button'
 import {
   Command,
   CommandEmpty,
