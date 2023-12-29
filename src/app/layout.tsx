@@ -2,6 +2,7 @@ import '@/utils/styles/globals.css'
 import { Poppins as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/modules/common/components/theme-provider'
+import { Toaster } from '@/modules/common/components/toast/toaster'
 export const fontSans = FontSans({
   weight: ['400', '500', '700'],
   subsets: ['latin-ext'],
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

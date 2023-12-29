@@ -42,6 +42,7 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { createRecibimiento } from '@/lib/actions/create-recibimiento'
+import { useToast } from '@/modules/common/components/toast/use-toast'
 
 type FormProps = {
   renglonesData: Renglon[]
@@ -62,6 +63,7 @@ type FormValues = {
 export default function RecibimientosFormAdd({ renglonesData }: FormProps) {
   const form = useForm<FormValues>()
   const router = useRouter()
+  const { toast } = useToast()
   const { fields, append, remove } = useFieldArray<FormValues>({
     control: form.control,
     name: `detalles`,
@@ -125,7 +127,14 @@ export default function RecibimientosFormAdd({ renglonesData }: FormProps) {
     remove(index)
   }
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    createRecibimiento(data)
+    createRecibimiento(data).then(() => {
+      toast({
+        title: 'Recibimiento creado',
+        description: 'El recibimiento se ha creado correctamente',
+        variant: 'default',
+      })
+      router.replace('/dashboard/abastecimiento/recibimientos')
+    })
   }
   return (
     <Form {...form}>

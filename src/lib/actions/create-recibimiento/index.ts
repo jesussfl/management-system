@@ -51,9 +51,8 @@ try {
         }
     })
     revalidatePath('/dashboard/abastecimiento/recibimientos')
-    redirect('/dashboard/abastecimiento/recibimientos')
 } catch (error) {
-    
+    console.log(error);
 }
  
 
