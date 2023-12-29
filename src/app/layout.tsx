@@ -1,4 +1,4 @@
-import '@/styles/globals.css'
+import '@/utils/styles/globals.css'
 import { Poppins as FontSans } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/modules/common/components/theme-provider'
@@ -15,7 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn('bg-background font-sans antialiased', fontSans.variable)}
+        className={cn(
+          'bg-background font-sans antialiased overflow-hidden',
+          fontSans.variable
+        )}
       >
         <ThemeProvider
           attribute="class"

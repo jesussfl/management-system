@@ -1,5 +1,5 @@
 import { columns } from './columns'
-import { Renglon } from '@/utils/types/types'
+import { Renglon } from '@/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button'
@@ -29,7 +29,7 @@ export default async function Page({ searchParams }: SearchParamProps) {
   const data = await prisma.renglones.findMany()
 
   return (
-    <main className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
+    <div className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-md font-medium">Inventario</h1>
         <div className="flex gap-2">
@@ -95,6 +95,6 @@ export default async function Page({ searchParams }: SearchParamProps) {
         </div>
       </div>
       <DataTable columns={columns} data={data} />
-    </main>
+    </div>
   )
 }

@@ -1,17 +1,17 @@
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Payment } from '@/utils/types/types'
+import { Renglon } from '@/types/types'
 import { ColumnDef } from '@tanstack/react-table'
 
 export const SELECT_COLUMN: any = {
   id: 'select',
-  header: ({ table }) => (
+  header: ({ table }: { table: any }) => (
     <Checkbox
       checked={table.getIsAllPageRowsSelected()}
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       aria-label="Select all"
     />
   ),
-  cell: ({ row }) => (
+  cell: ({ row }: { row: any }) => (
     <Checkbox
       checked={row.getIsSelected()}
       onCheckedChange={(value) => row.toggleSelected(!!value)}

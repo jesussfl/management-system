@@ -60,33 +60,33 @@ model VerificationToken {
 }
 
 model Sistemas {
-  id                     String                   @id
-  nombre                 String
-  descripcion            String
-  existencia             Int
-  estado                 String
-  id_almacen             Int
-  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
-  despachos_detalles     despachos_detalles[]
-  recibimientos_detalles recibimientos_detalles[]
+  id                 String               @id
+  nombre             String
+  descripcion        String
+  existencia         Int
+  estado             String
+  id_almacen         Int
+  almacen            almacenes            @relation(fields: [id_almacen], references: [id])
+  despachos_detalles despachos_detalles[]
+  // recibimientos_detalles recibimientos_detalles[]
 }
 
 model Subsistemas {
-  id                     String                   @id
-  nombre                 String
-  descripcion            String
-  existencia             Int
-  estado                 String
-  sistema                String
-  id_almacen             Int
-  almacen                almacenes                @relation(fields: [id_almacen], references: [id])
-  despachos_detalles     despachos_detalles[]
-  recibimientos_detalles recibimientos_detalles[]
+  id                 String               @id
+  nombre             String
+  descripcion        String
+  existencia         Int
+  estado             String
+  sistema            String
+  id_almacen         Int
+  almacen            almacenes            @relation(fields: [id_almacen], references: [id])
+  despachos_detalles despachos_detalles[]
+  // recibimientos_detalles recibimientos_detalles[]
 }
 
 model Renglones {
-  id                     Int                      @id @default(autoincrement())
-  nombre                 String                   @unique
+  id                     Int                     @id @default(autoincrement())
+  nombre                 String                  @unique
   descripcion            String
   clasificacion          String
   categoria              String
@@ -94,7 +94,7 @@ model Renglones {
   presentacion           String
   numero_parte           String
   unidad_de_medida       String
-  recibimientos_detalles recibimientos_detalles[]
+  recibimientos_detalles Detalles_recibimiento[]
 }
 
 model almacenes {
@@ -150,34 +150,28 @@ model destinatarios_militares {
 }
 
 model Recibimientos {
-  id                 Int                      @id @default(autoincrement())
+  id                 Int                     @id @default(autoincrement())
   fecha_recibimiento DateTime
-  motivo             String
-  renglones          recibimientos_detalles[]
-  devoluciones       devoluciones[]
+  motivo             String?
+  detalles           Detalles_recibimiento[]
 }
 
-model recibimientos_detalles {
+model Detalles_recibimiento {
   id                Int           @id @default(autoincrement())
   id_recibimiento   Int
   id_renglon        Int
   cantidad          Int
-  presentacion      String
-  fecha_fabricacion DateTime
-  fecha_vencimiento DateTime
+  fecha_fabricacion DateTime?
+  fecha_vencimiento DateTime?
   recibimiento      Recibimientos @relation(fields: [id_recibimiento], references: [id])
   renglon           Renglones     @relation(fields: [id_renglon], references: [id])
-  Sistemas          Sistemas?     @relation(fields: [sistemasId], references: [id])
-  sistemasId        String?
-  Subsistemas       Subsistemas?  @relation(fields: [subsistemasId], references: [id])
-  subsistemasId     String?
 }
 
 model devoluciones {
-  id              String         @id
+  id              String @id
   id_recibimiento String
   // recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
-  Recibimientos   Recibimientos? @relation(fields: [recibimientosId], references: [id])
+  // Recibimientos   Recibimientos? @relation(fields: [recibimientosId], references: [id])
   recibimientosId Int?
 }
 

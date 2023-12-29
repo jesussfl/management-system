@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ColumnDef,
   flexRender,
@@ -11,6 +11,7 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   VisibilityState,
+  RowSelectionState,
 } from '@tanstack/react-table'
 
 import {
@@ -28,16 +29,46 @@ import DataTableRowsCounter from './data-table-rows-counter'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isColumnFilterEnabled?: boolean
+  selectedData?: any
+  setSelectedData?: (data: any) => void
+  onSelectedRowsChange?: (lastSelectedRow: any) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isColumnFilterEnabled = true,
+  onSelectedRowsChange,
+  selectedData,
+  setSelectedData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [selectedRows, setSelectedRows] = useState<any[]>([])
+  const [lastSelectedRow, setLastSelectedRow] = useState<any>('')
+
+  useEffect(() => {
+    const handleSelectionState = (selections: RowSelectionState) => {
+      setSelectedRows((prev) =>
+        Object.keys(selections).map(
+          (key) =>
+            table.getSelectedRowModel().rowsById[key]?.original ||
+            prev.find((row) => row.id === key)
+        )
+      )
+    }
+
+    handleSelectionState(selectedData || rowSelection)
+  }, [selectedData || rowSelection])
+
+  useEffect(() => {
+    if (!onSelectedRowsChange) return
+    onSelectedRowsChange(lastSelectedRow)
+  }, [selectedRows])
+
   const table = useReactTable({
     data,
     columns,
@@ -45,23 +76,26 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-
+    getRowId: (row) => row.id,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: setSelectedData || setRowSelection,
     onSortingChange: setSorting,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
+      rowSelection: selectedData || rowSelection,
     },
   })
 
   return (
-    <div className="flex flex-1 flex-col justify-between px-2 gap-2">
-      <DataTableFilters table={table} />
-      <div className="rounded-md border">
+    <div className="flex flex-1 h-full flex-col justify-between px-2 gap-2">
+      <DataTableFilters
+        table={table}
+        isColumnFilterEnabled={isColumnFilterEnabled}
+      />
+      <div className="h-full rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -87,6 +121,9 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => {
+                    setLastSelectedRow(row.original)
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
