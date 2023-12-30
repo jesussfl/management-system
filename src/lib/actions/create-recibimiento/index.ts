@@ -2,15 +2,8 @@
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/utils/auth';
-import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-
-type InputRecibimientos = Prisma.RecibimientosGetPayload<{
-    include: {
-        detalles: true
-    }
-}>;
+import {z} from 'zod'
 type Detalles = {
     id_renglon: number
     cantidad: number
@@ -23,6 +16,7 @@ type Detalles = {
     motivo: string
     detalles: Detalles[]
   }
+
 export const createRecibimiento = async (data: FormValues) => {
 
 try {

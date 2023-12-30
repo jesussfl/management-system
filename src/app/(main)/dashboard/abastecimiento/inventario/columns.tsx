@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
+import Link from 'next/link'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +13,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { Renglon } from '@/types/types'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// Follow this model
+import { Renglones } from '@/types/types'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/modules/common/components/dialog/dialog'
 
-export const columns: ColumnDef<Renglon>[] = [
+import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import TableActions from '@/modules/inventario/components/table-actions'
+
+export const columns: ColumnDef<Renglones>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -57,6 +66,31 @@ export const columns: ColumnDef<Renglon>[] = [
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
+    },
+  },
+
+  {
+    accessorKey: 'stock',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const stock = row.original.recibimientos.reduce(
+        (total, item) => total + item.cantidad,
+        0
+      )
+
+      return <div>{stock}</div>
     },
   },
   {
@@ -109,7 +143,7 @@ export const columns: ColumnDef<Renglon>[] = [
   },
 
   {
-    accessorKey: 'presentacion',
+    accessorKey: 'unidad_empaque',
     header: ({ column }) => {
       return (
         <Button
@@ -118,7 +152,7 @@ export const columns: ColumnDef<Renglon>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Presentacion
+          Unidad de Empaque
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -135,15 +169,14 @@ export const columns: ColumnDef<Renglon>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Parte
+          Número de Parte
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
   },
-
   {
-    accessorKey: 'unidad_de_medida',
+    accessorKey: 'stock_minimo',
     header: ({ column }) => {
       return (
         <Button
@@ -152,52 +185,35 @@ export const columns: ColumnDef<Renglon>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Unidad de Medida
+          Stock Minimo
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
   },
-
-  // {
-  //   accessorKey: 'amount',
-  //   header: () => <div className="text-right">Amount</div>,
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue('amount'))
-  //     const formatted = new Intl.NumberFormat('en-US', {
-  //       style: 'currency',
-  //       currency: 'USD',
-  //     }).format(amount)
-
-  //     return <div className="text-right font-medium">{formatted}</div>
-  //   },
-  // },
   {
-    id: 'actions',
-    cell: ({ row }) => {
-      const renglon = row.original
-
+    accessorKey: 'stock_maximo',
+    header: ({ column }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(renglon.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
+        >
+          Stock Maximo
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
       )
+    },
+  },
+  {
+    id: 'acciones',
+    cell: ({ row }) => {
+      const data = row.original
+      const renglon = (({ recibimientos, ...rest }) => rest)(data)
+
+      return <TableActions renglon={renglon} />
     },
   },
 ]

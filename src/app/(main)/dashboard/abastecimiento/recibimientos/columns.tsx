@@ -1,24 +1,19 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Recibimientos } from '@prisma/client'
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-// Follow this model
 
-export const columns: ColumnDef<Recibimientos>[] = [
+import { SELECT_COLUMN } from '@/utils/constants/columns'
+import { Prisma } from '@prisma/client'
+import TableActions from '@/modules/recibimientos/components/table-actions'
+
+type Recibimiento = Prisma.RecibimientosGetPayload<{
+  include: { detalles: { include: { renglon: true } } }
+}>
+
+export const columns: ColumnDef<Recibimiento>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -50,14 +45,21 @@ export const columns: ColumnDef<Recibimientos>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="text-xs"
         >
-          Descripcion
+          Fecha recibido
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
+    cell: ({ row }) => {
+      return row.getValue<string>('fecha_recibimiento')
+        ? new Date(
+            row.getValue<string>('fecha_recibimiento')
+          ).toLocaleDateString()
+        : ''
+    },
   },
   {
-    accessorKey: 'renglones',
+    accessorKey: 'detalles',
     header: ({ column }) => {
       return (
         <Button
@@ -66,38 +68,25 @@ export const columns: ColumnDef<Recibimientos>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Renglones
+          Detalles
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
+    },
+    cell: ({ row }) => {
+      const string = row.original.detalles
+        .map((detalle) => `${detalle.cantidad} - ${detalle.renglon?.nombre}`)
+        .join(', ')
+
+      return <div className="">{string}</div>
     },
   },
   {
     id: 'actions',
     cell: ({ row }) => {
-      const renglon = row.original
+      const recibimiento = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(renglon.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+      return <TableActions id={recibimiento.id} />
     },
   },
 ]

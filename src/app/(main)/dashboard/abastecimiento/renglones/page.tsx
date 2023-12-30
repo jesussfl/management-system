@@ -24,14 +24,14 @@ export default async function Page() {
   const data = await prisma.renglones.findMany()
 
   return (
-    <main className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
+    <>
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-md font-medium">Renglones</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size={'sm'}>
               <Plus className="mr-2 h-4 w-4" />
-              Nuevo Renglón
+              Añadir Renglón
             </Button>
           </DialogTrigger>
 
@@ -49,6 +49,6 @@ export default async function Page() {
         </Dialog>
       </div>
       <DataTable columns={columns} data={data} />
-    </main>
+    </>
   )
 }

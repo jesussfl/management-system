@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -68,7 +67,6 @@ model Sistemas {
   id_almacen         Int
   almacen            almacenes            @relation(fields: [id_almacen], references: [id])
   despachos_detalles despachos_detalles[]
-  // recibimientos_detalles recibimientos_detalles[]
 }
 
 model Subsistemas {
@@ -84,17 +82,48 @@ model Subsistemas {
   // recibimientos_detalles recibimientos_detalles[]
 }
 
+enum Clasificacion {
+  REPUESTOS
+  ARTICULOS_OFICINA
+  LIQUIDOS
+  EQUIPAMIENTO_MILITAR
+  MATERIALES_CONSTRUCCION
+  ALIMENTOS
+  OTRO
+}
+
+enum UnidadEmpaque {
+  CAJA
+  BARRIL
+  BIDON
+  BOTELLA
+  BOLSA_HERMETICA
+  CONTENEDOR_PLASTICO
+  ESTUCHE
+  BANDEJA
+  CAJA_ARCHIVADOR
+  SOBRE
+  CONTENEDOR_ESPECIAL
+  ESTUCHE_TRANSPORTE
+  BOLSA_SELLADA
+  FUNDA_PROTECCION
+  CONTENEDOR_SELLADO
+  BOLSA_VACIO
+  OTRO
+}
+
 model Renglones {
-  id                     Int                     @id @default(autoincrement())
-  nombre                 String                  @unique
-  descripcion            String
-  clasificacion          String
-  categoria              String
-  tipo                   String
-  presentacion           String
-  numero_parte           String
-  unidad_de_medida       String
-  recibimientos_detalles Detalles_recibimiento[]
+  id             Int                     @id @default(autoincrement())
+  nombre         String                  @unique
+  descripcion    String
+  clasificacion  Clasificacion
+  categoria      String
+  tipo           String?
+  unidad_empaque UnidadEmpaque
+  stock_minimo   Int                     @default(1)
+  stock_maximo   Int?
+  numero_parte   String?
+  recibimientos  Detalles_recibimiento[]
 }
 
 model almacenes {
@@ -163,7 +192,7 @@ model Detalles_recibimiento {
   cantidad          Int
   fecha_fabricacion DateTime?
   fecha_vencimiento DateTime?
-  recibimiento      Recibimientos @relation(fields: [id_recibimiento], references: [id])
+  recibimiento      Recibimientos @relation(fields: [id_recibimiento], references: [id], onDelete: Cascade, onUpdate: Cascade)
   renglon           Renglones     @relation(fields: [id_renglon], references: [id])
 }
 

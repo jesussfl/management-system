@@ -90,12 +90,12 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex flex-1 h-full flex-col justify-between px-2 gap-2">
+    <div className="flex flex-1 flex-col justify-between px-2 gap-2">
       <DataTableFilters
         table={table}
         isColumnFilterEnabled={isColumnFilterEnabled}
       />
-      <div className="h-full rounded-md border">
+      <div className="bg-background rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -124,6 +124,7 @@ export function DataTable<TData, TValue>({
                   onClick={() => {
                     setLastSelectedRow(row.original)
                   }}
+                  className="border-b-0"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

@@ -15,6 +15,7 @@ import {
   PackagePlus,
   PackageMinus,
   HelpCircle,
+  UserCircle,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -82,6 +83,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: <Contact2 size={DEFAULT_ICON_SIZE} />,
       },
     ],
+  },
+  {
+    title: 'Usuarios',
+    path: '/dashboard/usuarios',
+    icon: <UserCircle size={DEFAULT_ICON_SIZE} />,
   },
   {
     title: 'Estadísticas',

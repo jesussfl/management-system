@@ -4,12 +4,7 @@ import { Input } from '@/modules/common/components/input/input'
 
 import { columns } from './columns'
 import { cn } from '@/lib/utils'
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  FieldValues,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
 import { Box, Trash } from 'lucide-react'
@@ -23,7 +18,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { Renglon } from '@/types/types'
+import { Renglon, Renglones } from '@/types/types'
 import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
@@ -43,9 +38,14 @@ import {
 } from '@/modules/common/components/card/card'
 import { createRecibimiento } from '@/lib/actions/create-recibimiento'
 import { useToast } from '@/modules/common/components/toast/use-toast'
+import {
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/modules/common/components/dialog/dialog'
 
 type FormProps = {
-  renglonesData: Renglon[]
+  renglonesData: Renglones[]
 }
 type Detalles = {
   id_renglon: number
@@ -140,14 +140,29 @@ export default function RecibimientosFormAdd({ renglonesData }: FormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col justify-between flex-1 overflow-y-auto "
+        className="flex flex-col justify-between "
       >
-        <div className="p-5 space-y-12 mt-5 mb-[8rem]">
+        <div className=" space-y-10 mb-[8rem]">
+          <DialogHeader className="pb-3 border-b">
+            <DialogTitle className="text-sm font-semibold text-foreground">
+              Agrega un nuevo recibimiento de renglones
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Paso {currentStep} de {'3'}
+            </DialogDescription>
+          </DialogHeader>
+
           {currentStep === 1 && (
             <>
-              <h3 className="text-center text-md font-medium text-foreground">
-                Selecciona los renglones que se recibieron
-              </h3>
+              <div className="flex flex-col items-center gap-3">
+                <h3 className="text-center text-2xl font-semibold text-foreground">
+                  Selecciona los renglones recibidos
+                </h3>
+                <p className="text-center text-sm w-[600px] text-muted-foreground">
+                  Encuentra y elige los productos que se han recibido en el
+                  CESERLODAI. Usa la búsqueda para agilizar el proceso.
+                </p>
+              </div>
               <DataTable
                 columns={columns}
                 data={renglonesData}
@@ -417,53 +432,31 @@ export default function RecibimientosFormAdd({ renglonesData }: FormProps) {
             </div>
           )}
         </div>
-        <div className="sticky bottom-0 flex justify-between p-5 border-t border-border bg-background">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="destructive"
-              size={'sm'}
-              onClick={(e) => {
+        <div className="sticky bottom-0 right-0 flex items-center justify-end gap-4 w-full bg-background py-4">
+          <Button
+            variant={'outline'}
+            size={'sm'}
+            disabled={currentStep === 1}
+            onClick={(e) => {
+              e.preventDefault()
+              handleBackStep()
+            }}
+          >
+            Anterior
+          </Button>
+          <Button
+            variant="default"
+            size={'sm'}
+            type={currentStep === 3 ? 'submit' : 'button'}
+            onClick={(e) => {
+              if (currentStep < 3) {
                 e.preventDefault()
-                setCurrentStep(1)
-              }}
-            >
-              Cancelar
-            </Button>
-            <div className="flex flex-col">
-              <h1 className="text-sm font-semibold text-foreground">
-                Agregar nuevo recibimiento
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Paso {currentStep} de {'3'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button
-              variant={'outline'}
-              size={'sm'}
-              disabled={currentStep === 1}
-              onClick={(e) => {
-                e.preventDefault()
-                handleBackStep()
-              }}
-            >
-              Anterior
-            </Button>
-            <Button
-              variant="default"
-              size={'sm'}
-              type={currentStep === 3 ? 'submit' : 'button'}
-              onClick={(e) => {
-                if (currentStep < 3) {
-                  e.preventDefault()
-                  handleNextStep()
-                }
-              }}
-            >
-              {currentStep < 3 ? 'Siguiente' : 'Guardar recibimiento'}
-            </Button>
-          </div>
+                handleNextStep()
+              }
+            }}
+          >
+            {currentStep < 3 ? 'Siguiente' : 'Guardar recibimiento'}
+          </Button>
         </div>
       </form>
     </Form>

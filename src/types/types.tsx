@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 export type SideMenuItem = {
   title: string
   path: string
@@ -17,3 +19,8 @@ export type Renglon = {
   numero_parte: string
   unidad_de_medida: string
 }
+export type Renglones = Prisma.RenglonesGetPayload<{
+  include: {
+    recibimientos: true
+  }
+}>

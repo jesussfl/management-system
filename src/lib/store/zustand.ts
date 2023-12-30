@@ -1,14 +1,24 @@
-import { create } from 'zustand'
 
+import create from 'zustand';
 
-type Store = {
-    rowSelection: {}
-    setRowSelection: (fn: (prev: PrevState) => PrevState) => void
+interface ModalState {
+  isOpen: boolean;
+  toggleModal: () => void;
+  closeModal: () => void;
 }
 
-export const useTransactionsRenglon = create<Store>((set) => ({
-    rowSelection: {},
-    setRowSelection: (fn: (prev: PrevState) => PrevState) => {
-      return set((state) => ({ rowSelection: fn(state.rowSelection) }));
-    },
-    }));
+const useModalStore = create<ModalState>((set) => ({
+  isOpen: false,
+  toggleModal: () => set((state) => ({ isOpen: !state.isOpen })),
+  closeModal: () => set({ isOpen: false }),
+}));
+
+export const useModal = () => {
+  const { isOpen, toggleModal, closeModal } = useModalStore((state) => ({
+    isOpen: state.isOpen,
+    toggleModal: state.toggleModal,
+    closeModal: state.closeModal,
+  }));
+
+  return { isOpen, toggleModal, closeModal };
+};
