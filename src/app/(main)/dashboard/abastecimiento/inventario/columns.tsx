@@ -1,30 +1,13 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
-import Link from 'next/link'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Renglones } from '@/types/types'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/modules/common/components/dialog/dialog'
 
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import TableActions from '@/modules/inventario/components/table-actions'
 
 export const columns: ColumnDef<Renglones>[] = [
@@ -35,55 +18,16 @@ export const columns: ColumnDef<Renglones>[] = [
   },
   {
     accessorKey: 'nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          className="text-xs"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nombre
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    // cell: ({ row }) => {
-    //   return <div className="w-24">{row.getValue<string>('nombre')}</div>
-    // },
+    header: ({ column }) => <HeaderCell column={column} value="Nombre" />,
   },
   {
     accessorKey: 'descripcion',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Descripcion
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Descripción" />,
   },
 
   {
     accessorKey: 'stock',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Stock
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
     cell: ({ row }) => {
       const stock = row.original.recibimientos.reduce(
         (total, item) => total + item.cantidad,
@@ -94,118 +38,61 @@ export const columns: ColumnDef<Renglones>[] = [
     },
   },
   {
-    accessorKey: 'clasificacion',
-    header: ({ column }) => {
+    accessorKey: 'estado',
+    header: ({ column }) => <HeaderCell column={column} value="Estado" />,
+    cell: ({ row }) => {
+      const { estado } = row.original
+      const COLORS = {
+        ACTIVO: 'bg-green-500',
+        DESHABILITADP: 'bg-yellow-500',
+        EN_BORRADOR: 'bg-gray-500',
+        ELIMINADO: 'bg-red-500',
+      }
       return (
-        <Button
-          variant="ghost"
-          className="text-xs"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Clasificacion
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
+        <div className="w-32 flex gap-2 items-center">
+          <div
+            className={` rounded-full w-2 h-2 ${COLORS[estado || 'ACTIVO']}`}
+          />{' '}
+          {estado}
+        </div>
       )
     },
+  },
+  {
+    accessorKey: 'clasificacion',
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Clasificación" />
+    ),
   },
   {
     accessorKey: 'categoria',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Categoria
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Categoría" />,
   },
   {
     accessorKey: 'tipo',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Tipo
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
   },
 
   {
     accessorKey: 'unidad_empaque',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Unidad de Empaque
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Unidad de empaque" />
+    ),
   },
 
   {
     accessorKey: 'numero_parte',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Número de Parte
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Número de parte" />
+    ),
   },
   {
     accessorKey: 'stock_minimo',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Stock Minimo
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Stock Mínimo" />,
   },
   {
     accessorKey: 'stock_maximo',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          size={'sm'}
-          className="text-xs"
-        >
-          Stock Maximo
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+    header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
   },
   {
     id: 'acciones',
@@ -218,3 +105,15 @@ export const columns: ColumnDef<Renglones>[] = [
     },
   },
 ]
+
+const HeaderCell = ({ column, value }: { column: any; value: any }) => (
+  <Button
+    variant="ghost"
+    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    size={'sm'}
+    className="text-xs"
+  >
+    {value}
+    <ArrowUpDown className="ml-2 h-3 w-3" />
+  </Button>
+)

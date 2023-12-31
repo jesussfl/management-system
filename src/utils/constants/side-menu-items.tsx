@@ -39,11 +39,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: <Boxes size={DEFAULT_ICON_SIZE} />,
       },
 
-      {
-        title: 'Renglones',
-        path: '/dashboard/abastecimiento/renglones',
-        icon: <Box size={DEFAULT_ICON_SIZE} />,
-      },
+      // {
+      //   title: 'Renglones',
+      //   path: '/dashboard/abastecimiento/renglones',
+      //   icon: <Box size={DEFAULT_ICON_SIZE} />,
+      // },
       {
         title: 'Recibimientos',
         path: '/dashboard/abastecimiento/recibimientos',

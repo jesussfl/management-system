@@ -112,6 +112,13 @@ enum UnidadEmpaque {
   OTRO
 }
 
+enum RenglonStates {
+  ACTIVO        @map("Activo")
+  ELIMINADO     @map("Eliminado")
+  EN_BORRADOR   @map("En Borrador")
+  DESHABILITADO @map("Deshabilitado")
+}
+
 model Renglones {
   id             Int                     @id @default(autoincrement())
   nombre         String                  @unique
@@ -123,6 +130,7 @@ model Renglones {
   stock_minimo   Int                     @default(1)
   stock_maximo   Int?
   numero_parte   String?
+  estado         RenglonStates?          @default(ACTIVO)
   recibimientos  Detalles_recibimiento[]
 }
 

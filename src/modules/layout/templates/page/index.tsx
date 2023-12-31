@@ -5,7 +5,11 @@ export const PageTemplate = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('', className)} {...props}>
+    <div
+      style={{ scrollbarGutter: 'stable both-edges' }}
+      className={cn('', className)}
+      {...props}
+    >
       {props.children}
     </div>
   )
@@ -80,6 +84,12 @@ export const PageContent = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('px-5', className)} {...props} />
+  <div
+    style={{ scrollbarGutter: 'stable both-edges' }}
+    className={cn('px-5 space-y-4', className)}
+    {...props}
+  >
+    {props.children}
+  </div>
 )
 PageContent.displayName = 'PageContent'

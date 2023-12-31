@@ -18,9 +18,11 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import { useState } from 'react'
+
+import DeleteDialog from '../delete-dialog'
 export default function TableActions({ renglon }: { renglon: Renglones }) {
   const [isOpen, setIsOpen] = useState(false)
-
+  const [dialogType, setDialogType] = useState('')
   const toggleModal = () => setIsOpen(!isOpen)
   return (
     <Dialog open={isOpen} onOpenChange={toggleModal}>
@@ -40,18 +42,23 @@ export default function TableActions({ renglon }: { renglon: Renglones }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
 
-          <DialogTrigger asChild>
+          <DialogTrigger asChild onClick={() => setDialogType('edit')}>
             <DropdownMenuItem>Editar</DropdownMenuItem>
           </DialogTrigger>
-
-          <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          <DialogTrigger asChild onClick={() => setDialogType('delete')}>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DialogTrigger>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DialogContent
-        className={'lg:max-w-screen-lg h-[94%] overflow-hidden p-0'}
-      >
-        <RowItemForm defaultValues={renglon} close={toggleModal} />
-      </DialogContent>
+      {dialogType === 'edit' ? (
+        <DialogContent
+          className={'lg:max-w-screen-lg h-[94%] overflow-hidden p-0'}
+        >
+          <RowItemForm defaultValues={renglon} close={toggleModal} />
+        </DialogContent>
+      ) : (
+        <DeleteDialog renglon={renglon} />
+      )}
     </Dialog>
   )
 }

@@ -39,7 +39,7 @@ export default function RowItemForm({ defaultValues, close }: Props) {
         toast({
           title: 'Renglon actualizado',
           description: 'El renglon se ha actualizado correctamente',
-          variant: 'default',
+          variant: 'success',
         })
         close()
       })
@@ -48,7 +48,7 @@ export default function RowItemForm({ defaultValues, close }: Props) {
         toast({
           title: 'Renglon creado',
           description: 'El renglon se ha creado correctamente',
-          variant: 'default',
+          variant: 'success',
         })
         close()
       })
