@@ -18,7 +18,14 @@ import {
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
 
-export function Combobox({ name, data, field, form }) {
+type ComboboxProps = {
+  name: string
+  data: { label: string; value: string }[]
+  field: any
+  form: any
+  disabled?: boolean
+}
+export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -26,8 +33,9 @@ export function Combobox({ name, data, field, form }) {
           <Button
             variant="outline"
             role="combobox"
+            disabled={disabled}
             className={cn(
-              'w-[200px] justify-between',
+              'justify-between',
               !field.value && 'text-muted-foreground'
             )}
           >
@@ -48,6 +56,9 @@ export function Combobox({ name, data, field, form }) {
                 value={info.label}
                 key={info.value}
                 onSelect={() => {
+                  if (form.formState.errors[name]) {
+                    form.clearErrors(name)
+                  }
                   form.setValue(name, info.value)
                 }}
               >

@@ -10,18 +10,18 @@ import {
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
 import { Renglones } from '@prisma/client'
-import { useModal } from '@/lib/store/zustand'
+
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
+import { useState } from 'react'
 export default function TableActions({ renglon }: { renglon: Renglones }) {
-  const { isOpen, toggleModal, closeModal } = useModal()
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggleModal = () => setIsOpen(!isOpen)
   return (
     <Dialog open={isOpen} onOpenChange={toggleModal}>
       <DropdownMenu>
@@ -48,16 +48,9 @@ export default function TableActions({ renglon }: { renglon: Renglones }) {
         </DropdownMenuContent>
       </DropdownMenu>
       <DialogContent
-        className={'lg:max-w-screen-lg max-h-[94%] overflow-hidden px-0'}
+        className={'lg:max-w-screen-lg h-[94%] overflow-hidden p-0'}
       >
-        <DialogHeader className="px-6 pb-4 border-b border-border">
-          <DialogTitle>Nuevo Renglón</DialogTitle>
-          <DialogDescription>
-            Agrega un nuevo renglón a la base de datos de abastecimiento
-          </DialogDescription>
-        </DialogHeader>
-
-        <RenglonesForm defaultValues={renglon} />
+        <RowItemForm defaultValues={renglon} close={toggleModal} />
       </DialogContent>
     </Dialog>
   )

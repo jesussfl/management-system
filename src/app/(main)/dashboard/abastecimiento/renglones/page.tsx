@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
 export const metadata: Metadata = {
   title: 'Renglones',
   description: 'Desde aquí puedes administrar la entrada del inventario',
@@ -44,7 +44,7 @@ export default async function Page() {
                 Agrega un nuevo renglón a la base de datos de abastecimiento
               </DialogDescription>
             </DialogHeader>
-            <RenglonesForm />
+            <RowItemForm />
           </DialogContent>
         </Dialog>
       </div>

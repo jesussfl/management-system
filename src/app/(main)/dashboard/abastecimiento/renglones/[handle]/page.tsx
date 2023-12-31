@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import { Button } from '@/modules/common/components/button'
 import { Edit } from 'lucide-react'
 
@@ -42,7 +42,7 @@ export default async function Page({ params }: Props) {
                 Editar el renglón en la base de datos de abastecimiento
               </DialogDescription>
             </DialogHeader>
-            <RenglonesForm defaultValues={data} />
+            <RowItemForm defaultValues={data} />
           </DialogContent>
         </Dialog>
       </div>

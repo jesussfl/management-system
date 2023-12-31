@@ -24,7 +24,7 @@ import {
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
 
-import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import TableActions from '@/modules/inventario/components/table-actions'
 
 export const columns: ColumnDef<Renglones>[] = [
@@ -209,6 +209,7 @@ export const columns: ColumnDef<Renglones>[] = [
   },
   {
     id: 'acciones',
+
     cell: ({ row }) => {
       const data = row.original
       const renglon = (({ recibimientos, ...rest }) => rest)(data)

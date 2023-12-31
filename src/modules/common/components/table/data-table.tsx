@@ -100,9 +100,16 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={
+                        index === headerGroup.headers.length - 1
+                          ? 'sticky right-0 top-0 bg-background'
+                          : ''
+                      }
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -126,8 +133,15 @@ export function DataTable<TData, TValue>({
                   }}
                   className="border-b-0"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, index) => (
+                    <TableCell
+                      key={cell.id}
+                      className={
+                        index === row.getVisibleCells().length - 1
+                          ? 'sticky right-0 top-0 bg-background'
+                          : ''
+                      }
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

@@ -1,35 +1,31 @@
 'use client'
-
+import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RenglonesForm from '@/modules/renglones/components/renglones-form'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import { Button } from '@/modules/common/components/button'
+import { Plus } from 'lucide-react'
 
 export default function ModalForm() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toogleModal = () => setIsOpen(!isOpen)
+  console.log(isOpen)
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={toogleModal}>
       <DialogTrigger asChild>
-        <Button variant="outline" size={'sm'}>
-          Nuevo Renglón
+        <Button variant="outline" size={'sm'} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Agregar Renglón
         </Button>
       </DialogTrigger>
       <DialogContent
-        className={'lg:max-w-screen-lg max-h-[94%] overflow-hidden px-0'}
+        className={'lg:max-w-screen-lg h-[94%] overflow-hidden p-0'}
       >
-        <DialogHeader className="px-6 pb-4 border-b border-border">
-          <DialogTitle>Nuevo Renglón</DialogTitle>
-          <DialogDescription>
-            Agrega un nuevo renglón a la base de datos de abastecimiento
-          </DialogDescription>
-        </DialogHeader>
-
-        <RenglonesForm />
+        <RowItemForm close={toogleModal} />
       </DialogContent>
     </Dialog>
   )

@@ -148,7 +148,7 @@ const FormMessage = React.forwardRef<
   const body = error ? String(error?.message) : children
 
   if (!body) {
-    return null
+    return <p className="text-[0.8rem] font-medium text-transparent">test</p>
   }
 
   return (
@@ -164,6 +164,45 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = 'FormMessage'
 
+const FormInstructions = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={cn('flex flex-col items-center gap-3', className)}
+    {...props}
+  />
+)
+FormInstructions.displayName = 'FormInstructions'
+
+const FormInstructionsTitle = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) => (
+  <h3
+    className={cn(
+      'text-center text-2xl font-semibold text-foreground',
+      className
+    )}
+    {...props}
+  />
+)
+FormInstructionsTitle.displayName = 'FormInstructionsTitle'
+
+const FormInstructionsDescription = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) => (
+  <p
+    className={cn(
+      'text-center text-sm w-[600px] text-muted-foreground',
+      className
+    )}
+    {...props}
+  />
+)
+FormInstructionsDescription.displayName = 'FormInstructionsDescription'
+
 export {
   useFormField,
   Form,
@@ -172,5 +211,8 @@ export {
   FormControl,
   FormDescription,
   FormMessage,
+  FormInstructions,
+  FormInstructionsTitle,
+  FormInstructionsDescription,
   FormField,
 }

@@ -2,15 +2,24 @@ import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button'
-import { Plus, FileDown } from 'lucide-react'
+import { Plus, FileDown, PackagePlus } from 'lucide-react'
 import { Metadata } from 'next'
-import { Renglon, Renglones } from '@/types/types'
+import { Renglones } from '@/types/types'
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
 import RecibimientosFormAdd from '@/modules/recibimientos/components/form/recibimientos-form-add'
+import {
+  HeaderLeftSide,
+  HeaderRightSide,
+  PageContent,
+  PageHeader,
+  PageHeaderDescription,
+  PageHeaderTitle,
+  PageTemplate,
+} from '@/modules/layout/templates/page'
 
 export const metadata: Metadata = {
   title: 'Recibimientos',
@@ -29,13 +38,21 @@ export default async function Page() {
   const renglonesData = (await prisma.renglones.findMany()) as Renglones[]
 
   return (
-    <>
-      <div className="flex items-center justify-between mb-5 p-5 border-b">
-        <h1 className="text-lg font-medium">Recibimientos</h1>
-        <div className="flex gap-2">
+    <PageTemplate>
+      <PageHeader>
+        <HeaderLeftSide>
+          <PageHeaderTitle>
+            <PackagePlus size={24} />
+            Recibimientos
+          </PageHeaderTitle>
+          <PageHeaderDescription>
+            Gestiona las entradas del inventario
+          </PageHeaderDescription>
+        </HeaderLeftSide>
+        <HeaderRightSide>
           <Button variant="outline" size={'sm'}>
             <FileDown className="mr-2 h-4 w-4" />
-            Generar Reporte
+            Exportar
           </Button>
           <Dialog>
             <DialogTrigger asChild>
@@ -51,9 +68,12 @@ export default async function Page() {
               <RecibimientosFormAdd renglonesData={renglonesData} />
             </DialogContent>
           </Dialog>
-        </div>
-      </div>
-      <DataTable columns={columns} data={data} />
-    </>
+        </HeaderRightSide>
+      </PageHeader>
+
+      <PageContent>
+        <DataTable columns={columns} data={data} />
+      </PageContent>
+    </PageTemplate>
   )
 }
