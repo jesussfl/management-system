@@ -57,7 +57,7 @@ export const authOptions = {
   pages: {
    signIn: "/auth/login",
   },
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
   callbacks: {
     authorized(params) {
       return !!params.auth?.user;
