@@ -1,7 +1,7 @@
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import type { NextAuthOptions } from "next-auth";
 import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth from "next-auth"
 
@@ -52,15 +52,19 @@ export const authOptions = {
       }),  
   ],
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-      strategy: "jwt",
-  },
+
   pages: {
     signIn: "/auth/login",
     signOut: "/auth/login",
   },
   callbacks: {
-
+    async session({session, user}) {
+        session.user.id = user.id
+        return session
+      },
+      authorized({ req , token }) {
+        if(token) return true // If there is a token, the user is authenticated
+      }
   },
   debug: process.env.NODE_ENV === "development",
  
