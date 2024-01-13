@@ -4,7 +4,7 @@ import Logo from '@/modules/common/components/logo/logo'
 import { SideMenuItems } from '@/modules/layout/components/side-menu-item'
 
 const SideMenu = () => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   return (
     <div
       className={`sticky top-0 z-10 ${
