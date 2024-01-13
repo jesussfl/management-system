@@ -15,12 +15,19 @@ import { Edit } from 'lucide-react'
 type Props = {
   params: { handle: string }
 }
-export default async function Page({ params }: Props) {
+
+async function getData(id: number) {
+  'use server'
   const data = (await prisma.renglones.findUnique({
     where: {
-      id: Number(params.handle),
+      id,
     },
   })) as Renglones
+  return data
+}
+
+export default async function Page({ params }: Props) {
+  const data = await getData(Number(params.handle))
   return (
     <div className="flex">
       <div className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">

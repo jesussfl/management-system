@@ -25,7 +25,9 @@ export const metadata: Metadata = {
   title: 'Recibimientos',
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
-export default async function Page() {
+
+async function getRecibimientos() {
+  'use server'
   const data = await prisma.recibimientos.findMany({
     include: {
       detalles: {
@@ -35,7 +37,18 @@ export default async function Page() {
       },
     },
   })
-  const renglonesData = (await prisma.renglones.findMany()) as Renglones[]
+  return data
+}
+
+async function getRenglones() {
+  'use server'
+  const data = (await prisma.renglones.findMany()) as Renglones[]
+  return data
+}
+
+export default async function Page() {
+  const data = await getRecibimientos()
+  const renglonesData = await getRenglones()
 
   return (
     <PageTemplate>

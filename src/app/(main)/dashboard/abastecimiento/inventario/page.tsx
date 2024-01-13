@@ -80,12 +80,18 @@ const invoices = [
     paymentMethod: 'Credit Card',
   },
 ]
-export default async function Page() {
+
+async function getData() {
+  'use server'
   const data = await prisma.renglones.findMany({
     include: {
       recibimientos: true,
     },
   })
+  return data
+}
+export default async function Page() {
+  const data = await getData()
   return (
     <PageTemplate>
       <PageHeader>

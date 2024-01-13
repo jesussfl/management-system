@@ -1,5 +1,4 @@
 import { columns } from './columns'
-
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button'
@@ -20,8 +19,13 @@ export const metadata: Metadata = {
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
 
-export default async function Page() {
+async function getData() {
+  'use server'
   const data = await prisma.renglones.findMany()
+  return data
+}
+export default async function Page() {
+  const data = await getData()
 
   return (
     <>
