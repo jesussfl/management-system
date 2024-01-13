@@ -46,7 +46,7 @@
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.291.0",
     "next": "14.0.3",
-    "next-auth": "^5.0.0-beta.4",
+    "next-auth": "^5.0.0-beta.3",
     "next-themes": "^0.2.1",
     "react": "^18",
     "react-aria": "^3.31.0",
