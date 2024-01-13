@@ -44,7 +44,7 @@ export const columns: ColumnDef<Renglones>[] = [
       const { estado } = row.original
       const COLORS = {
         ACTIVO: 'bg-green-500',
-        DESHABILITADP: 'bg-yellow-500',
+        DESHABILITADO: 'bg-yellow-500',
         EN_BORRADOR: 'bg-gray-500',
         ELIMINADO: 'bg-red-500',
       }

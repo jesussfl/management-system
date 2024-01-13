@@ -35,6 +35,7 @@ export const metadata: Metadata = {
   title: 'Inventario',
   description: 'Desde aquí puedes ver todos tus renglones',
 }
+
 const invoices = [
   {
     invoice: 'INV001',
