@@ -53,19 +53,9 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
 
-  pages: {
-    signIn: "/auth/login",
-    signOut: "/auth/login",
-  },
-  callbacks: {
-    async session({session, user}) {
-        session.user.id = user.id
-        return session
-      },
-      authorized({ req , token }) {
-        if(token) return true // If there is a token, the user is authenticated
-      }
-  },
+ pages: {
+   signIn: "/auth/login",
+ },
   debug: process.env.NODE_ENV === "development",
  
   
