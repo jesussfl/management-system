@@ -35,7 +35,7 @@ interface DataTableProps<TData, TValue> {
   onSelectedRowsChange?: (lastSelectedRow: any) => void
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: any }, TValue>({
   columns,
   data,
   isColumnFilterEnabled = true,
