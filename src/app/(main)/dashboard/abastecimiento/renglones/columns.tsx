@@ -12,14 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { Payment, Renglon } from '@/utils/types/types'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import Link from 'next/link'
+import { Renglones } from '@prisma/client'
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 // Follow this model
 
-export const columns: ColumnDef<Renglon>[] = [
+export const columns: ColumnDef<Renglones>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',

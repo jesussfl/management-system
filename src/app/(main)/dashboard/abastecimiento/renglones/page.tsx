@@ -44,7 +44,7 @@ export default async function Page() {
                 Agrega un nuevo renglón a la base de datos de abastecimiento
               </DialogDescription>
             </DialogHeader>
-            <RowItemForm />
+            <RowItemForm close={() => {}} />
           </DialogContent>
         </Dialog>
       </div>

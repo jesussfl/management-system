@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { Renglon } from '@/utils/types/types'
+import { Renglones } from '@prisma/client'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ export default async function Page({ params }: Props) {
     where: {
       id: Number(params.handle),
     },
-  })) as Renglon
+  })) as Renglones
   return (
     <div className="flex">
       <div className="flex-1 max-h-full m-12 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
@@ -42,7 +42,7 @@ export default async function Page({ params }: Props) {
                 Editar el renglón en la base de datos de abastecimiento
               </DialogDescription>
             </DialogHeader>
-            <RowItemForm defaultValues={data} />
+            <RowItemForm defaultValues={data} close={() => {}} />
           </DialogContent>
         </Dialog>
       </div>
