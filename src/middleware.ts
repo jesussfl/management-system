@@ -1,10 +1,9 @@
-
-
-// This function can be marked `async` if using `await` inside
-export { default } from "next-auth/middleware"
-
-
-// See "Matching Paths" below to learn more
+import NextAuth from 'next-auth';
+import { authOptions } from '@/auth';
+ 
+export default NextAuth(authOptions).auth;
+ 
 export const config = {
-  matcher: ['/dashboard/:path*', '/dashboard']
-}
+  // https://nextjs.org/docs/app/building-your-application/routing/middleware#matcher
+  matcher: ['/((?!api|_next/static|_next/image|.png).*)'],
+};

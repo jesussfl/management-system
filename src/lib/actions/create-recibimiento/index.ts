@@ -1,7 +1,6 @@
 "use server"
 import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/utils/auth';
+import { auth } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import {z} from 'zod'
 type Detalles = {
@@ -21,7 +20,7 @@ export const createRecibimiento = async (data: FormValues) => {
 
 try {
     
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session?.user) {
       throw new Error('You must be signed in to perform this action.');

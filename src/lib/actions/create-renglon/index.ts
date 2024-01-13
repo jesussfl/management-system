@@ -1,7 +1,7 @@
 "use server"
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/utils/auth'
+import { authOptions } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Renglones } from '@prisma/client'
 

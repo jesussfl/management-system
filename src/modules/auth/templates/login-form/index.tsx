@@ -9,6 +9,7 @@ import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
 import { Label } from '@/modules/common/components/label/label'
 import { signIn } from 'next-auth/react'
+
 import Link from 'next/link'
 function LoginForm() {
   const router = useRouter()
@@ -20,18 +21,7 @@ function LoginForm() {
     e.preventDefault()
     setIsLoading(true)
     const data = { email, password }
-    signIn('credentials', { ...data, redirect: false }).then((callback) => {
-      if (callback?.error) {
-        setIsLoading(false)
-        console.error(callback.error)
-      }
-
-      if (callback?.ok && !callback?.error) {
-        setIsLoading(false)
-        console.info('Logged in successfully!')
-        router.push('/dashboard')
-      }
-    })
+    signIn('credentials', { ...data, callbackUrl: '/dashboard' })
   }
 
   return (

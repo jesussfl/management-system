@@ -1,11 +1,12 @@
 'use server'
-import { authOptions } from "@/utils/auth"
-import { getServerSession } from "next-auth"
+import { authOptions } from "@/auth"
+// import { getServerSession } from "next-auth"
+import { auth } from "@/auth"
 import {prisma} from "@/lib/prisma"
 export const checkRowItemExists = async (name: string) => {
 
-    const session = await getServerSession(authOptions)
-
+    const session = await auth()
+    console.log(session)
     if (!session?.user) {
 
         throw new Error('You must be signed in to perform this action')
