@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/auth/login',
   reactStrictMode: true,
   images: {
     remotePatterns: [
