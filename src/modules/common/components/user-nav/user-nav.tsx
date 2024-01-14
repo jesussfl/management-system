@@ -1,10 +1,4 @@
-'use client'
-import { prisma } from '@/lib/prisma'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/modules/common/components/avatar/avatar'
+import { auth } from '@/auth'
 import { Button } from '@/modules/common/components/button'
 import {
   DropdownMenu,
@@ -16,19 +10,33 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-
-import { signOut } from 'next-auth/react'
-import { getSession } from 'next-auth/react'
-export async function UserNav() {
-  const session = await getSession()
+import { useSession, signOut } from 'next-auth/react'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/modules/common/components/avatar/avatar'
+export default function UserNav() {
+  const { data: session } = useSession()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button
+          variant="ghost"
+          className="flex w-full justify-start gap-2 hover:bg-dark-secondary"
+        >
+          <Avatar className="h-8 w-8 ">
             <AvatarImage src="/avatars/01.png" alt="@shadcn" />
             <AvatarFallback>SC</AvatarFallback>
           </Avatar>
+          <div className="flex flex-col justify-start items-start space-y-1">
+            <p className="text-sm font-medium leading-none text-white">
+              {session?.user?.name}
+            </p>
+            <p className="text-xs leading-none text-gray-400">
+              {session?.user?.email}
+            </p>
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

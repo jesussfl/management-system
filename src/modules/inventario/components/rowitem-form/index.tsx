@@ -107,7 +107,6 @@ export default function RowItemForm({ defaultValues, close }: Props) {
   const handleBackStep = () => {
     setCurrentStep((prev) => prev - 1)
   }
-  console.log(form.formState.errors)
   return (
     <Form {...form}>
       <form

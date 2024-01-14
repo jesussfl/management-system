@@ -13,20 +13,23 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="flex flex-col w-full justify-center items-center gap-4 ">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Inicio de Sesión
+    <div className="flex flex-col w-full justify-center items-center gap-4 bg-border ">
+      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[480px] bg-white p-9 rounded-md">
+        <div className="flex flex-col space-y-2 ">
+          <h1 className="text-2xl font-semibold tracking-tight text-gray-800">
+            Inicia sesión con tu cuenta
           </h1>
           <p className="text-sm text-muted-foreground">
-            Bienvenido!, por favor ingresa tus datos.
+            Ingresa tus datos correspondientes para acceder al sistema.
           </p>
         </div>
         <LoginForm />
         <Link
           href="/auth/signup"
-          className={cn(buttonVariants({ variant: 'ghost' }), 'self-stretch')}
+          className={cn(
+            buttonVariants({ variant: 'secondary' }),
+            'self-stretch'
+          )}
         >
           No tengo una cuenta
         </Link>

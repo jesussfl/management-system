@@ -20,7 +20,7 @@ export const authOptions = {
               };
                 // check to see if email and password is there
                 if(!email || !password) {
-                    throw new Error('Please enter an email and password')
+                   return null
                 }
   
                 // check to see if user exists
@@ -29,23 +29,22 @@ export const authOptions = {
                         email
                     }
                 });
-                console.log(user)
                 // if no user was found 
                 if (!user || !user?.password) {
   
-                  console.log(user)
-                    throw new Error('No user found')
+                 return null
                 }
   
                 // check to see if password matches
                 const passwordMatch = await bcrypt.compare(password, user.password)
   
                 // if password does not match
-                if (!passwordMatch) {
-                    throw new Error('Incorrect password')
+                if (passwordMatch) {
+                    return user;
                 }
+
+                return null
   
-                return user;
             },
         }),  
     ],
@@ -70,5 +69,6 @@ export const authOptions = {
 export const { 
     handlers, 
     auth, 
-    signOut 
+    signOut,
+    signIn, 
   } = NextAuth(authOptions)

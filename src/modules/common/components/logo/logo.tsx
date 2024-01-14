@@ -1,5 +1,4 @@
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
-import Link from 'next/link'
 
 function Logo({
   isOpen,
@@ -9,15 +8,19 @@ function Logo({
   setIsOpen: (isOpen: boolean) => void
 }) {
   return (
-    <>
+    <div
+      className={`flex flex-row-reverse ${
+        isOpen ? 'justify-between' : 'justify-center'
+      } gap-0 mb-4`}
+    >
       <div className="flex flex-wrap-reverse items-center justify-between gap-3 mb-4">
-        <Link href="/dashboard" className="flex flex-col gap-4 ">
+        {/* <Link href="/dashboard" className="flex flex-col gap-4 ">
           <span
             className={`${
               isOpen ? 'h-8 w-8' : 'h-[56px] w-[56px]'
             }  bg-border rounded-lg`}
           />
-        </Link>
+        </Link> */}
         {isOpen ? (
           <PanelLeftClose
             className="cursor-pointer text-white"
@@ -37,7 +40,7 @@ function Logo({
         </p>
         <span className="text-white font-medium text-sm">CESERLODAI</span>
       </div>
-    </>
+    </div>
   )
 }
 
