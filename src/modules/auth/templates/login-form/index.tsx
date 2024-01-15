@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useTransition } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import { buttonVariants } from '@/modules/common/components/button'
 import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'

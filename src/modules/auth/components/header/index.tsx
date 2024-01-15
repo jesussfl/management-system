@@ -1,6 +1,6 @@
 import { Poppins } from 'next/font/google'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 
 const font = Poppins({
   subsets: ['latin'],

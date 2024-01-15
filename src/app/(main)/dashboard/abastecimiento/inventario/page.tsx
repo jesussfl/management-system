@@ -26,7 +26,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -83,7 +82,7 @@ const invoices = [
     paymentMethod: 'Credit Card',
   },
 ]
-
+const SECTION_NAME = 'INVENTARIO'
 async function getData() {
   'use server'
   const data = await prisma.renglones.findMany({
@@ -93,12 +92,47 @@ async function getData() {
   })
   return data
 }
+const validateRol = async (rol: string) => {
+  const result = await prisma.rol.findUnique({
+    where: {
+      rol: rol,
+    },
+    include: {
+      permisos: true,
+    },
+  })
+
+  if (result) {
+    // Verificar si alguno de los permisos contiene la cadena "Abastecimiento" en permiso_key
+    const hasAbastecimientoPermission = result.permisos.some((permiso) =>
+      permiso.permiso_key.includes(SECTION_NAME)
+    )
+
+    if (hasAbastecimientoPermission) {
+      // La validación pasa, hay un permiso que contiene "Abastecimiento"
+      console.log('El rol tiene permisos de Abastecimiento')
+      // Puedes devolver true u otra acción según tus necesidades
+      return true
+    } else {
+      // La validación no pasa, no hay permisos que contengan "Abastecimiento"
+      console.log('El rol no tiene permisos de Abastecimiento')
+      // Puedes devolver false u otra acción según tus necesidades
+      return false
+    }
+  } else {
+    // El rol no existe
+    console.log('El rol no existe')
+    // Puedes devolver false u otra acción según tus necesidades
+    return false
+  }
+}
 export default async function Page() {
   const session = await auth()
-
-  // if (session?.user.rol_nombre !== Roles.ADMIN) {
-  //   throw new Error('Unauthorized')
-  // }
+  const rol = session?.user.rol_nombre
+  const isAuthorized = rol && (await validateRol(rol))
+  if (!isAuthorized) {
+    return null
+  }
 
   const data = await getData()
 

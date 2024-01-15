@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { Input } from '@/modules/common/components/input/input'
 
 import { columns } from './columns'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'

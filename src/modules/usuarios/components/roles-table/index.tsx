@@ -39,13 +39,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/modules/common/components/table/table'
-import { Rol } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import TableActions from '../roles-table-actions'
 
+type Rol = Prisma.RolGetPayload<{
+  include: {
+    permisos: true
+  }
+}>
 interface DataTableProps {
   data: Rol[]
 }
-
 export const columns: ColumnDef<Rol>[] = [
   {
     id: 'select',
@@ -90,6 +94,18 @@ export const columns: ColumnDef<Rol>[] = [
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue('descripcion')}</div>
     ),
+  },
+  {
+    accessorKey: 'permisos',
+    header: () => <div className="text-left">Permisos</div>,
+    cell: ({ row }) => {
+      const { permisos } = row.original
+      return (
+        <div className="">
+          {permisos.map((permiso) => permiso.permiso_key).join(', ')}
+        </div>
+      )
+    },
   },
   {
     id: 'acciones',

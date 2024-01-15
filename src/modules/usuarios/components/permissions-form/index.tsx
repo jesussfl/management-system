@@ -22,22 +22,96 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
 import { Permiso } from '@prisma/client'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
+import Link from 'next/link'
 interface Props {
   defaultValues?: Permiso
   close?: () => void
 }
 
+enum Permissions {
+  CREAR = 'Crear',
+  LEER = 'Leer',
+  ACTUALIZAR = 'Actualizar',
+  ELIMINAR = 'Eliminar',
+  FULL = 'Full',
+}
+
+enum Sections {
+  USUARIOS = 'Usuarios',
+  ROLES = 'Roles',
+  PERMISOS = 'Permisos',
+  ABASTECIMIENTO = 'Abastecimiento',
+  ARMAMENTO = 'Armamento',
+}
+
+//extends Permiso
+
+//type FormValues = Omit<Permiso, 'key'>
+
+type FormValues = {
+  nombre: string
+  descripcion: string
+  seccion: Sections
+  permiso: Permissions
+}
+
+const destructureKey = (key: string) => {
+  const [seccion, permiso] = key.split(':')
+  return {
+    seccion: seccion as Sections,
+    permiso: permiso as Permissions,
+  }
+}
+
+const formatDefaultValues = (defaultValues?: Permiso) => {
+  if (!defaultValues) {
+    return {
+      seccion: undefined,
+      permiso: undefined,
+      nombre: '',
+      descripcion: '',
+    }
+  }
+  const { seccion, permiso } = destructureKey(defaultValues?.key)
+  return {
+    ...defaultValues,
+    seccion,
+    permiso,
+  }
+}
+
 export default function PermissionsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
 
-  const form = useForm<Permiso>({
+  const form = useForm<FormValues>({
     // criteriaMode: 'firstError',
-    defaultValues,
+    defaultValues: formatDefaultValues(defaultValues),
   })
-  const onSubmit: SubmitHandler<Permiso> = async (values) => {
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    if (!values.permiso && !values.seccion) {
+      form.setError('permiso', {
+        type: 'custom',
+        message: 'Debe seleccionar un permiso y una sección',
+      })
+      return
+    }
+
+    const formattedValues = {
+      permiso: values.nombre,
+      descripcion: values.descripcion,
+      key: `${values.seccion}:${values.permiso}`,
+    }
+
     if (defaultValues) {
       React.startTransition(() => {
-        updatePermiso(defaultValues.id, values).then((data) => {
+        updatePermiso(defaultValues.id, formattedValues).then((data) => {
           if (data?.success) {
             toast({
               title: 'Permiso actualizado',
@@ -50,7 +124,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
       })
     } else {
       React.startTransition(() => {
-        createPermiso(values).then((data) => {
+        createPermiso(formattedValues).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -91,7 +165,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
         <div className="px-24">
           <FormField
             control={form.control}
-            name="permiso"
+            name="nombre"
             rules={{
               required: 'Este campo es necesario',
               minLength: {
@@ -167,34 +241,61 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
 
           <FormField
             control={form.control}
-            name="key"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 70,
-                message: 'Debe tener un maximo de 70 caracteres',
-              },
-            }}
+            name="permiso"
             render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Key</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value)
-                    }}
-                  />
-                </FormControl>
+              <FormItem>
+                <FormLabel>Permiso</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el permiso que quieres asignar" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.keys(Permissions).map((permission) => (
+                      <SelectItem key={permission} value={permission}>
+                        {permission}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormDescription>
-                  Define cómo esto se puede ver reflejado en el código
+                  You can manage email addresses in your{' '}
+                  <Link href="/examples/forms">email settings</Link>.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="seccion"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Seccion</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona la sección que quieres asignar al permiso" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.keys(Sections).map((section) => (
+                      <SelectItem key={section} value={section}>
+                        {section}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  You can manage email addresses in your{' '}
+                  <Link href="/examples/forms">email settings</Link>.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

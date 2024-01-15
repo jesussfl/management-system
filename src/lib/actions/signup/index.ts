@@ -4,7 +4,7 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { RegisterSchema } from "@/utils/schemas";
-import { getUserByEmail } from "@/lib/data/getUserByEmail";
+import { getUserByEmail } from "@/lib/data/get-user-byEmail";
 
 import { prisma } from "@/lib/prisma";
 

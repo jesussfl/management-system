@@ -4,7 +4,7 @@ import * as z from "zod";
 import { AuthError } from "next-auth";
 import { signIn } from "@/auth"
 import { LoginSchema } from "@/utils/schemas";
-import { getUserByEmail } from "@/lib/data/getUserByEmail";
+import { getUserByEmail } from "@/lib/data/get-user-byEmail";
 
 import bcrypt from "bcryptjs"
 

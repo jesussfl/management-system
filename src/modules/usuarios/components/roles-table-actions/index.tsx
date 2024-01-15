@@ -9,7 +9,7 @@ import {
 
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
-import { Renglones, Rol } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import {
   Dialog,
@@ -21,6 +21,7 @@ import { useState } from 'react'
 
 import DeleteDialog from '../roles-delete-dialog'
 import RolesForm from '../roles-form'
+type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
 type Props = {
   rol: Rol

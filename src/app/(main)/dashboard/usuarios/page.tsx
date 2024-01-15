@@ -41,7 +41,11 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const data = await prisma.usuario.findMany()
-  const roles = await prisma.rol.findMany()
+  const roles = await prisma.rol.findMany({
+    include: {
+      permisos: true,
+    },
+  })
   const permissions = await prisma.permiso.findMany()
   return (
     <PageTemplate>

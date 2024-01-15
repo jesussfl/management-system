@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
-import { Renglones } from '@prisma/client'
+
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { createRol, updateRol } from '@/lib/actions/roles'
 
@@ -23,29 +23,44 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Rol } from '@prisma/client'
+import { Prisma, Permiso } from '@prisma/client'
+import { Switch } from '@/modules/common/components/switch/switch'
+import { getPermisos } from '@/lib/actions/permissions'
+type FormValues = Prisma.RolGetPayload<{ include: { permisos: true } }>
 interface Props {
-  defaultValues?: Rol
+  defaultValues?: FormValues
   close?: () => void
 }
 
 export default function RolesForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
 
-  const form = useForm<Rol>({
-    // criteriaMode: 'firstError',
+  const [permissions, setPermissions] = React.useState<Permiso[]>([])
+  const form = useForm<FormValues>({
     defaultValues,
   })
-  const onSubmit: SubmitHandler<Rol> = async (values) => {
+
+  React.useEffect(() => {
+    getPermisos().then((data) => {
+      setPermissions(data)
+    })
+  }, [])
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    const formattedValues = {
+      ...values,
+      permisos: values.permisos.filter((permiso) => !!permiso.permiso_key),
+    }
+    if (formattedValues.permisos.length === 0) {
+      toast({
+        title: 'Seleccionar un permiso',
+        description: 'Debe seleccionar al menos un permiso',
+        variant: 'destructive',
+      })
+      return
+    }
     if (defaultValues) {
       React.startTransition(() => {
-        updateRol(defaultValues.id, values).then((data) => {
-          //   if (data?.error) {
-          //       form.setError(data.field as any, {
-          //           type: 'custom',
-          //           message: data.error,
-          //       })
-          //   }
+        updateRol(defaultValues.id, formattedValues).then((data) => {
           if (data?.success) {
             toast({
               title: 'Rol actualizado',
@@ -58,7 +73,7 @@ export default function RolesForm({ defaultValues, close }: Props) {
       })
     } else {
       React.startTransition(() => {
-        createRol(values).then((data) => {
+        createRol(formattedValues).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -173,6 +188,35 @@ export default function RolesForm({ defaultValues, close }: Props) {
               </FormItem>
             )}
           />
+          <div className="flex flex-col gap-4">
+            {permissions.map((permiso, index) => (
+              <FormField
+                key={permiso.key}
+                control={form.control}
+                name={`permisos.${index}.permiso_key`}
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>{permiso.permiso}</FormLabel>
+                      <FormDescription>{permiso.descripcion}</FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value === permiso.key}
+                        onCheckedChange={(value) => {
+                          if (value) {
+                            field.onChange(permiso.key)
+                          } else {
+                            field.onChange(false)
+                          }
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">

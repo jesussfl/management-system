@@ -1,6 +1,6 @@
 import '@/utils/styles/globals.css'
 import { Poppins as FontSans } from 'next/font/google'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/utils'
 import { ThemeProvider } from '@/modules/common/components/theme-provider'
 import { Toaster } from '@/modules/common/components/toast/toaster'
 import { SessionProvider } from 'next-auth/react'

@@ -10,6 +10,8 @@ datasource db {
   // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+//#region User Models
+
 model Cuenta {
   id                String  @id @default(cuid())
   userId            String
@@ -81,20 +83,23 @@ model Rol {
 }
 
 model Roles_Permisos {
-  id         Int     @id @default(autoincrement())
-  rol_id     Int
-  permiso_id Int
-  rol        Rol     @relation(fields: [rol_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  permiso    Permiso @relation(fields: [permiso_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id          Int     @id @default(autoincrement())
+  rol_nombre  String
+  permiso_key String
+  rol         Rol     @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  permiso     Permiso @relation(fields: [permiso_key], references: [key], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Permiso {
-  id          Int              @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   permiso     String
   descripcion String
-  key         String           @unique
-  roles       Roles_Permisos[]
+
+  key   String           @unique
+  roles Roles_Permisos[]
 }
+
+//#endregion
 
 model Sistema {
   id                 String               @id

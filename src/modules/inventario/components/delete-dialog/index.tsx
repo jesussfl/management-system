@@ -7,13 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
-import { useState } from 'react'
+
 import { Label } from '@/modules/common/components/label/label'
 import { Input } from '@/modules/common/components/input/input'
 import { Renglones } from '@prisma/client'
 import { Button } from '@/modules/common/components/button'
-import { deleteRenglon } from '@/lib/actions/delete-renglon'
+import { deleteRenglon } from '@/lib/actions/renglon'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 function DeleteDialog({ renglon }: { renglon: Renglones }) {
   const { toast } = useToast()
