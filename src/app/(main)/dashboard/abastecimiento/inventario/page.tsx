@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 import { Metadata } from 'next'
 
-import ModalForm from '@/modules/inventario/components/modal-form'
+import ModalForm from '@/modules/common/components/modal-form'
 import { Boxes } from 'lucide-react'
 import {
   HeaderLeftSide,
@@ -31,6 +31,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/modules/common/components/table/table'
+import { auth } from '@/auth'
+import RowItemForm from '@/modules/inventario/components/rowitem-form'
+
 export const metadata: Metadata = {
   title: 'Inventario',
   description: 'Desde aquí puedes ver todos tus renglones',
@@ -91,7 +94,14 @@ async function getData() {
   return data
 }
 export default async function Page() {
+  const session = await auth()
+
+  // if (session?.user.rol_nombre !== Roles.ADMIN) {
+  //   throw new Error('Unauthorized')
+  // }
+
   const data = await getData()
+
   return (
     <PageTemplate>
       <PageHeader>
@@ -105,7 +115,9 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <ModalForm />
+          <ModalForm triggerName="Nuevo renglon">
+            <RowItemForm />
+          </ModalForm>
         </HeaderRightSide>
       </PageHeader>
 

@@ -23,10 +23,10 @@ export default async function login(
 
   const existingUser = await getUserByEmail(email);
 
-  if (!existingUser || !existingUser.email || !existingUser.password) {
+  if (!existingUser || !existingUser.email || !existingUser.contrasena) {
     return { error: "No hay un usuario con este correo", field: "email" }
   }
-  const passwordMatch = await bcrypt.compare(password, existingUser.password)
+  const passwordMatch = await bcrypt.compare(password, existingUser.contrasena)
   if (!passwordMatch) {
     return { error: "Contraseña incorrecta", field: "password" }
   }

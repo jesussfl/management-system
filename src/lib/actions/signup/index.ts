@@ -29,11 +29,22 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: "Este correo ya está registrado", field: "email" };
   }
 
-  await prisma.user.create({
+  await prisma.usuario.create({
     data: {
-      name,
+      nombre : name,
       email,
-      password: hashedPassword,
+      contrasena: hashedPassword,
+      rol: {
+        connectOrCreate:{
+          where: {
+            rol: "Administrador"
+          },
+          create: {
+            rol: "Administrador",
+            descripcion: 'Allows access to all features'
+          }
+        }
+      }
     },
   });
 

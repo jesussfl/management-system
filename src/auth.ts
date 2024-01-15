@@ -17,6 +17,7 @@ export const authOptions = {
               const { email, password } = credentials as {
                   email: string;
                   password: string;
+                
               };
                 // check to see if email and password is there
                 if(!email || !password) {
@@ -24,19 +25,19 @@ export const authOptions = {
                 }
   
                 // check to see if user exists
-                const user = await prisma.user.findUnique({
+                const user = await prisma.usuario.findUnique({
                     where: {
                         email
                     }
                 });
                 // if no user was found 
-                if (!user || !user?.password) {
+                if (!user || !user?.contrasena) {
   
                  return null
                 }
   
                 // check to see if password matches
-                const passwordMatch = await bcrypt.compare(password, user.password)
+                const passwordMatch = await bcrypt.compare(password, user.contrasena)
   
                 // if password does not match
                 if (passwordMatch) {
@@ -58,6 +59,20 @@ export const authOptions = {
   },
   debug: process.env.NODE_ENV === "development",
   callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.rol_nombre = user.rol_nombre
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session?.user) {
+        session.user.id = token.id
+        session.user.rol_nombre = token.rol_nombre
+      }
+      return session
+    },
     authorized(params) {
       return !!params.auth?.user;
     },

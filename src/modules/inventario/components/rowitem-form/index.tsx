@@ -21,7 +21,7 @@ import { checkRowItemExists } from '@/lib/actions/existance-rowitem'
 
 interface Props {
   defaultValues?: Renglones
-  close: () => void
+  close?: () => void
 }
 type FormValues = Omit<Renglones, 'id'>
 
@@ -41,7 +41,8 @@ export default function RowItemForm({ defaultValues, close }: Props) {
           description: 'El renglon se ha actualizado correctamente',
           variant: 'success',
         })
-        close()
+
+        close && close()
       })
     } else {
       createRenglon(data).then(() => {
@@ -50,7 +51,7 @@ export default function RowItemForm({ defaultValues, close }: Props) {
           description: 'El renglon se ha creado correctamente',
           variant: 'success',
         })
-        close()
+        close && close()
       })
     }
   }

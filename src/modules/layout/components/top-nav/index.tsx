@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { cn } from '@/lib/utils'
-import UserNav from '@/modules/common/components/user-nav/user-nav'
 import ToogleTheme from '@/modules/common/components/toogle-theme/toogle-theme'
 
 const TopNav = () => {

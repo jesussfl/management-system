@@ -13,16 +13,16 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { User } from '@prisma/client'
+import { Usuario } from '@prisma/client'
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
     header: 'ID',
   },
   {
-    accessorKey: 'name',
+    accessorKey: 'nombre',
     header: ({ column }) => {
       return (
         <Button
@@ -54,7 +54,7 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
-    accessorKey: 'role',
+    accessorKey: 'rol_nombre',
     header: ({ column }) => {
       return (
         <Button

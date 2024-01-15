@@ -127,7 +127,7 @@ function LoginForm() {
           />
           <div className="flex justify-end">
             <Link
-              href="/auth/signup"
+              href="/auth/reset"
               className={cn(
                 buttonVariants({ variant: 'ghost' }),
                 'text-green-600'
