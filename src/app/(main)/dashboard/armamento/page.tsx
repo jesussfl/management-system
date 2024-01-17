@@ -280,8 +280,10 @@
 //   )
 // }
 
-function page() {
-  return <div>Enter</div>
+export default function Page() {
+  return (
+    <div>
+      <h1>Ayuda</h1>
+    </div>
+  )
 }
-
-export default page
