@@ -45,6 +45,7 @@ model Usuario {
   nombre        String?   @map("name")
   email         String?   @unique
   contrasena    String?   @map("password")
+  facialID      String?   @unique
   emailVerified DateTime?
   image         String?
   createdAt     DateTime  @default(now())

@@ -7,6 +7,7 @@ import Credentials from '@auth/core/providers/credentials'
 
 import type { NextAuthConfig } from 'next-auth'
 import type { Adapter } from '@auth/core/adapters'
+import { Console } from 'console'
 
 /**
  * Authentication Configuration
@@ -27,13 +28,30 @@ export const authOptions = {
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
+        facialID: { label: 'Facial ID', type: 'text' },
       },
       async authorize(credentials) {
-        const { email, password } = credentials as {
+        const { email, password, facialID } = credentials as {
           email: string
-          password: string
+          password?: string
+          facialID?: string
         }
         // check to see if email and password is there
+        if (!password && facialID) {
+          const user = await prisma.usuario.findUnique({
+            where: {
+              facialID,
+            },
+            include: {
+              rol: {
+                include: {
+                  permisos: true,
+                },
+              },
+            },
+          })
+          return user
+        }
         if (!email || !password) {
           return null
         }
@@ -42,6 +60,13 @@ export const authOptions = {
         const user = await prisma.usuario.findUnique({
           where: {
             email,
+          },
+          include: {
+            rol: {
+              include: {
+                permisos: true,
+              },
+            },
           },
         })
         // if no user was found
@@ -75,6 +100,7 @@ export const authOptions = {
       if (user) {
         token.id = user.id
         token.rol_nombre = user.rol_nombre
+        token.rol = user.rol
       }
       return token
     },
@@ -82,6 +108,7 @@ export const authOptions = {
       if (session?.user) {
         session.user.id = token.id
         session.user.rol_nombre = token.rol_nombre
+        session.user.rol = token.rol
       }
       return session
     },

@@ -8,6 +8,8 @@ import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
+// @ts-ignore
+import faceIO from '@faceio/fiojs'
 
 import {
   Form,
@@ -21,8 +23,9 @@ import {
 import Link from 'next/link'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import login from '@/lib/actions/login'
+import { login, loginByFacialID } from '@/lib/actions/login'
 import { isValidEmail } from '@/utils/helpers/isValidEmail'
+import { signIn } from 'next-auth/react'
 type FormValues = {
   email: string
   password: string
@@ -38,6 +41,57 @@ function LoginForm() {
   })
   const searchParams = useSearchParams()
   const callbackUrl = searchParams?.get('callbackUrl')
+  const [faceio, setFaceio] = React.useState<any>(null)
+  React.useEffect(() => {
+    const initializeFaceIO = async () => {
+      try {
+        // Create a new instance of FaceIO with your public ID
+        const faceioInstance = new faceIO('fioaa043')
+        // Update state with the instance
+        setFaceio(faceioInstance)
+      } catch (error) {
+        // Set error state if initialization fails
+      }
+    }
+    initializeFaceIO()
+  }, [])
+  const handleAuthenticate = async () => {
+    try {
+      if (!faceio) return
+      // Call the authenticate method of the FaceIO instance with necessary options
+      const response = await faceio.authenticate({
+        locale: 'es',
+      })
+      // Log authentication details to the console
+      console.log(
+        `Unique Facial ID: ${response.facialId} PayLoad: ${response.payload}`
+      )
+      loginByFacialID({ facialID: response.facialId }, callbackUrl)
+        .then((data) => {
+          if (data?.error) {
+            toast({
+              title: 'Parece que hubo un error',
+              description: data.error,
+              variant: 'destructive',
+            })
+          }
+
+          if (data?.success) {
+            toast({
+              title: 'Success',
+              description: data.success,
+              variant: 'success',
+            })
+          }
+        })
+        .catch((error) => {
+          // Set error state if authentication fails
+          console.error(error)
+        })
+    } catch (error) {
+      // Set error state if authentication fails
+    }
+  }
 
   const [isPending, startTransition] = useTransition()
   const handleEmailValidation = (email: string) => {
@@ -141,6 +195,19 @@ function LoginForm() {
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Iniciar sesión
+          </Button>
+          <Button
+            variant={'secondary'}
+            disabled={isPending}
+            onClick={(e) => {
+              e.preventDefault()
+              handleAuthenticate()
+            }}
+          >
+            {isPending && (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Reconocimiento Facial
           </Button>
         </div>
       </form>

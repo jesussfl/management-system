@@ -32,6 +32,7 @@ import {
 } from '@/modules/common/components/table/table'
 import { auth } from '@/auth'
 import RowItemForm from '@/modules/inventario/components/rowitem-form'
+import { Roles_Permisos } from '@prisma/client'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -82,7 +83,7 @@ const invoices = [
     paymentMethod: 'Credit Card',
   },
 ]
-const SECTION_NAME = 'INVENTARIO'
+const SECTION_NAME = 'ARMAMENTO'
 async function getData() {
   'use server'
   const data = await prisma.renglones.findMany({
@@ -92,19 +93,10 @@ async function getData() {
   })
   return data
 }
-const validateRol = async (rol: string) => {
-  const result = await prisma.rol.findUnique({
-    where: {
-      rol: rol,
-    },
-    include: {
-      permisos: true,
-    },
-  })
-
-  if (result) {
+const validateRol = async (permisos: Roles_Permisos[]) => {
+  if (permisos.length > 0) {
     // Verificar si alguno de los permisos contiene la cadena "Abastecimiento" en permiso_key
-    const hasAbastecimientoPermission = result.permisos.some((permiso) =>
+    const hasAbastecimientoPermission = permisos.some((permiso) =>
       permiso.permiso_key.includes(SECTION_NAME)
     )
 
@@ -128,8 +120,9 @@ const validateRol = async (rol: string) => {
 }
 export default async function Page() {
   const session = await auth()
-  const rol = session?.user.rol_nombre
-  const isAuthorized = rol && (await validateRol(rol))
+  const permissions = session?.user.rol.permisos
+  const isAuthorized = await validateRol(permissions)
+
   if (!isAuthorized) {
     return null
   }
