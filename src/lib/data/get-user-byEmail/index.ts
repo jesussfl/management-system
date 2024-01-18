@@ -18,3 +18,13 @@ export const getUserByFacialID = async (facialID: string) => {
     return null
   }
 }
+
+export const getAllUsers = async () => {
+  try {
+    const users = await prisma.usuario.findMany()
+    return users
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

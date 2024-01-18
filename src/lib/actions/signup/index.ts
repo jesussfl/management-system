@@ -83,6 +83,7 @@ export const signupByFacialID = async ({
   try {
     await prisma.usuario.create({
       data: {
+        nombre: name,
         email,
         facialID,
         rol: {
@@ -102,5 +103,15 @@ export const signupByFacialID = async ({
   } catch (error) {
     console.log(error)
     return { error: 'Error al registrar la persona', field: 'facialID' }
+  }
+}
+
+export const getAllUsers = async () => {
+  try {
+    const users = await prisma.usuario.findMany()
+    return users
+  } catch (error) {
+    console.log(error, 'ERROOR')
+    return null
   }
 }

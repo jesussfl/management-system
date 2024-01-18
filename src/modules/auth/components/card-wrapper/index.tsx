@@ -28,12 +28,12 @@ export const CardWrapper = ({
   showSocial,
 }: CardWrapperProps) => {
   return (
-    <div className="flex flex-col w-full justify-center items-center gap-4 bg-gray-50">
-      <Card className="w-[500px] shadow-md">
+    <div className="flex flex-col w-full gap-4 lg:justify-center lg:items-center bg-gray-50">
+      <Card className="flex flex-col h-full lg:w-[500px] shadow-md overflow-y-auto">
         <CardHeader>
           <Header label={headerLabel} title={headerTitle} />
         </CardHeader>
-        <CardContent>{children}</CardContent>
+        <CardContent className="flex-1">{children}</CardContent>
         {showSocial && (
           <CardFooter>
             <Social />

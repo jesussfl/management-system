@@ -20,10 +20,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={cn(
-          'bg-background font-sans antialiased overflow-hidden',
-          fontSans.variable
-        )}
+        className={cn('bg-background font-sans antialiased', fontSans.variable)}
       >
         <SessionProvider session={session}>
           <ThemeProvider
