@@ -134,31 +134,6 @@ export function FaceSignupForm() {
           })
       })
     })
-
-    // const facialIdToDelete = '96fd0cc6a3784e2090ee0f845350e498fioaa043'
-    // const url = `https://api.faceio.net/deletefacialid?fid=${facialIdToDelete}&key=${process.env.FACEIO_PUBLIC_ID}`
-
-    // fetch(url, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((reply) => {
-    //     if (reply.status !== 200) {
-    //       console.error(reply.error)
-    //       return
-    //     }
-
-    //     // Éxito
-    //     console.log(
-    //       'Facial ID, datos de carga útil y hash biométrico eliminados de esta aplicación'
-    //     )
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error al eliminar el Facial ID:', error)
-    //   })
   }
   return (
     <Form {...form}>
@@ -233,7 +208,7 @@ export function FaceSignupForm() {
           )}
         />
         <div className="flex flex-col-reverse gap-2 mt-4">
-          <Button
+          {/* <Button
             variant={'destructive'}
             disabled={isPending}
             onClick={(e) => {
@@ -245,7 +220,7 @@ export function FaceSignupForm() {
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Borrar mi facial ID
-          </Button>
+          </Button> */}
           <Button disabled={isPending} type="submit">
             {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
