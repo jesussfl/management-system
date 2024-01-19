@@ -25,6 +25,7 @@ import { signIn } from 'next-auth/react'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
+import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type FormValues = {
   email: string
   name: string
@@ -41,13 +42,6 @@ export function FaceSignupForm() {
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const { email, name, adminPassword } = values
 
-    if (adminPassword !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      form.setError('adminPassword', {
-        type: 'custom',
-        message: 'Contraseña de administrador incorrecta',
-      })
-      return
-    }
     try {
       let response = await faceioRef.current
         .enroll({
@@ -158,7 +152,7 @@ export function FaceSignupForm() {
           control={form.control}
           name="name"
           rules={{
-            required: 'Este campo es requerido',
+            required: true,
             minLength: {
               value: 3,
               message: 'El nombre de usuario debe tener al menos 3 caracteres',
@@ -182,7 +176,7 @@ export function FaceSignupForm() {
           control={form.control}
           name="email"
           rules={{
-            required: 'Este campo es requerido',
+            required: true,
             validate: handleEmailValidation,
           }}
           render={({ field }) => (
@@ -204,7 +198,10 @@ export function FaceSignupForm() {
         <FormField
           control={form.control}
           name="adminPassword"
-          rules={{ required: 'Contraseña de administrador requerida' }}
+          rules={{
+            required: 'Contraseña de administrador requerida',
+            validate: validateAdminPassword,
+          }}
           render={({ field }) => (
             <FormItem className="">
               <FormLabel>Contraseña del administrador</FormLabel>

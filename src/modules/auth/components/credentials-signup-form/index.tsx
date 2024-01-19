@@ -21,6 +21,8 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { signup } from '@/lib/actions/signup'
 import { signIn } from 'next-auth/react'
+import { validatePassword } from '@/utils/helpers/validate-password'
+import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type FormValues = {
   email: string
   password: string
@@ -31,26 +33,12 @@ type FormValues = {
 
 export function CredentialsSignupForm() {
   const { toast } = useToast()
-  const form = useForm<FormValues>()
+  const form = useForm<FormValues>({
+    mode: 'all',
+  })
   const [isPending, startTransition] = useTransition()
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (values.password !== values.confirmPassword) {
-      form.setError('confirmPassword', {
-        type: 'custom',
-        message: 'Las contraseñas no coinciden',
-      })
-      return
-    }
-
-    if (values.adminPassword !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      form.setError('adminPassword', {
-        type: 'custom',
-        message: 'Contraseña de administrador incorrecta',
-      })
-      return
-    }
-
     startTransition(() => {
       signup(values).then((data) => {
         if (data?.error) {
@@ -130,7 +118,10 @@ export function CredentialsSignupForm() {
         <FormField
           control={form.control}
           name="password"
-          rules={{ required: 'Contraseña requerida' }}
+          rules={{
+            required: true,
+            validate: (value) => validatePassword({ value }),
+          }}
           render={({ field }) => (
             <FormItem className="">
               <FormLabel>Contraseña</FormLabel>
@@ -143,7 +134,8 @@ export function CredentialsSignupForm() {
                 />
               </FormControl>
               <FormDescription>
-                La contraseña debe contener al menos 8 carácteres y 2 especiales
+                La contraseña debe contener al menos 8 carácteres, una letra
+                mayúscula, una letra minúscula, un número y un caracter especial
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -152,7 +144,10 @@ export function CredentialsSignupForm() {
         <FormField
           control={form.control}
           name="confirmPassword"
-          rules={{ required: 'Contraseña requerida' }}
+          rules={{
+            required: 'Contraseña requerida',
+            validate: (value) => value === form.getValues('password'),
+          }}
           render={({ field }) => (
             <FormItem className="">
               <FormLabel>Confirmar contraseña</FormLabel>
@@ -172,7 +167,10 @@ export function CredentialsSignupForm() {
         <FormField
           control={form.control}
           name="adminPassword"
-          rules={{ required: 'Contraseña de administrador requerida' }}
+          rules={{
+            required: 'Contraseña de administrador requerida',
+            validate: validateAdminPassword,
+          }}
           render={({ field }) => (
             <FormItem className="">
               <FormLabel>Contraseña del administrador</FormLabel>
