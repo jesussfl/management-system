@@ -10,6 +10,8 @@ import { Plus } from 'lucide-react'
 
 type Props = {
   children: React.ReactNode
+  open?: boolean
+  close?: () => void
   triggerName: string
   height?: string
   triggerVariant?:
@@ -26,6 +28,8 @@ export default function ModalForm({
   triggerName,
   triggerVariant,
   height,
+  close,
+  open,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -36,7 +40,10 @@ export default function ModalForm({
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={toogleModal}>
+    <Dialog
+      open={open !== undefined ? open : isOpen}
+      onOpenChange={close ? close : toogleModal}
+    >
       <DialogTrigger asChild>
         <Button
           variant={triggerVariant || 'default'}

@@ -1,12 +1,11 @@
 'use client'
 
-import { useTransition, useState, useEffect } from 'react'
+import { useTransition } from 'react'
 
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
-// @ts-ignore
-import faceIO from '@faceio/fiojs'
+
 import {
   Form,
   FormControl,
@@ -24,6 +23,8 @@ import { signupByFacialID, getAllUsers } from '@/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 
 import { useFaceio } from '@/lib/hooks/use-faceio'
+import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
+import { ToastAction } from '@/modules/common/components/toast/toast'
 type FormValues = {
   email: string
   name: string
@@ -31,19 +32,13 @@ type FormValues = {
 }
 
 export function FaceSignupForm() {
-  const [isPending, startTransition] = useTransition()
-  const { faceio } = useFaceio()
   const { toast } = useToast()
-  const form = useForm<FormValues>({
-    defaultValues: {
-      email: '',
-      name: '',
-      adminPassword: '',
-    },
-  })
+  const { faceioRef } = useFaceio()
+  const form = useForm<FormValues>()
+
+  const [isPending, startTransition] = useTransition()
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (!faceio) return
     const { email, name, adminPassword } = values
 
     if (adminPassword !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
@@ -54,14 +49,35 @@ export function FaceSignupForm() {
       return
     }
     try {
-      let response = await faceio.enroll({
-        locale: 'es',
-        payload: {
-          email: `${values.email}`,
-        },
-        permissionTimeout: 15,
-        enrollIntroTimeout: 4,
-      })
+      let response = await faceioRef.current
+        .enroll({
+          locale: 'es',
+          payload: {
+            email: `${values.email}`,
+          },
+          permissionTimeout: 15,
+          enrollIntroTimeout: 4,
+        })
+        .catch((error: fioErrCode) => {
+          console.log(error)
+
+          const errorMessage = errorMessages[error] || error.toString()
+          toast({
+            title: 'Parece que hubo un error',
+            description: errorMessage,
+            variant: 'destructive',
+            action: (
+              <ToastAction
+                altText="Intentar de nuevo"
+                onClick={() => {
+                  window.location.reload()
+                }}
+              >
+                Recargar página
+              </ToastAction>
+            ),
+          })
+        })
 
       console.log(` Unique Facial ID: ${response.facialId}
       Enrollment Date: ${response.timestamp}
@@ -191,7 +207,7 @@ export function FaceSignupForm() {
           rules={{ required: 'Contraseña de administrador requerida' }}
           render={({ field }) => (
             <FormItem className="">
-              <FormLabel>Contraseña de administrador</FormLabel>
+              <FormLabel>Contraseña del administrador</FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -201,14 +217,14 @@ export function FaceSignupForm() {
                 />
               </FormControl>
               <FormDescription>
-                Es necesario para validar el acceso al panel de administración
+                Pide a tu administrador una contraseña para poder registrarte.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex flex-col-reverse gap-2 mt-4">
-          {/* <Button
+          <Button
             variant={'destructive'}
             disabled={isPending}
             onClick={(e) => {
@@ -220,12 +236,12 @@ export function FaceSignupForm() {
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Borrar mi facial ID
-          </Button> */}
+          </Button>
           <Button disabled={isPending} type="submit">
             {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Vincular Rostro
+            Crear ID Facial
           </Button>
         </div>
       </form>

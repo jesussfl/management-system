@@ -1,26 +1,23 @@
-import { useTransition, useState, useEffect } from 'react'
+import { useTransition, useState, useEffect, useRef } from 'react'
 
 // @ts-ignore
 import faceIO from '@faceio/fiojs'
+import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
 
 export const useFaceio = () => {
-  const [faceio, setFaceio] = useState<any>(null)
+  const faceioRef = useRef<faceIO | null>(null)
 
-  useEffect(() => {
-    const initializeFaceIO = async () => {
-      try {
-        // Create a new instance of FaceIO with your public ID
-        const faceioInstance = new faceIO(
-          process.env.NEXT_PUBLIC_FACEIO_PUBLIC_ID
-        )
-        // Update state with the instance
-        setFaceio(faceioInstance)
-      } catch (error) {
-        // Set error state if initialization fails
-      }
+  const initialiseFaceio = async () => {
+    try {
+      faceioRef.current = new faceIO(process.env.NEXT_PUBLIC_FACEIO_PUBLIC_ID)
+      console.log('FaceIO initialized successfully')
+    } catch (error) {
+      console.log(error)
     }
-    initializeFaceIO()
+  }
+  useEffect(() => {
+    initialiseFaceio()
   }, [])
 
-  return { faceio }
+  return { faceioRef }
 }

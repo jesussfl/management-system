@@ -13,25 +13,31 @@ export const metadata: Metadata = {
   description: ' Ingresa tus datos para crear tu cuenta',
 }
 
-export default function Page() {
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { error: string | null }
+}) {
+  const cardLabel =
+    searchParams.error === 'unrecognizedFace'
+      ? 'Parece que no estás registrado en nuestra base de datos. Ingresa la información para crear tu cuenta'
+      : 'Ingresa la información para crear tu ID Facial o registrate mediante correo y contraseña'
   return (
     <CardWrapper
+      error={searchParams.error === 'unrecognizedFace'}
       headerTitle="Registro"
-      headerLabel="Ingresa tus datos para crear tu cuenta"
+      headerLabel={cardLabel}
       backButtonLabel="Ya tengo una cuenta"
       backButtonHref="/auth/login"
+      showSocial
     >
       <Tabs
         className="flex flex-col gap-2"
         defaultValue="Reconocimiento Facial"
       >
         <TabsList className="mx-5">
-          <TabsTrigger value="Reconocimiento Facial">
-            Reconocimiento Facial
-          </TabsTrigger>
-          <TabsTrigger value="Correo y Contraseña">
-            Correo y Contraseña
-          </TabsTrigger>
+          <TabsTrigger value="Reconocimiento Facial">ID Facial</TabsTrigger>
+          <TabsTrigger value="Correo y Contraseña">Registro Básico</TabsTrigger>
         </TabsList>
         <TabsContent value="Reconocimiento Facial">
           <FaceSignupForm />

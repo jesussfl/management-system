@@ -30,17 +30,9 @@ type FormValues = {
 }
 
 export function CredentialsSignupForm() {
-  const [isPending, startTransition] = useTransition()
   const { toast } = useToast()
-  const form = useForm<FormValues>({
-    defaultValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      name: '',
-      adminPassword: '',
-    },
-  })
+  const form = useForm<FormValues>()
+  const [isPending, startTransition] = useTransition()
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (values.password !== values.confirmPassword) {
@@ -183,7 +175,7 @@ export function CredentialsSignupForm() {
           rules={{ required: 'Contraseña de administrador requerida' }}
           render={({ field }) => (
             <FormItem className="">
-              <FormLabel>Contraseña de administrador</FormLabel>
+              <FormLabel>Contraseña del administrador</FormLabel>
               <FormControl>
                 <Input
                   type="password"
@@ -193,7 +185,7 @@ export function CredentialsSignupForm() {
                 />
               </FormControl>
               <FormDescription>
-                Es necesario para validar el acceso al panel de administración
+                Pide a tu administrador una contraseña para poder registrarte.
               </FormDescription>
               <FormMessage />
             </FormItem>

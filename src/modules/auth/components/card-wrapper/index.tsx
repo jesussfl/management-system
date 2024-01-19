@@ -17,9 +17,11 @@ interface CardWrapperProps {
   backButtonLabel: string
   backButtonHref: string
   showSocial?: boolean
+  error?: boolean
 }
 
 export const CardWrapper = ({
+  error = false,
   children,
   headerTitle,
   headerLabel,
@@ -31,7 +33,7 @@ export const CardWrapper = ({
     <div className="flex flex-col w-full gap-4 lg:justify-center lg:items-center bg-gray-50">
       <Card className="flex flex-col h-full lg:w-[500px] shadow-md overflow-y-auto">
         <CardHeader>
-          <Header label={headerLabel} title={headerTitle} />
+          <Header error={error} label={headerLabel} title={headerTitle} />
         </CardHeader>
         <CardContent className="flex-1">{children}</CardContent>
         {showSocial && (

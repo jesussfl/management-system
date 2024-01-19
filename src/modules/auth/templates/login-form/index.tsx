@@ -8,8 +8,6 @@ import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
-// @ts-ignore
-import faceIO from '@faceio/fiojs'
 
 import {
   Form,
@@ -24,8 +22,11 @@ import Link from 'next/link'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { login, loginByFacialID } from '@/lib/actions/login'
-import { isValidEmail } from '@/utils/helpers/isValidEmail'
-import { signIn } from 'next-auth/react'
+import { handleEmailValidation } from '@/utils/helpers/isValidEmail'
+import { useFaceio } from '@/lib/hooks/use-faceio'
+import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
+import { ToastAction } from '@/modules/common/components/toast/toast'
+
 type FormValues = {
   email: string
   password: string
@@ -33,87 +34,81 @@ type FormValues = {
 
 function LoginForm() {
   const { toast } = useToast()
-  const form = useForm<FormValues>({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  })
+  const { faceioRef } = useFaceio()
+  const form = useForm<FormValues>()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams?.get('callbackUrl')
-  const [faceio, setFaceio] = React.useState<any>(null)
-  React.useEffect(() => {
-    const initializeFaceIO = async () => {
-      try {
-        // Create a new instance of FaceIO with your public ID
-        const faceioInstance = new faceIO('fioaa043')
-        // Update state with the instance
-        setFaceio(faceioInstance)
-      } catch (error) {
-        // Set error state if initialization fails
-      }
-    }
-    initializeFaceIO()
-  }, [])
-  const handleAuthenticate = async () => {
+
+  const [isPending, startTransition] = useTransition()
+
+  const authenticateByFacialID = async () => {
     try {
-      if (!faceio) return
-      // Call the authenticate method of the FaceIO instance with necessary options
-      const response = await faceio.authenticate({
-        locale: 'es',
-      })
-      // Log authentication details to the console
-      console.log(
-        `Unique Facial ID: ${response.facialId} PayLoad: ${response.payload}`
-      )
-      loginByFacialID({ facialID: response.facialId }, callbackUrl)
-        .then((data) => {
-          if (data?.error) {
+      const response = await faceioRef.current
+        ?.authenticate({
+          locale: 'es',
+        })
+        .catch((error: fioErrCode) => {
+          const errorMessage = errorMessages[error] || error.toString()
+
+          if (error === fioErrCode.UNRECOGNIZED_FACE) {
+            window.location.href = '/auth/signup?error=unrecognizedFace'
+            return
+          }
+
+          if (error === fioErrCode.SESSION_EXPIRED) {
+            toast({
+              title: 'Por favor refresca la página',
+              variant: 'destructive',
+            })
+            return
+          }
+
+          toast({
+            title: 'Parece que hubo un error',
+            description: errorMessage,
+            variant: 'destructive',
+            action: (
+              <ToastAction
+                altText="Intentar de nuevo"
+                onClick={() => {
+                  window.location.reload()
+                }}
+              >
+                Recargar página
+              </ToastAction>
+            ),
+          })
+        })
+
+      loginByFacialID({ facialID: response.facialId }, callbackUrl).then(
+        (res) => {
+          if (res?.error) {
             toast({
               title: 'Parece que hubo un error',
-              description: data.error,
+              description: res.error,
               variant: 'destructive',
             })
           }
 
-          if (data?.success) {
+          if (res?.success) {
             toast({
               title: 'Success',
-              description: data.success,
+              description: res.success,
               variant: 'success',
             })
           }
-        })
-        .catch((error) => {
-          // Set error state if authentication fails
-          console.error(error)
-        })
+        }
+      )
     } catch (error) {
-      // Set error state if authentication fails
+      console.error(error)
     }
   }
 
-  const [isPending, startTransition] = useTransition()
-  const handleEmailValidation = (email: string) => {
-    console.log('ValidateEmail was called with', email)
-
-    const isValid = isValidEmail(email)
-
-    const validityChanged =
-      (form.formState.errors.email && isValid) ||
-      (!form.formState.errors.email && !isValid)
-    if (validityChanged) {
-      console.log('Fire tracker with', isValid ? 'Valid' : 'Invalid')
-    }
-
-    return isValid ? true : 'El email no es valido'
-  }
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     startTransition(() => {
       login(values, callbackUrl)
         .then((data) => {
           if (data?.error) {
-            form.reset()
             form.setError(data.field as any, {
               type: 'custom',
               message: data.error,
@@ -190,24 +185,28 @@ function LoginForm() {
               Olvidé mi contraseña
             </Link>
           </div>
+
           <Button disabled={isPending} type="submit">
             {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Iniciar sesión
           </Button>
+          <p className="text-muted-foreground text-sm my-4 text-center">
+            Ó inicia sesión mediante:
+          </p>
           <Button
             variant={'secondary'}
             disabled={isPending}
             onClick={(e) => {
               e.preventDefault()
-              handleAuthenticate()
+              authenticateByFacialID()
             }}
           >
             {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Reconocimiento Facial
+            ID Facial
           </Button>
         </div>
       </form>
