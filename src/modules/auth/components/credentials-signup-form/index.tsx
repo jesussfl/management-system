@@ -18,7 +18,7 @@ import {
 
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { handleEmailValidation } from '@/utils/helpers/isValidEmail'
+import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { signup } from '@/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 type FormValues = {

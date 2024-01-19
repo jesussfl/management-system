@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import LoginForm from '@/modules/auth/templates/login-form'
+import LoginForm from '@/modules/auth/components/login-form'
 import { CardWrapper } from '@/modules/auth/components/card-wrapper'
 
 export const metadata: Metadata = {

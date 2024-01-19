@@ -7,7 +7,6 @@ import Credentials from '@auth/core/providers/credentials'
 
 import type { NextAuthConfig } from 'next-auth'
 import type { Adapter } from '@auth/core/adapters'
-import { Console } from 'console'
 
 /**
  * Authentication Configuration

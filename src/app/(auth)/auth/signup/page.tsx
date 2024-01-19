@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { CredentialsSignupForm } from '@/modules/auth/templates/credentials-signup-form'
+import { CredentialsSignupForm } from '@/modules/auth/components/credentials-signup-form'
 import { CardWrapper } from '@/modules/auth/components/card-wrapper'
 import {
   Tabs,
@@ -7,7 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
-import { FaceSignupForm } from '@/modules/auth/templates/face-signup-form'
+import { FaceSignupForm } from '@/modules/auth/components/face-signup-form'
 export const metadata: Metadata = {
   title: 'Registro',
   description: ' Ingresa tus datos para crear tu cuenta',
