@@ -2,7 +2,7 @@ import { useTransition, useState, useEffect, useRef } from 'react'
 
 // @ts-ignore
 import faceIO from '@faceio/fiojs'
-import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
+import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
 
 export const useFaceio = () => {
   const faceioRef = useRef<faceIO | null>(null)

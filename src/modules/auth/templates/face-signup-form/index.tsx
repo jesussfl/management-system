@@ -23,7 +23,7 @@ import { signupByFacialID, getAllUsers } from '@/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 
 import { useFaceio } from '@/lib/hooks/use-faceio'
-import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
+import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 type FormValues = {
   email: string

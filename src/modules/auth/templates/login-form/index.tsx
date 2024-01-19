@@ -24,7 +24,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { login, loginByFacialID } from '@/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/isValidEmail'
 import { useFaceio } from '@/lib/hooks/use-faceio'
-import { errorMessages, fioErrCode } from '@/utils/constants/fio-errors'
+import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 
 type FormValues = {

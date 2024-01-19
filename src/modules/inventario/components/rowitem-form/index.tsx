@@ -28,7 +28,13 @@ interface Props {
 }
 type FormValues = Omit<Renglones, 'id'>
 
-export default function RowItemForm({ defaultValues, close }: Props) {
+/**
+ * Form component that allows the user to add or update a "row item" with multiple steps and form validation.
+ */
+export default function RowItemForm({
+  defaultValues,
+  close,
+}: Props): React.JSX.Element {
   const { toast } = useToast()
 
   const form = useForm<FormValues>({

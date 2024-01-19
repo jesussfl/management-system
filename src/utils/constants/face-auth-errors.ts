@@ -1,3 +1,7 @@
+/**
+ * enum that represents error codes for Facial ID Authentication using FaceIO API https://faceio.net/.
+ * Each error code has a corresponding error message defined in the ErrorMessage type.
+ */
 export enum fioErrCode {
   PERMISSION_REFUSED = 1,
   NO_FACES_DETECTED = 2,
@@ -26,13 +30,26 @@ export type ErrorMessage = {
   [key in fioErrCode]: string
 }
 
+/**
+ * An object that maps error codes to corresponding error messages for Facial ID Authentication.
+ * Error messages are written in Spanish.
+ * @type {ErrorMessage}
+ * @see {@link fioErrCode}
+ * @see {@link ErrorMessage}
+ * @example
+ * const errorMessage = errorMessages[fioErrCode.UNRECOGNIZED_FACE];
+ * console.log(errorMessage); // 'Face not recognized'
+ *
+ *
+ */
 export const errorMessages: ErrorMessage = {
   [fioErrCode.PERMISSION_REFUSED]: 'Permiso denegado',
-  [fioErrCode.NO_FACES_DETECTED]: 'No se detectaron caras',
-  [fioErrCode.UNRECOGNIZED_FACE]: 'Cara no reconocida',
-  [fioErrCode.MANY_FACES]: 'Demasiadas caras',
+  [fioErrCode.NO_FACES_DETECTED]: 'No se detectó ningun rostro',
+  [fioErrCode.UNRECOGNIZED_FACE]:
+    'El rostro no es reconocido en la base de datos, intente de nuevo o cree un ID Facial',
+  [fioErrCode.MANY_FACES]: 'Hay más de un rostro en la imagen',
   [fioErrCode.PAD_ATTACK]: 'Ataque con almohadilla',
-  [fioErrCode.FACE_MISMATCH]: 'Cara no coincide',
+  [fioErrCode.FACE_MISMATCH]: 'El segundo rostro no coincide con el primero',
   [fioErrCode.NETWORK_IO]: 'Error de red',
   [fioErrCode.WRONG_PIN_CODE]: 'Código de seguridad incorrecto',
   [fioErrCode.PROCESSING_ERR]: 'Error de procesamiento',
@@ -49,5 +66,4 @@ export const errorMessages: ErrorMessage = {
   [fioErrCode.SESSION_IN_PROGRESS]: 'Sesión en curso',
   [fioErrCode.FACE_DUPLICATION]: 'Cara duplicada',
   [fioErrCode.MINORS_NOT_ALLOWED]: 'Menores no permitidos',
-  // Agrega el resto de los códigos de error aquí...
 }

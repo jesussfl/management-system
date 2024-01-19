@@ -21,6 +21,25 @@ import { SideMenuItem } from '@/types/types'
 
 const DEFAULT_ICON_SIZE = 20
 
+/**
+ * Object array which represents the items in a side menu.
+ * Each object in the array has properties such as title (the display name of the menu item), path (the URL path associated with the menu item),
+ * and icon (the icon to display next to the menu item).
+ * Some of the menu items also have a submenu property, indicating that they have sub-menu items.
+ * The sub-menu items are defined in the submenuItems property, which is also an array of objects with similar properties.
+ * 
+ * @type {SideMenuItem[]}
+ * @memberof SideMenuItem
+ * @example
+ * const sideMenuItems = [
+ *   {
+ *     title: 'Home',
+ *     path: '/',
+ *     icon: <Home size={DEFAULT_ICON_SIZE} />,
+ *   },
+ }
+ ]
+ */
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
   {
     title: 'Inicio',

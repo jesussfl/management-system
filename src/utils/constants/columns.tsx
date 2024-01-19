@@ -1,6 +1,4 @@
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Renglon } from '@/types/types'
-import { ColumnDef } from '@tanstack/react-table'
 
 export const SELECT_COLUMN: any = {
   id: 'select',
