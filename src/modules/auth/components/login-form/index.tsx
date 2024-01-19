@@ -92,8 +92,7 @@ function LoginForm() {
 
           if (res?.success) {
             toast({
-              title: 'Success',
-              description: res.success,
+              title: res.success,
               variant: 'success',
             })
           }
@@ -118,8 +117,7 @@ function LoginForm() {
           if (data?.success) {
             form.reset()
             toast({
-              title: 'Success',
-              description: data.success,
+              title: data.success,
               variant: 'success',
             })
           }

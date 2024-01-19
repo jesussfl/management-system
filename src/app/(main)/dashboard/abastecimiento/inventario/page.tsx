@@ -33,6 +33,8 @@ import {
 import { auth } from '@/auth'
 import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import { Roles_Permisos } from '@prisma/client'
+import { validatePermissions } from '@/lib/data/validate-permissions'
+import { getAllRenglones } from '@/lib/actions/renglon'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -84,50 +86,13 @@ const invoices = [
   },
 ]
 const SECTION_NAME = 'ARMAMENTO'
-async function getData() {
-  'use server'
-  const data = await prisma.renglones.findMany({
-    include: {
-      recibimientos: true,
-    },
-  })
-  return data
-}
-const validateRol = async (permisos: Roles_Permisos[]) => {
-  if (permisos.length > 0) {
-    // Verificar si alguno de los permisos contiene la cadena "Abastecimiento" en permiso_key
-    const hasAbastecimientoPermission = permisos.some((permiso) =>
-      permiso.permiso_key.includes(SECTION_NAME)
-    )
 
-    if (hasAbastecimientoPermission) {
-      // La validación pasa, hay un permiso que contiene "Abastecimiento"
-      console.log('El rol tiene permisos de Abastecimiento')
-      // Puedes devolver true u otra acción según tus necesidades
-      return true
-    } else {
-      // La validación no pasa, no hay permisos que contengan "Abastecimiento"
-      console.log('El rol no tiene permisos de Abastecimiento')
-      // Puedes devolver false u otra acción según tus necesidades
-      return false
-    }
-  } else {
-    // El rol no existe
-    console.log('El rol no existe')
-    // Puedes devolver false u otra acción según tus necesidades
-    return false
-  }
-}
 export default async function Page() {
-  const session = await auth()
-  const permissions = session?.user.rol.permisos
-  const isAuthorized = await validateRol(permissions)
+  const isAuthorized = await validatePermissions({
+    section: SECTION_NAME,
+  })
 
-  if (!isAuthorized) {
-    return null
-  }
-
-  const data = await getData()
+  const renglonesData = await getAllRenglones()
 
   return (
     <PageTemplate>
@@ -155,7 +120,7 @@ export default async function Page() {
         </TabsList>
         <TabsContent value="rowitems">
           <PageContent>
-            <DataTable columns={columns} data={data} />
+            <DataTable columns={columns} data={renglonesData} />
           </PageContent>
         </TabsContent>
         <TabsContent value="categories">

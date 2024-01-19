@@ -11,3 +11,9 @@ export const currentRole = async () => {
 
   return session?.user?.rol_nombre
 }
+
+export const getUserPermissions = async () => {
+  const session = await auth()
+
+  return session?.user.rol.permisos
+}
