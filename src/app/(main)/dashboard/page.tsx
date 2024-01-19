@@ -1,3 +1,4 @@
+import { PageTemplate } from '@/modules/layout/templates/page'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -5,9 +6,5 @@ export const metadata: Metadata = {
   description: 'Gestiona toda la logística del CESERLODAI',
 }
 export default function Page() {
-  return (
-    <div className="flex-1 max-h-full mx-0 my-3 overflow-hidden overflow-y-auto bg-background p-5 border border-border rounded-sm">
-      hola
-    </div>
-  )
+  return <PageTemplate className="">hola</PageTemplate>
 }

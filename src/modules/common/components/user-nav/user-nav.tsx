@@ -23,7 +23,7 @@ export default function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="flex w-full justify-start gap-2 hover:bg-dark-secondary"
+          className="flex justify-start gap-2 hover:bg-dark-secondary"
         >
           <Avatar className="h-8 w-8 ">
             <AvatarImage src="/avatars/01.png" alt="@shadcn" />
@@ -32,9 +32,6 @@ export default function UserNav() {
           <div className="flex flex-col justify-start items-start space-y-1">
             <p className="text-sm font-medium leading-none text-white">
               {session?.user?.name}
-            </p>
-            <p className="text-xs leading-none text-gray-400">
-              {session?.user?.email}
             </p>
           </div>
         </Button>

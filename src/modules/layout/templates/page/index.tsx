@@ -7,7 +7,10 @@ export const PageTemplate = ({
   return (
     <div
       style={{ scrollbarGutter: 'stable both-edges' }}
-      className={cn('', className)}
+      className={cn(
+        'bg-background h-full overflow-y-auto rounded-md',
+        className
+      )}
       {...props}
     >
       {props.children}

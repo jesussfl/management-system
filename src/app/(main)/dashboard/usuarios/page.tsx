@@ -48,7 +48,7 @@ export default async function Page() {
   })
   const permissions = await prisma.permiso.findMany()
   return (
-    <PageTemplate>
+    <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
@@ -101,6 +101,6 @@ export default async function Page() {
           </PageContent>
         </TabsContent>
       </Tabs>
-    </PageTemplate>
+    </>
   )
 }

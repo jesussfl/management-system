@@ -7,19 +7,21 @@ import UserNav from '@/modules/common/components/user-nav/user-nav'
 const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(true)
   return (
-    <div
-      className={`sticky flex flex-col justify-between top-0 z-10 ${
-        isOpen ? 'w-64' : 'w-[88px]'
-      } p-3 min-h-screen bg-dark overflow-x-hidden  transition-all transform hideScrollbar {
-        
-      }`}
-    >
-      <div>
-        <Logo isOpen={isOpen} setIsOpen={setIsOpen} />
-        <SideMenuItems isOpen={isOpen} />
-      </div>
-      <UserNav />
-    </div>
+    <>
+      <aside
+        id="default-sidebar"
+        aria-label="Sidebar"
+        className={`sticky top-0 left-0 flex flex-col justify-between z-40 ${
+          isOpen ? 'w-64' : 'w-[88px]'
+        } p-3 min-h-screen bg-dark overflow-x-hidden   transition-transform -translate-x-full sm:translate-x-0`}
+      >
+        <div>
+          <Logo isOpen={isOpen} setIsOpen={setIsOpen} />
+          <SideMenuItems isOpen={isOpen} />
+        </div>
+        <UserNav />
+      </aside>
+    </>
   )
 }
 

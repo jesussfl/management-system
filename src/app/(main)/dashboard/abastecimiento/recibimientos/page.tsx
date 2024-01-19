@@ -51,7 +51,7 @@ export default async function Page() {
   const renglonesData = await getRenglones()
 
   return (
-    <PageTemplate>
+    <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
@@ -87,6 +87,6 @@ export default async function Page() {
       <PageContent>
         <DataTable columns={columns} data={data} />
       </PageContent>
-    </PageTemplate>
+    </>
   )
 }

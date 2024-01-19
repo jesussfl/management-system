@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client'
 export type SideMenuItem = {
   title: string
   path: string
-  icon?: JSX.Element | null
+  icon?: any
   submenu?: boolean
   submenuItems?: SideMenuItem[]
 }

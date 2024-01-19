@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 }
 export default async function Page() {
   return (
-    <PageTemplate>
+    <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
@@ -54,6 +54,6 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent></PageContent>
-    </PageTemplate>
+    </>
   )
 }

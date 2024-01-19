@@ -1,6 +1,5 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { prisma } from '@/lib/prisma'
 
 import { Metadata } from 'next'
 
@@ -24,15 +23,12 @@ import {
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/modules/common/components/table/table'
-import { auth } from '@/auth'
 import RowItemForm from '@/modules/inventario/components/rowitem-form'
-import { Roles_Permisos } from '@prisma/client'
 import { validatePermissions } from '@/lib/data/validate-permissions'
 import { getAllRenglones } from '@/lib/actions/renglon'
 
@@ -95,7 +91,7 @@ export default async function Page() {
   const renglonesData = await getAllRenglones()
 
   return (
-    <PageTemplate>
+    <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
@@ -190,6 +186,6 @@ export default async function Page() {
           </PageContent>
         </TabsContent>
       </Tabs>
-    </PageTemplate>
+    </>
   )
 }
