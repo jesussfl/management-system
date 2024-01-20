@@ -16,11 +16,9 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
 import { useState } from 'react'
 
 import DeleteDialog from '../permissions-delete-dialog'
-import RolesForm from '../roles-form'
 import PermissionsForm from '../permissions-form'
 
 type Props = {

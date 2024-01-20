@@ -87,7 +87,7 @@ export const authOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60,
+    maxAge: 60 * 60 * 24 * 30, // 5h
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
@@ -95,8 +95,12 @@ export const authOptions = {
   },
   debug: process.env.NODE_ENV === 'development',
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === 'update') {
+        token.id = session.user.id
+        token.rol = session.user.rol
+        token.rol_nombre = session.user.rol_nombre
+      } else if (user) {
         token.id = user.id
         token.rol_nombre = user.rol_nombre
         token.rol = user.rol
@@ -117,4 +121,4 @@ export const authOptions = {
   },
 } satisfies NextAuthConfig
 
-export const { handlers, auth, signOut, signIn } = NextAuth(authOptions)
+export const { handlers, auth, signOut, signIn, update } = NextAuth(authOptions)

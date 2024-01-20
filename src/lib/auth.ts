@@ -14,6 +14,5 @@ export const currentRole = async () => {
 
 export const getUserPermissions = async () => {
   const session = await auth()
-
   return session?.user.rol.permisos
 }

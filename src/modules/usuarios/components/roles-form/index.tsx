@@ -25,26 +25,44 @@ import {
 import { Input } from '@/modules/common/components/input/input'
 import { Prisma, Permiso } from '@prisma/client'
 import { Switch } from '@/modules/common/components/switch/switch'
-import { getPermisos } from '@/lib/actions/permissions'
+
 type FormValues = Prisma.RolGetPayload<{ include: { permisos: true } }>
 interface Props {
   defaultValues?: FormValues
   close?: () => void
+  permissions: Permiso[]
 }
 
-export default function RolesForm({ defaultValues, close }: Props) {
-  const { toast } = useToast()
+const replacePermissions = (permissions: Permiso[], defaultKeys: Set<string>) =>
+  permissions.map((permiso) => {
+    const isInDefaultValues = defaultKeys.has(permiso.key)
+    if (isInDefaultValues) {
+      return {
+        permiso_key: permiso.key,
+      }
+    }
 
-  const [permissions, setPermissions] = React.useState<Permiso[]>([])
-  const form = useForm<FormValues>({
-    defaultValues,
+    return {
+      permiso_key: undefined,
+    }
   })
 
-  React.useEffect(() => {
-    getPermisos().then((data) => {
-      setPermissions(data)
-    })
-  }, [])
+export default function RolesForm({
+  defaultValues,
+  close,
+  permissions,
+}: Props) {
+  const { toast } = useToast()
+  const defaultKeys = new Set(
+    defaultValues?.permisos.map((defaultPermiso) => defaultPermiso.permiso_key)
+  )
+  const form = useForm<FormValues>({
+    defaultValues: {
+      ...defaultValues,
+      permisos: replacePermissions(permissions, defaultKeys),
+    },
+  })
+
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const formattedValues = {
       ...values,
@@ -67,6 +85,7 @@ export default function RolesForm({ defaultValues, close }: Props) {
               description: 'El rol se ha actualizado correctamente',
               variant: 'success',
             })
+
             close && close()
           }
         })
@@ -194,26 +213,29 @@ export default function RolesForm({ defaultValues, close }: Props) {
                 key={permiso.key}
                 control={form.control}
                 name={`permisos.${index}.permiso_key`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                    <div className="space-y-0.5">
-                      <FormLabel>{permiso.permiso}</FormLabel>
-                      <FormDescription>{permiso.descripcion}</FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value === permiso.key}
-                        onCheckedChange={(value) => {
-                          if (value) {
-                            field.onChange(permiso.key)
-                          } else {
-                            field.onChange(false)
-                          }
-                        }}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  console.log(field)
+                  return (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                      <div className="space-y-0.5">
+                        <FormLabel>{permiso.permiso}</FormLabel>
+                        <FormDescription>{permiso.descripcion}</FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value === permiso.key}
+                          onCheckedChange={(value) => {
+                            if (value) {
+                              field.onChange(permiso.key)
+                            } else {
+                              field.onChange('')
+                            }
+                          }}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )
+                }}
               />
             ))}
           </div>

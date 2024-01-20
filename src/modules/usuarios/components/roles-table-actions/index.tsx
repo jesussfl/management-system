@@ -9,18 +9,18 @@ import {
 
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
-import { Prisma } from '@prisma/client'
+import { Permiso, Prisma } from '@prisma/client'
 
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import DeleteDialog from '../roles-delete-dialog'
 import RolesForm from '../roles-form'
+import { getPermisos } from '@/lib/actions/permissions'
 type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
 type Props = {
@@ -30,6 +30,12 @@ type Props = {
 export default function TableActions({ rol }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [dialogType, setDialogType] = useState('')
+  const [permissions, setPermissions] = useState<Permiso[]>([])
+  useEffect(() => {
+    getPermisos().then((data) => {
+      setPermissions(data)
+    })
+  }, [])
   const toggleModal = () => setIsOpen(!isOpen)
   return (
     <Dialog open={isOpen} onOpenChange={toggleModal}>
@@ -59,7 +65,11 @@ export default function TableActions({ rol }: Props) {
       </DropdownMenu>
       {dialogType === 'edit' ? (
         <DialogContent className={'lg:max-w-screen-lg overflow-hidden p-0'}>
-          <RolesForm defaultValues={rol} close={toggleModal} />
+          <RolesForm
+            defaultValues={rol}
+            close={toggleModal}
+            permissions={permissions}
+          />
         </DialogContent>
       ) : (
         <DeleteDialog rol={rol} close={toggleModal} />
