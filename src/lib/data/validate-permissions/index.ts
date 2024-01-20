@@ -5,7 +5,7 @@ type Params = {
   action?: string
 }
 
-export const validatePermissions = async ({ section, action }: Params) => {
+export const validateUserPermissions = async ({ section, action }: Params) => {
   const permissions = await getUserPermissions()
 
   const isPageAuthorized = permissions?.some((permission) =>

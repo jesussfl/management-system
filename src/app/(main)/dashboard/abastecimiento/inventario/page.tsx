@@ -28,9 +28,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/modules/common/components/table/table'
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
-import { validatePermissions } from '@/lib/data/validate-permissions'
-import { getAllRenglones } from '@/lib/actions/renglon'
+import ItemsForm from '@/modules/inventario/components/items-form'
+import { validateUserPermissions } from '@/lib/data/validate-permissions'
+import { getAllItems } from '@/lib/actions/items'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -81,14 +81,14 @@ const invoices = [
     paymentMethod: 'Credit Card',
   },
 ]
-const SECTION_NAME = 'ARMAMENTO'
+const SECTION_NAME = 'INVENTARIO'
 
 export default async function Page() {
-  const isAuthorized = await validatePermissions({
+  const isAuthorized = await validateUserPermissions({
     section: SECTION_NAME,
   })
 
-  const renglonesData = await getAllRenglones()
+  const itemsData = await getAllItems()
 
   return (
     <>
@@ -103,20 +103,20 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <ModalForm triggerName="Nuevo renglon">
-            <RowItemForm />
+          <ModalForm triggerName="Nuevo renglón">
+            <ItemsForm />
           </ModalForm>
         </HeaderRightSide>
       </PageHeader>
 
-      <Tabs defaultValue="rowitems">
+      <Tabs defaultValue="items">
         <TabsList className="mx-5">
-          <TabsTrigger value="rowitems">Renglones</TabsTrigger>
+          <TabsTrigger value="items">Renglones</TabsTrigger>
           <TabsTrigger value="categories">Categorías</TabsTrigger>
         </TabsList>
-        <TabsContent value="rowitems">
+        <TabsContent value="items">
           <PageContent>
-            <DataTable columns={columns} data={renglonesData} />
+            <DataTable columns={columns} data={itemsData} />
           </PageContent>
         </TabsContent>
         <TabsContent value="categories">

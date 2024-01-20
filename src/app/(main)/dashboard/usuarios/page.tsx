@@ -11,7 +11,6 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
-  PageTemplate,
 } from '@/modules/layout/templates/page'
 import ModalForm from '@/modules/common/components/modal-form'
 import {
@@ -20,33 +19,23 @@ import {
   TabsTrigger,
   TabsList,
 } from '@/modules/common/components/tabs/tabs'
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/common/components/table/table'
+
 import { RolesTable } from '@/modules/usuarios/components/roles-table'
 import RolesForm from '@/modules/usuarios/components/roles-form'
 import PermissionsForm from '@/modules/usuarios/components/permissions-form'
 import { PermissionsTable } from '@/modules/usuarios/components/permissions-table'
+import { getAllUsers } from '@/lib/actions/users'
+import { getAllRoles } from '@/lib/actions/roles'
+import { getAllPermissions } from '@/lib/actions/permissions'
 export const metadata: Metadata = {
   title: 'Recibimientos',
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
 
 export default async function Page() {
-  const data = await prisma.usuario.findMany()
-  const roles = await prisma.rol.findMany({
-    include: {
-      permisos: true,
-    },
-  })
-  const permissions = await prisma.permiso.findMany()
+  const usersData = await getAllUsers()
+  const rolesData = await getAllRoles()
+  const permissionsData = await getAllPermissions()
   return (
     <>
       <PageHeader>
@@ -66,27 +55,27 @@ export default async function Page() {
           </Button>
         </HeaderRightSide>
       </PageHeader>
-      <Tabs defaultValue="rowitems">
+      <Tabs defaultValue="users">
         <TabsList className="mx-5">
-          <TabsTrigger value="rowitems">Usuarios</TabsTrigger>
-          <TabsTrigger value="categories">Roles y Permisos</TabsTrigger>
+          <TabsTrigger value="users">Usuarios</TabsTrigger>
+          <TabsTrigger value="roles">Roles y Permisos</TabsTrigger>
         </TabsList>
-        <TabsContent value="rowitems">
+        <TabsContent value="users">
           <PageContent>
-            <DataTable columns={columns} data={data} />
+            <DataTable columns={columns} data={usersData} />
           </PageContent>
         </TabsContent>
-        <TabsContent value="categories">
+        <TabsContent value="roles">
           <PageContent>
             <div className="flex w-full gap-8 p-3">
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
                 <div className="flex justify-between">
                   <h4 className="font-semibold">Lista de Roles</h4>
                   <ModalForm triggerName="Nuevo rol">
-                    <RolesForm />
+                    <RolesForm permissions={permissionsData} />
                   </ModalForm>
                 </div>
-                <RolesTable data={roles} />
+                <RolesTable data={rolesData} />
               </div>
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
                 <div className="flex justify-between">
@@ -95,7 +84,7 @@ export default async function Page() {
                     <PermissionsForm />
                   </ModalForm>
                 </div>
-                <PermissionsTable data={permissions} />
+                <PermissionsTable data={permissionsData} />
               </div>
             </div>
           </PageContent>

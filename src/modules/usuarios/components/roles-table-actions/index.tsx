@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react'
 
 import DeleteDialog from '../roles-delete-dialog'
 import RolesForm from '../roles-form'
-import { getPermisos } from '@/lib/actions/permissions'
+import { getAllPermissions } from '@/lib/actions/permissions'
 type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
 type Props = {
@@ -32,7 +32,7 @@ export default function TableActions({ rol }: Props) {
   const [dialogType, setDialogType] = useState('')
   const [permissions, setPermissions] = useState<Permiso[]>([])
   useEffect(() => {
-    getPermisos().then((data) => {
+    getAllPermissions().then((data) => {
       setPermissions(data)
     })
   }, [])

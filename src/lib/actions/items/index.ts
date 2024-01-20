@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Renglones } from '@prisma/client'
 
 type FormValues = Omit<Renglones, 'id'>
-export const createRenglon = async (data: FormValues) => {
+export const createItem = async (data: FormValues) => {
   try {
     const session = await auth()
     if (!session?.user) {
@@ -30,7 +30,7 @@ export const createRenglon = async (data: FormValues) => {
   }
 }
 
-export const updateRenglon = async (id: number, data: FormValues) => {
+export const updateItem = async (id: number, data: FormValues) => {
   try {
     const session = await auth()
     if (!session?.user) {
@@ -49,7 +49,7 @@ export const updateRenglon = async (id: number, data: FormValues) => {
   }
 }
 
-export const deleteRenglon = async (id: number) => {
+export const deleteItem = async (id: number) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -83,7 +83,7 @@ export const checkRowItemExists = async (name: string) => {
   return !!exists
 }
 
-export const getAllRenglones = async () => {
+export const getAllItems = async () => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')

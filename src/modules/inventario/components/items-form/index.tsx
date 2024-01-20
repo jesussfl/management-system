@@ -6,11 +6,7 @@ import { Button } from '@/modules/common/components/button'
 import { Form } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { Renglones } from '@prisma/client'
-import {
-  createRenglon,
-  updateRenglon,
-  checkRowItemExists,
-} from '@/lib/actions/renglon'
+import { createItem, updateItem, checkRowItemExists } from '@/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import {
@@ -31,7 +27,7 @@ type FormValues = Omit<Renglones, 'id'>
 /**
  * Form component that allows the user to add or update a "row item" with multiple steps and form validation.
  */
-export default function RowItemForm({
+export default function ItemsForm({
   defaultValues,
   close,
 }: Props): React.JSX.Element {
@@ -44,7 +40,7 @@ export default function RowItemForm({
   const [currentStep, setCurrentStep] = React.useState(1)
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (defaultValues) {
-      updateRenglon(defaultValues.id, data).then(() => {
+      updateItem(defaultValues.id, data).then(() => {
         toast({
           title: 'Renglon actualizado',
           description: 'El renglon se ha actualizado correctamente',
@@ -54,7 +50,7 @@ export default function RowItemForm({
         close && close()
       })
     } else {
-      createRenglon(data).then(() => {
+      createItem(data).then(() => {
         toast({
           title: 'Renglon creado',
           description: 'El renglon se ha creado correctamente',

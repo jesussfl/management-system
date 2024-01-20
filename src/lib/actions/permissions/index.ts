@@ -64,7 +64,7 @@ export const deletePermiso = async (id: number) => {
   revalidatePath('/dashboard/abastecimiento/usuarios')
 }
 
-export const getPermisos = async () => {
+export const getAllPermissions = async () => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')

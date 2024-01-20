@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import RowItemForm from '@/modules/inventario/components/rowitem-form'
+import ItemsForm from '@/modules/inventario/components/items-form'
 import { Button } from '@/modules/common/components/button'
 import { Plus } from 'lucide-react'
 
