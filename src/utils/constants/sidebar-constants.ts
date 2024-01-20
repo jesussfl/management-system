@@ -57,12 +57,6 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         path: '/dashboard/abastecimiento/inventario',
         icon: Boxes,
       },
-
-      // {
-      //   title: 'Renglones',
-      //   path: '/dashboard/abastecimiento/renglones',
-      //   icon: <Box size={DEFAULT_ICON_SIZE} />,
-      // },
       {
         title: 'Recibimientos',
         path: '/dashboard/abastecimiento/recibimientos',
@@ -134,3 +128,21 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     icon: HelpCircle,
   },
 ]
+
+export enum SECTION_NAMES {
+  INICIO = 'INICIO',
+  INVENTARIO = 'INVENTARIO',
+  RECIBIMIENTOS = 'RECIBIMIENTOS',
+  DESPACHOS = 'DESPACHOS',
+  ALMACENES = 'ALMACENES',
+  DESTINATARIOS = 'DESTINATARIOS',
+  ARMAMENTO = 'ARMAMENTO',
+  PERSONAL = 'PERSONAL',
+  USUARIOS = 'USUARIOS',
+  ESTADISTICAS = 'ESTADISTICAS',
+  AUDITORIA = 'AUDITORIA',
+  REPORTES = 'REPORTES',
+  CONFIGURACION = 'CONFIGURACION',
+  AYUDA = 'AYUDA',
+  TODAS = 'TODAS',
+}

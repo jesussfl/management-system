@@ -1,7 +1,7 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { SIDE_MENU_ITEMS } from '@/utils/constants/side-menu-items'
+import { SIDE_MENU_ITEMS } from '@/utils/constants/sidebar-constants'
 import { SideMenuItem } from '@/types/types'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'

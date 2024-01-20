@@ -31,6 +31,7 @@ import {
 import ItemsForm from '@/modules/inventario/components/items-form'
 import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { getAllItems } from '@/lib/actions/items'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -81,11 +82,10 @@ const invoices = [
     paymentMethod: 'Credit Card',
   },
 ]
-const SECTION_NAME = 'INVENTARIO'
 
 export default async function Page() {
   const isAuthorized = await validateUserPermissions({
-    section: SECTION_NAME,
+    section: SECTION_NAMES.INVENTARIO,
   })
 
   const itemsData = await getAllItems()

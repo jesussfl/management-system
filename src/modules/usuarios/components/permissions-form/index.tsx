@@ -16,7 +16,6 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { createPermiso, updatePermiso } from '@/lib/actions/permissions'
 import {
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
@@ -30,6 +29,7 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import Link from 'next/link'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 interface Props {
   defaultValues?: Permiso
   close?: () => void
@@ -43,14 +43,6 @@ enum Permissions {
   FULL = 'Full',
 }
 
-enum Sections {
-  USUARIOS = 'Usuarios',
-  ROLES = 'Roles',
-  PERMISOS = 'Permisos',
-  ABASTECIMIENTO = 'Abastecimiento',
-  ARMAMENTO = 'Armamento',
-}
-
 //extends Permiso
 
 //type FormValues = Omit<Permiso, 'key'>
@@ -58,17 +50,19 @@ enum Sections {
 type FormValues = {
   nombre: string
   descripcion: string
-  seccion: Sections
+  seccion: SECTION_NAMES
   permiso: Permissions
 }
 
 const destructureKey = (key: string) => {
   const [seccion, permiso] = key.split(':')
   return {
-    seccion: seccion as Sections,
+    seccion: seccion as SECTION_NAMES,
     permiso: permiso as Permissions,
   }
 }
+
+//TODO: Improve UX to add multiple permissions at the same time
 
 const formatDefaultValues = (defaultValues?: Permiso) => {
   if (!defaultValues) {
@@ -286,7 +280,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {Object.keys(Sections).map((section) => (
+                    {Object.keys(SECTION_NAMES).map((section) => (
                       <SelectItem key={section} value={section}>
                         {section}
                       </SelectItem>

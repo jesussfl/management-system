@@ -10,6 +10,7 @@ import {
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
 import { Permiso, Prisma } from '@prisma/client'
+import { getAllPermissions } from '@/lib/actions/permissions'
 
 import {
   Dialog,
@@ -20,7 +21,6 @@ import { useEffect, useState } from 'react'
 
 import DeleteDialog from '../roles-delete-dialog'
 import RolesForm from '../roles-form'
-import { getAllPermissions } from '@/lib/actions/permissions'
 type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
 type Props = {
@@ -35,7 +35,7 @@ export default function TableActions({ rol }: Props) {
     getAllPermissions().then((data) => {
       setPermissions(data)
     })
-  }, [])
+  }, [rol])
   const toggleModal = () => setIsOpen(!isOpen)
   return (
     <Dialog open={isOpen} onOpenChange={toggleModal}>

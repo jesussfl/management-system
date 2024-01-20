@@ -1,6 +1,5 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button'
 import { FileDown, User2 } from 'lucide-react'
 import { Metadata } from 'next'
@@ -12,7 +11,6 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import ModalForm from '@/modules/common/components/modal-form'
 import {
   Tabs,
   TabsContent,
@@ -21,12 +19,18 @@ import {
 } from '@/modules/common/components/tabs/tabs'
 
 import { RolesTable } from '@/modules/usuarios/components/roles-table'
+import { PermissionsTable } from '@/modules/usuarios/components/permissions-table'
+
+import ModalForm from '@/modules/common/components/modal-form'
 import RolesForm from '@/modules/usuarios/components/roles-form'
 import PermissionsForm from '@/modules/usuarios/components/permissions-form'
-import { PermissionsTable } from '@/modules/usuarios/components/permissions-table'
+
 import { getAllUsers } from '@/lib/actions/users'
 import { getAllRoles } from '@/lib/actions/roles'
 import { getAllPermissions } from '@/lib/actions/permissions'
+import { validateUserPermissions } from '@/lib/data/validate-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+
 export const metadata: Metadata = {
   title: 'Recibimientos',
   description: 'Desde aquí puedes administrar la entrada del inventario',
@@ -36,6 +40,11 @@ export default async function Page() {
   const usersData = await getAllUsers()
   const rolesData = await getAllRoles()
   const permissionsData = await getAllPermissions()
+
+  // const isAuthorized = await validateUserPermissions({
+  //   section: SECTION_NAMES.USUARIOS,
+  // })
+
   return (
     <>
       <PageHeader>

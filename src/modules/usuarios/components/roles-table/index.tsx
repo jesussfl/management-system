@@ -1,11 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from '@radix-ui/react-icons'
+import { CaretSortIcon, ChevronDownIcon } from '@radix-ui/react-icons'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -25,9 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { Input } from '@/modules/common/components/input/input'
@@ -60,14 +53,14 @@ export const columns: ColumnDef<Rol>[] = [
           (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Seleccionar todas las filas"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Seleccionar la fila"
       />
     ),
     enableSorting: false,
@@ -86,14 +79,12 @@ export const columns: ColumnDef<Rol>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('rol')}</div>,
+    cell: ({ row }) => <div>{row.getValue('rol')}</div>,
   },
   {
     accessorKey: 'descripcion',
     header: () => <div className="text-left">Descripcion</div>,
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue('descripcion')}</div>
-    ),
+    cell: ({ row }) => <div>{row.getValue('descripcion')}</div>,
   },
   {
     accessorKey: 'permisos',

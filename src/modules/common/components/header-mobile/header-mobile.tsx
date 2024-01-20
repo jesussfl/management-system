@@ -5,7 +5,7 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-import { SIDE_MENU_ITEMS } from '@/utils/constants/side-menu-items'
+import { SIDE_MENU_ITEMS } from '@/utils/constants/sidebar-constants'
 import { SideMenuItem } from '@/types/types'
 import { motion, useCycle } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'

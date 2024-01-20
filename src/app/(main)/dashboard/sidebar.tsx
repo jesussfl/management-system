@@ -3,7 +3,7 @@ import { CustomFlowbiteTheme, Sidebar } from 'flowbite-react'
 import type { FC } from 'react'
 
 import { twMerge } from 'tailwind-merge'
-import { SIDE_MENU_ITEMS } from '@/utils/constants/side-menu-items'
+import { SIDE_MENU_ITEMS } from '@/utils/constants/sidebar-constants'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
