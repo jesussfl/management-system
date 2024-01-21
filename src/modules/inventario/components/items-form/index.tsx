@@ -63,7 +63,6 @@ export default function ItemsForm({
   const handleNextStep = async () => {
     if (currentStep === 1) {
       checkRowItemExists(form.getValues('nombre')).then((res) => {
-        console.log(res)
         if (res && !defaultValues) {
           form.setError('nombre', {
             type: 'custom',
@@ -83,21 +82,21 @@ export default function ItemsForm({
     }
 
     if (currentStep === 2) {
-      form
-        .trigger(['clasificacion', 'unidad_empaque', 'categoria', 'tipo'])
-        .then(() => {
-          if (
-            form.formState.errors.clasificacion ||
-            form.formState.errors.unidad_empaque ||
-            form.formState.errors.categoria
-          ) {
-            return
-          }
-          setCurrentStep((prev) => prev + 1)
-        })
-      if (form.formState.errors) {
-        return
-      }
+      // form
+      //   .trigger(['clasificacion', 'unidad_empaque', 'categoria', 'tipo'])
+      //   .then(() => {
+      //     if (
+      //       form.formState.errors.clasificacion ||
+      //       form.formState.errors.unidad_empaque ||
+      //       form.formState.errors.categoria
+      //     ) {
+      //       return
+      //     }
+      //     setCurrentStep((prev) => prev + 1)
+      //   })
+      // if (form.formState.errors) {
+      //   return
+      // }
       setCurrentStep((prev) => prev + 1)
     }
 

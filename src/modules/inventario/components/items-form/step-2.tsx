@@ -12,56 +12,53 @@ import {
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
 import { Combobox } from '@/modules/common/components/combobox'
-import { Renglones, Clasificacion, UnidadEmpaque } from '@prisma/client'
 
-type ClasificacionCombobox = {
-  value: Clasificacion
+import { useEffect, useState, useTransition } from 'react'
+import { getAllCategories } from '@/lib/actions/categories'
+import { getAllClassifications } from '@/lib/actions/classifications'
+
+type ComboboxData = {
+  value: number
   label: string
 }
-type UnidadEmpaqueCombobox = {
-  value: UnidadEmpaque
-  label: string
-}
 
-const Clasificaciones: ClasificacionCombobox[] = [
+const Unidades_Empaque: ComboboxData[] = [
   {
-    value: 'ARTICULOS_OFICINA',
-    label: 'Articulos de Oficina',
-  },
-  {
-    value: 'EQUIPAMIENTO_MILITAR',
-    label: 'Equipamiento Militar',
-  },
-  {
-    value: 'LIQUIDOS',
-    label: 'Liquidos',
-  },
-  {
-    value: 'MATERIALES_CONSTRUCCION',
-    label: 'Materiales de Construcción',
-  },
-  {
-    value: 'REPUESTOS',
-    label: 'Repuestos',
-  },
-  {
-    value: 'OTRO',
-    label: 'Otro',
-  },
-]
-
-const Unidades_Empaque: UnidadEmpaqueCombobox[] = [
-  {
-    value: 'BARRIL',
+    value: 1,
     label: 'Barril',
   },
   {
-    value: 'BIDON',
+    value: 2,
     label: 'Bidón',
   },
 ]
 export const Step2 = () => {
+  const [isPending, startTransition] = useTransition()
+  const [categories, setCategories] = useState<ComboboxData[]>([])
+  const [classifications, setClassifications] = useState<ComboboxData[]>([])
   const form = useFormContext()
+
+  useEffect(() => {
+    startTransition(() => {
+      getAllCategories().then((data) => {
+        const transformedData = data.map((category) => ({
+          value: category.id,
+          label: category.nombre,
+        }))
+
+        setCategories(transformedData)
+      })
+
+      getAllClassifications().then((data) => {
+        const transformedData = data.map((classification) => ({
+          value: classification.id,
+          label: classification.nombre,
+        }))
+
+        setClassifications(transformedData)
+      })
+    })
+  }, [])
 
   return (
     <div className="flex flex-col gap-5 mb-8">
@@ -86,7 +83,7 @@ export const Step2 = () => {
               <FormLabel>Clasificación</FormLabel>
               <Combobox
                 name={field.name}
-                data={Clasificaciones}
+                data={categories}
                 form={form}
                 field={field}
               />
@@ -106,7 +103,7 @@ export const Step2 = () => {
               <FormLabel>Categoría</FormLabel>
               <Combobox
                 name={field.name}
-                data={Clasificaciones}
+                data={classifications}
                 form={form}
                 field={field}
                 disabled={form.watch('clasificacion') === undefined}

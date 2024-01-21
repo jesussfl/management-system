@@ -20,7 +20,7 @@ import {
 
 type ComboboxProps = {
   name: string
-  data: { label: string; value: string }[]
+  data: { label: string; value: number }[]
   field: any
   form: any
   disabled?: boolean

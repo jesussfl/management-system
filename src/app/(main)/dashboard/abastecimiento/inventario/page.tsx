@@ -12,7 +12,6 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
-  PageTemplate,
 } from '@/modules/layout/templates/page'
 import {
   Tabs,
@@ -20,68 +19,22 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/common/components/table/table'
+
 import ItemsForm from '@/modules/inventario/components/items-form'
 import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { getAllItems } from '@/lib/actions/items'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { ClassificationsTable } from '@/modules/inventario/components/classification-table'
+import { getAllClassifications } from '@/lib/actions/classifications'
+import { CategoriesTable } from '@/modules/inventario/components/categories-table'
+import ClassificationsForm from '@/modules/inventario/components/classification-form'
+import CategoriesForm from '@/modules/inventario/components/categories-form'
+import { getAllCategories } from '@/lib/actions/categories'
 
 export const metadata: Metadata = {
   title: 'Inventario',
   description: 'Desde aquí puedes ver todos tus renglones',
 }
-
-const invoices = [
-  {
-    invoice: 'INV001',
-    paymentStatus: 'Paid',
-    totalAmount: '$250.00',
-    paymentMethod: 'Credit Card',
-  },
-  {
-    invoice: 'INV002',
-    paymentStatus: 'Pending',
-    totalAmount: '$150.00',
-    paymentMethod: 'PayPal',
-  },
-  {
-    invoice: 'INV003',
-    paymentStatus: 'Unpaid',
-    totalAmount: '$350.00',
-    paymentMethod: 'Bank Transfer',
-  },
-  {
-    invoice: 'INV004',
-    paymentStatus: 'Paid',
-    totalAmount: '$450.00',
-    paymentMethod: 'Credit Card',
-  },
-  {
-    invoice: 'INV005',
-    paymentStatus: 'Paid',
-    totalAmount: '$550.00',
-    paymentMethod: 'PayPal',
-  },
-  {
-    invoice: 'INV006',
-    paymentStatus: 'Pending',
-    totalAmount: '$200.00',
-    paymentMethod: 'Bank Transfer',
-  },
-  {
-    invoice: 'INV007',
-    paymentStatus: 'Unpaid',
-    totalAmount: '$300.00',
-    paymentMethod: 'Credit Card',
-  },
-]
 
 export default async function Page() {
   const isAuthorized = await validateUserPermissions({
@@ -89,6 +42,8 @@ export default async function Page() {
   })
 
   const itemsData = await getAllItems()
+  const classificationsData = await getAllClassifications()
+  const categoriesData = await getAllCategories()
 
   return (
     <>
@@ -123,64 +78,22 @@ export default async function Page() {
           <PageContent>
             <div className="flex w-full gap-8 p-3">
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <h4 className="font-semibold">Lista de clasificaciones</h4>
-                <Table>
-                  {/* <TableCaption>
-                    Lista de clasificaciones en el inventario
-                  </TableCaption> */}
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Nombre</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Categorías</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invoices.map((invoice) => (
-                      <TableRow key={invoice.invoice}>
-                        <TableCell className="font-medium">
-                          {invoice.invoice}
-                        </TableCell>
-                        <TableCell>{invoice.paymentStatus}</TableCell>
-                        <TableCell>{invoice.paymentMethod}</TableCell>
-                        <TableCell className="text-right">
-                          {invoice.totalAmount}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="flex justify-between">
+                  <h4 className="font-semibold">Lista de Clasificaciones</h4>
+                  <ModalForm triggerName="Nueva clasificación">
+                    <ClassificationsForm />
+                  </ModalForm>
+                </div>
+                <ClassificationsTable data={classificationsData} />
               </div>
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <h4 className="font-semibold">Lista de clasificaciones</h4>
-                <Table>
-                  {/* <TableCaption>
-                    Lista de clasificaciones en el inventario
-                  </TableCaption> */}
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Nombre</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Categorías</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invoices.map((invoice) => (
-                      <TableRow key={invoice.invoice}>
-                        <TableCell className="font-medium">
-                          {invoice.invoice}
-                        </TableCell>
-                        <TableCell>{invoice.paymentStatus}</TableCell>
-                        <TableCell>{invoice.paymentMethod}</TableCell>
-                        <TableCell className="text-right">
-                          {invoice.totalAmount}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <div className="flex justify-between">
+                  <h4 className="font-semibold">Lista de Categorías</h4>
+                  <ModalForm triggerName="Nuevo categoría">
+                    <CategoriesForm />
+                  </ModalForm>
+                </div>
+                <CategoriesTable data={categoriesData} />
               </div>
             </div>
           </PageContent>

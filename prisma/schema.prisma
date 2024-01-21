@@ -129,36 +129,6 @@ model Subsistemas {
   // recibimientos_detalles recibimientos_detalles[]
 }
 
-enum Clasificacion {
-  REPUESTOS
-  ARTICULOS_OFICINA
-  LIQUIDOS
-  EQUIPAMIENTO_MILITAR
-  MATERIALES_CONSTRUCCION
-  ALIMENTOS
-  OTRO
-}
-
-enum UnidadEmpaque {
-  CAJA
-  BARRIL
-  BIDON
-  BOTELLA
-  BOLSA_HERMETICA
-  CONTENEDOR_PLASTICO
-  ESTUCHE
-  BANDEJA
-  CAJA_ARCHIVADOR
-  SOBRE
-  CONTENEDOR_ESPECIAL
-  ESTUCHE_TRANSPORTE
-  BOLSA_SELLADA
-  FUNDA_PROTECCION
-  CONTENEDOR_SELLADO
-  BOLSA_VACIO
-  OTRO
-}
-
 enum RenglonStates {
   ACTIVO        @map("Activo")
   ELIMINADO     @map("Eliminado")
@@ -166,19 +136,46 @@ enum RenglonStates {
   DESHABILITADO @map("Deshabilitado")
 }
 
+model UnidadEmpaque {
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique
+  descripcion String?
+
+  Renglones Renglones[]
+}
+
+model Categoria {
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
+
+  Renglones Renglones[]
+}
+
+model Clasificacion {
+  id          Int         @id @default(autoincrement())
+  nombre      String      @unique
+  descripcion String
+  Renglones   Renglones[]
+}
+
 model Renglones {
-  id             Int                     @id @default(autoincrement())
-  nombre         String                  @unique
-  descripcion    String
-  clasificacion  Clasificacion
-  categoria      String
-  tipo           String?
-  unidad_empaque UnidadEmpaque
-  stock_minimo   Int                     @default(1)
-  stock_maximo   Int?
-  numero_parte   String?
-  estado         RenglonStates?          @default(ACTIVO)
-  recibimientos  Detalles_recibimiento[]
+  id            Int                     @id @default(autoincrement())
+  nombre        String                  @unique
+  descripcion   String
+  tipo          String?
+  stock_minimo  Int                     @default(1)
+  stock_maximo  Int?
+  numero_parte  String?
+  estado        RenglonStates?          @default(ACTIVO)
+  recibimientos Detalles_recibimiento[]
+
+  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
+  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
+  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
+  unidadEmpaqueId Int
+  clasificacionId Int
+  categoriaId     Int
 }
 
 model almacenes {

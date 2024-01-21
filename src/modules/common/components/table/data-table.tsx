@@ -67,6 +67,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   useEffect(() => {
     if (!onSelectedRowsChange) return
     onSelectedRowsChange(lastSelectedRow)
+    //@ts-ignore
   }, [selectedRows])
 
   const table = useReactTable({

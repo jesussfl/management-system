@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Permiso } from '@prisma/client'
+import { Categoria, Clasificacion, Permiso } from '@prisma/client'
 import {
   Select,
   SelectContent,
@@ -30,85 +30,35 @@ import {
 } from '@/modules/common/components/select/select'
 import Link from 'next/link'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  createClassification,
+  updateClassification,
+} from '@/lib/actions/classifications'
+import { createCategory, updateCategory } from '@/lib/actions/categories'
 interface Props {
-  defaultValues?: Permiso
+  defaultValues?: Categoria
   close?: () => void
 }
-
-enum Permissions {
-  CREAR = 'Crear',
-  LEER = 'Leer',
-  ACTUALIZAR = 'Actualizar',
-  ELIMINAR = 'Eliminar',
-  FULL = 'Full',
-}
-
-//extends Permiso
-
-//type FormValues = Omit<Permiso, 'key'>
 
 type FormValues = {
   nombre: string
   descripcion: string
-  seccion: SECTION_NAMES
-  permiso: Permissions
 }
 
-const destructureKey = (key: string) => {
-  const [seccion, permiso] = key.split(':')
-  return {
-    seccion: seccion as SECTION_NAMES,
-    permiso: permiso as Permissions,
-  }
-}
-
-//TODO: Improve UX to add multiple permissions at the same time
-
-const formatDefaultValues = (defaultValues?: Permiso) => {
-  if (!defaultValues) {
-    return {
-      seccion: undefined,
-      permiso: undefined,
-      nombre: '',
-      descripcion: '',
-    }
-  }
-  const { seccion, permiso } = destructureKey(defaultValues?.key)
-  return {
-    ...defaultValues,
-    seccion,
-    permiso,
-  }
-}
-
-export default function PermissionsForm({ defaultValues, close }: Props) {
+export default function CategoriesForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
 
   const form = useForm<FormValues>({
-    defaultValues: formatDefaultValues(defaultValues),
+    defaultValues,
   })
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (!values.permiso && !values.seccion) {
-      form.setError('permiso', {
-        type: 'custom',
-        message: 'Debe seleccionar un permiso y una sección',
-      })
-      return
-    }
-
-    const formattedValues = {
-      permiso: values.nombre,
-      descripcion: values.descripcion,
-      key: `${values.seccion}:${values.permiso}`,
-    }
-
     if (defaultValues) {
       React.startTransition(() => {
-        updatePermiso(defaultValues.id, formattedValues).then((data) => {
+        updateCategory(defaultValues.id, values).then((data) => {
           if (data?.success) {
             toast({
-              title: 'Permiso actualizado',
-              description: 'El permiso se ha actualizado correctamente',
+              title: 'Categoria actualizada',
+              description: 'La categoria se ha actualizado correctamente',
               variant: 'success',
             })
             close && close()
@@ -117,7 +67,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
       })
     } else {
       React.startTransition(() => {
-        createPermiso(formattedValues).then((data) => {
+        createCategory(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -127,8 +77,8 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
 
           if (data?.success) {
             toast({
-              title: 'Permiso creado',
-              description: 'El permiso se ha creado correctamente',
+              title: 'Categoria creada',
+              description: 'La categoria se ha creado correctamente',
               variant: 'success',
             })
             close && close()
@@ -149,7 +99,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
       >
         <DialogHeader className="pb-3 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega un nuevo permiso
+            Agrega una nueva categoría
           </DialogTitle>
         </DialogHeader>
         <div className="px-24">
@@ -169,7 +119,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
             }}
             render={({ field }) => (
               <FormItem className="">
-                <FormLabel>Permiso</FormLabel>
+                <FormLabel>Nombre</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -228,74 +178,10 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="permiso"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Permiso</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona el permiso que quieres asignar" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.keys(Permissions).map((permission) => (
-                      <SelectItem key={permission} value={permission}>
-                        {permission}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href="/examples/forms">email settings</Link>.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="seccion"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Seccion</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona la sección que quieres asignar al permiso" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {Object.keys(SECTION_NAMES).map((section) => (
-                      <SelectItem key={section} value={section}>
-                        {section}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href="/examples/forms">email settings</Link>.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          {(form.formState.errors.permiso ||
-            form.formState.errors.descripcion) && (
+          {form.formState.errors.descripcion && (
             <p className="text-sm font-medium text-destructive">
               Corrige los campos en rojo
             </p>
