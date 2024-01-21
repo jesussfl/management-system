@@ -45,53 +45,75 @@ export const Step3 = () => {
           </FormItem>
         )}
       />
-      <FormField
-        control={form.control}
-        name="stock_minimo"
-        rules={{
-          required: true,
-        }}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Stock Mínimo</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ingresa el stock mínimo"
-                {...field}
-                onChange={(event) => {
-                  field.onChange(parseInt(event.target.value))
-                }}
-                value={field.value || ''}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name="stock_maximo"
-        rules={{
-          required: false,
-        }}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Stock Máximo</FormLabel>
-            <FormControl>
-              <Input
-                type="number"
-                placeholder="Ingresa el stock máximo"
-                {...field}
-                onChange={(event) => {
-                  field.onChange(parseInt(event.target.value))
-                }}
-                value={field.value || ''}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="flex flex-1 gap-4">
+        <FormField
+          control={form.control}
+          name="stock_minimo"
+          rules={{
+            required: true,
+            min: 0,
+            max: 1000000,
+            validate: (value) => {
+              if (form.getValues('stock_maximo')) {
+                if (value > form.getValues('stock_maximo')) {
+                  return 'El stock minimo no puede ser mayor al stock maximo'
+                }
+                return true
+              }
+              return true
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Stock Mínimo</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ingresa el stock mínimo"
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(parseInt(event.target.value))
+                  }}
+                  value={field.value || ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="stock_maximo"
+          rules={{
+            required: false,
+            validate: (value) => {
+              if (form.getValues('stock_minimo')) {
+                if (value < form.getValues('stock_minimo')) {
+                  return 'El stock maximo no puede ser menor al stock minimo'
+                }
+                return true
+              }
+              return true
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Stock Máximo</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="Ingresa el stock máximo"
+                  {...field}
+                  onChange={(event) => {
+                    field.onChange(parseInt(event.target.value))
+                  }}
+                  value={field.value || ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   )
 }

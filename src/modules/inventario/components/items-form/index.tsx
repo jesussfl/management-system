@@ -6,7 +6,7 @@ import { Button } from '@/modules/common/components/button'
 import { Form } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { Renglones } from '@prisma/client'
-import { createItem, updateItem, checkRowItemExists } from '@/lib/actions/items'
+import { createItem, updateItem, checkItemExistance } from '@/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import {
@@ -34,7 +34,7 @@ export default function ItemsForm({
   const { toast } = useToast()
 
   const form = useForm<FormValues>({
-    criteriaMode: 'firstError',
+    mode: 'all',
     defaultValues,
   })
   const [currentStep, setCurrentStep] = React.useState(1)
@@ -60,52 +60,52 @@ export default function ItemsForm({
       })
     }
   }
+
+  const validateAndProceed = async (
+    fields: Array<keyof FormValues>
+  ): Promise<void> => {
+    await form.trigger(fields)
+
+    if (!Object.values(form.formState.errors).some(Boolean)) {
+      setCurrentStep((prev) => prev + 1)
+    }
+  }
+
   const handleNextStep = async () => {
-    if (currentStep === 1) {
-      checkRowItemExists(form.getValues('nombre')).then((res) => {
-        if (res && !defaultValues) {
+    switch (currentStep) {
+      case 1:
+        const name = form.getValues('nombre')
+        const itemExists = await checkItemExistance(name)
+
+        if (itemExists && !defaultValues) {
           form.setError('nombre', {
             type: 'custom',
-            message: 'Ya existe un renglon con este nombre',
+            message: 'Ya existe un renglón con este nombre',
           })
-        } else {
-          form.trigger(['nombre', 'descripcion']).then(() => {
-            if (
-              !form.formState.errors.nombre &&
-              !form.formState.errors.descripcion
-            ) {
-              setCurrentStep((prev) => prev + 1)
-            }
-          })
+          return
         }
-      })
-    }
 
-    if (currentStep === 2) {
-      // form
-      //   .trigger(['clasificacion', 'unidad_empaque', 'categoria', 'tipo'])
-      //   .then(() => {
-      //     if (
-      //       form.formState.errors.clasificacion ||
-      //       form.formState.errors.unidad_empaque ||
-      //       form.formState.errors.categoria
-      //     ) {
-      //       return
-      //     }
-      //     setCurrentStep((prev) => prev + 1)
-      //   })
-      // if (form.formState.errors) {
-      //   return
-      // }
-      setCurrentStep((prev) => prev + 1)
-    }
+        await validateAndProceed(['nombre', 'descripcion'])
+        break
 
-    if (currentStep === 3) {
-      form.trigger(['stock_minimo', 'stock_maximo', 'numero_parte'])
-      if (form.formState.errors) {
-        return
-      }
-      setCurrentStep((prev) => prev + 1)
+      case 2:
+        await validateAndProceed([
+          'clasificacionId',
+          'unidadEmpaqueId',
+          'categoriaId',
+        ])
+        break
+
+      case 3:
+        await validateAndProceed([
+          'stock_minimo',
+          'stock_maximo',
+          'numero_parte',
+        ])
+        break
+
+      default:
+        break
     }
   }
 
@@ -143,32 +143,27 @@ export default function ItemsForm({
             </p>
           )}
 
-          {currentStep < 3 && currentStep > 1 && (
-            <Button
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault()
-                handleBackStep()
-              }}
-            >
-              Volver
-            </Button>
-          )}
-          {currentStep < 3 && (
-            <Button
-              onClick={(e) => {
-                e.preventDefault()
-                handleNextStep()
-              }}
-            >
-              Siguiente
-            </Button>
-          )}
-          {currentStep === 3 && (
-            <Button variant="default" type="submit">
-              Guardar
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            disabled={currentStep === 1}
+            onClick={(e) => {
+              e.preventDefault()
+              handleBackStep()
+            }}
+          >
+            Volver
+          </Button>
+
+          <Button
+            onClick={(e) => {
+              if (currentStep === 3) return
+
+              e.preventDefault()
+              handleNextStep()
+            }}
+          >
+            {currentStep === 3 ? 'Guardar' : 'Siguiente'}
+          </Button>
         </DialogFooter>
       </form>
     </Form>

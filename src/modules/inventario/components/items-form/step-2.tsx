@@ -16,6 +16,7 @@ import { Combobox } from '@/modules/common/components/combobox'
 import { useEffect, useState, useTransition } from 'react'
 import { getAllCategories } from '@/lib/actions/categories'
 import { getAllClassifications } from '@/lib/actions/classifications'
+import { getAllPresentations } from '@/lib/actions/presentations'
 
 type ComboboxData = {
   value: number
@@ -36,6 +37,7 @@ export const Step2 = () => {
   const [isPending, startTransition] = useTransition()
   const [categories, setCategories] = useState<ComboboxData[]>([])
   const [classifications, setClassifications] = useState<ComboboxData[]>([])
+  const [presentations, setPresentations] = useState<ComboboxData[]>([])
   const form = useFormContext()
 
   useEffect(() => {
@@ -57,6 +59,15 @@ export const Step2 = () => {
 
         setClassifications(transformedData)
       })
+
+      getAllPresentations().then((data) => {
+        const transformedData = data.map((presentation) => ({
+          value: presentation.id,
+          label: presentation.nombre,
+        }))
+
+        setPresentations(transformedData)
+      })
     })
   }, [])
 
@@ -71,99 +82,90 @@ export const Step2 = () => {
           correctamente
         </FormInstructionsDescription>
       </FormInstructions>
-      <div className="flex justify-between gap-8">
-        <FormField
-          control={form.control}
-          name="clasificacion"
-          rules={{
-            required: 'Este campo es requerido',
-          }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full ">
-              <FormLabel>Clasificación</FormLabel>
-              <Combobox
-                name={field.name}
-                data={categories}
-                form={form}
-                field={field}
-              />
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="categoria"
-          rules={{
-            required: 'Este campo es requerido',
-          }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full ">
-              <FormLabel>Categoría</FormLabel>
-              <Combobox
-                name={field.name}
-                data={classifications}
-                form={form}
-                field={field}
-                disabled={form.watch('clasificacion') === undefined}
-              />
-              <FormDescription>
-                {form.watch('clasificacion') === undefined
-                  ? 'Elige una clasificacion primero'
-                  : ''}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="flex justify-between gap-8">
-        <FormField
-          control={form.control}
-          name="unidad_empaque"
-          rules={{
-            required: 'Este campo es requerido',
-          }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col w-full gap-2.5">
-              <FormLabel>Unidad de Empaque</FormLabel>
-              <Combobox
-                name={field.name}
-                data={Unidades_Empaque}
-                form={form}
-                field={field}
-                disabled={form.watch('clasificacion') === undefined}
-              />
-              <FormDescription>
-                {form.watch('clasificacion') === undefined
-                  ? 'Elige una clasificacion primero'
-                  : ''}
-              </FormDescription>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="tipo"
-          render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>{`Tipo (Opcional)`}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Ingresa el tipo"
-                  {...field}
-                  value={field.value || ''}
+      <FormField
+        control={form.control}
+        name="clasificacionId"
+        rules={{
+          required: 'Este campo es requerido',
+        }}
+        render={({ field }) => (
+          <FormItem className="flex flex-col w-full ">
+            <FormLabel>Clasificación</FormLabel>
+            <Combobox
+              name={field.name}
+              data={categories}
+              form={form}
+              field={field}
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {form.watch('clasificacionId') !== undefined && (
+        <>
+          <FormField
+            control={form.control}
+            name="categoriaId"
+            rules={{
+              required: 'Este campo es requerido',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full ">
+                <FormLabel>Categoría</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={classifications}
+                  form={form}
+                  field={field}
+                  disabled={form.watch('clasificacionId') === undefined}
                 />
-              </FormControl>
+                <FormDescription></FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="unidadEmpaqueId"
+            rules={{
+              required: 'Este campo es requerido',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full gap-2.5">
+                <FormLabel>Unidad de Empaque</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={presentations}
+                  form={form}
+                  field={field}
+                  disabled={form.watch('clasificacionId') === undefined}
+                />
+                <FormDescription></FormDescription>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </>
+      )}
+      <FormField
+        control={form.control}
+        name="tipo"
+        render={({ field }) => (
+          <FormItem className="">
+            <FormLabel>{`Tipo (Opcional)`}</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Ingresa el tipo"
+                {...field}
+                value={field.value || ''}
+              />
+            </FormControl>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   )
 }

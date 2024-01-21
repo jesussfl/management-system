@@ -59,7 +59,7 @@ export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
                   if (form.formState.errors[name]) {
                     form.clearErrors(name)
                   }
-                  form.setValue(name, info.value)
+                  form.setValue(name, Number(info.value))
                 }}
               >
                 {info.label}

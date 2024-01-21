@@ -59,13 +59,13 @@ export const columns: ColumnDef<Renglones>[] = [
     },
   },
   {
-    accessorKey: 'clasificacion',
+    accessorKey: 'clasificacion.nombre',
     header: ({ column }) => (
       <HeaderCell column={column} value="Clasificación" />
     ),
   },
   {
-    accessorKey: 'categoria',
+    accessorKey: 'categoria.nombre',
     header: ({ column }) => <HeaderCell column={column} value="Categoría" />,
   },
   {
@@ -74,7 +74,7 @@ export const columns: ColumnDef<Renglones>[] = [
   },
 
   {
-    accessorKey: 'unidad_empaque',
+    accessorKey: 'unidad_empaque.nombre',
     header: ({ column }) => (
       <HeaderCell column={column} value="Unidad de empaque" />
     ),

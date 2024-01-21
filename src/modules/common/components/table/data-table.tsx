@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   ColumnDef,
   flexRender,
@@ -36,8 +36,8 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData extends { id: any }, TValue>({
-  columns,
-  data,
+  columns: tableColumns,
+  data: tableData,
   isColumnFilterEnabled = true,
   onSelectedRowsChange,
   selectedData,
@@ -49,6 +49,10 @@ export function DataTable<TData extends { id: any }, TValue>({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [selectedRows, setSelectedRows] = useState<any[]>([])
   const [lastSelectedRow, setLastSelectedRow] = useState<any>('')
+
+  //Memoization
+  const data = useMemo(() => tableData, [tableData])
+  const columns = useMemo(() => tableColumns, [tableColumns])
 
   useEffect(() => {
     const handleSelectionState = (selections: RowSelectionState) => {
@@ -67,7 +71,6 @@ export function DataTable<TData extends { id: any }, TValue>({
   useEffect(() => {
     if (!onSelectedRowsChange) return
     onSelectedRowsChange(lastSelectedRow)
-    //@ts-ignore
   }, [selectedRows])
 
   const table = useReactTable({

@@ -22,7 +22,9 @@ export const createItem = async (data: FormValues) => {
     }
 
     await prisma.renglones.create({
-      data,
+      data: {
+        ...data,
+      },
     })
     revalidatePath('/dashboard/abastecimiento/renglones')
   } catch (error) {
@@ -64,7 +66,7 @@ export const deleteItem = async (id: number) => {
 
   revalidatePath('/dashboard/abastecimiento/recibimientos')
 }
-export const checkRowItemExists = async (name: string) => {
+export const checkItemExistance = async (name: string) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -91,6 +93,9 @@ export const getAllItems = async () => {
   const renglones = await prisma.renglones.findMany({
     include: {
       recibimientos: true,
+      clasificacion: true,
+      unidad_empaque: true,
+      categoria: true,
     },
   })
   return renglones

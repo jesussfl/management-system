@@ -80,7 +80,10 @@ export default async function Page() {
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
                 <div className="flex justify-between">
                   <h4 className="font-semibold">Lista de Clasificaciones</h4>
-                  <ModalForm triggerName="Nueva clasificación">
+                  <ModalForm
+                    triggerName="Nueva clasificación"
+                    triggerVariant="secondary"
+                  >
                     <ClassificationsForm />
                   </ModalForm>
                 </div>
@@ -89,7 +92,10 @@ export default async function Page() {
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
                 <div className="flex justify-between">
                   <h4 className="font-semibold">Lista de Categorías</h4>
-                  <ModalForm triggerName="Nuevo categoría">
+                  <ModalForm
+                    triggerName="Nuevo categoría"
+                    triggerVariant="secondary"
+                  >
                     <CategoriesForm />
                   </ModalForm>
                 </div>

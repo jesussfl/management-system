@@ -7,6 +7,17 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import { Button } from '@/modules/common/components/button'
 import { Plus } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
 
 type Props = {
   children: React.ReactNode
@@ -32,8 +43,20 @@ export default function ModalForm({
   open,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [showWarning, setShowWarning] = useState(false)
 
-  const toogleModal = () => setIsOpen(!isOpen)
+  const toogleModal = () => {
+    if (!isOpen) {
+      setIsOpen(true)
+      return
+    }
+    setShowWarning(true)
+  }
+
+  const closeWithWarning = () => {
+    setIsOpen(false)
+    setShowWarning(false)
+  }
 
   const childrenWithProps = cloneElement(children as React.ReactElement, {
     close: toogleModal,
@@ -42,7 +65,7 @@ export default function ModalForm({
   return (
     <Dialog
       open={open !== undefined ? open : isOpen}
-      onOpenChange={close ? close : toogleModal}
+      onOpenChange={toogleModal}
     >
       <DialogTrigger asChild>
         <Button
@@ -58,6 +81,27 @@ export default function ModalForm({
         className={`lg:max-w-screen-lg h-[${height}] overflow-hidden p-0`}
       >
         {childrenWithProps}
+
+        <AlertDialog open={showWarning}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                ¿Estás seguro que deseas salir?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Tus cambios no se guardarán
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setShowWarning(false)}>
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={closeWithWarning}>
+                Sí, salir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   )
