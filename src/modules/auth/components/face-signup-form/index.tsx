@@ -23,7 +23,10 @@ import { signupByFacialID, getAllUsers } from '@/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 
 import { useFaceio } from '@/lib/hooks/use-faceio'
-import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
+import {
+  errorMessages,
+  faceioErrorCode,
+} from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type FormValues = {
@@ -34,7 +37,7 @@ type FormValues = {
 
 export function FaceSignupForm() {
   const { toast } = useToast()
-  const { faceioRef } = useFaceio()
+  const { faceio } = useFaceio()
   const form = useForm<FormValues>()
 
   const [isPending, startTransition] = useTransition()
@@ -43,7 +46,7 @@ export function FaceSignupForm() {
     const { email, name, adminPassword } = values
 
     try {
-      let response = await faceioRef.current
+      let response = await faceio
         .enroll({
           locale: 'es',
           payload: {
@@ -52,7 +55,7 @@ export function FaceSignupForm() {
           permissionTimeout: 15,
           enrollIntroTimeout: 4,
         })
-        .catch((error: fioErrCode) => {
+        .catch((error: faceioErrorCode) => {
           console.log(error)
 
           const errorMessage = errorMessages[error] || error.toString()
@@ -112,6 +115,10 @@ export function FaceSignupForm() {
     }
   }
   const deleteFacialId = async () => {
+    console.log(
+      'Deleting facial ID... ',
+      process.env.NEXT_PUBLIC_FACEIO_API_KEY
+    )
     startTransition(() => {
       getAllUsers().then((users) => {
         users &&

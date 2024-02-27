@@ -137,9 +137,9 @@ enum RenglonStates {
 }
 
 model UnidadEmpaque {
-  id          Int     @id @default(autoincrement())
-  nombre      String  @unique
-  descripcion String?
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
 
   Renglones Renglones[]
 }

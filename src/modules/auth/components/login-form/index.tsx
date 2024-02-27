@@ -24,7 +24,10 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { login, loginByFacialID } from '@/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { useFaceio } from '@/lib/hooks/use-faceio'
-import { errorMessages, fioErrCode } from '@/utils/constants/face-auth-errors'
+import {
+  errorMessages,
+  faceioErrorCode,
+} from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 
 type FormValues = {
@@ -34,28 +37,27 @@ type FormValues = {
 
 function LoginForm() {
   const { toast } = useToast()
-  const { faceioRef } = useFaceio()
+  const { faceio } = useFaceio()
   const form = useForm<FormValues>()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams?.get('callbackUrl')
-
   const [isPending, startTransition] = useTransition()
 
   const authenticateByFacialID = async () => {
     try {
-      const response = await faceioRef.current
+      const response = await faceio
         ?.authenticate({
           locale: 'es',
         })
-        .catch((error: fioErrCode) => {
+        .catch((error: faceioErrorCode) => {
           const errorMessage = errorMessages[error] || error.toString()
 
-          if (error === fioErrCode.UNRECOGNIZED_FACE) {
+          if (error === faceioErrorCode.UNRECOGNIZED_FACE) {
             window.location.href = '/auth/signup?error=unrecognizedFace'
             return
           }
 
-          if (error === fioErrCode.SESSION_EXPIRED) {
+          if (error === faceioErrorCode.SESSION_EXPIRED) {
             toast({
               title: 'Por favor refresca la página',
               variant: 'destructive',
@@ -79,7 +81,7 @@ function LoginForm() {
             ),
           })
         })
-
+      console.log(response)
       loginByFacialID({ facialID: response.facialId }, callbackUrl).then(
         (res) => {
           if (res?.error) {

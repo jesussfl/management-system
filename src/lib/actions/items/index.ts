@@ -20,10 +20,33 @@ export const createItem = async (data: FormValues) => {
     if (exist) {
       throw new Error('Renglon already exists')
     }
-
+    console.log('data', data)
     await prisma.renglones.create({
       data: {
-        ...data,
+        nombre: data.nombre,
+        descripcion: data.descripcion,
+        tipo: data.tipo,
+        stock_minimo: data.stock_minimo,
+        stock_maximo: data.stock_maximo,
+        numero_parte: data.numero_parte,
+
+        clasificacion: {
+          connect: {
+            id: data.clasificacionId,
+          },
+        },
+
+        categoria: {
+          connect: {
+            id: data.categoriaId,
+          },
+        },
+
+        unidad_empaque: {
+          connect: {
+            id: data.unidadEmpaqueId,
+          },
+        },
       },
     })
     revalidatePath('/dashboard/abastecimiento/renglones')

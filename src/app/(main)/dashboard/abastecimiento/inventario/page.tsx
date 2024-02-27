@@ -30,6 +30,9 @@ import { CategoriesTable } from '@/modules/inventario/components/categories-tabl
 import ClassificationsForm from '@/modules/inventario/components/classification-form'
 import CategoriesForm from '@/modules/inventario/components/categories-form'
 import { getAllCategories } from '@/lib/actions/categories'
+import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
+import { PackagingUnitsTable } from '@/modules/inventario/components/packaging-units-table'
+import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -44,6 +47,7 @@ export default async function Page() {
   const itemsData = await getAllItems()
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
+  const packagingUnitsData = await getAllPackagingUnits()
 
   return (
     <>
@@ -68,6 +72,7 @@ export default async function Page() {
         <TabsList className="mx-5">
           <TabsTrigger value="items">Renglones</TabsTrigger>
           <TabsTrigger value="categories">Categorías</TabsTrigger>
+          <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
         </TabsList>
         <TabsContent value="items">
           <PageContent>
@@ -93,7 +98,7 @@ export default async function Page() {
                 <div className="flex justify-between">
                   <h4 className="font-semibold">Lista de Categorías</h4>
                   <ModalForm
-                    triggerName="Nuevo categoría"
+                    triggerName="Nueva categoría"
                     triggerVariant="secondary"
                   >
                     <CategoriesForm />
@@ -102,6 +107,20 @@ export default async function Page() {
                 <CategoriesTable data={categoriesData} />
               </div>
             </div>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="packagingUnits">
+          <PageContent>
+            <div className="flex justify-between">
+              <h4 className="font-semibold">Lista de Unidades de Empaque</h4>
+              <ModalForm
+                triggerName="Nueva Unidad de Empaque"
+                triggerVariant="secondary"
+              >
+                <PackagingUnitsForm />
+              </ModalForm>
+            </div>
+            <PackagingUnitsTable data={packagingUnitsData} />
           </PageContent>
         </TabsContent>
       </Tabs>

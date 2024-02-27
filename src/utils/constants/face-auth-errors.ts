@@ -2,7 +2,7 @@
  * enum that represents error codes for Facial ID Authentication using FaceIO API https://faceio.net/.
  * Each error code has a corresponding error message defined in the ErrorMessage type.
  */
-export enum fioErrCode {
+export enum faceioErrorCode {
   PERMISSION_REFUSED = 1,
   NO_FACES_DETECTED = 2,
   UNRECOGNIZED_FACE = 3,
@@ -27,43 +27,44 @@ export enum fioErrCode {
   MINORS_NOT_ALLOWED = 22,
 }
 export type ErrorMessage = {
-  [key in fioErrCode]: string
+  [key in faceioErrorCode]: string
 }
 
 /**
  * An object that maps error codes to corresponding error messages for Facial ID Authentication.
  * Error messages are written in Spanish.
  * @type {ErrorMessage}
- * @see {@link fioErrCode}
+ * @see {@link faceioErrorCode}
  * @see {@link ErrorMessage}
  * @example
- * const errorMessage = errorMessages[fioErrCode.UNRECOGNIZED_FACE];
+ * const errorMessage = errorMessages[faceioErrorCode.UNRECOGNIZED_FACE];
  * console.log(errorMessage); // 'Face not recognized'
  *
  *
  */
 export const errorMessages: ErrorMessage = {
-  [fioErrCode.PERMISSION_REFUSED]: 'Permiso denegado',
-  [fioErrCode.NO_FACES_DETECTED]: 'No se detectó ningun rostro',
-  [fioErrCode.UNRECOGNIZED_FACE]:
+  [faceioErrorCode.PERMISSION_REFUSED]: 'Permiso denegado',
+  [faceioErrorCode.NO_FACES_DETECTED]: 'No se detectó ningun rostro',
+  [faceioErrorCode.UNRECOGNIZED_FACE]:
     'El rostro no es reconocido en la base de datos, intente de nuevo o cree un ID Facial',
-  [fioErrCode.MANY_FACES]: 'Hay más de un rostro en la imagen',
-  [fioErrCode.PAD_ATTACK]: 'Ataque con almohadilla',
-  [fioErrCode.FACE_MISMATCH]: 'El segundo rostro no coincide con el primero',
-  [fioErrCode.NETWORK_IO]: 'Error de red',
-  [fioErrCode.WRONG_PIN_CODE]: 'Código de seguridad incorrecto',
-  [fioErrCode.PROCESSING_ERR]: 'Error de procesamiento',
-  [fioErrCode.UNAUTHORIZED]: 'No autorizado',
-  [fioErrCode.TERMS_NOT_ACCEPTED]: 'Debe aceptar los términos',
-  [fioErrCode.UI_NOT_READY]: 'Interfaz de usuario no lista',
-  [fioErrCode.SESSION_EXPIRED]: 'Sesión expirada',
-  [fioErrCode.TIMEOUT]: 'Timeout',
-  [fioErrCode.TOO_MANY_REQUESTS]: 'Demasiadas solicitudes',
-  [fioErrCode.EMPTY_ORIGIN]: 'Origen vacío',
-  [fioErrCode.FORBIDDDEN_ORIGIN]: 'Origen prohibido',
-  [fioErrCode.FORBIDDDEN_COUNTRY]: 'Pais prohibido',
-  [fioErrCode.UNIQUE_PIN_REQUIRED]: 'Código de seguridad único requerido',
-  [fioErrCode.SESSION_IN_PROGRESS]: 'Sesión en curso',
-  [fioErrCode.FACE_DUPLICATION]: 'Cara duplicada',
-  [fioErrCode.MINORS_NOT_ALLOWED]: 'Menores no permitidos',
+  [faceioErrorCode.MANY_FACES]: 'Hay más de un rostro en la imagen',
+  [faceioErrorCode.PAD_ATTACK]: 'Ataque con almohadilla',
+  [faceioErrorCode.FACE_MISMATCH]:
+    'El segundo rostro no coincide con el primero',
+  [faceioErrorCode.NETWORK_IO]: 'Error de red',
+  [faceioErrorCode.WRONG_PIN_CODE]: 'Código de seguridad incorrecto',
+  [faceioErrorCode.PROCESSING_ERR]: 'Error de procesamiento',
+  [faceioErrorCode.UNAUTHORIZED]: 'No autorizado',
+  [faceioErrorCode.TERMS_NOT_ACCEPTED]: 'Debe aceptar los términos',
+  [faceioErrorCode.UI_NOT_READY]: 'Interfaz de usuario no lista',
+  [faceioErrorCode.SESSION_EXPIRED]: 'Sesión expirada',
+  [faceioErrorCode.TIMEOUT]: 'Timeout',
+  [faceioErrorCode.TOO_MANY_REQUESTS]: 'Demasiadas solicitudes',
+  [faceioErrorCode.EMPTY_ORIGIN]: 'Origen vacío',
+  [faceioErrorCode.FORBIDDDEN_ORIGIN]: 'Origen prohibido',
+  [faceioErrorCode.FORBIDDDEN_COUNTRY]: 'Pais prohibido',
+  [faceioErrorCode.UNIQUE_PIN_REQUIRED]: 'Código de seguridad único requerido',
+  [faceioErrorCode.SESSION_IN_PROGRESS]: 'Sesión en curso',
+  [faceioErrorCode.FACE_DUPLICATION]: 'Cara duplicada',
+  [faceioErrorCode.MINORS_NOT_ALLOWED]: 'Menores no permitidos',
 }

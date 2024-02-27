@@ -25,6 +25,8 @@ type ComboboxProps = {
   form: any
   disabled?: boolean
 }
+
+//TODO: popover should be the same width as trigger
 export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
   return (
     <Popover>
@@ -46,6 +48,7 @@ export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
           </Button>
         </FormControl>
       </PopoverTrigger>
+
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Buscar..." className="h-9" />

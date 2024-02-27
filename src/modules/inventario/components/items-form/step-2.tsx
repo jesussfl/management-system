@@ -23,21 +23,11 @@ type ComboboxData = {
   label: string
 }
 
-const Unidades_Empaque: ComboboxData[] = [
-  {
-    value: 1,
-    label: 'Barril',
-  },
-  {
-    value: 2,
-    label: 'Bidón',
-  },
-]
 export const Step2 = () => {
   const [isPending, startTransition] = useTransition()
   const [categories, setCategories] = useState<ComboboxData[]>([])
   const [classifications, setClassifications] = useState<ComboboxData[]>([])
-  const [presentations, setPresentations] = useState<ComboboxData[]>([])
+  const [packagingUnits, setPackagingUnits] = useState<ComboboxData[]>([])
   const form = useFormContext()
 
   useEffect(() => {
@@ -66,7 +56,7 @@ export const Step2 = () => {
           label: presentation.nombre,
         }))
 
-        setPresentations(transformedData)
+        setPackagingUnits(transformedData)
       })
     })
   }, [])
@@ -93,7 +83,7 @@ export const Step2 = () => {
             <FormLabel>Clasificación</FormLabel>
             <Combobox
               name={field.name}
-              data={categories}
+              data={classifications}
               form={form}
               field={field}
             />
@@ -114,7 +104,7 @@ export const Step2 = () => {
                 <FormLabel>Categoría</FormLabel>
                 <Combobox
                   name={field.name}
-                  data={classifications}
+                  data={categories}
                   form={form}
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
@@ -135,7 +125,7 @@ export const Step2 = () => {
                 <FormLabel>Unidad de Empaque</FormLabel>
                 <Combobox
                   name={field.name}
-                  data={presentations}
+                  data={packagingUnits}
                   form={form}
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
