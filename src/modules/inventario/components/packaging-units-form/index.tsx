@@ -118,8 +118,8 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                 message: 'Debe tener al menos 3 caracteres',
               },
               maxLength: {
-                value: 70,
-                message: 'Debe tener un maximo de 70 caracteres',
+                value: 100,
+                message: 'Debe tener un maximo de 100 caracteres',
               },
             }}
             render={({ field }) => (
