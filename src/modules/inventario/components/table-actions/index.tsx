@@ -51,9 +51,7 @@ export default function TableActions({ renglon }: { renglon: Renglones }) {
         </DropdownMenuContent>
       </DropdownMenu>
       {dialogType === 'edit' ? (
-        <DialogContent
-          className={'lg:max-w-screen-lg h-[94%] overflow-hidden p-0'}
-        >
+        <DialogContent className={'lg:max-w-screen-lg overflow-hidden p-0'}>
           <ItemsForm defaultValues={renglon} close={toggleModal} />
         </DialogContent>
       ) : (

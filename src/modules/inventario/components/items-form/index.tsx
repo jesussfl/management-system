@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { Form } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
@@ -18,6 +18,28 @@ import { Step1 } from './step-1'
 import { Step2 } from './step-2'
 import { Step3 } from './step-3'
 
+function getDirtyValues<
+  DirtyFields extends Record<string, unknown>,
+  Values extends Record<keyof DirtyFields, unknown>,
+>(dirtyFields: DirtyFields, values: Values): Partial<typeof values> {
+  const dirtyValues = Object.keys(dirtyFields).reduce((prev, key) => {
+    // Unsure when RFH sets this to `false`, but omit the field if so.
+    if (!dirtyFields[key]) return prev
+
+    return {
+      ...prev,
+      [key]:
+        typeof dirtyFields[key] === 'object'
+          ? getDirtyValues(
+              dirtyFields[key] as DirtyFields,
+              values[key] as Values
+            )
+          : values[key],
+    }
+  }, {})
+
+  return dirtyValues
+}
 interface Props {
   defaultValues?: Renglones
   close?: () => void
@@ -32,21 +54,23 @@ export default function ItemsForm({
   close,
 }: Props): React.JSX.Element {
   const { toast } = useToast()
-
+  const isEditEnabled = !!defaultValues
   const form = useForm<FormValues>({
     mode: 'all',
     defaultValues,
   })
+
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [currentStep, setCurrentStep] = React.useState(1)
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (defaultValues) {
-      updateItem(defaultValues.id, data).then(() => {
+    if (isEditEnabled && isDirty) {
+      const dirtyValues = getDirtyValues(dirtyFields, data) as FormValues
+      updateItem(defaultValues.id, dirtyValues).then(() => {
         toast({
           title: 'Renglon actualizado',
           description: 'El renglon se ha actualizado correctamente',
           variant: 'success',
         })
-
         close && close()
       })
     } else {
@@ -123,7 +147,7 @@ export default function ItemsForm({
       >
         <DialogHeader className="pb-3 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega un nuevo renglón
+            {defaultValues ? 'Editar renglón' : 'Agrega un nuevo renglón'}
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             Paso {currentStep} de {'3'}

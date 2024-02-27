@@ -51,7 +51,9 @@ export const Step1 = () => {
                   if (form.formState.errors[field.name]) {
                     form.clearErrors(field.name)
                   }
-                  form.setValue(field.name, e.target.value)
+                  form.setValue(field.name, e.target.value, {
+                    shouldDirty: true,
+                  })
                 }}
               />
             </FormControl>
@@ -87,7 +89,9 @@ export const Step1 = () => {
                   if (form.formState.errors[field.name]) {
                     form.clearErrors(field.name)
                   }
-                  form.setValue(field.name, e.target.value)
+                  form.setValue(field.name, e.target.value, {
+                    shouldDirty: true,
+                  })
                 }}
               />
             </FormControl>
