@@ -5,10 +5,10 @@ import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
-import { Renglones } from '@prisma/client'
+import { Renglon } from '@prisma/client'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-export const columns: ColumnDef<Renglones>[] = [
+export const columns: ColumnDef<Renglon>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -47,7 +47,7 @@ export const columns: ColumnDef<Renglones>[] = [
     },
   },
   {
-    accessorKey: 'categoria',
+    accessorKey: 'categoria.nombre',
     header: ({ column }) => {
       return (
         <Button
@@ -62,6 +62,40 @@ export const columns: ColumnDef<Renglones>[] = [
       )
     },
   },
+
+  {
+    accessorKey: 'clasificacion.nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
+        >
+          Categoria
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'unidad_empaque.nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          size={'sm'}
+          className="text-xs"
+        >
+          Unidad de empaque
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
   {
     accessorKey: 'tipo',
     header: ({ column }) => {
@@ -72,7 +106,7 @@ export const columns: ColumnDef<Renglones>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Tipos
+          Tipo
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )

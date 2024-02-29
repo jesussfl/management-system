@@ -5,7 +5,7 @@ import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { Form } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
-import { Renglones } from '@prisma/client'
+import { Renglon } from '@prisma/client'
 import { createItem, updateItem, checkItemExistance } from '@/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
@@ -17,34 +17,13 @@ import {
 import { Step1 } from './step-1'
 import { Step2 } from './step-2'
 import { Step3 } from './step-3'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 
-function getDirtyValues<
-  DirtyFields extends Record<string, unknown>,
-  Values extends Record<keyof DirtyFields, unknown>,
->(dirtyFields: DirtyFields, values: Values): Partial<typeof values> {
-  const dirtyValues = Object.keys(dirtyFields).reduce((prev, key) => {
-    // Unsure when RFH sets this to `false`, but omit the field if so.
-    if (!dirtyFields[key]) return prev
-
-    return {
-      ...prev,
-      [key]:
-        typeof dirtyFields[key] === 'object'
-          ? getDirtyValues(
-              dirtyFields[key] as DirtyFields,
-              values[key] as Values
-            )
-          : values[key],
-    }
-  }, {})
-
-  return dirtyValues
-}
 interface Props {
-  defaultValues?: Renglones
+  defaultValues?: Renglon
   close?: () => void
 }
-type FormValues = Omit<Renglones, 'id'>
+type FormValues = Omit<Renglon, 'id'>
 
 /**
  * Form component that allows the user to add or update a "row item" with multiple steps and form validation.

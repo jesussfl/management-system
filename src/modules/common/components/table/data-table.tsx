@@ -94,7 +94,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   })
 
   return (
-    <div className="flex flex-1 flex-col justify-between px-2 gap-2">
+    <div className="flex flex-col px-2 gap-2">
       <DataTableFilters
         table={table}
         isColumnFilterEnabled={isColumnFilterEnabled}

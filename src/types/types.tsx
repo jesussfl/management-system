@@ -19,8 +19,8 @@ export type Renglon = {
   numero_parte: string
   unidad_de_medida: string
 }
-export type Renglones = Prisma.RenglonesGetPayload<{
+export type RenglonType = Prisma.RenglonGetPayload<{
   include: {
-    recibimientos: true
+    recepciones: true
   }
 }>

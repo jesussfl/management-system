@@ -9,7 +9,7 @@ import {
 
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
-import { Renglones } from '@prisma/client'
+import { Renglon } from '@prisma/client'
 
 import {
   Dialog,
@@ -20,7 +20,7 @@ import ItemsForm from '@/modules/inventario/components/items-form'
 import { useState } from 'react'
 
 import DeleteDialog from '../delete-dialog'
-export default function TableActions({ renglon }: { renglon: Renglones }) {
+export default function TableActions({ renglon }: { renglon: Renglon }) {
   const [isOpen, setIsOpen] = useState(false)
   const [dialogType, setDialogType] = useState('')
   const toggleModal = () => setIsOpen(!isOpen)

@@ -17,7 +17,7 @@ import {
 } from '@/modules/layout/templates/page'
 
 export const metadata: Metadata = {
-  title: 'Recibimientos',
+  title: 'Recepciones',
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
 export default async function Page() {

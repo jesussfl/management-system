@@ -2,9 +2,9 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Renglones } from '@prisma/client'
+import { Renglon } from '@prisma/client'
 
-type FormValues = Omit<Renglones, 'id'>
+type FormValues = Omit<Renglon, 'id'>
 export const createItem = async (data: FormValues) => {
   try {
     const session = await auth()
@@ -12,7 +12,7 @@ export const createItem = async (data: FormValues) => {
       throw new Error('You must be signed in to perform this action')
     }
     const { nombre } = data
-    const exist = await prisma.renglones.findUnique({
+    const exist = await prisma.renglon.findUnique({
       where: {
         nombre,
       },
@@ -21,7 +21,7 @@ export const createItem = async (data: FormValues) => {
       throw new Error('Renglon already exists')
     }
     console.log('data', data)
-    await prisma.renglones.create({
+    await prisma.renglon.create({
       data: {
         nombre: data.nombre,
         descripcion: data.descripcion,
@@ -62,7 +62,7 @@ export const updateItem = async (id: number, data: FormValues) => {
       throw new Error('You must be signed in to perform this action')
     }
 
-    await prisma.renglones.update({
+    await prisma.renglon.update({
       where: {
         id,
       },
@@ -81,13 +81,13 @@ export const deleteItem = async (id: number) => {
     throw new Error('You must be signed in to perform this action.')
   }
 
-  await prisma.renglones.delete({
+  await prisma.renglon.delete({
     where: {
       id,
     },
   })
 
-  revalidatePath('/dashboard/abastecimiento/recibimientos')
+  revalidatePath('/dashboard/abastecimiento/recepciones')
 }
 export const checkItemExistance = async (name: string) => {
   const session = await auth()
@@ -99,7 +99,7 @@ export const checkItemExistance = async (name: string) => {
     return false
   }
 
-  const exists = await prisma.renglones.findUnique({
+  const exists = await prisma.renglon.findUnique({
     where: {
       nombre: name,
     },
@@ -113,9 +113,9 @@ export const getAllItems = async () => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const renglones = await prisma.renglones.findMany({
+  const renglones = await prisma.renglon.findMany({
     include: {
-      recibimientos: true,
+      recepciones: true,
       clasificacion: true,
       unidad_empaque: true,
       categoria: true,

@@ -10,11 +10,11 @@ import {
 
 import { Label } from '@/modules/common/components/label/label'
 import { Input } from '@/modules/common/components/input/input'
-import { Renglones } from '@prisma/client'
+import { Renglon } from '@prisma/client'
 import { Button } from '@/modules/common/components/button'
 import { deleteItem } from '@/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-function DeleteDialog({ renglon }: { renglon: Renglones }) {
+function DeleteDialog({ renglon }: { renglon: Renglon }) {
   const { toast } = useToast()
   return (
     <DialogContent className="sm:max-w-[425px]">

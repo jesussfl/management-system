@@ -102,6 +102,49 @@ model Permiso {
 }
 
 //#endregion
+model Renglon {
+  id           Int                     @id @default(autoincrement())
+  nombre       String                  @unique
+  descripcion  String
+  tipo         String?
+  stock_minimo Int                     @default(1)
+  stock_maximo Int?
+  numero_parte String?
+  estado       RenglonStates?          @default(ACTIVO)
+  recepciones  Recepciones_Renglones[]
+
+  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
+  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
+  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
+  unidadEmpaqueId Int
+  clasificacionId Int
+  categoriaId     Int
+
+  @@map("Renglones")
+}
+
+model UnidadEmpaque {
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
+
+  Renglones Renglon[]
+}
+
+model Categoria {
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
+
+  Renglones Renglon[]
+}
+
+model Clasificacion {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  descripcion String
+  Renglones   Renglon[]
+}
 
 model Sistema {
   id                 String               @id
@@ -136,48 +179,6 @@ enum RenglonStates {
   DESHABILITADO @map("Deshabilitado")
 }
 
-model UnidadEmpaque {
-  id          Int    @id @default(autoincrement())
-  nombre      String @unique
-  descripcion String
-
-  Renglones Renglones[]
-}
-
-model Categoria {
-  id          Int    @id @default(autoincrement())
-  nombre      String @unique
-  descripcion String
-
-  Renglones Renglones[]
-}
-
-model Clasificacion {
-  id          Int         @id @default(autoincrement())
-  nombre      String      @unique
-  descripcion String
-  Renglones   Renglones[]
-}
-
-model Renglones {
-  id            Int                     @id @default(autoincrement())
-  nombre        String                  @unique
-  descripcion   String
-  tipo          String?
-  stock_minimo  Int                     @default(1)
-  stock_maximo  Int?
-  numero_parte  String?
-  estado        RenglonStates?          @default(ACTIVO)
-  recibimientos Detalles_recibimiento[]
-
-  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
-  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
-  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
-  unidadEmpaqueId Int
-  clasificacionId Int
-  categoriaId     Int
-}
-
 model almacenes {
   id          Int           @id
   nombre      String
@@ -186,12 +187,14 @@ model almacenes {
   Subsistemas Subsistemas[]
 }
 
-model despachos {
+model despacho {
   id                  String                  @id
   motivo              String
   cedula_destinatario String
   destinatarios       destinatarios_militares @relation(fields: [cedula_destinatario], references: [cedula])
   detalles            despachos_detalles[]
+
+  @@map("despachos")
 }
 
 model despachos_detalles {
@@ -201,7 +204,7 @@ model despachos_detalles {
   id_renglon    String
   id_subsistema String
   id_sistema    String
-  despachos     despachos    @relation(fields: [id_despacho], references: [id])
+  despachos     despacho     @relation(fields: [id_despacho], references: [id])
   // renglones     renglones   @relation(fields: [id_renglon], references: [id])
   // subsistemas   subsistemas @relation(fields: [id_subsistema], references: [id])
   // sistemas      sistemas    @relation(fields: [id_sistema], references: [id])
@@ -223,36 +226,37 @@ model destinatarios_militares {
   id_categoria          String
   id_componente         String
   id_unidad             String
-  despachos             despachos[]
+  despachos             despacho[]
   grados_militares      grados_militares      @relation(fields: [id_grado], references: [id])
   categorias_militares  categorias_militares  @relation(fields: [id_categoria], references: [id])
   componentes_militares componentes_militares @relation(fields: [id_componente], references: [id])
   unidades_militares    unidades_militares    @relation(fields: [id_unidad], references: [id])
 }
 
-model Recibimientos {
-  id                 Int                     @id @default(autoincrement())
-  fecha_recibimiento DateTime
-  motivo             String?
-  detalles           Detalles_recibimiento[]
+model Recepcion {
+  id              Int                     @id @default(autoincrement())
+  fecha_recepcion DateTime
+  motivo          String?
+  renglones       Recepciones_Renglones[]
 }
 
-model Detalles_recibimiento {
-  id                Int           @id @default(autoincrement())
-  id_recibimiento   Int
+model Recepciones_Renglones {
+  recepcion         Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_recepcion      Int
+  renglon           Renglon   @relation(fields: [id_renglon], references: [id])
   id_renglon        Int
   cantidad          Int
   fecha_fabricacion DateTime?
   fecha_vencimiento DateTime?
-  recibimiento      Recibimientos @relation(fields: [id_recibimiento], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  renglon           Renglones     @relation(fields: [id_renglon], references: [id])
+
+  @@id([id_recepcion, id_renglon])
 }
 
 model devoluciones {
   id              String @id
   id_recibimiento String
   // recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
-  // Recibimientos   Recibimientos? @relation(fields: [recibimientosId], references: [id])
+  // Recepcion   Recibimientos? @relation(fields: [recibimientosId], references: [id])
   recibimientosId Int?
 }
 

@@ -58,8 +58,8 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: Boxes,
       },
       {
-        title: 'Recibimientos',
-        path: '/dashboard/abastecimiento/recibimientos',
+        title: 'Recepciones',
+        path: '/dashboard/abastecimiento/recepciones',
         icon: PackagePlus,
       },
       {
@@ -132,7 +132,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
 export enum SECTION_NAMES {
   INICIO = 'INICIO',
   INVENTARIO = 'INVENTARIO',
-  RECIBIMIENTOS = 'RECIBIMIENTOS',
+  RECEPCION = 'RECEPCION',
   DESPACHOS = 'DESPACHOS',
   ALMACENES = 'ALMACENES',
   DESTINATARIOS = 'DESTINATARIOS',

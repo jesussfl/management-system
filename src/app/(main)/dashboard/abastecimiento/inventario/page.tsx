@@ -21,18 +21,22 @@ import {
 } from '@/modules/common/components/tabs/tabs'
 
 import ItemsForm from '@/modules/inventario/components/items-form'
+
 import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { getAllItems } from '@/lib/actions/items'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { ClassificationsTable } from '@/modules/inventario/components/classification-table'
+import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
 import { getAllClassifications } from '@/lib/actions/classifications'
-import { CategoriesTable } from '@/modules/inventario/components/categories-table'
+import { getAllCategories } from '@/lib/actions/categories'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+
 import ClassificationsForm from '@/modules/inventario/components/classification-form'
 import CategoriesForm from '@/modules/inventario/components/categories-form'
-import { getAllCategories } from '@/lib/actions/categories'
-import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
-import { PackagingUnitsTable } from '@/modules/inventario/components/packaging-units-table'
 import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
+
+import { columns as categoriesColumns } from '@/modules/inventario/components/categories-table'
+import { columns as classificationsColumns } from '@/modules/inventario/components/classification-table'
+import { columns as packagingUnitsColumns } from '@/modules/inventario/components/packaging-units-table'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -92,7 +96,10 @@ export default async function Page() {
                     <ClassificationsForm />
                   </ModalForm>
                 </div>
-                <ClassificationsTable data={classificationsData} />
+                <DataTable
+                  columns={classificationsColumns}
+                  data={classificationsData}
+                />
               </div>
               <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
                 <div className="flex justify-between">
@@ -104,7 +111,7 @@ export default async function Page() {
                     <CategoriesForm />
                   </ModalForm>
                 </div>
-                <CategoriesTable data={categoriesData} />
+                <DataTable columns={categoriesColumns} data={categoriesData} />
               </div>
             </div>
           </PageContent>
@@ -120,7 +127,10 @@ export default async function Page() {
                 <PackagingUnitsForm />
               </ModalForm>
             </div>
-            <PackagingUnitsTable data={packagingUnitsData} />
+            <DataTable
+              columns={packagingUnitsColumns}
+              data={packagingUnitsData}
+            />
           </PageContent>
         </TabsContent>
       </Tabs>

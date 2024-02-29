@@ -6,11 +6,11 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Renglones } from '@/types/types'
+import { RenglonType } from '@/types/types'
 
 import TableActions from '@/modules/inventario/components/table-actions'
 
-export const columns: ColumnDef<Renglones>[] = [
+export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -29,7 +29,7 @@ export const columns: ColumnDef<Renglones>[] = [
     accessorKey: 'stock',
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
     cell: ({ row }) => {
-      const stock = row.original.recibimientos.reduce(
+      const stock = row.original.recepciones.reduce(
         (total, item) => total + item.cantidad,
         0
       )
@@ -99,7 +99,7 @@ export const columns: ColumnDef<Renglones>[] = [
 
     cell: ({ row }) => {
       const data = row.original
-      const renglon = (({ recibimientos, ...rest }) => rest)(data)
+      const renglon = (({ recepciones, ...rest }) => rest)(data)
 
       return <TableActions renglon={renglon} />
     },

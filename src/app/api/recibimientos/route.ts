@@ -1,52 +1,45 @@
 import { NextResponse } from 'next/server'
-import { notFound } from 'next/navigation';
+import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
-import { authOptions, auth } from '@/auth';
-import { Prisma } from '@prisma/client';
+import { authOptions, auth } from '@/auth'
+import { Prisma } from '@prisma/client'
 
-type Recibimientos = Prisma.RecibimientosGetPayload<{
-    include: {
-        detalles: true
-    }
-}>;
+type Recepciones = Prisma.RecepcionGetPayload<{
+  include: {
+    renglones: true
+  }
+}>
 
-export async function POST(request : Request) {
+export async function POST(request: Request) {
+  try {
+    const session = await auth()
 
-    try {
-        
-        const session = await auth();
-
-        if (!session?.user) {
-            return new NextResponse('Unauthorized', { status: 401 });
-        }
-
-        const body : Recibimientos = await request.json();
-
-        const { motivo, fecha_recibimiento, detalles  } = body
-
-        if (!fecha_recibimiento || !detalles) {
-          return new NextResponse('Missing Fields', { status: 400 });
-        }
-
-      const response = await prisma.recibimientos.create({
-        data: {
-          motivo,
-          fecha_recibimiento,
-          detalles : {
-            create : detalles
-          }
-        }
-      })
-
-      return NextResponse.json(response)
-
-    } catch (error) {
-
-        console.log(error);
-
-        return new NextResponse('Internal Error', { status: 500 });
-        
+    if (!session?.user) {
+      return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    
+    const body: Recepciones = await request.json()
+
+    const { motivo, fecha_recepcion, renglones } = body
+
+    if (!fecha_recepcion || !renglones) {
+      return new NextResponse('Missing Fields', { status: 400 })
+    }
+
+    const response = await prisma.recepcion.create({
+      data: {
+        motivo,
+        fecha_recepcion,
+        renglones: {
+          create: renglones,
+        },
+      },
+    })
+
+    return NextResponse.json(response)
+  } catch (error) {
+    console.log(error)
+
+    return new NextResponse('Internal Error', { status: 500 })
+  }
 }

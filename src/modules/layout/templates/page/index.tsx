@@ -25,7 +25,7 @@ export const PageHeader = ({
   return (
     <div
       className={cn(
-        'flex items-center justify-between mb-5 p-5 border-b',
+        'flex items-center justify-between mb-5 p-5 border-b bg-background',
         className
       )}
       {...props}

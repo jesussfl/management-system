@@ -7,13 +7,13 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
-import TableActions from '@/modules/recibimientos/components/table-actions'
+import TableActions from '@/modules/recepciones/components/table-actions'
 
-type Recibimiento = Prisma.RecibimientosGetPayload<{
-  include: { detalles: { include: { renglon: true } } }
+type RecepcionType = Prisma.RecepcionGetPayload<{
+  include: { renglones: { include: { renglon: true } } }
 }>
 
-export const columns: ColumnDef<Recibimiento>[] = [
+export const columns: ColumnDef<RecepcionType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -36,7 +36,7 @@ export const columns: ColumnDef<Recibimiento>[] = [
     },
   },
   {
-    accessorKey: 'fecha_recibimiento',
+    accessorKey: 'fecha_recepcion',
     header: ({ column }) => {
       return (
         <Button
@@ -51,15 +51,13 @@ export const columns: ColumnDef<Recibimiento>[] = [
       )
     },
     cell: ({ row }) => {
-      return row.getValue<string>('fecha_recibimiento')
-        ? new Date(
-            row.getValue<string>('fecha_recibimiento')
-          ).toLocaleDateString()
+      return row.getValue<string>('fecha_recepcion')
+        ? new Date(row.getValue<string>('fecha_recepcion')).toLocaleDateString()
         : ''
     },
   },
   {
-    accessorKey: 'detalles',
+    accessorKey: 'renglones',
     header: ({ column }) => {
       return (
         <Button
@@ -68,25 +66,25 @@ export const columns: ColumnDef<Recibimiento>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Detalles
+          renglones
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const string = row.original.detalles
-        .map((detalle) => `${detalle.cantidad} - ${detalle.renglon?.nombre}`)
+      const string = row.original.renglones
+        .map((renglon) => `${renglon.cantidad} - ${renglon.renglon?.nombre}`)
         .join(', ')
 
       return <div className="">{string}</div>
     },
   },
   {
-    id: 'actions',
+    id: 'acciones',
     cell: ({ row }) => {
-      const recibimiento = row.original
+      const recepcion = row.original
 
-      return <TableActions id={recibimiento.id} />
+      return <TableActions id={recepcion.id} />
     },
   },
 ]

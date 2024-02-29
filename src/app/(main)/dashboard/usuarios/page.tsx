@@ -32,7 +32,7 @@ import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
-  title: 'Recibimientos',
+  title: 'Recepciones',
   description: 'Desde aquí puedes administrar la entrada del inventario',
 }
 
