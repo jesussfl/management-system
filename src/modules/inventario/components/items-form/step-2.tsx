@@ -17,6 +17,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { getAllCategories } from '@/lib/actions/categories'
 import { getAllClassifications } from '@/lib/actions/classifications'
 import { getAllPresentations } from '@/lib/actions/presentations'
+import { UnidadEmpaque } from '@prisma/client'
 
 type ComboboxData = {
   value: number
@@ -28,6 +29,9 @@ export const Step2 = () => {
   const [categories, setCategories] = useState<ComboboxData[]>([])
   const [classifications, setClassifications] = useState<ComboboxData[]>([])
   const [packagingUnits, setPackagingUnits] = useState<ComboboxData[]>([])
+  const [packagingUnitsData, setPackagingUnitsData] = useState<UnidadEmpaque[]>(
+    []
+  )
   const form = useFormContext()
 
   useEffect(() => {
@@ -55,7 +59,7 @@ export const Step2 = () => {
           value: presentation.id,
           label: presentation.nombre,
         }))
-
+        setPackagingUnitsData(data)
         setPackagingUnits(transformedData)
       })
     })

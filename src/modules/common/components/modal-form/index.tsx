@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
+import { cn } from '@/utils/utils'
 
 type Props = {
   children: React.ReactNode
@@ -32,25 +33,30 @@ type Props = {
     | 'secondary'
     | 'destructive'
     | 'link'
+  disabled?: boolean
+  closeWarning?: boolean
+  className?: string
 }
 
 export default function ModalForm({
   children,
   triggerName,
   triggerVariant,
+  disabled,
   height,
   close,
   open,
+  closeWarning = true,
+  className = '',
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [showWarning, setShowWarning] = useState(false)
-
   const toogleModal = () => {
     if (!isOpen) {
       setIsOpen(true)
       return
     }
-    setShowWarning(true)
+    closeWarning ? setShowWarning(true) : setIsOpen(false)
   }
 
   const closeWithWarning = () => {
@@ -72,13 +78,14 @@ export default function ModalForm({
           variant={triggerVariant || 'default'}
           size={'sm'}
           className="gap-2"
+          disabled={disabled}
         >
           <Plus className="h-4 w-4" />
           {triggerName}
         </Button>
       </DialogTrigger>
       <DialogContent
-        className={`lg:max-w-screen-lg h-[${height}] overflow-hidden p-0`}
+        className={cn(`lg:max-w-screen-lg overflow-hidden p-0`, className)}
       >
         {childrenWithProps}
 

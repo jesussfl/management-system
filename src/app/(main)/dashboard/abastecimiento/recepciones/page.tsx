@@ -1,16 +1,9 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { prisma } from '@/lib/prisma'
 import { Button } from '@/modules/common/components/button'
 import { Plus, FileDown, PackagePlus } from 'lucide-react'
 import { Metadata } from 'next'
-import { RenglonType } from '@/types/types'
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/modules/common/components/dialog/dialog'
-import ReceptionsForm from '@/modules/recepciones/components/form/receptions-form'
+
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -18,11 +11,8 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
-  PageTemplate,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/lib/actions/items'
 import { getAllReceptions } from '@/lib/actions/receptions'
-import ModalForm from '@/modules/common/components/modal-form'
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
@@ -34,7 +24,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const receptionsData = await getAllReceptions()
-  const itemsData = await getAllItems()
 
   return (
     <>

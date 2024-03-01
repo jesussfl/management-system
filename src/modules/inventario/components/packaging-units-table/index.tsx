@@ -80,6 +80,36 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
+
+  {
+    accessorKey: 'tipo_medida',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Tipo de medida
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'peso',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Peso Fijo
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
   {
     accessorKey: 'descripcion',
     header: ({ column }) => {
@@ -94,6 +124,7 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
+
   {
     id: 'acciones',
     enableHiding: false,

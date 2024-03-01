@@ -2,15 +2,14 @@ import { Metadata } from 'next'
 import ReceptionsForm from '@/modules/recepciones/components/form/receptions-form'
 import {
   HeaderLeftSide,
-  HeaderRightSide,
   PageContent,
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/lib/actions/items'
-import { Button, buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, PackagePlus, Save } from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -43,7 +42,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </div>
         </HeaderLeftSide>
       </PageHeader>
-      <PageContent className="bg-[#F9FAFB] px-[14rem] pt-5 space-y-4">
+      <PageContent className="bg-[#F9FAFB] pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm renglonesData={itemsData} />
       </PageContent>
     </>

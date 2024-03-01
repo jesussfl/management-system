@@ -6,10 +6,14 @@ import { Prisma, Recepcion, Recepciones_Renglones } from '@prisma/client'
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: { renglones: true }
 }>
-type Detalles = Omit<Recepciones_Renglones, 'id_recepcion'>
+type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'>
 
 type FormValues = Omit<Recepcion, 'id'> & {
-  renglones: Detalles[]
+  renglones: Detalles[] & {
+    seriales: {
+      serial: string
+    }
+  }
 }
 export const createReception = async (data: FormValues) => {
   const session = await auth()
@@ -30,7 +34,12 @@ export const createReception = async (data: FormValues) => {
       motivo,
       fecha_recepcion,
       renglones: {
-        create: renglones,
+        create: renglones.map((renglon) => ({
+          ...renglon,
+          seriales: {
+            create: renglon.seriales,
+          },
+        })),
       },
     },
   })

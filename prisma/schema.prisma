@@ -103,32 +103,43 @@ model Permiso {
 
 //#endregion
 model Renglon {
-  id           Int                     @id @default(autoincrement())
-  nombre       String                  @unique
+  id           Int            @id @default(autoincrement())
+  nombre       String         @unique
   descripcion  String
   tipo         String?
-  stock_minimo Int                     @default(1)
+  stock_minimo Int            @default(1)
   stock_maximo Int?
   numero_parte String?
-  estado       RenglonStates?          @default(ACTIVO)
-  recepciones  Recepciones_Renglones[]
+  peso         Decimal        @default(1)
+  estado       RenglonStates? @default(ACTIVO)
 
-  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
-  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
-  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
   unidadEmpaqueId Int
+  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
   clasificacionId Int
+  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
   categoriaId     Int
+  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
+
+  despachos   Despachos_Renglones[]
+  recepciones Recepciones_Renglones[]
 
   @@map("Renglones")
 }
 
-model UnidadEmpaque {
-  id          Int    @id @default(autoincrement())
-  nombre      String @unique
-  descripcion String
+enum Medidas {
+  LITROS
+  KILOGRAMOS
+  GRAMOS
+}
 
-  Renglones Renglon[]
+model UnidadEmpaque {
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  descripcion String
+  abreviacion String?
+  tipo_medida Medidas
+  peso        Decimal?
+  Renglones   Renglon[]
 }
 
 model Categoria {
@@ -241,23 +252,67 @@ model Recepcion {
 }
 
 model Recepciones_Renglones {
+  id                Int       @id @default(autoincrement())
   recepcion         Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
   id_recepcion      Int
   renglon           Renglon   @relation(fields: [id_renglon], references: [id])
   id_renglon        Int
   cantidad          Int
+  seriales          Serial[]
   fecha_fabricacion DateTime?
   fecha_vencimiento DateTime?
-
-  @@id([id_recepcion, id_renglon])
 }
 
-model devoluciones {
-  id              String @id
-  id_recibimiento String
-  // recibimientos   recibimientos @relation(fields: [id_recibimiento], references: [id])
-  // Recepcion   Recibimientos? @relation(fields: [recibimientosId], references: [id])
-  recibimientosId Int?
+model Serial {
+  serial       String                @id
+  id_recepcion Int
+  recepcion    Recepciones_Renglones @relation(fields: [id_recepcion], references: [id])
+  estado       String?
+  devoluciones Devolucion[]
+}
+
+model Devolucion {
+  id               Int      @id @default(autoincrement())
+  id_serial        String
+  serial           Serial   @relation(fields: [id_serial], references: [serial])
+  fecha_devolucion DateTime
+  motivo           String
+}
+
+model Despacho {
+  id                  Int                   @id @default(autoincrement())
+  fecha_despacho      DateTime
+  motivo              String?
+  renglones           Despachos_Renglones[]
+  cedula_destinatario String
+  destinatario        Destinatario          @relation(fields: [cedula_destinatario], references: [cedula])
+}
+
+model Despachos_Renglones {
+  id          Int      @id @default(autoincrement())
+  id_renglon  Int
+  renglon     Renglon  @relation(fields: [id_renglon], references: [id])
+  id_despacho Int
+  despacho    Despacho @relation(fields: [id_despacho], references: [id])
+}
+
+model Destinatario {
+  cedula                String                @id
+  nombres               String
+  apellidos             String
+  estado_civil          String
+  id_armamento          String
+  situacion_profesional String
+  estado                String
+  id_unidad             String
+  id_categoria          String
+  id_grado              String
+  id_componente         String
+  unidades_militares    unidades_militares    @relation(fields: [id_unidad], references: [id])
+  categorias_militares  categorias_militares  @relation(fields: [id_categoria], references: [id])
+  grados_militares      grados_militares      @relation(fields: [id_grado], references: [id])
+  componentes_militares componentes_militares @relation(fields: [id_componente], references: [id])
+  despachos             Despacho[]
 }
 
 model componentes_militares {
@@ -269,6 +324,7 @@ model componentes_militares {
   fecha_eliminado         DateTime
   destinatarios_militares destinatarios_militares[]
   personal_militar        personal_militar[]
+  Destinatario            Destinatario[]
 }
 
 model grados_militares {
@@ -281,6 +337,7 @@ model grados_militares {
   fecha_eliminado         DateTime
   destinatarios_militares destinatarios_militares[]
   personal_militar        personal_militar[]
+  Destinatario            Destinatario[]
 }
 
 model categorias_militares {
@@ -290,6 +347,7 @@ model categorias_militares {
   estado                  String
   destinatarios_militares destinatarios_militares[]
   personal_militar        personal_militar[]
+  Destinatario            Destinatario[]
 }
 
 model unidades_militares {
@@ -301,6 +359,7 @@ model unidades_militares {
   zodis                   zodis                     @relation(fields: [id_zodi], references: [id])
   destinatarios_militares destinatarios_militares[]
   personal_militar        personal_militar[]
+  Destinatario            Destinatario[]
 }
 
 model zodis {

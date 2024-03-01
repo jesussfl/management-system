@@ -20,14 +20,22 @@ import {
 
 type ComboboxProps = {
   name: string
-  data: { label: string; value: number }[]
+  data: { label: string; value: number | string }[]
   field: any
   form: any
   disabled?: boolean
+  isValueString?: boolean
 }
 
 //TODO: popover should be the same width as trigger
-export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
+export function Combobox({
+  name,
+  data,
+  field,
+  form,
+  disabled,
+  isValueString = false,
+}: ComboboxProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -62,9 +70,13 @@ export function Combobox({ name, data, field, form, disabled }: ComboboxProps) {
                   if (form.formState.errors[name]) {
                     form.clearErrors(name)
                   }
-                  form.setValue(name, Number(info.value), {
-                    shouldDirty: true,
-                  })
+                  form.setValue(
+                    name,
+                    isValueString ? info.label : Number(info.value),
+                    {
+                      shouldDirty: true,
+                    }
+                  )
                 }}
               >
                 {info.label}

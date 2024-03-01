@@ -11,10 +11,28 @@ import {
   FormDescription,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
+import { UnidadEmpaque } from '@prisma/client'
+import { useEffect, useState, useTransition } from 'react'
+import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
 
 export const Step3 = () => {
   const form = useFormContext()
-
+  const [isPending, startTransition] = useTransition()
+  const [packagingUnitsData, setPackagingUnitsData] = useState<UnidadEmpaque[]>(
+    []
+  )
+  const weight =
+    !isPending &&
+    packagingUnitsData.find(
+      (unit) => unit.id === form.getValues('unidadEmpaqueId')
+    )?.peso
+  useEffect(() => {
+    startTransition(() => {
+      getAllPackagingUnits().then((data) => {
+        setPackagingUnitsData(data)
+      })
+    })
+  }, [])
   return (
     <div className="flex flex-col gap-8 mb-8">
       <FormInstructions>
@@ -114,6 +132,42 @@ export const Step3 = () => {
           )}
         />
       </div>
+      {!isPending && (
+        <FormField
+          control={form.control}
+          name="peso"
+          rules={{
+            required: false,
+          }}
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Peso</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  placeholder="Ingresa el peso del renglón"
+                  {...field}
+                  onChange={(event) => {
+                    if (form.formState.errors[field.name]) {
+                      form.clearErrors(field.name)
+                    }
+                    form.setValue(field.name, Number(event.target.value), {
+                      shouldDirty: true,
+                    })
+                  }}
+                  value={
+                    field.value ||
+                    form.setValue(field.name, Number(weight)) ||
+                    0
+                  }
+                  disabled={weight ? true : false}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
     </div>
   )
 }

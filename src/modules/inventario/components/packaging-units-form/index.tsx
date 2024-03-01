@@ -39,19 +39,22 @@ import {
   createPackagingUnit,
   updatePackagingUnit,
 } from '@/lib/actions/packaging-units'
+import { Combobox } from '@/modules/common/components/combobox'
 interface Props {
   defaultValues?: UnidadEmpaque
   close?: () => void
 }
+const MEDIDAS = [
+  { label: 'LITROS', value: 'LITROS' },
+  { label: 'UNIDADES', value: 'UNIDADES' },
+  { label: 'MILILITROS', value: 'MILILITROS' },
+  { label: 'KILOGRAMOS', value: 'KILOGRAMOS' },
+]
 
-type FormValues = {
-  nombre: string
-  descripcion: string
-}
+type FormValues = Omit<UnidadEmpaque, 'id'>
 
 export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
-
   const form = useForm<FormValues>({
     defaultValues,
   })
@@ -179,6 +182,89 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                   Da contexto para ayudar a entender este permiso y el efecto
                   que puede tener.
                 </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tipo_medida"
+            rules={{
+              required: 'Este campo es requerido',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full ">
+                <FormLabel>Tipo de peso</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={MEDIDAS}
+                  form={form}
+                  field={field}
+                  isValueString={true}
+                />
+                <FormDescription></FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="abreviacion"
+            rules={{
+              required: 'Este campo es necesario',
+              minLength: {
+                value: 3,
+                message: 'Debe tener al menos 3 caracteres',
+              },
+              maxLength: {
+                value: 8,
+                message: 'Debe tener un maximo de 8 caracteres',
+              },
+            }}
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Abreviacion del peso</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ? field.value.toUpperCase() : ''}
+                    onChange={(e) => {
+                      if (form.formState.errors[field.name]) {
+                        form.clearErrors(field.name)
+                      }
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Este campo es util para identificar la unidad de peso
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={'peso'}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel>{'Peso de la unidad (Opcional)'} </FormLabel>
+                <FormDescription>
+                  Este campo es util si la unidad de empaque tiene un peso fijo
+                </FormDescription>
+                <FormControl>
+                  <Input
+                    type="number"
+                    {...field}
+                    value={Number(field.value) || ''}
+                    onChange={(event) =>
+                      field.onChange(Number(event.target.value))
+                    }
+                  />
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}

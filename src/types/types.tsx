@@ -22,5 +22,6 @@ export type Renglon = {
 export type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     recepciones: true
+    unidad_empaque: true
   }
 }>

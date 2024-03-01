@@ -38,6 +38,35 @@ export const columns: ColumnDef<RenglonType>[] = [
     },
   },
   {
+    accessorKey: 'peso_total',
+    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
+    cell: ({ row }) => {
+      const stock = row.original.recepciones.reduce(
+        (total, item) => total + item.cantidad,
+        0
+      )
+      return (
+        <div>
+          {`${stock * Number(row.original.peso)} 
+            ${row.original.unidad_empaque.abreviacion}
+          `}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'peso',
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Peso Por Unidad" />
+    ),
+
+    cell: ({ row }) => {
+      return (
+        <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
+      )
+    },
+  },
+  {
     accessorKey: 'estado',
     header: ({ column }) => <HeaderCell column={column} value="Estado" />,
     cell: ({ row }) => {

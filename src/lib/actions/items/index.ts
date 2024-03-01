@@ -29,7 +29,7 @@ export const createItem = async (data: FormValues) => {
         stock_minimo: data.stock_minimo,
         stock_maximo: data.stock_maximo,
         numero_parte: data.numero_parte,
-
+        peso: data.peso,
         clasificacion: {
           connect: {
             id: data.clasificacionId,
