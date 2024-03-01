@@ -37,6 +37,12 @@ import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-
 import { columns as categoriesColumns } from '@/modules/inventario/components/categories-table'
 import { columns as classificationsColumns } from '@/modules/inventario/components/classification-table'
 import { columns as packagingUnitsColumns } from '@/modules/inventario/components/packaging-units-table'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -86,33 +92,34 @@ export default async function Page() {
         <TabsContent value="categories">
           <PageContent>
             <div className="flex w-full gap-8 p-3">
-              <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold">Lista de Clasificaciones</h4>
-                  <ModalForm
-                    triggerName="Nueva clasificación"
-                    triggerVariant="secondary"
-                  >
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle>Lista de Clasificaciones</CardTitle>
+                  <ModalForm triggerName="Nueva clasificación">
                     <ClassificationsForm />
                   </ModalForm>
-                </div>
-                <DataTable
-                  columns={classificationsColumns}
-                  data={classificationsData}
-                />
-              </div>
-              <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold">Lista de Categorías</h4>
-                  <ModalForm
-                    triggerName="Nueva categoría"
-                    triggerVariant="secondary"
-                  >
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={classificationsColumns}
+                    data={classificationsData}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle>Lista de Categorías</CardTitle>
+                  <ModalForm triggerName="Nueva categoría">
                     <CategoriesForm />
                   </ModalForm>
-                </div>
-                <DataTable columns={categoriesColumns} data={categoriesData} />
-              </div>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={categoriesColumns}
+                    data={categoriesData}
+                  />
+                </CardContent>
+              </Card>
             </div>
           </PageContent>
         </TabsContent>

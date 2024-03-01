@@ -115,7 +115,11 @@ export const getAllItems = async () => {
   }
   const renglones = await prisma.renglon.findMany({
     include: {
-      recepciones: true,
+      recepciones: {
+        include: {
+          seriales: true,
+        },
+      },
       clasificacion: true,
       unidad_empaque: true,
       categoria: true,

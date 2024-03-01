@@ -2,18 +2,20 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Prisma, Recepcion, Recepciones_Renglones } from '@prisma/client'
-type RecepcionType = Prisma.RecepcionGetPayload<{
-  include: { renglones: true }
-}>
-type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'>
+import {
+  Prisma,
+  Recepcion,
+  Recepciones_Renglones,
+  Serial,
+} from '@prisma/client'
+type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
+
+type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'> & {
+  seriales: SerialType[]
+}
 
 type FormValues = Omit<Recepcion, 'id'> & {
-  renglones: Detalles[] & {
-    seriales: {
-      serial: string
-    }
-  }
+  renglones: Detalles[]
 }
 export const createReception = async (data: FormValues) => {
   const session = await auth()
@@ -29,6 +31,37 @@ export const createReception = async (data: FormValues) => {
       error: 'Missing Fields',
     }
   }
+  if (
+    renglones.some(
+      (renglon, index) =>
+        renglon.seriales.length === 0 ||
+        renglon.seriales.some(
+          (serial) =>
+            !serial.serial ||
+            serial.serial === '' ||
+            serial.serial === undefined
+        )
+    )
+  ) {
+    const fields = renglones
+      .filter(
+        (renglon) =>
+          renglon.seriales.length === 0 ||
+          renglon.seriales.some(
+            (serial) =>
+              !serial.serial ||
+              serial.serial === '' ||
+              serial.serial === undefined
+          )
+      )
+      .map((renglon, index) => renglon.id_renglon)
+
+    return {
+      error: 'Hay algunos renglones sin seriales',
+      fields: fields,
+    }
+  }
+
   await prisma.recepcion.create({
     data: {
       motivo,

@@ -252,21 +252,22 @@ model Recepcion {
 }
 
 model Recepciones_Renglones {
-  id                Int       @id @default(autoincrement())
-  recepcion         Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_recepcion      Int
-  renglon           Renglon   @relation(fields: [id_renglon], references: [id])
-  id_renglon        Int
-  cantidad          Int
-  seriales          Serial[]
-  fecha_fabricacion DateTime?
-  fecha_vencimiento DateTime?
+  id                   Int       @id @default(autoincrement())
+  recepcion            Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_recepcion         Int
+  renglon              Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_renglon           Int
+  cantidad             Int
+  seriales_automaticos Boolean
+  seriales             Serial[]
+  fecha_fabricacion    DateTime?
+  fecha_vencimiento    DateTime?
 }
 
 model Serial {
   serial       String                @id
   id_recepcion Int
-  recepcion    Recepciones_Renglones @relation(fields: [id_recepcion], references: [id])
+  recepcion    Recepciones_Renglones @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
   estado       String?
   devoluciones Devolucion[]
 }

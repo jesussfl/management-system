@@ -9,6 +9,7 @@ import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { RenglonType } from '@/types/types'
 
 import TableActions from '@/modules/inventario/components/table-actions'
+import ModalForm from '@/modules/common/components/modal-form'
 
 export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
@@ -62,7 +63,9 @@ export const columns: ColumnDef<RenglonType>[] = [
 
     cell: ({ row }) => {
       return (
-        <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
+        <div>{`${String(row.original.peso)} ${
+          row.original.unidad_empaque.abreviacion
+        }`}</div>
       )
     },
   },
@@ -122,6 +125,34 @@ export const columns: ColumnDef<RenglonType>[] = [
   {
     accessorKey: 'stock_maximo',
     header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
+  },
+  {
+    accessorKey: 'seriales',
+    header: ({ column }) => <HeaderCell column={column} value="Seriales" />,
+    cell: ({ row }) => {
+      const renglones = row.original.recepciones.map((renglon) => renglon)
+      const seriales = renglones.flatMap((renglon) => renglon.seriales)
+      console.log(seriales)
+      if (seriales.length === 0) {
+        return <div>No hay seriales</div>
+      }
+      return (
+        <ModalForm
+          triggerName="Ver seriales"
+          triggerVariant="outline"
+          closeWarning={false}
+        >
+          <div className="p-8">
+            <div className="mb-3">Seriales</div>
+            {seriales.map((serial) => (
+              <div key={serial.serial} className="mb-3">
+                {serial.serial}
+              </div>
+            ))}
+          </div>
+        </ModalForm>
+      )
+    },
   },
   {
     id: 'acciones',

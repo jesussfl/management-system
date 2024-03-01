@@ -5,14 +5,26 @@ import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
-import { Renglon } from '@prisma/client'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
+import { RenglonType } from '@/types/types'
 
-export const columns: ColumnDef<Renglon>[] = [
+export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
     header: 'ID',
+  },
+
+  {
+    accessorKey: 'stock',
+    cell: ({ row }) => {
+      const stock = row.original.recepciones.reduce(
+        (total, item) => total + item.cantidad,
+        0
+      )
+
+      return <div>{stock}</div>
+    },
   },
   {
     accessorKey: 'nombre',
