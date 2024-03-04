@@ -130,6 +130,7 @@ enum Medidas {
   LITROS
   KILOGRAMOS
   GRAMOS
+  UNIDADES
 }
 
 model UnidadEmpaque {
