@@ -6,10 +6,25 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { RenglonType } from '@/types/types'
 
 import TableActions from '@/modules/inventario/components/table-actions'
 import ModalForm from '@/modules/common/components/modal-form'
+import { Prisma } from '@prisma/client'
+type RenglonType = Prisma.RenglonGetPayload<{
+  include: {
+    recepciones: {
+      include: {
+        seriales: true
+      }
+    }
+    unidad_empaque: true
+    despachos: {
+      include: {
+        seriales: true
+      }
+    }
+  }
+}>
 
 export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
@@ -35,7 +50,12 @@ export const columns: ColumnDef<RenglonType>[] = [
         0
       )
 
-      return <div>{stock}</div>
+      const dispatchedSerials = row.original.despachos.reduce(
+        (total, item) => total + item.seriales.length,
+        0
+      )
+
+      return <div>{stock - dispatchedSerials}</div>
     },
   },
   {
@@ -132,7 +152,6 @@ export const columns: ColumnDef<RenglonType>[] = [
     cell: ({ row }) => {
       const renglones = row.original.recepciones.map((renglon) => renglon)
       const seriales = renglones.flatMap((renglon) => renglon.seriales)
-      console.log(seriales)
       if (seriales.length === 0) {
         return <div>No hay seriales</div>
       }

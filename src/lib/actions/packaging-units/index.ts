@@ -80,5 +80,5 @@ export const getAllPackagingUnits = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const packagingUnits = await prisma.unidadEmpaque.findMany()
-  return packagingUnits
+  return JSON.parse(JSON.stringify(packagingUnits))
 }

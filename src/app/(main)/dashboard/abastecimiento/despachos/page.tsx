@@ -1,5 +1,5 @@
-import { Button } from '@/modules/common/components/button'
-import { Plus, FileDown, PackageMinus } from 'lucide-react'
+import { Button, buttonVariants } from '@/modules/common/components/button'
+import { Plus, FileDown, PackageMinus, PackagePlus } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   Dialog,
@@ -15,18 +15,23 @@ import {
   PageHeaderTitle,
   PageTemplate,
 } from '@/modules/layout/templates/page'
+import { DataTable } from '@/modules/common/components/table/data-table'
+import { getAllDispatches } from '@/lib/actions/dispatches'
+import { columns } from './columns'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Recepciones',
-  description: 'Desde aquí puedes administrar la entrada del inventario',
+  title: 'Despachos',
+  description: 'Desde aquí puedes administrar las salidas del inventario',
 }
 export default async function Page() {
+  const dispatchesData = await getAllDispatches()
   return (
     <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackageMinus size={24} />
+            <PackagePlus size={24} />
             Despachos
           </PageHeaderTitle>
           <PageHeaderDescription>
@@ -38,22 +43,19 @@ export default async function Page() {
             <FileDown className="mr-2 h-4 w-4" />
             Exportar
           </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="default" size={'sm'}>
-                <Plus className="mr-2 h-4 w-4" />
-                Añadir Despacho
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent
-              className={'lg:max-w-screen-xl overflow-y-auto max-h-[90vh] pb-0'}
-            ></DialogContent>
-          </Dialog>
+          <Link
+            href="/dashboard/abastecimiento/despachos/agregar"
+            className={buttonVariants({ variant: 'default' })}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Agregar Despacho
+          </Link>
         </HeaderRightSide>
       </PageHeader>
 
-      <PageContent></PageContent>
+      <PageContent>
+        <DataTable columns={columns} data={dispatchesData} />
+      </PageContent>
     </>
   )
 }

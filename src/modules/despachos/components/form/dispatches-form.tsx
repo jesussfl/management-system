@@ -44,7 +44,9 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import {
   Prisma,
   Recepcion,
+  Despacho,
   Recepciones_Renglones,
+  Despachos_Renglones,
   Serial,
 } from '@prisma/client'
 import { createReception } from '@/lib/actions/receptions'
@@ -52,26 +54,30 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { SerialsForm } from './serials-form'
 import { v4 } from 'uuid'
+import { createDispatch } from '@/lib/actions/dispatches'
 
 type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
-type RecepcionType = Prisma.RecepcionGetPayload<{
-  include: { renglones: true }
+type DespachoType = Prisma.Despachos_RenglonesGetPayload<{
+  include: { renglon: true }
 }>
-type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'> & {
-  seriales: SerialType[]
+type Detalles = Omit<Despachos_Renglones, 'id_despacho' | 'id'> & {
+  seriales: string[]
 }
 
-type FormValues = Omit<Recepcion, 'id'> & {
+type DefaultValues = Omit<Despachos_Renglones, 'id_despacho' | 'id'> & {
+  seriales: string[]
+}
+type FormValues = Omit<Despacho, 'id'> & {
   renglones: Detalles[]
 }
 interface Props {
   renglonesData: RenglonType[]
-  defaultValues?: RecepcionType
+  defaultValues?: FormValues
   close?: () => void
 }
 // type FormValues = Omit<RecepcionType, 'id' | 'renglones.id_recepcion'>
 
-export default function ReceptionsForm({
+export default function DispatchesForm({
   renglonesData,
   defaultValues,
   close,
@@ -89,22 +95,32 @@ export default function ReceptionsForm({
     name: `renglones`,
   })
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-  const [selectedItems, setSelectedItems] = useState<any>({})
+  const [selectedItems, setSelectedItems] = useState<{
+    [key: number]: boolean
+  }>({})
   const [selectedData, setSelectedData] = useState<RenglonType[]>([])
-
+  useEffect(() => {
+    if (defaultValues) {
+      const renglones = defaultValues.renglones
+      // @ts-ignore
+      const renglonesData = renglones.map((item) => item.renglon) //TODO: revisar el tipado
+      const selections = renglones.reduce(
+        (acc, item) => {
+          acc[item.id_renglon] = true
+          return acc
+        },
+        {} as { [key: number]: boolean }
+      )
+      setSelectedItems(selections)
+      setSelectedData(renglonesData)
+    }
+  }, [defaultValues])
   const handleTableSelect = useCallback(
     (lastSelectedRow: any) => {
       if (lastSelectedRow) {
         append({
           id_renglon: lastSelectedRow.id,
-          cantidad: 0,
-          fabricante: null,
-          precio: 0,
-          codigo_solicitud: null,
-          fecha_fabricacion: null,
-          fecha_vencimiento: null,
           seriales: [],
-          seriales_automaticos: false,
         })
         setSelectedData((prev) => {
           if (prev.find((item) => item.id === lastSelectedRow.id)) {
@@ -142,11 +158,10 @@ export default function ReceptionsForm({
         return
       }
     })
-    console.log(data)
     if (itemsWithoutSerials.length > 0) {
       return
     }
-    createReception(data).then((res) => {
+    createDispatch(data).then((res) => {
       if (res?.error) {
         toast({
           title: 'Error',
@@ -161,11 +176,11 @@ export default function ReceptionsForm({
         return
       }
       toast({
-        title: 'Recepción creada',
-        description: 'La recepción se ha creado correctamente',
+        title: 'Despacho creado',
+        description: 'Los despachos se han creado correctamente',
         variant: 'success',
       })
-      router.replace('/dashboard/abastecimiento/recepciones')
+      router.replace('/dashboard/abastecimiento/despachos')
     })
   }
   return (
@@ -177,11 +192,11 @@ export default function ReceptionsForm({
         <Card>
           <CardHeader>
             <CardTitle>
-              Complete la información solicitada para la recepción de los
+              Complete la información solicitada para el despacho de los
               renglones
             </CardTitle>
             <CardDescription>
-              Llene los campos solicitados para la recepción de los renglones
+              Llene los campos solicitados para el despacho de los renglones
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
@@ -204,7 +219,7 @@ export default function ReceptionsForm({
                   <div className="flex flex-col gap-1">
                     <FormLabel>Motivo</FormLabel>
                     <FormDescription>
-                      Redacta el motivo por el cual se está recibiendo el
+                      Redacta el motivo por el cual se está despachando el
                       material, renglones, etc...
                     </FormDescription>
                   </div>
@@ -226,17 +241,17 @@ export default function ReceptionsForm({
             <div className="border-b border-base-300" />
             <FormField
               control={form.control}
-              name={`fecha_recepcion`}
+              name={`fecha_despacho`}
               rules={{
                 required: true,
               }}
               render={({ field }) => (
                 <FormItem className="flex flex-row flex-1 items-center gap-5 ">
                   <div className="w-[20rem]">
-                    <FormLabel>Fecha de recepción</FormLabel>
+                    <FormLabel>Fecha de despacho</FormLabel>
                     <FormDescription>
-                      Selecciona la fecha en la que se reciben los materiales o
-                      renglones{' '}
+                      Selecciona la fecha en la que se despachan los materiales
+                      o renglones{' '}
                     </FormDescription>
                   </div>
                   <div className="flex-1 w-full">
@@ -280,16 +295,16 @@ export default function ReceptionsForm({
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">
               <FormDescription className="w-[20rem]">
-                Selecciona los materiales o renglones que se han recibido
+                Selecciona los materiales o renglones que se han despachado
               </FormDescription>
               <ModalForm
                 triggerName="Seleccionar renglones"
                 closeWarning={false}
               >
                 <div className="flex flex-col gap-4 p-8">
-                  <CardTitle>Selecciona los renglones recibidos</CardTitle>
+                  <CardTitle>Selecciona los renglones despachados</CardTitle>
                   <CardDescription>
-                    Encuentra y elige los productos que se han recibido en el
+                    Encuentra y elige los productos que se han despachado en el
                     CESERLODAI. Usa la búsqueda para agilizar el proceso.
                   </CardDescription>
                   <DataTable
@@ -341,7 +356,7 @@ export default function ReceptionsForm({
           </Card>
         )}
         <Button variant="default" type={'submit'}>
-          Guardar recepción
+          Guardar despacho
         </Button>
       </form>
     </Form>
@@ -362,7 +377,6 @@ export const SelectedItemCard = ({
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const form = useFormContext()
-
   return (
     <Card
       key={item.id}
@@ -387,191 +401,6 @@ export const SelectedItemCard = ({
         />
       </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-end">
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.codigo_solicitud`}
-          render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">{`Código de solicitud (opcional):`}</FormLabel>
-
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input type="text" {...field} />
-                </FormControl>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.cantidad`}
-          rules={{
-            required: 'La cantidad es requerida',
-            min: {
-              value: 1,
-              message: 'La cantidad debe ser mayor a 0',
-            },
-            max: {
-              value:
-                (item.stock_maximo || 999) -
-                item.recepciones.reduce(
-                  (total, item) => total + item.cantidad,
-                  0
-                ),
-              message: 'La cantidad no puede ser mayor al stock maximo',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">Cantidad recibida:</FormLabel>
-
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input
-                    type="number"
-                    onChange={(event) =>
-                      field.onChange(parseInt(event.target.value))
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.fecha_fabricacion`}
-          render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">Fecha de fabricación:</FormLabel>
-              <div className="flex-1 w-full">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'dd/MM/yyyy')
-                        ) : (
-                          <span>Seleccionar fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(field.value || '')}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.fecha_vencimiento`}
-          render={({ field }) => (
-            <FormItem className=" items-center flex  justify-between gap-2">
-              <FormLabel className="w-[12rem]">Fecha de vencimiento:</FormLabel>
-              <div className="flex-1 w-full">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'dd/MM/yyyy')
-                        ) : (
-                          <span>Seleccionar fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(field.value || '')}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.fabricante`}
-          render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">{`Fabricante (opcional):`}</FormLabel>
-
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input type="text" {...field} />
-                </FormControl>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`renglones.${index}.precio`}
-          rules={{
-            min: {
-              value: 1,
-              message: 'El precio debe ser mayor a 0',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">{`Precio en Bs (opcional):`}</FormLabel>
-
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input
-                    inputMode="decimal"
-                    type="text"
-                    pattern="[0-9]*[.,]?[0-9]*"
-                    onChange={(event) =>
-                      field.onChange(parseFloat(event.target.value))
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
         <div
           onClick={() => {
             if (isEmpty) {
@@ -585,7 +414,7 @@ export const SelectedItemCard = ({
             triggerName={`${
               form.watch(`renglones.${index}.seriales`).length > 0
                 ? 'Ver seriales'
-                : 'Agregar seriales'
+                : 'Seleccionar seriales'
             }  `}
             triggerVariant={`${
               form.watch(`renglones.${index}.seriales`).length > 0
@@ -594,11 +423,10 @@ export const SelectedItemCard = ({
             }`}
             closeWarning={false}
             className="max-h-[80vh]"
-            disabled={!form.watch(`renglones.${index}.cantidad`)}
           >
             <SerialsForm
               index={index}
-              id={form.watch(`renglones.${index}.id`)}
+              id={item.id}
               quantity={form.watch(`renglones.${index}.cantidad`)}
             />
           </ModalForm>

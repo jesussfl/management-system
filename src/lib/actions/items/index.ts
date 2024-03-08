@@ -120,10 +120,15 @@ export const getAllItems = async () => {
           seriales: true,
         },
       },
+      despachos: {
+        include: {
+          seriales: true,
+        },
+      },
       clasificacion: true,
       unidad_empaque: true,
       categoria: true,
     },
   })
-  return renglones
+  return JSON.parse(JSON.stringify(renglones))
 }

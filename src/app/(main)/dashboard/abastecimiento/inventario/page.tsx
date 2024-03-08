@@ -91,7 +91,7 @@ export default async function Page() {
         </TabsContent>
         <TabsContent value="categories">
           <PageContent>
-            <div className="flex w-full gap-8 p-3">
+            <div className="flex w-full gap-8">
               <Card>
                 <CardHeader className="flex flex-row justify-between">
                   <CardTitle>Lista de Clasificaciones</CardTitle>
@@ -125,19 +125,23 @@ export default async function Page() {
         </TabsContent>
         <TabsContent value="packagingUnits">
           <PageContent>
-            <div className="flex justify-between">
-              <h4 className="font-semibold">Lista de Unidades de Empaque</h4>
-              <ModalForm
-                triggerName="Nueva Unidad de Empaque"
-                triggerVariant="secondary"
-              >
-                <PackagingUnitsForm />
-              </ModalForm>
-            </div>
-            <DataTable
-              columns={packagingUnitsColumns}
-              data={packagingUnitsData}
-            />
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle>Lista de Unidades de Empaque</CardTitle>
+                <ModalForm
+                  triggerName="Nueva Unidad de Empaque"
+                  triggerVariant="secondary"
+                >
+                  <PackagingUnitsForm />
+                </ModalForm>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  columns={packagingUnitsColumns}
+                  data={packagingUnitsData}
+                />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
       </Tabs>

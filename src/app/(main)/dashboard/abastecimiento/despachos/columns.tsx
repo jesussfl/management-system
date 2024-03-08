@@ -7,13 +7,13 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
-import TableActions from '@/modules/recepciones/components/table-actions'
+import TableActions from './table-actions'
 
-type RecepcionType = Prisma.RecepcionGetPayload<{
-  include: { renglones: { include: { renglon: true } } }
+type DespachoType = Prisma.DespachoGetPayload<{
+  include: { renglones: { include: { renglon: true; seriales: true } } }
 }>
 
-export const columns: ColumnDef<RecepcionType>[] = [
+export const columns: ColumnDef<DespachoType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -36,7 +36,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
     },
   },
   {
-    accessorKey: 'fecha_recepcion',
+    accessorKey: 'fecha_despacho',
     header: ({ column }) => {
       return (
         <Button
@@ -45,14 +45,14 @@ export const columns: ColumnDef<RecepcionType>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className="text-xs"
         >
-          Fecha recibido
+          Fecha despacho
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      return row.getValue<string>('fecha_recepcion')
-        ? new Date(row.getValue<string>('fecha_recepcion')).toLocaleDateString()
+      return row.getValue<string>('fecha_despacho')
+        ? new Date(row.getValue<string>('fecha_despacho')).toLocaleDateString()
         : ''
     },
   },
@@ -73,12 +73,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
     },
     cell: ({ row }) => {
       const string = row.original.renglones
-        .map(
-          (renglon) =>
-            `${renglon.cantidad} - ${renglon.renglon?.nombre} - precio: ${
-              renglon.precio ? renglon.precio : 's/p'
-            } - fabricante: ${renglon.fabricante ? renglon.fabricante : 's/f'}`
-        )
+        .map((renglon) => ` ${renglon.renglon?.nombre}`)
         .join(', ')
 
       return <div className="">{string}</div>
@@ -87,9 +82,9 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'acciones',
     cell: ({ row }) => {
-      const recepcion = row.original
+      const dispatch = row.original
 
-      return <TableActions id={recepcion.id} />
+      return <TableActions id={dispatch.id} data={dispatch} />
     },
   },
 ]
