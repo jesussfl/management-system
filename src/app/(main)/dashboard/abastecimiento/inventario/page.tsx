@@ -50,9 +50,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const isAuthorized = await validateUserPermissions({
-    section: SECTION_NAMES.INVENTARIO,
-  })
+  // const isAuthorized = await validateUserPermissions({
+  //   section: SECTION_NAMES.INVENTARIO,
+  // })
 
   const itemsData = await getAllItems()
   const classificationsData = await getAllClassifications()
