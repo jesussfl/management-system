@@ -22,10 +22,16 @@ export const Step3 = () => {
     []
   )
   const weight =
-    !isPending &&
+    packagingUnitsData.length > 0 &&
     packagingUnitsData.find(
       (unit) => unit.id === form.getValues('unidadEmpaqueId')
     )?.peso
+
+  useEffect(() => {
+    if (weight) {
+      form.setValue('peso', weight)
+    }
+  }, [weight, form])
   useEffect(() => {
     startTransition(() => {
       getAllPackagingUnits().then((data) => {
@@ -155,11 +161,7 @@ export const Step3 = () => {
                       shouldDirty: true,
                     })
                   }}
-                  value={
-                    field.value ||
-                    form.setValue(field.name, Number(weight)) ||
-                    0
-                  }
+                  value={field.value || 0}
                   disabled={weight ? true : false}
                 />
               </FormControl>

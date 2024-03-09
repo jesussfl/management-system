@@ -14,43 +14,47 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { createPermiso, updatePermiso } from '@/lib/actions/permissions'
 import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Categoria, Clasificacion, Permiso } from '@prisma/client'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/modules/common/components/select/select'
-import Link from 'next/link'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import {
-  createClassification,
-  updateClassification,
-} from '@/lib/actions/classifications'
+import { Categoria } from '@prisma/client'
 import { createCategory, updateCategory } from '@/lib/actions/categories'
+import { getAllClassifications } from '@/lib/actions/classifications'
+import { Combobox } from '@/modules/common/components/combobox'
 interface Props {
   defaultValues?: Categoria
   close?: () => void
 }
-
-type FormValues = {
-  nombre: string
-  descripcion: string
+type ComboboxData = {
+  value: number
+  label: string
 }
+type FormValues = Categoria
 
 export default function CategoriesForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
-
+  const [isPending, startTransition] = React.useTransition()
+  const [classifications, setClassifications] = React.useState<ComboboxData[]>(
+    []
+  )
   const form = useForm<FormValues>({
     defaultValues,
   })
+
+  React.useEffect(() => {
+    startTransition(() => {
+      getAllClassifications().then((data) => {
+        const transformedData = data.map((classification) => ({
+          value: classification.id,
+          label: classification.nombre,
+        }))
+
+        setClassifications(transformedData)
+      })
+    })
+  }, [])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (defaultValues) {
       React.startTransition(() => {
@@ -103,6 +107,25 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
           </DialogTitle>
         </DialogHeader>
         <div className="px-24">
+          <FormField
+            control={form.control}
+            name="id_clasificacion"
+            rules={{
+              required: 'Es necesario seleccionar una clasificación',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full ">
+                <FormLabel>¿A qué clasificación pertenece?</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={classifications}
+                  form={form}
+                  field={field}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="nombre"

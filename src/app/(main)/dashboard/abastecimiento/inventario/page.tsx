@@ -58,7 +58,6 @@ export default async function Page() {
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
   const packagingUnitsData = await getAllPackagingUnits()
-
   return (
     <>
       <PageHeader>
@@ -131,6 +130,7 @@ export default async function Page() {
                 <ModalForm
                   triggerName="Nueva Unidad de Empaque"
                   triggerVariant="secondary"
+                  className="h-[90%]"
                 >
                   <PackagingUnitsForm />
                 </ModalForm>

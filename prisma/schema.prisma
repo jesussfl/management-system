@@ -122,40 +122,48 @@ model Renglon {
 
   despachos   Despachos_Renglones[]
   recepciones Recepciones_Renglones[]
-
-  @@map("Renglones")
 }
 
 enum Medidas {
+  MILILITROS
   LITROS
+  ONZAS
+  LIBRAS
+  TONELADAS
   KILOGRAMOS
   GRAMOS
   UNIDADES
 }
 
 model UnidadEmpaque {
-  id          Int       @id @default(autoincrement())
-  nombre      String    @unique
-  descripcion String
-  abreviacion String?
-  tipo_medida Medidas
-  peso        Decimal?
-  Renglones   Renglon[]
+  id           Int       @id @default(autoincrement())
+  nombre       String    @unique
+  descripcion  String
+  abreviacion  String?
+  tipo_medida  Medidas
+  peso         Decimal?
+  renglones    Renglon[]
+  categoria    Categoria @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_categoria Int
 }
 
 model Categoria {
-  id          Int    @id @default(autoincrement())
-  nombre      String @unique
-  descripcion String
+  id               Int    @id @default(autoincrement())
+  nombre           String @unique
+  descripcion      String
+  id_clasificacion Int
 
-  Renglones Renglon[]
+  renglones        Renglon[]
+  unidades_empaque UnidadEmpaque[]
+  clasificacion    Clasificacion   @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Clasificacion {
-  id          Int       @id @default(autoincrement())
-  nombre      String    @unique
+  id          Int         @id @default(autoincrement())
+  nombre      String      @unique
   descripcion String
-  Renglones   Renglon[]
+  renglones   Renglon[]
+  categorias  Categoria[]
 }
 
 model Sistema {

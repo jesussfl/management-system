@@ -96,19 +96,27 @@ export const Step2 = () => {
         )}
       />
       {form.watch('clasificacionId') !== undefined && (
-        <>
-          <FormField
-            control={form.control}
-            name="categoriaId"
-            rules={{
-              required: 'Este campo es requerido',
-            }}
-            render={({ field }) => (
+        <FormField
+          control={form.control}
+          name="categoriaId"
+          rules={{
+            required: 'Este campo es requerido',
+          }}
+          render={({ field }) => {
+            const filteredCategories = categories.filter((category) =>
+              category.value === form.watch('clasificacionId')
+                ? {
+                    value: category.value,
+                    label: category.label,
+                  }
+                : null
+            )
+            return (
               <FormItem className="flex flex-col w-full ">
                 <FormLabel>Categoría</FormLabel>
                 <Combobox
                   name={field.name}
-                  data={categories}
+                  data={filteredCategories}
                   form={form}
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
@@ -116,20 +124,33 @@ export const Step2 = () => {
                 <FormDescription></FormDescription>
                 <FormMessage />
               </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="unidadEmpaqueId"
-            rules={{
-              required: 'Este campo es requerido',
-            }}
-            render={({ field }) => (
+            )
+          }}
+        />
+      )}
+      {form.watch('categoriaId') !== undefined && (
+        <FormField
+          control={form.control}
+          name="unidadEmpaqueId"
+          rules={{
+            required: 'Este campo es requerido',
+          }}
+          render={({ field }) => {
+            const filteredPackagingUnits = packagingUnits.filter(
+              (packagingUnit) =>
+                packagingUnit.value === form.watch('categoriaId')
+                  ? {
+                      value: packagingUnit.value,
+                      label: packagingUnit.label,
+                    }
+                  : null
+            )
+            return (
               <FormItem className="flex flex-col w-full gap-2.5">
                 <FormLabel>Unidad de Empaque</FormLabel>
                 <Combobox
                   name={field.name}
-                  data={packagingUnits}
+                  data={filteredPackagingUnits}
                   form={form}
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
@@ -138,10 +159,11 @@ export const Step2 = () => {
 
                 <FormMessage />
               </FormItem>
-            )}
-          />
-        </>
+            )
+          }}
+        />
       )}
+
       <FormField
         control={form.control}
         name="tipo"

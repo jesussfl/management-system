@@ -72,6 +72,10 @@ export const getAllCategories = async () => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const classifications = await prisma.categoria.findMany()
+  const classifications = await prisma.categoria.findMany({
+    include: {
+      clasificacion: true,
+    },
+  })
   return classifications
 }

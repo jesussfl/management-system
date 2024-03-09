@@ -14,32 +14,18 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { createPermiso, updatePermiso } from '@/lib/actions/permissions'
 import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Clasificacion, Permiso, UnidadEmpaque } from '@prisma/client'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/modules/common/components/select/select'
-import Link from 'next/link'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import {
-  createClassification,
-  updateClassification,
-} from '@/lib/actions/classifications'
-// import { createCategory, updateCategory } from '@/lib/actions/categories'
+import { UnidadEmpaque } from '@prisma/client'
 import {
   createPackagingUnit,
   updatePackagingUnit,
 } from '@/lib/actions/packaging-units'
 import { Combobox } from '@/modules/common/components/combobox'
+import { getAllCategories } from '@/lib/actions/categories'
 interface Props {
   defaultValues?: UnidadEmpaque
   close?: () => void
@@ -49,8 +35,15 @@ const MEDIDAS = [
   { label: 'UNIDADES', value: 'UNIDADES' },
   { label: 'MILILITROS', value: 'MILILITROS' },
   { label: 'KILOGRAMOS', value: 'KILOGRAMOS' },
+  { label: 'GRAMOS', value: 'GRAMOS' },
+  { label: 'ONZAS', value: 'ONZAS' },
+  { label: 'TONELADAS', value: 'TONELADAS' },
+  { label: 'LIBRAS', value: 'LIBRAS' },
 ]
-
+type ComboboxData = {
+  value: number
+  label: string
+}
 type FormValues = Omit<UnidadEmpaque, 'id'>
 
 export default function PackagingUnitsForm({ defaultValues, close }: Props) {
@@ -58,6 +51,21 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const [isPending, startTransition] = React.useTransition()
+  const [categories, setCategories] = React.useState<ComboboxData[]>([])
+  React.useEffect(() => {
+    startTransition(() => {
+      getAllCategories().then((data) => {
+        const transformedData = data.map((categorie) => ({
+          value: categorie.id,
+          label: categorie.nombre,
+        }))
+
+        setCategories(transformedData)
+      })
+    })
+  }, [])
+
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     if (defaultValues) {
       React.startTransition(() => {
@@ -102,7 +110,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
+        className="flex-1 overflow-y-scroll p-6 gap-8 mb-32"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <DialogHeader className="pb-3 mb-8 border-b border-border">
@@ -111,6 +119,25 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
           </DialogTitle>
         </DialogHeader>
         <div className="px-24">
+          <FormField
+            control={form.control}
+            name="id_categoria"
+            rules={{
+              required: 'Es necesario seleccionar una categoría',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full ">
+                <FormLabel>¿A qué categoría pertenece?</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={categories}
+                  form={form}
+                  field={field}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="nombre"
@@ -257,11 +284,13 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                 <FormControl>
                   <Input
                     type="number"
+                    min={0}
+                    step={0.01}
                     {...field}
-                    value={Number(field.value) || ''}
-                    onChange={(event) =>
-                      field.onChange(Number(event.target.value))
-                    }
+                    value={Number(field.value).toFixed(2) || ''}
+                    onChange={(event) => {
+                      field.onChange(Number(event.target.value).toFixed(2))
+                    }}
                   />
                 </FormControl>
 
@@ -285,4 +314,8 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
       </form>
     </Form>
   )
+}
+var validate = function (e: any) {
+  var t = e.value
+  e.value = t.indexOf('.') >= 0 ? t.slice(0, t.indexOf('.') + 3) : t
 }
