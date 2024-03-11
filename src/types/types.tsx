@@ -26,6 +26,22 @@ export type RenglonType = Prisma.RenglonGetPayload<{
         seriales: true
       }
     }
+    despachos: {
+      include: {
+        seriales: true
+      }
+    }
+
     unidad_empaque: true
+  }
+}>
+
+export type DestinatarioType = Prisma.DestinatarioGetPayload<{
+  include: {
+    unidad: true
+    despachos: true
+    categoria: true
+    componente: true
+    grado: true
   }
 }>

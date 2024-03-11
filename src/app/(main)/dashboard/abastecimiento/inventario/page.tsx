@@ -22,13 +22,10 @@ import {
 
 import ItemsForm from '@/modules/inventario/components/items-form'
 
-import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { getAllItems } from '@/lib/actions/items'
 import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
 import { getAllClassifications } from '@/lib/actions/classifications'
 import { getAllCategories } from '@/lib/actions/categories'
-
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 import ClassificationsForm from '@/modules/inventario/components/classification-form'
 import CategoriesForm from '@/modules/inventario/components/categories-form'

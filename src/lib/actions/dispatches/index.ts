@@ -26,7 +26,7 @@ export const createDispatch = async (data: FormValues) => {
     throw new Error('You must be signed in to perform this action.')
   }
 
-  const { motivo, fecha_despacho, renglones } = data
+  const { motivo, fecha_despacho, cedula_destinatario, renglones } = data
 
   if (!fecha_despacho || !renglones) {
     return {
@@ -39,13 +39,14 @@ export const createDispatch = async (data: FormValues) => {
       .map((renglon, index) => renglon.id_renglon)
 
     return {
-      error: 'Hay algunos renglones sin seriales',
+      error: 'Revisa que todos los renglones esten correctamente seleccionados',
       fields: fields,
     }
   }
 
   await prisma.despacho.create({
     data: {
+      cedula_destinatario,
       motivo,
       fecha_despacho,
       renglones: {
@@ -101,6 +102,7 @@ export const getAllDispatches = async () => {
           seriales: true,
         },
       },
+      destinatario: true,
     },
   })
   return dispatch

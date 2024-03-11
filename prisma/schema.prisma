@@ -254,8 +254,8 @@ model Despacho {
   fecha_despacho      DateTime
   motivo              String?
   renglones           Despachos_Renglones[]
-  cedula_destinatario String?
-  destinatario        Destinatario?         @relation(fields: [cedula_destinatario], references: [cedula])
+  cedula_destinatario String
+  destinatario        Destinatario          @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Despachos_Renglones {
@@ -267,59 +267,69 @@ model Despachos_Renglones {
   seriales    Serial[]
 }
 
+enum Tipos_Cedulas {
+  V
+  E
+  J
+  G
+  R
+  P
+}
+
 model Destinatario {
-  cedula                String             @id
+  id                    Int                @id @default(autoincrement())
+  tipo_cedula           Tipos_Cedulas
+  cedula                String             @unique
   nombres               String
   telefono              String
   apellidos             String
   situacion_profesional String
-  estado                String
-  id_unidad             String
-  unidad                Unidad_Militar     @relation(fields: [id_unidad], references: [id])
-  id_categoria          String
+  id_unidad             Int?
+  unidad                Unidad_Militar?    @relation(fields: [id_unidad], references: [id])
+  id_categoria          Int
   categoria             Categoria_Militar  @relation(fields: [id_categoria], references: [id])
-  id_grado              String
+  id_grado              Int
   grado                 Grado_Militar      @relation(fields: [id_grado], references: [id])
-  id_componente         String
+  id_componente         Int
   componente            Componente_Militar @relation(fields: [id_componente], references: [id])
   despachos             Despacho[]
 }
 
 model Componente_Militar {
-  id               String             @id
-  nombre           String
+  id               Int                @id @default(autoincrement())
+  nombre           String             @unique
   descripcion      String
-  estado           String
-  ultima_edicion   DateTime
-  fecha_eliminado  DateTime
+  estado           String?
+  // ultima_edicion   DateTime
+  // fecha_eliminado  DateTime
   destinatario     Destinatario[]
   personal_militar personal_militar[]
 }
 
 model Grado_Militar {
-  id               String             @id
-  nombre           String
+  id               Int                @id @default(autoincrement())
+  nombre           String             @unique
   abreviatura      String
-  orden            Int
-  estado           String
-  ultima_edicion   DateTime
-  fecha_eliminado  DateTime
+  orden            Int?
+  estado           String?
+  // ultima_edicion   DateTime
+  // fecha_eliminado  DateTime
   personal_militar personal_militar[]
   destinatario     Destinatario[]
 }
 
 model Categoria_Militar {
-  id               String             @id
-  nombre           String
+  id               Int                @id @default(autoincrement())
+  nombre           String             @unique
   abreviatura      String
-  estado           String
+  estado           String?
   destinatario     Destinatario[]
   personal_militar personal_militar[]
 }
 
 model Unidad_Militar {
-  id            String             @id
-  nombre        String
+  id            Int                @id @default(autoincrement())
+  nombre        String             @unique
   descripcion   String
   ubicacion     String
   id_zodi       String
@@ -330,7 +340,7 @@ model Unidad_Militar {
 
 model zodis {
   id          String           @id
-  nombre      String
+  nombre      String           @unique
   descripcion String
   ubicacion   String
   id_redi     String
@@ -340,7 +350,7 @@ model zodis {
 
 model redis {
   id          String  @id
-  nombre      String
+  nombre      String  @unique
   descripcion String
   ubicacion   String
   zodis       zodis[]
@@ -359,13 +369,13 @@ model personal_militar {
   id_grado              String
   id_componente         String
   Componente_Militar    Componente_Militar? @relation(fields: [componente_MilitarId], references: [id])
-  componente_MilitarId  String?
+  componente_MilitarId  Int?
   Grado_Militar         Grado_Militar?      @relation(fields: [grado_MilitarId], references: [id])
-  grado_MilitarId       String?
+  grado_MilitarId       Int?
   Categoria_Militar     Categoria_Militar?  @relation(fields: [categoria_MilitarId], references: [id])
-  categoria_MilitarId   String?
+  categoria_MilitarId   Int?
   Unidad_Militar        Unidad_Militar?     @relation(fields: [unidad_MilitarId], references: [id])
-  unidad_MilitarId      String?
+  unidad_MilitarId      Int?
 }
 
 model reposos {

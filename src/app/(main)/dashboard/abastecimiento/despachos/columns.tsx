@@ -36,6 +36,22 @@ export const columns: ColumnDef<DespachoType>[] = [
     },
   },
   {
+    accessorKey: 'destinatario.cedula',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Cédula Destinatario
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: 'fecha_despacho',
     header: ({ column }) => {
       return (

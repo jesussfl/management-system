@@ -1,6 +1,5 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
-import { Input } from '@/modules/common/components/input/input'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
@@ -12,7 +11,7 @@ import {
 } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { Box, Trash } from 'lucide-react'
+import { Box, CheckIcon, Trash } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -41,20 +40,19 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  Prisma,
-  Recepcion,
-  Despacho,
-  Recepciones_Renglones,
-  Despachos_Renglones,
-  Serial,
-} from '@prisma/client'
-import { createReception } from '@/lib/actions/receptions'
+import { Prisma, Despacho, Despachos_Renglones, Serial } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
-import { Switch } from '@/modules/common/components/switch/switch'
 import { SerialsForm } from './serials-form'
-import { v4 } from 'uuid'
 import { createDispatch } from '@/lib/actions/dispatches'
+import { getAllReceivers } from '@/lib/actions/receivers'
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/modules/common/components/command/command'
 
 type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
 type DespachoType = Prisma.Despachos_RenglonesGetPayload<{
@@ -76,7 +74,10 @@ interface Props {
   close?: () => void
 }
 // type FormValues = Omit<RecepcionType, 'id' | 'renglones.id_recepcion'>
-
+type ComboboxData = {
+  value: string
+  label: string
+}
 export default function DispatchesForm({
   renglonesData,
   defaultValues,
@@ -94,11 +95,28 @@ export default function DispatchesForm({
     control: form.control,
     name: `renglones`,
   })
+  const [isPending, startTransition] = useTransition()
+
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
   const [selectedItems, setSelectedItems] = useState<{
     [key: number]: boolean
   }>({})
+  const [receivers, setReceivers] = useState<ComboboxData[]>([])
   const [selectedData, setSelectedData] = useState<RenglonType[]>([])
+  console.log(selectedData)
+  useEffect(() => {
+    startTransition(() => {
+      getAllReceivers().then((data) => {
+        const transformedData = data.map((receiver) => ({
+          value: receiver.cedula,
+          label: receiver.cedula + '-' + receiver.nombres,
+        }))
+
+        setReceivers(transformedData)
+      })
+    })
+  }, [])
+
   useEffect(() => {
     if (defaultValues) {
       const renglones = defaultValues.renglones
@@ -200,6 +218,75 @@ export default function DispatchesForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
+            <FormField
+              control={form.control}
+              name="cedula_destinatario"
+              render={({ field }) => (
+                <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                  <FormLabel>Destinatario:</FormLabel>
+                  <div className="w-[70%]">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? receivers.find(
+                                  (receiver) => receiver.value === field.value
+                                )?.label
+                              : 'Seleccionar destinatario'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <CommandInput
+                            placeholder="Buscar destinatario..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {receivers.map((receiver) => (
+                              <CommandItem
+                                value={receiver.label}
+                                key={receiver.value}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'cedula_destinatario',
+                                    receiver.value
+                                  )
+                                }}
+                              >
+                                {receiver.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    receiver.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="motivo"
@@ -335,18 +422,26 @@ export default function DispatchesForm({
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid xl:grid-cols-2 gap-4">
                 {selectedData.map((item, index) => {
-                  const isEmpty = itemsWithoutSerials.includes(item.id)
+                  const receptions = item.recepciones.reduce(
+                    (total, item) => total + item.cantidad,
+                    0
+                  )
+
+                  const dispatchedSerials = item.despachos.reduce(
+                    (total, item) => total + item.seriales.length,
+                    0
+                  )
+
+                  const totalStock = receptions - dispatchedSerials
+                  console.log('stock', totalStock, dispatchedSerials)
+                  const isEmpty = totalStock === 0
                   return (
                     <SelectedItemCard
                       key={item.id}
                       item={item}
                       index={index}
                       deleteItem={deleteItem}
-                      isEmpty={
-                        isEmpty
-                          ? 'Este renglon no tiene seriales asociados'
-                          : false
-                      }
+                      isEmpty={isEmpty ? 'Este renglon no tiene stock' : false}
                       setItemsWithoutSerials={setItemsWithoutSerials}
                     />
                   )
@@ -423,6 +518,7 @@ export const SelectedItemCard = ({
             }`}
             closeWarning={false}
             className="max-h-[80vh]"
+            disabled={isEmpty ? true : false}
           >
             <SerialsForm
               index={index}

@@ -27,7 +27,11 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
-
+/* styles.css */
+.PopoverContent {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
