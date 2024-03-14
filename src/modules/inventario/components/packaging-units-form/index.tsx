@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -26,6 +26,9 @@ import {
 } from '@/lib/actions/packaging-units'
 import { Combobox } from '@/modules/common/components/combobox'
 import { getAllCategories } from '@/lib/actions/categories'
+import { useRouter } from 'next/navigation'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { Loader2 } from 'lucide-react'
 interface Props {
   defaultValues?: UnidadEmpaque
   close?: () => void
@@ -48,11 +51,16 @@ type FormValues = Omit<UnidadEmpaque, 'id'>
 
 export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
+  const isEditEnabled = !!defaultValues
+  const router = useRouter()
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+
   const [isPending, startTransition] = React.useTransition()
   const [categories, setCategories] = React.useState<ComboboxData[]>([])
+
   React.useEffect(() => {
     startTransition(() => {
       getAllCategories().then((data) => {
@@ -67,22 +75,8 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   }, [])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        updatePackagingUnit(defaultValues.id, values).then((data) => {
-          if (data?.success) {
-            toast({
-              title: 'Unidad de empaque actualizada',
-              description:
-                'La Unidad de empaque se ha actualizado correctamente',
-              variant: 'success',
-            })
-            close && close()
-          }
-        })
-      })
-    } else {
-      React.startTransition(() => {
+    startTransition(() => {
+      if (!isEditEnabled) {
         createPackagingUnit(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
@@ -97,11 +91,41 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
               description: 'La Unidad de empaque se ha creado correctamente',
               variant: 'success',
             })
-            close && close()
+
+            router.back()
           }
         })
+
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
+
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+
+      updatePackagingUnit(defaultValues.id, dirtyValues).then((data) => {
+        if (data?.error) {
+          form.setError(data.field as any, {
+            type: 'custom',
+            message: data.error,
+          })
+        }
+        if (data?.success) {
+          toast({
+            title: 'Unidad de empaque actualizada',
+            description: 'La Unidad de empaque se ha actualizado correctamente',
+            variant: 'success',
+          })
+          router.back()
+        }
       })
-    }
+    })
   }
 
   return (
@@ -157,7 +181,9 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -196,7 +222,9 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -302,15 +330,15 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
             </p>
           )}
 
-          <Button variant="default" type="submit">
-            Guardar
+          <Button variant="default" type="submit" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
           </Button>
         </DialogFooter>
       </form>
     </Form>
   )
-}
-var validate = function (e: any) {
-  var t = e.value
-  e.value = t.indexOf('.') >= 0 ? t.slice(0, t.indexOf('.') + 3) : t
 }

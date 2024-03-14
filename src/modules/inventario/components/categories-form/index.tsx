@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -14,20 +14,18 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
 import { Categoria, Prisma } from '@prisma/client'
 import { createCategory, updateCategory } from '@/lib/actions/categories'
 import { getAllClassifications } from '@/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
 import { CategoriaType } from '@/types/types'
+import { useRouter } from 'next/navigation'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { Loader2 } from 'lucide-react'
 
 interface Props {
   defaultValues?: Categoria
-  close?: () => void
 }
 type ComboboxData = {
   value: number
@@ -35,15 +33,18 @@ type ComboboxData = {
 }
 type FormValues = Categoria
 
-export default function CategoriesForm({ defaultValues, close }: Props) {
+export default function CategoriesForm({ defaultValues }: Props) {
   const { toast } = useToast()
-  const [isPending, startTransition] = React.useTransition()
+  const isEditEnabled = !!defaultValues
+  const router = useRouter()
   const [classifications, setClassifications] = React.useState<ComboboxData[]>(
     []
   )
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const [isPending, startTransition] = React.useTransition()
 
   React.useEffect(() => {
     startTransition(() => {
@@ -58,21 +59,8 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
     })
   }, [])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        updateCategory(defaultValues.id, values).then((data) => {
-          if (data?.success) {
-            toast({
-              title: 'Categoria actualizada',
-              description: 'La categoria se ha actualizado correctamente',
-              variant: 'success',
-            })
-            close && close()
-          }
-        })
-      })
-    } else {
-      React.startTransition(() => {
+    startTransition(() => {
+      if (!isEditEnabled) {
         createCategory(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
@@ -87,11 +75,34 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
               description: 'La categoria se ha creado correctamente',
               variant: 'success',
             })
-            close && close()
+
+            router.back()
           }
         })
+
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
+
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      updateCategory(defaultValues.id, dirtyValues).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Categoria actualizada',
+            description: 'La categoria se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
       })
-    }
+    })
   }
 
   return (
@@ -147,7 +158,9 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -186,7 +199,9 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -207,8 +222,12 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
             </p>
           )}
 
-          <Button variant="default" type="submit">
-            Guardar
+          <Button variant="default" type="submit" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
           </Button>
         </DialogFooter>
       </form>

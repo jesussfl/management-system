@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -14,16 +14,15 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
 import { Clasificacion } from '@prisma/client'
 import {
   createClassification,
   updateClassification,
 } from '@/lib/actions/classifications'
+import { useRouter } from 'next/navigation'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { Loader2 } from 'lucide-react'
 interface Props {
   defaultValues?: Clasificacion
   close?: () => void
@@ -36,26 +35,17 @@ type FormValues = {
 
 export default function ClassificationsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
-
+  const router = useRouter()
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const isEditEnabled = !!defaultValues
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const [isPending, startTransition] = React.useTransition()
+
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        updateClassification(defaultValues.id, values).then((data) => {
-          if (data?.success) {
-            toast({
-              title: 'Permiso actualizado',
-              description: 'El permiso se ha actualizado correctamente',
-              variant: 'success',
-            })
-            close && close()
-          }
-        })
-      })
-    } else {
-      React.startTransition(() => {
+    startTransition(() => {
+      if (!isEditEnabled) {
         createClassification(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
@@ -66,15 +56,34 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
 
           if (data?.success) {
             toast({
-              title: 'Permiso creado',
-              description: 'El permiso se ha creado correctamente',
+              title: 'Clasificación creada',
+              description: 'La clasificación se ha creado correctamente',
               variant: 'success',
             })
-            close && close()
+            router.back()
           }
         })
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+        return
+      }
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      updateClassification(defaultValues.id, dirtyValues).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Clasificación actualizada',
+            description: 'La clasificación se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
       })
-    }
+    })
   }
 
   return (
@@ -111,7 +120,9 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -150,7 +161,9 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -171,8 +184,12 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
             </p>
           )}
 
-          <Button variant="default" type="submit">
-            Guardar
+          <Button variant="default" type="submit" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
           </Button>
         </DialogFooter>
       </form>

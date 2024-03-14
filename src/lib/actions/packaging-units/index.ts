@@ -43,7 +43,19 @@ export const updatePackagingUnit = async (
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
+  const { nombre } = data
+  const exist = await prisma.unidadEmpaque.findUnique({
+    where: {
+      nombre,
+    },
+  })
 
+  if (exist) {
+    return {
+      field: 'nombre',
+      error: 'Esta Unidad de empaque ya existe',
+    }
+  }
   await prisma.unidadEmpaque.update({
     where: {
       id,

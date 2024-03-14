@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ClassificationsForm from '@/modules/inventario/components/classification-form'
+import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
 
 export default async function Page({
   params: { id },
@@ -18,7 +18,7 @@ export default async function Page({
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-hidden p-0'}
+        className={'lg:max-w-screen-lg overflow-hidden p-0 max-h-[90vh]'}
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
@@ -26,7 +26,7 @@ export default async function Page({
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ClassificationsForm defaultValues={packagingUnitData} />
+        <PackagingUnitsForm defaultValues={packagingUnitData} />
       </DialogContent>
     </Dialog>
   )

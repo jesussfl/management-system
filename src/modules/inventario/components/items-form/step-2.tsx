@@ -18,6 +18,7 @@ import { getAllCategories } from '@/lib/actions/categories'
 import { getAllClassifications } from '@/lib/actions/classifications'
 import { getAllPresentations } from '@/lib/actions/presentations'
 import { UnidadEmpaque } from '@prisma/client'
+import { Loader2 } from 'lucide-react'
 
 type ComboboxData = {
   value: number
@@ -76,112 +77,119 @@ export const Step2 = () => {
           correctamente
         </FormInstructionsDescription>
       </FormInstructions>
-      <FormField
-        control={form.control}
-        name="clasificacionId"
-        rules={{
-          required: 'Este campo es requerido',
-        }}
-        render={({ field }) => (
-          <FormItem className="flex flex-col w-full ">
-            <FormLabel>Clasificación</FormLabel>
-            <Combobox
-              name={field.name}
-              data={classifications}
-              form={form}
-              field={field}
-            />
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      {form.watch('clasificacionId') !== undefined && (
-        <FormField
-          control={form.control}
-          name="categoriaId"
-          rules={{
-            required: 'Este campo es requerido',
-          }}
-          render={({ field }) => {
-            const filteredCategories = categories.filter((category) =>
-              category.value === form.watch('clasificacionId')
-                ? {
-                    value: category.value,
-                    label: category.label,
-                  }
-                : null
-            )
-            return (
+
+      {!isPending ? (
+        <>
+          <FormField
+            control={form.control}
+            name="clasificacionId"
+            rules={{
+              required: 'Este campo es requerido',
+            }}
+            render={({ field }) => (
               <FormItem className="flex flex-col w-full ">
-                <FormLabel>Categoría</FormLabel>
+                <FormLabel>Clasificación</FormLabel>
                 <Combobox
                   name={field.name}
-                  data={filteredCategories}
+                  data={classifications}
                   form={form}
                   field={field}
-                  disabled={form.watch('clasificacionId') === undefined}
                 />
-                <FormDescription></FormDescription>
                 <FormMessage />
               </FormItem>
-            )
-          }}
-        />
-      )}
-      {form.watch('categoriaId') !== undefined && (
-        <FormField
-          control={form.control}
-          name="unidadEmpaqueId"
-          rules={{
-            required: 'Este campo es requerido',
-          }}
-          render={({ field }) => {
-            const filteredPackagingUnits = packagingUnits.filter(
-              (packagingUnit) =>
-                packagingUnit.value === form.watch('categoriaId')
-                  ? {
-                      value: packagingUnit.value,
-                      label: packagingUnit.label,
-                    }
-                  : null
-            )
-            return (
-              <FormItem className="flex flex-col w-full gap-2.5">
-                <FormLabel>Unidad de Empaque</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={filteredPackagingUnits}
-                  form={form}
-                  field={field}
-                  disabled={form.watch('clasificacionId') === undefined}
-                />
-                <FormDescription></FormDescription>
+            )}
+          />
+          {form.watch('clasificacionId') !== undefined && (
+            <FormField
+              control={form.control}
+              name="categoriaId"
+              rules={{
+                required: 'Este campo es requerido',
+              }}
+              render={({ field }) => {
+                const filteredCategories = categories.filter((category) =>
+                  category.value === form.watch('clasificacionId')
+                    ? {
+                        value: category.value,
+                        label: category.label,
+                      }
+                    : null
+                )
+                return (
+                  <FormItem className="flex flex-col w-full ">
+                    <FormLabel>Categoría</FormLabel>
+                    <Combobox
+                      name={field.name}
+                      data={filteredCategories}
+                      form={form}
+                      field={field}
+                      disabled={form.watch('clasificacionId') === undefined}
+                    />
+                    <FormDescription></FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
+            />
+          )}
+          {form.watch('categoriaId') !== undefined && (
+            <FormField
+              control={form.control}
+              name="unidadEmpaqueId"
+              rules={{
+                required: 'Este campo es requerido',
+              }}
+              render={({ field }) => {
+                const filteredPackagingUnits = packagingUnits.filter(
+                  (packagingUnit) =>
+                    packagingUnit.value === form.watch('categoriaId')
+                      ? {
+                          value: packagingUnit.value,
+                          label: packagingUnit.label,
+                        }
+                      : null
+                )
+                return (
+                  <FormItem className="flex flex-col w-full gap-2.5">
+                    <FormLabel>Unidad de Empaque</FormLabel>
+                    <Combobox
+                      name={field.name}
+                      data={filteredPackagingUnits}
+                      form={form}
+                      field={field}
+                      disabled={form.watch('clasificacionId') === undefined}
+                    />
+                    <FormDescription></FormDescription>
+
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
+            />
+          )}
+
+          <FormField
+            control={form.control}
+            name="tipo"
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>{`Tipo (Opcional)`}</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Ingresa el tipo"
+                    {...field}
+                    value={field.value || ''}
+                  />
+                </FormControl>
 
                 <FormMessage />
               </FormItem>
-            )
-          }}
-        />
+            )}
+          />
+        </>
+      ) : (
+        <Loader2 className="w-6 h-6 animate-spin" />
       )}
-
-      <FormField
-        control={form.control}
-        name="tipo"
-        render={({ field }) => (
-          <FormItem className="">
-            <FormLabel>{`Tipo (Opcional)`}</FormLabel>
-            <FormControl>
-              <Input
-                placeholder="Ingresa el tipo"
-                {...field}
-                value={field.value || ''}
-              />
-            </FormControl>
-
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </div>
   )
 }

@@ -9,16 +9,12 @@ import { Renglon } from '@prisma/client'
 import { createItem, updateItem, checkItemExistance } from '@/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
-import {
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Step1 } from './step-1'
 import { Step2 } from './step-2'
 import { Step3 } from './step-3'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
 interface Props {
   defaultValues?: Renglon
   close?: () => void
@@ -28,22 +24,42 @@ type FormValues = Omit<Renglon, 'id'>
 /**
  * Form component that allows the user to add or update a "row item" with multiple steps and form validation.
  */
-export default function ItemsForm({
-  defaultValues,
-  close,
-}: Props): React.JSX.Element {
+export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
+
   const form = useForm<FormValues>({
     mode: 'all',
     defaultValues,
   })
 
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const [isPending, startTransition] = React.useTransition()
+  const [isLoading, setIsLoading] = React.useState(false)
   const [currentStep, setCurrentStep] = React.useState(1)
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    if (isEditEnabled && isDirty) {
+    startTransition(() => {
+      if (!isEditEnabled) {
+        createItem(data).then(() => {
+          toast({
+            title: 'Renglon creado',
+            description: 'El renglon se ha creado correctamente',
+            variant: 'success',
+          })
+          router.back()
+        })
+
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
       const dirtyValues = getDirtyValues(dirtyFields, data) as FormValues
       updateItem(defaultValues.id, dirtyValues).then(() => {
         toast({
@@ -53,16 +69,7 @@ export default function ItemsForm({
         })
         router.back()
       })
-    } else {
-      createItem(data).then(() => {
-        toast({
-          title: 'Renglon creado',
-          description: 'El renglon se ha creado correctamente',
-          variant: 'success',
-        })
-        router.back()
-      })
-    }
+    })
   }
 
   const validateAndProceed = async (
@@ -78,7 +85,9 @@ export default function ItemsForm({
   const handleNextStep = async () => {
     switch (currentStep) {
       case 1:
+        setIsLoading(true)
         const name = form.getValues('nombre')
+
         const itemExists = await checkItemExistance(name)
 
         if (itemExists && !defaultValues) {
@@ -86,10 +95,14 @@ export default function ItemsForm({
             type: 'custom',
             message: 'Ya existe un renglón con este nombre',
           })
+          setIsLoading(false)
+
           return
         }
 
         await validateAndProceed(['nombre', 'descripcion'])
+
+        setIsLoading(false)
         break
 
       case 2:
@@ -153,6 +166,7 @@ export default function ItemsForm({
           </Button>
 
           <Button
+            disabled={isPending || isLoading}
             onClick={(e) => {
               if (currentStep === 3) return
 
@@ -160,7 +174,13 @@ export default function ItemsForm({
               handleNextStep()
             }}
           >
-            {currentStep === 3 ? 'Guardar' : 'Siguiente'}
+            {isPending || isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : currentStep === 3 ? (
+              'Guardar'
+            ) : (
+              'Siguiente'
+            )}
           </Button>
         </DialogFooter>
       </form>

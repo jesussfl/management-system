@@ -75,7 +75,9 @@ export default async function Page() {
       <Tabs defaultValue="items">
         <TabsList className="mx-5">
           <TabsTrigger value="items">Renglones</TabsTrigger>
-          <TabsTrigger value="categories">Categorías</TabsTrigger>
+          <TabsTrigger value="categories">
+            Clasificaciones y Categorías{' '}
+          </TabsTrigger>
           <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
         </TabsList>
         <TabsContent value="items">
