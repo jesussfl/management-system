@@ -14,22 +14,12 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { createPermiso, updatePermiso } from '@/lib/actions/permissions'
 import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Clasificacion, Permiso } from '@prisma/client'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/modules/common/components/select/select'
-import Link from 'next/link'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { Clasificacion } from '@prisma/client'
 import {
   createClassification,
   updateClassification,
@@ -96,11 +86,6 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
         className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega una nueva clasificación
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}

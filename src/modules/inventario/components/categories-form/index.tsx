@@ -19,10 +19,12 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Categoria } from '@prisma/client'
+import { Categoria, Prisma } from '@prisma/client'
 import { createCategory, updateCategory } from '@/lib/actions/categories'
 import { getAllClassifications } from '@/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
+import { CategoriaType } from '@/types/types'
+
 interface Props {
   defaultValues?: Categoria
   close?: () => void
@@ -101,11 +103,6 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
         className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega una nueva categoría
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}

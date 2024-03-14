@@ -18,7 +18,7 @@ import { Step1 } from './step-1'
 import { Step2 } from './step-2'
 import { Step3 } from './step-3'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
-
+import { useRouter } from 'next/navigation'
 interface Props {
   defaultValues?: Renglon
   close?: () => void
@@ -34,6 +34,7 @@ export default function ItemsForm({
 }: Props): React.JSX.Element {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
+  const router = useRouter()
   const form = useForm<FormValues>({
     mode: 'all',
     defaultValues,
@@ -50,7 +51,7 @@ export default function ItemsForm({
           description: 'El renglon se ha actualizado correctamente',
           variant: 'success',
         })
-        close && close()
+        router.back()
       })
     } else {
       createItem(data).then(() => {
@@ -59,7 +60,7 @@ export default function ItemsForm({
           description: 'El renglon se ha creado correctamente',
           variant: 'success',
         })
-        close && close()
+        router.back()
       })
     }
   }
@@ -124,14 +125,6 @@ export default function ItemsForm({
         className="flex-1 overflow-y-scroll p-6 gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            {defaultValues ? 'Editar renglón' : 'Agrega un nuevo renglón'}
-          </DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">
-            Paso {currentStep} de {'3'}
-          </DialogDescription>
-        </DialogHeader>
         <div className="px-24">
           {currentStep === 1 && <Step1 />}
           {currentStep === 2 && <Step2 />}
@@ -145,7 +138,9 @@ export default function ItemsForm({
               Corrige los campos en rojo
             </p>
           )}
-
+          <p className="text-xs text-muted-foreground">
+            Paso {currentStep} de {'3'}
+          </p>
           <Button
             variant="outline"
             disabled={currentStep === 1}

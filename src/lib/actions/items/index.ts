@@ -132,3 +132,25 @@ export const getAllItems = async () => {
   })
   return JSON.parse(JSON.stringify(renglones))
 }
+
+export const getItemById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const renglon = await prisma.renglon.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      clasificacion: true,
+      categoria: true,
+      unidad_empaque: true,
+    },
+  })
+
+  if (!renglon) {
+    throw new Error('Renglon no existe')
+  }
+  return JSON.parse(JSON.stringify(renglon))
+}

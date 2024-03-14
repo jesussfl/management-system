@@ -66,16 +66,36 @@ export const deleteCategory = async (id: number) => {
 
   revalidatePath('/dashboard/abastecimiento/inventario')
 }
+export const getCategoryById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const category = await prisma.categoria.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      clasificacion: true,
+    },
+  })
 
+  if (!category) {
+    throw new Error('Categoria no existe')
+  }
+
+  return category
+}
 export const getAllCategories = async () => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const classifications = await prisma.categoria.findMany({
+  const categories = await prisma.categoria.findMany({
     include: {
       clasificacion: true,
     },
   })
-  return classifications
+
+  return categories
 }

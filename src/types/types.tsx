@@ -35,7 +35,11 @@ export type RenglonType = Prisma.RenglonGetPayload<{
     unidad_empaque: true
   }
 }>
-
+export type CategoriaType = Prisma.CategoriaGetPayload<{
+  include: {
+    clasificacion: true
+  }
+}>
 export type DestinatarioType = Prisma.DestinatarioGetPayload<{
   include: {
     unidad: true

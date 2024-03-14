@@ -1,15 +1,24 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-import TableActions from '@/modules/inventario/components/table-actions'
 import ModalForm from '@/modules/common/components/modal-form'
 import { Prisma } from '@prisma/client'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import Link from 'next/link'
+
 type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     recepciones: {
@@ -180,7 +189,32 @@ export const columns: ColumnDef<RenglonType>[] = [
       const data = row.original
       const renglon = (({ recepciones, ...rest }) => rest)(data)
 
-      return <TableActions renglon={renglon} />
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir Menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(String(renglon.id))}
+            >
+              Copiar código
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <Link
+              href={`/dashboard/abastecimiento/inventario/renglon/${renglon.id}`}
+            >
+              <DropdownMenuItem> Editar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
   },
 ]

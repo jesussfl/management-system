@@ -75,3 +75,20 @@ export const getAllClassifications = async () => {
   const classifications = await prisma.clasificacion.findMany()
   return classifications
 }
+
+export const getClassificationById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const classification = await prisma.clasificacion.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!classification) {
+    throw new Error('Clasificación no existe')
+  }
+  return classification
+}

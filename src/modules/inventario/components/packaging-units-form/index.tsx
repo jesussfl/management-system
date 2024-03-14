@@ -113,11 +113,6 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
         className="flex-1 overflow-y-scroll p-6 gap-8 mb-32"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega una nueva unidad de empaque
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}
