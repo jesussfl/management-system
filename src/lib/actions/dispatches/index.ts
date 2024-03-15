@@ -98,7 +98,11 @@ export const getAllDispatches = async () => {
     include: {
       renglones: {
         include: {
-          renglon: true,
+          renglon: {
+            include: {
+              unidad_empaque: true,
+            },
+          },
           seriales: true,
         },
       },

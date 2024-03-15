@@ -167,7 +167,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="sticky bottom-0 flex flex-row justify-between items-center bg-background p-5">
+      <div className=" flex flex-row justify-between items-center bg-background p-5">
         <DataTableRowsCounter
           selectedRows={table.getSelectedRowModel().rows.length}
           totalRows={table.getFilteredRowModel().rows.length}

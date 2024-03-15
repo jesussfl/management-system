@@ -6,8 +6,10 @@ import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { RenglonType } from '@/types/types'
-
+import { Prisma } from '@prisma/client'
+type RenglonType = Prisma.RenglonGetPayload<{
+  include: { unidad_empaque: true; recepciones: true }
+}>
 export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
   {
