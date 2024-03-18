@@ -5,6 +5,7 @@ import {
   Categoria_Militar,
   Componente_Militar,
   Grado_Militar,
+  Prisma,
   Unidad_Militar,
 } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
@@ -45,7 +46,16 @@ export const createComponent = async (data: Omit<Componente_Militar, 'id'>) => {
     success: 'Component created successfully',
   }
 }
-export const createGrade = async (data: Omit<Grado_Militar, 'id'>) => {
+export const createGrade = async (
+  data: Omit<
+    Prisma.Grado_MilitarGetPayload<{
+      include: {
+        componentes: true
+      }
+    }>,
+    'id'
+  >
+) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -73,7 +83,18 @@ export const createGrade = async (data: Omit<Grado_Militar, 'id'>) => {
   }
 
   await prisma.grado_Militar.create({
-    data,
+    data: {
+      ...data,
+      componentes: {
+        create: data.componentes.map((component) => ({
+          componente: {
+            connect: {
+              id: component.id_componente,
+            },
+          },
+        })),
+      },
+    },
   })
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
@@ -159,7 +180,61 @@ export const updateComponent = async (
 
 export const updateGrade = async (
   id: number,
-  data: Omit<Grado_Militar, 'id'>
+  data: Omit<
+    Prisma.Grado_MilitarGetPayload<{
+      include: {
+        componentes: true
+      }
+    }>,
+    'id'
+  >
+) => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const exists = await prisma.grado_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Grade not found',
+      field: 'nombre',
+    }
+  }
+  console.log(data)
+  await prisma.grado_Militar.update({
+    where: {
+      id,
+    },
+    data: {
+      ...data,
+      componentes: {
+        deleteMany: {},
+        create: data.componentes.map((component) => ({
+          id_componente: component.id_componente,
+        })),
+      },
+    },
+  })
+
+  revalidatePath('/dashboard/abastecimiento/destinatarios')
+
+  return {
+    success: 'Grade updated successfully',
+  }
+}
+export const updateCategory = async (
+  id: number,
+  data: Omit<
+    Prisma.Categoria_MilitarGetPayload<{ include: { grados: true } }>,
+    'id'
+  >
 ) => {
   const session = await auth()
 
@@ -175,7 +250,7 @@ export const updateGrade = async (
     }
   }
 
-  const exists = await prisma.grado_Militar.findUnique({
+  const exists = await prisma.categoria_Militar.findUnique({
     where: {
       id,
     },
@@ -183,24 +258,32 @@ export const updateGrade = async (
 
   if (!exists) {
     return {
-      error: 'Grade not found',
+      error: 'Category not found',
+      field: 'nombre',
     }
   }
 
-  await prisma.grado_Militar.update({
+  await prisma.categoria_Militar.update({
     where: {
       id,
     },
-    data,
+    data: {
+      ...data,
+      grados: {
+        deleteMany: {},
+        create: data.grados.map((grade) => ({
+          id_grado: grade.id_grado,
+        })),
+      },
+    },
   })
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
-    success: 'Grade updated successfully',
+    success: 'Category actualizada exitosamente',
   }
 }
-
 export const deleteComponent = async (id: number) => {
   const session = await auth()
 
@@ -259,7 +342,12 @@ export const deleteGrade = async (id: number) => {
   }
 }
 
-export const createCategory = async (data: Omit<Categoria_Militar, 'id'>) => {
+export const createCategory = async (
+  data: Omit<
+    Prisma.Categoria_MilitarGetPayload<{ include: { grados: true } }>,
+    'id'
+  >
+) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -287,7 +375,18 @@ export const createCategory = async (data: Omit<Categoria_Militar, 'id'>) => {
   }
 
   await prisma.categoria_Militar.create({
-    data,
+    data: {
+      ...data,
+      grados: {
+        create: data.grados.map((grade) => ({
+          grado: {
+            connect: {
+              id: grade.id_grado,
+            },
+          },
+        })),
+      },
+    },
   })
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')
@@ -310,10 +409,59 @@ export const getAllGrades = async () => {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const grades = await prisma.grado_Militar.findMany()
+  const grades = await prisma.grado_Militar.findMany({
+    include: {
+      componentes: {
+        include: {
+          componente: true,
+        },
+      },
+    },
+  })
   return grades
 }
+export const getGradeById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
 
+  const grade = await prisma.grado_Militar.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      componentes: true,
+    },
+  })
+
+  if (!grade) {
+    throw new Error('Grade not found')
+  }
+
+  return grade
+}
+export const getCategoryById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const category = await prisma.categoria_Militar.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      grados: true,
+    },
+  })
+
+  if (!category) {
+    throw new Error('Category not found')
+  }
+
+  return category
+}
 export const getAllCategories = async () => {
   const session = await auth()
   if (!session?.user) {

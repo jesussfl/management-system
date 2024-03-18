@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -44,81 +44,27 @@ import {
   CommandItem,
 } from '@/modules/common/components/command/command'
 import { CheckIcon } from 'lucide-react'
-import {
-  getAllCategories,
-  getAllComponents,
-  getAllGrades,
-} from '@/lib/actions/ranks'
 import { createReceiver } from '@/lib/actions/receivers'
-import { useRouter } from 'next/navigation'
+import { useReceiversFormData } from '@/lib/hooks/use-receivers-form-data'
 
 type FormValues = Omit<DestinatarioType, 'id'>
 interface Props {
   defaultValues?: FormValues
-  close?: () => void
-}
-type ComboboxData = {
-  value: number
-  label: string
 }
 
-export default function ReceiversForm({ defaultValues, close }: Props) {
+export default function ReceiversForm({ defaultValues }: Props) {
   const { toast } = useToast()
-  const [isPending, startTransition] = React.useTransition()
-  const [categories, setCategories] = React.useState<ComboboxData[]>([])
-  const [components, setComponents] = React.useState<ComboboxData[]>([])
-  const [grades, setGrades] = React.useState<ComboboxData[]>([])
-
+  const isEditEnabled = !!defaultValues
   const form = useForm<FormValues>({
     defaultValues,
   })
-  const router = useRouter()
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const { categories, components, grades, isPending, startTransition, router } =
+    useReceiversFormData()
 
-  React.useEffect(() => {
-    startTransition(() => {
-      getAllCategories().then((data) => {
-        const transformedData = data.map((category) => ({
-          value: category.id,
-          label: category.nombre,
-        }))
-        setCategories(transformedData)
-      })
-
-      getAllComponents().then((data) => {
-        const transformedData = data.map((component) => ({
-          value: component.id,
-          label: component.nombre,
-        }))
-
-        setComponents(transformedData)
-      })
-
-      getAllGrades().then((data) => {
-        const transformedData = data.map((grade) => ({
-          value: grade.id,
-          label: grade.nombre,
-        }))
-
-        setGrades(transformedData)
-      })
-    })
-  }, [])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        // updateCategory(defaultValues.id, values).then((data) => {
-        //   if (data?.success) {
-        //     toast({
-        //       title: 'Categoria actualizada',
-        //       description: 'La categoria se ha actualizado correctamente',
-        //       variant: 'success',
-        //     })
-        //     close && close()
-        //   }
-        // })
-      })
-    } else {
-      React.startTransition(() => {
+    startTransition(() => {
+      if (!isEditEnabled) {
         createReceiver(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
@@ -136,8 +82,18 @@ export default function ReceiversForm({ defaultValues, close }: Props) {
             router.replace('/dashboard/abastecimiento/destinatarios')
           }
         })
-      })
-    }
+
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
+    })
   }
 
   if (isPending) {
@@ -277,209 +233,6 @@ export default function ReceiversForm({ defaultValues, close }: Props) {
             <div className="border-b border-base-300" />
 
             <div className="flex gap-12">
-              {/* <FormField
-                control={form.control}
-                name="id_unidad"
-                render={({ field }) => (
-                  <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                    <FormLabel>Unidad</FormLabel>
-                    <div className="w-[70%]">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-full justify-between',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {field.value
-                                ? unidades.find(
-                                    (unidad) => unidad.value === field.value
-                                  )?.label
-                                : 'Seleccionar unidad'}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="PopoverContent">
-                          <Command>
-                            <CommandInput
-                              placeholder="Buscar unidad..."
-                              className="h-9"
-                            />
-                            <CommandEmpty>
-                              No se encontaron resultados.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {unidades.map((unidad) => (
-                                <CommandItem
-                                  value={unidad.label}
-                                  key={unidad.value}
-                                  onSelect={() => {
-                                    form.setValue('id_unidad', unidad.value)
-                                  }}
-                                >
-                                  {unidad.label}
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      unidad.value === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              /> */}
-              <FormField
-                control={form.control}
-                name="id_categoria"
-                render={({ field }) => (
-                  <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                    <FormLabel>Categoria:</FormLabel>
-                    <div className="w-[70%]">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-full justify-between',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {field.value
-                                ? categories.find(
-                                    (category) => category.value === field.value
-                                  )?.label
-                                : 'Seleccionar categoría'}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="PopoverContent">
-                          <Command>
-                            <CommandInput
-                              placeholder="Buscar categoría..."
-                              className="h-9"
-                            />
-                            <CommandEmpty>
-                              No se encontaron resultados.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {categories.map((category) => (
-                                <CommandItem
-                                  value={category.label}
-                                  key={category.value}
-                                  onSelect={() => {
-                                    form.setValue(
-                                      'id_categoria',
-                                      category.value
-                                    )
-                                  }}
-                                >
-                                  {category.label}
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      category.value === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-12">
-              <FormField
-                control={form.control}
-                name="id_grado"
-                render={({ field }) => (
-                  <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                    <FormLabel>Grado:</FormLabel>
-                    <div className="w-[70%]">
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-full justify-between',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {field.value
-                                ? grades.find(
-                                    (grade) => grade.value === field.value
-                                  )?.label
-                                : 'Seleccionar grado'}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="PopoverContent">
-                          <Command>
-                            <CommandInput
-                              placeholder="Buscar grado..."
-                              className="h-9"
-                            />
-                            <CommandEmpty>
-                              No se encontaron resultados.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {grades.map((grade) => (
-                                <CommandItem
-                                  value={grade.label}
-                                  key={grade.value}
-                                  onSelect={() => {
-                                    form.setValue('id_grado', grade.value)
-                                  }}
-                                >
-                                  {grade.label}
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      grade.value === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="id_componente"
@@ -550,7 +303,141 @@ export default function ReceiversForm({ defaultValues, close }: Props) {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="id_grado"
+                render={({ field }) => (
+                  <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                    <FormLabel>Grado:</FormLabel>
+                    <div className="w-[70%]">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              disabled={!form.watch('id_componente')}
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              {field.value
+                                ? grades.find(
+                                    (grade) => grade.value === field.value
+                                  )?.label
+                                : 'Seleccionar grado'}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="PopoverContent">
+                          <Command>
+                            <CommandInput
+                              placeholder="Buscar grado..."
+                              className="h-9"
+                            />
+                            <CommandEmpty>
+                              No se encontaron resultados.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {grades.map((grade) => (
+                                <CommandItem
+                                  value={grade.label}
+                                  key={grade.value}
+                                  onSelect={() => {
+                                    form.setValue('id_grado', grade.value)
+                                  }}
+                                >
+                                  {grade.label}
+                                  <CheckIcon
+                                    className={cn(
+                                      'ml-auto h-4 w-4',
+                                      grade.value === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
+            <FormField
+              control={form.control}
+              name="id_categoria"
+              render={({ field }) => (
+                <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                  <FormLabel>Categoria:</FormLabel>
+                  <div className="w-[70%]">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            disabled={!form.watch('id_grado')}
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? categories.find(
+                                  (category) => category.value === field.value
+                                )?.label
+                              : 'Seleccionar categoría'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <CommandInput
+                            placeholder="Buscar categoría..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {categories.map((category) => (
+                              <CommandItem
+                                value={category.label}
+                                key={category.value}
+                                onSelect={() => {
+                                  form.setValue('id_categoria', category.value)
+                                }}
+                              >
+                                {category.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    category.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
             <div className="border-b border-base-300" />
             <FormField
               control={form.control}

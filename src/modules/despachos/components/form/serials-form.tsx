@@ -1,26 +1,18 @@
 'use client'
-import { Input } from '@/modules/common/components/input/input'
 
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/modules/common/components/form'
 
-import {
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
-import { v4 } from 'uuid'
+import { CardHeader } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { useEffect, useState, useTransition } from 'react'
-import { Serial } from '@prisma/client'
-import { getAllSerials, getSerialsByItem } from '@/lib/actions/serials'
+import { getSerialsByItem } from '@/lib/actions/serials'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 export function SerialsForm({
   index: indexForm,
@@ -73,7 +65,9 @@ export function SerialsForm({
                         return
                       }
 
-                      form.setValue(`renglones.${indexForm}.seriales`, [])
+                      form.setValue(`renglones.${indexForm}.seriales`, [], {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>

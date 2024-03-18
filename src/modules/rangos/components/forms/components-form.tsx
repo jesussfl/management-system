@@ -21,6 +21,7 @@ import {
 import { Input } from '@/modules/common/components/input/input'
 import { Categoria_Militar, Componente_Militar } from '@prisma/client'
 import { createCategory, createComponent } from '@/lib/actions/ranks'
+import { useRouter } from 'next/navigation'
 interface Props {
   defaultValues?: Componente_Militar
   close?: () => void
@@ -30,7 +31,7 @@ type FormValues = Omit<Componente_Militar, 'id'>
 
 export default function ComponentsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
-
+  const router = useRouter()
   const form = useForm<FormValues>({
     defaultValues,
   })
@@ -63,7 +64,7 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
               description: 'El componente se ha creado correctamente',
               variant: 'success',
             })
-            close && close()
+            router.back()
           }
         })
       })
@@ -79,11 +80,6 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
         className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega un nuevo componente militar
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}
@@ -109,13 +105,13 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
-                <FormDescription>
-                  Da contexto de lo que este permiso visualiza o modifica
-                </FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -152,10 +148,7 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
                     }}
                   />
                 </FormControl>
-                <FormDescription>
-                  Da contexto para ayudar a entender este permiso y el efecto
-                  que puede tener.
-                </FormDescription>
+
                 <FormMessage />
               </FormItem>
             )}

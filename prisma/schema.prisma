@@ -296,35 +296,57 @@ model Destinatario {
 }
 
 model Componente_Militar {
-  id               Int                @id @default(autoincrement())
-  nombre           String             @unique
+  id               Int                  @id @default(autoincrement())
+  nombre           String               @unique
   descripcion      String
   estado           String?
   // ultima_edicion   DateTime
   // fecha_eliminado  DateTime
   destinatario     Destinatario[]
   personal_militar personal_militar[]
+  grados           Grados_Componentes[]
+}
+
+model Grados_Componentes {
+  id            Int                @id @default(autoincrement())
+  id_grado      Int
+  grado         Grado_Militar      @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_componente Int
+  componente    Componente_Militar @relation(fields: [id_componente], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Grado_Militar {
-  id               Int                @id @default(autoincrement())
-  nombre           String             @unique
-  abreviatura      String
-  orden            Int?
-  estado           String?
+  id          Int     @id @default(autoincrement())
+  nombre      String  @unique
+  abreviatura String
+  orden       Int?
+  estado      String?
+
   // ultima_edicion   DateTime
   // fecha_eliminado  DateTime
+  componentes      Grados_Componentes[]
+  categorias       Categorias_Grados[]
   personal_militar personal_militar[]
   destinatario     Destinatario[]
 }
 
+model Categorias_Grados {
+  id           Int               @id @default(autoincrement())
+  id_categoria Int
+  categoria    Categoria_Militar @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_grado Int
+  grado    Grado_Militar @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
 model Categoria_Militar {
-  id               Int                @id @default(autoincrement())
-  nombre           String             @unique
+  id               Int                 @id @default(autoincrement())
+  nombre           String              @unique
   abreviatura      String
   estado           String?
   destinatario     Destinatario[]
   personal_militar personal_militar[]
+  grados           Categorias_Grados[]
 }
 
 model Unidad_Militar {

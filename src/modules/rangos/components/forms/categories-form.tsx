@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -14,43 +14,62 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Categoria_Militar, Grado_Militar } from '@prisma/client'
-import { createCategory, createGrade } from '@/lib/actions/ranks'
+import { Prisma } from '@prisma/client'
+import {
+  createCategory,
+  getAllGrades,
+  updateCategory,
+} from '@/lib/actions/ranks'
+import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
+import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
+
+type CategoriaType = Prisma.Categoria_MilitarGetPayload<{
+  include: { grados: true }
+}>
+
 interface Props {
-  defaultValues?: Categoria_Militar
-  close?: () => void
+  defaultValues?: CategoriaType
 }
 
-type FormValues = Omit<Categoria_Militar, 'id'>
-
-export default function CategoriesForm({ defaultValues, close }: Props) {
+type FormValues = Omit<CategoriaType, 'id'>
+type CheckboxType = {
+  id: number
+  label: string
+}
+export default function CategoriesForm({ defaultValues }: Props) {
   const { toast } = useToast()
-
+  const isEditEnabled = !!defaultValues
+  const router = useRouter()
   const form = useForm<FormValues>({
     defaultValues,
   })
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        // updateClassification(defaultValues.id, values).then((data) => {
-        //   if (data?.success) {
-        //     toast({
-        //       title: 'Permiso actualizado',
-        //       description: 'El permiso se ha actualizado correctamente',
-        //       variant: 'success',
-        //     })
-        //     close && close()
-        //   }
-        // })
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const [isPending, startTransition] = React.useTransition()
+
+  const [grades, setGrades] = React.useState<CheckboxType[]>([])
+  React.useEffect(() => {
+    startTransition(() => {
+      getAllGrades().then((data) => {
+        const transformedData = data.map((grade) => ({
+          id: grade.id,
+          label: grade.nombre,
+        }))
+
+        setGrades(transformedData)
       })
-    } else {
-      React.startTransition(() => {
-        createCategory(values).then((data) => {
+    })
+  }, [form])
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    const formattedValues = {
+      ...values,
+      grados: values.grados.filter((grados) => !!grados.id_grado),
+    }
+
+    startTransition(() => {
+      if (!isEditEnabled) {
+        createCategory(formattedValues).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -63,11 +82,37 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
               description: 'La categoria se ha creado correctamente',
               variant: 'success',
             })
-            close && close()
+            router.back()
           }
         })
+
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
+      updateCategory(defaultValues.id, formattedValues).then((data) => {
+        if (data?.error) {
+          form.setError(data.field as any, {
+            type: 'custom',
+            message: data.error,
+          })
+        }
+        if (data?.success) {
+          toast({
+            title: 'Categoria actualizada',
+            description: 'La categoria se ha actualizado correctamente',
+            variant: 'success',
+          })
+          router.back()
+        }
       })
-    }
+    })
   }
 
   return (
@@ -79,11 +124,6 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
         className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega una nueva categoría militar
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}
@@ -155,6 +195,54 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name={'grados'}
+            rules={{ required: 'Este campo es necesario' }}
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Grados</FormLabel>
+                  <FormDescription>
+                    Selecciona los grados asociados a esta categoría .
+                  </FormDescription>
+                </div>
+                {grades.map((grade, index) => (
+                  <FormField
+                    key={grade.id}
+                    control={form.control}
+                    name={`grados.${index}.id_grado`} // Nombre único para cada campo Checkbox
+                    render={({ field }) => {
+                      return (
+                        <FormItem
+                          key={grade.id}
+                          className="flex flex-row items-start space-x-3 space-y-0"
+                        >
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value ? true : false}
+                              onCheckedChange={(value) => {
+                                if (value) {
+                                  field.onChange(grade.id)
+                                } else {
+                                  field.onChange('')
+                                }
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="text-sm font-normal">
+                            {grade.label}
+                          </FormLabel>
+                        </FormItem>
+                      )
+                    }}
+                  />
+                ))}
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
@@ -164,8 +252,12 @@ export default function CategoriesForm({ defaultValues, close }: Props) {
             </p>
           )} */}
 
-          <Button variant="default" type="submit">
-            Guardar
+          <Button disabled={isPending} variant="default" type="submit">
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
           </Button>
         </DialogFooter>
       </form>

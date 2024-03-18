@@ -8,17 +8,6 @@ export type SideMenuItem = {
   submenuItems?: SideMenuItem[]
 }
 
-export type Renglon = {
-  id: number
-  nombre: string
-  descripcion: string
-  clasificacion: 'Consumible' | 'Equipo' | 'Insumo' | 'Material' | 'Mueble'
-  categoria: string
-  tipo: string
-  presentacion: string
-  numero_parte: string
-  unidad_de_medida: string
-}
 export type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     recepciones: {
@@ -49,3 +38,22 @@ export type DestinatarioType = Prisma.DestinatarioGetPayload<{
     grado: true
   }
 }>
+
+export type GradosWithComponentes = Prisma.Grado_MilitarGetPayload<{
+  include: {
+    componentes: true
+  }
+}>
+export type GradosWithComponentesAndIncludeComponente =
+  Prisma.Grado_MilitarGetPayload<{
+    include: { componentes: { include: { componente: true } } }
+  }>
+export type CheckboxDataType = {
+  id: number
+  label: string
+}
+
+export type ComboboxData = {
+  value: number
+  label: string
+}

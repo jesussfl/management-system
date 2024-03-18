@@ -6,14 +6,31 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Grado_Militar } from '@prisma/client'
-import TableActions from '../actions/grade-actions'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import Link from 'next/link'
+import { MoreHorizontal } from 'lucide-react'
+import ModalForm from '@/modules/common/components/modal-form'
+import { GradosWithComponentesAndIncludeComponente } from '@/types/types'
+import {
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+} from '@/modules/common/components/dialog/dialog'
+import { DialogTitle } from '@radix-ui/react-dialog'
+import {
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
 
-interface DataTableProps {
-  data: Grado_Militar[]
-}
-
-export const columns: ColumnDef<Grado_Militar>[] = [
+export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -65,10 +82,87 @@ export const columns: ColumnDef<Grado_Militar>[] = [
     },
   },
   {
+    accessorKey: 'orden',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Orden
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: 'componentes',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Componentes
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <ModalForm
+        triggerName="Ver componentes"
+        triggerVariant="outline"
+        closeWarning={false}
+        className="h-[60vh]"
+      >
+        <>
+          <CardHeader>
+            <CardTitle>Componentes relacionados</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            {row.original.componentes.map((componente) => (
+              <div key={componente.id} className="flex flex-col">
+                <p className="font-bold">{componente.componente.nombre}</p>
+                <p>{componente.componente.descripcion}</p>
+              </div>
+            ))}
+          </CardContent>
+        </>
+      </ModalForm>
+    ),
+  },
+  {
     id: 'acciones',
     enableHiding: false,
     cell: ({ row }) => {
-      return <TableActions grade={row.original} />
+      const data = row.original
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir Menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(String(data.id))}
+            >
+              Copiar código
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <Link
+              href={`/dashboard/abastecimiento/destinatarios/grado/${data.id}`}
+            >
+              <DropdownMenuItem> Editar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
   },
 ]

@@ -25,15 +25,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import ModalForm from '@/modules/common/components/modal-form'
 import {
   getAllCategories,
   getAllComponents,
   getAllGrades,
 } from '@/lib/actions/ranks'
-import CategoriesForm from '@/modules/rangos/components/forms/categories-form'
-import GradesForm from '@/modules/rangos/components/forms/grades-form'
-import ComponentsForm from '@/modules/rangos/components/forms/components-form'
 import { columns as categoryColumns } from '@/modules/rangos/components/columns/category-columns'
 import { columns as gradeColumns } from '@/modules/rangos/components/columns/grade-columns'
 import { columns as componentColumns } from '@/modules/rangos/components/columns/component-columns'
@@ -76,9 +72,9 @@ export default async function Page() {
       <Tabs defaultValue="destinatarios">
         <TabsList className="mx-5">
           <TabsTrigger value="destinatarios">Destinatarios</TabsTrigger>
-          <TabsTrigger value="categorias">Categorías</TabsTrigger>
-          <TabsTrigger value="grados">Grados</TabsTrigger>
           <TabsTrigger value="componentes">Componentes</TabsTrigger>
+          <TabsTrigger value="grados">Grados</TabsTrigger>
+          <TabsTrigger value="categorias">Categorías</TabsTrigger>
         </TabsList>
         <TabsContent value="destinatarios">
           <PageContent>
@@ -90,9 +86,13 @@ export default async function Page() {
             <Card>
               <CardHeader className="flex flex-row justify-between">
                 <CardTitle>Lista de Categorias Militares</CardTitle>
-                <ModalForm triggerName="Nueva Categoría" closeWarning={false}>
-                  <CategoriesForm />
-                </ModalForm>
+                <Link
+                  href="/dashboard/abastecimiento/destinatarios/categoria"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Categoría
+                </Link>
               </CardHeader>
               <CardContent>
                 <DataTable columns={categoryColumns} data={categoriesData} />
@@ -105,9 +105,13 @@ export default async function Page() {
             <Card>
               <CardHeader className="flex flex-row justify-between">
                 <CardTitle>Lista de Grados Militares</CardTitle>
-                <ModalForm triggerName="Nuevo Grado" closeWarning={false}>
-                  <GradesForm />
-                </ModalForm>
+                <Link
+                  href="/dashboard/abastecimiento/destinatarios/grado"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Grado
+                </Link>
               </CardHeader>
               <CardContent>
                 <DataTable columns={gradeColumns} data={gradesData} />
@@ -120,9 +124,13 @@ export default async function Page() {
             <Card>
               <CardHeader className="flex flex-row justify-between">
                 <CardTitle>Lista de Componentes Militares</CardTitle>
-                <ModalForm triggerName="Nuevo Componente" closeWarning={false}>
-                  <ComponentsForm />
-                </ModalForm>
+                <Link
+                  href="/dashboard/abastecimiento/destinatarios/componente"
+                  className={buttonVariants({ variant: 'default' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Componente
+                </Link>
               </CardHeader>
               <CardContent>
                 <DataTable columns={componentColumns} data={componentsData} />
