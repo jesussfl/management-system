@@ -7,7 +7,6 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Componente_Militar } from '@prisma/client'
-import TableActions from '../actions/component-actions'
 import {
   DropdownMenu,
   DropdownMenuContent,

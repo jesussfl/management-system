@@ -22,7 +22,7 @@ export function getDirtyValues<
 
   return dirtyValues
 }
-export function getDirtyFieldss(dirtyFields, formValues) {
+export function getDirtyFieldss(dirtyFields: any, formValues: any) {
   if (typeof dirtyFields !== 'object' || dirtyFields === null || !formValues) {
     return {}
   }
@@ -39,17 +39,25 @@ export function getDirtyFieldss(dirtyFields, formValues) {
       )
       if (_dirtyFields.length > 0) {
         // eslint-disable-next-line no-param-reassign
+
+        //ts ignore
+
+        //@ts-ignore
         accumulator[key] = _dirtyFields
       }
     }
     // If it's an object, apply the logic recursively
     else if (typeof isDirty === 'object' && isDirty !== null) {
       // eslint-disable-next-line no-param-reassign
+      //@ts-ignore
+
       accumulator[key] = getDirtyFieldss(isDirty, value)
     }
     // If it's a dirty field, get the value from formValues
     else if (isDirty) {
       // eslint-disable-next-line no-param-reassign
+      //@ts-ignore
+
       accumulator[key] = value
     }
 
