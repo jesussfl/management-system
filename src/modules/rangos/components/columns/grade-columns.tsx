@@ -19,12 +19,6 @@ import { MoreHorizontal } from 'lucide-react'
 import ModalForm from '@/modules/common/components/modal-form'
 import { GradosWithComponentesAndIncludeComponente } from '@/types/types'
 import {
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-} from '@/modules/common/components/dialog/dialog'
-import { DialogTitle } from '@radix-ui/react-dialog'
-import {
   CardContent,
   CardHeader,
   CardTitle,

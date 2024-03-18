@@ -1,12 +1,11 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -14,43 +13,29 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
-import { Categoria_Militar, Componente_Militar } from '@prisma/client'
-import { createCategory, createComponent } from '@/lib/actions/ranks'
+import { Componente_Militar } from '@prisma/client'
+import { createComponent, updateComponent } from '@/lib/actions/ranks'
 import { useRouter } from 'next/navigation'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Componente_Militar
-  close?: () => void
 }
 
 type FormValues = Omit<Componente_Militar, 'id'>
 
-export default function ComponentsForm({ defaultValues, close }: Props) {
+export default function ComponentsForm({ defaultValues }: Props) {
+  const isEditEnabled = !!defaultValues
   const { toast } = useToast()
   const router = useRouter()
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const [isPending, startTransition] = React.useTransition()
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (defaultValues) {
-      React.startTransition(() => {
-        // updateClassification(defaultValues.id, values).then((data) => {
-        //   if (data?.success) {
-        //     toast({
-        //       title: 'Permiso actualizado',
-        //       description: 'El permiso se ha actualizado correctamente',
-        //       variant: 'success',
-        //     })
-        //     close && close()
-        //   }
-        // })
-      })
-    } else {
-      React.startTransition(() => {
+    startTransition(() => {
+      if (!isEditEnabled) {
         createComponent(values).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
@@ -67,10 +52,37 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
             router.back()
           }
         })
-      })
-    }
-  }
 
+        return
+      }
+
+      if (!isDirty) {
+        toast({
+          title: 'No se han detectado cambios',
+        })
+
+        return
+      }
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      updateComponent(defaultValues.id, dirtyValues).then((data) => {
+        if (data?.error) {
+          toast({
+            title: 'Error',
+            description: data.error,
+            variant: 'destructive',
+          })
+        }
+        if (data?.success) {
+          toast({
+            title: 'Componente actualizado',
+            description: 'El componente se ha actualizado correctamente',
+            variant: 'success',
+          })
+          router.back()
+        }
+      })
+    })
+  }
   return (
     <Form {...form}>
       <form
@@ -144,7 +156,9 @@ export default function ComponentsForm({ defaultValues, close }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>

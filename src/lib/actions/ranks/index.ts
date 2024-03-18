@@ -143,15 +143,6 @@ export const updateComponent = async (
     throw new Error('You must be signed in to perform this action')
   }
 
-  const { nombre } = data
-
-  if (!nombre) {
-    return {
-      error: 'Name is required',
-      field: 'nombre',
-    }
-  }
-
   const exists = await prisma.componente_Militar.findUnique({
     where: {
       id,
@@ -419,6 +410,24 @@ export const getAllGrades = async () => {
     },
   })
   return grades
+}
+export const getComponentById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const component = await prisma.componente_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!component) {
+    throw new Error('Component not found')
+  }
+
+  return component
 }
 export const getGradeById = async (id: number) => {
   const session = await auth()

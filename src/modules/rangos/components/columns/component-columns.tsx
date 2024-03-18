@@ -8,7 +8,16 @@ import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Componente_Militar } from '@prisma/client'
 import TableActions from '../actions/component-actions'
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import Link from 'next/link'
+import { MoreHorizontal } from 'lucide-react'
 interface DataTableProps {
   data: Componente_Militar[]
 }
@@ -68,7 +77,33 @@ export const columns: ColumnDef<Componente_Militar>[] = [
     id: 'acciones',
     enableHiding: false,
     cell: ({ row }) => {
-      return <TableActions component={row.original} />
+      const data = row.original
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir Menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(String(data.id))}
+            >
+              Copiar código
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <Link
+              href={`/dashboard/abastecimiento/destinatarios/componente/${data.id}`}
+            >
+              <DropdownMenuItem> Editar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
   },
 ]

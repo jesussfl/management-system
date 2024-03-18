@@ -1,4 +1,5 @@
 import { getCategoryById } from '@/lib/actions/categories'
+import { getComponentById } from '@/lib/actions/ranks'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -7,13 +8,14 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import CategoriesForm from '@/modules/rangos/components/forms/categories-form'
+import ComponentsForm from '@/modules/rangos/components/forms/components-form'
 
 export default async function Page({
   params: { id },
 }: {
   params: { id: string }
 }) {
-  const categoryData = await getCategoryById(Number(id))
+  const componentData = await getComponentById(Number(id))
   return (
     <Dialog open={true}>
       <DialogContent
@@ -22,11 +24,11 @@ export default async function Page({
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Editar Categoría
+            Editar Componente
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <CategoriesForm defaultValues={categoryData} />
+        <ComponentsForm defaultValues={componentData} />
       </DialogContent>
     </Dialog>
   )
