@@ -109,5 +109,18 @@ export const getPackagingUnitById = async (id: number) => {
   if (!packagingUnit) {
     throw new Error('Unidad de empaque no existe')
   }
-  return JSON.parse(JSON.stringify(packagingUnit))
+  return JSON.parse(JSON.stringify(packagingUnit)) as UnidadEmpaque
+}
+
+export const getPackagingUnitsByCategoryId = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const packagingUnits = await prisma.unidadEmpaque.findMany({
+    where: {
+      id_categoria: id,
+    },
+  })
+  return JSON.parse(JSON.stringify(packagingUnits)) as UnidadEmpaque[]
 }

@@ -34,6 +34,7 @@ export function Combobox({
   field,
   form,
   disabled,
+
   isValueString = false,
 }: ComboboxProps) {
   return (
@@ -57,7 +58,7 @@ export function Combobox({
         </FormControl>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[400px] p-0">
         <Command>
           <CommandInput placeholder="Buscar..." className="h-9" />
           <CommandEmpty>Sin resultados.</CommandEmpty>

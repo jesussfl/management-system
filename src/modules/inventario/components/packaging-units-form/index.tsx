@@ -263,12 +263,12 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
             rules={{
               required: 'Este campo es necesario',
               minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
+                value: 1,
+                message: 'Debe tener al menos 1 caracter',
               },
               maxLength: {
-                value: 8,
-                message: 'Debe tener un maximo de 8 caracteres',
+                value: 10,
+                message: 'Debe tener un maximo de 10 caracteres',
               },
             }}
             render={({ field }) => (

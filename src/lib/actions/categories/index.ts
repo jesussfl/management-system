@@ -99,3 +99,19 @@ export const getAllCategories = async () => {
 
   return categories
 }
+
+export const getCategoriesByClassificationId = async (id: number) => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const categories = await prisma.categoria.findMany({
+    where: {
+      id_clasificacion: id,
+    },
+  })
+
+  return categories
+}
