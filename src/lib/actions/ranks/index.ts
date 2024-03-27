@@ -2,6 +2,11 @@
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import {
+  CategoriasWithGradosArray,
+  CreateCategoriasWithGrados,
+  CreateGradosWithComponentes,
+} from '@/types/types'
+import {
   Categoria_Militar,
   Componente_Militar,
   Grado_Militar,
@@ -46,16 +51,7 @@ export const createComponent = async (data: Omit<Componente_Militar, 'id'>) => {
     success: 'Component created successfully',
   }
 }
-export const createGrade = async (
-  data: Omit<
-    Prisma.Grado_MilitarGetPayload<{
-      include: {
-        componentes: true
-      }
-    }>,
-    'id'
-  >
-) => {
+export const createGrade = async (data: CreateGradosWithComponentes) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -171,14 +167,7 @@ export const updateComponent = async (
 
 export const updateGrade = async (
   id: number,
-  data: Omit<
-    Prisma.Grado_MilitarGetPayload<{
-      include: {
-        componentes: true
-      }
-    }>,
-    'id'
-  >
+  data: CreateGradosWithComponentes
 ) => {
   const session = await auth()
 
@@ -222,10 +211,7 @@ export const updateGrade = async (
 }
 export const updateCategory = async (
   id: number,
-  data: Omit<
-    Prisma.Categoria_MilitarGetPayload<{ include: { grados: true } }>,
-    'id'
-  >
+  data: CreateCategoriasWithGrados
 ) => {
   const session = await auth()
 
@@ -333,12 +319,7 @@ export const deleteGrade = async (id: number) => {
   }
 }
 
-export const createCategory = async (
-  data: Omit<
-    Prisma.Categoria_MilitarGetPayload<{ include: { grados: true } }>,
-    'id'
-  >
-) => {
+export const createCategory = async (data: CreateCategoriasWithGrados) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -411,6 +392,28 @@ export const getAllGrades = async () => {
   })
   return grades
 }
+
+export const getGradesByComponentId = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const grades = await prisma.grado_Militar.findMany({
+    where: {
+      componentes: { some: { id_componente: id } },
+    },
+    include: {
+      componentes: {
+        include: {
+          componente: true,
+        },
+      },
+    },
+  })
+
+  return grades
+}
 export const getComponentById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
@@ -440,7 +443,11 @@ export const getGradeById = async (id: number) => {
       id,
     },
     include: {
-      componentes: true,
+      componentes: {
+        include: {
+          componente: true,
+        },
+      },
     },
   })
 
@@ -448,7 +455,13 @@ export const getGradeById = async (id: number) => {
     throw new Error('Grade not found')
   }
 
-  return grade
+  return {
+    ...grade,
+    componentes: grade.componentes.map((component) => ({
+      value: String(component.id_componente),
+      label: component.componente.nombre,
+    })),
+  }
 }
 export const getCategoryById = async (id: number) => {
   const session = await auth()
@@ -461,7 +474,11 @@ export const getCategoryById = async (id: number) => {
       id,
     },
     include: {
-      grados: true,
+      grados: {
+        include: {
+          grado: true,
+        },
+      },
     },
   })
 
@@ -469,7 +486,13 @@ export const getCategoryById = async (id: number) => {
     throw new Error('Category not found')
   }
 
-  return category
+  return {
+    ...category,
+    grados: category.grados.map((grade) => ({
+      value: String(grade.id_grado),
+      label: grade.grado.nombre,
+    })),
+  }
 }
 export const getAllCategories = async () => {
   const session = await auth()

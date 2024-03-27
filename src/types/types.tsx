@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client'
+import { Option } from '@/modules/common/components/multiple-selector'
+import { Categoria_Militar, Grado_Militar, Prisma } from '@prisma/client'
 
 export type SideMenuItem = {
   title: string
@@ -44,6 +45,24 @@ export type GradosWithComponentes = Prisma.Grado_MilitarGetPayload<{
     componentes: true
   }
 }>
+
+export type CategoriasWithGradosArray = Categoria_Militar & {
+  grados: Option[]
+}
+export type GradosWithComponentesArray = Grado_Militar & {
+  componentes: Option[]
+}
+
+export type CreateCategoriasWithGrados = Omit<
+  Categoria_Militar & { grados: { id_grado: number }[] },
+  'id'
+>
+export type CreateGradosWithComponentes = Omit<
+  Grado_Militar & {
+    componentes: { id_componente: number }[]
+  },
+  'id'
+>
 export type GradosWithComponentesAndIncludeComponente =
   Prisma.Grado_MilitarGetPayload<{
     include: { componentes: { include: { componente: true } } }

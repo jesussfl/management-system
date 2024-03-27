@@ -21,7 +21,8 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { DestinatarioType } from '@/types/types'
-import { PhoneInput } from '@/modules/common/components/phone-input'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 import {
   Select,
   SelectContent,
@@ -221,7 +222,8 @@ export default function ReceiversForm({ defaultValues }: Props) {
                   <div className="w-[70%]">
                     <FormControl>
                       <PhoneInput
-                        placeholder="Ingresa tu numero telefónico"
+                        country={'ve'}
+                        // placeholder="Ingresa tu numero telefónico"
                         {...field}
                       />
                     </FormControl>

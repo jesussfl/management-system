@@ -102,28 +102,35 @@ export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <ModalForm
-        triggerName="Ver componentes"
-        triggerVariant="outline"
-        closeWarning={false}
-        className="h-[60vh]"
-      >
-        <>
-          <CardHeader>
-            <CardTitle>Componentes relacionados</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {row.original.componentes.map((componente) => (
-              <div key={componente.id} className="flex flex-col">
-                <p className="font-bold">{componente.componente.nombre}</p>
-                <p>{componente.componente.descripcion}</p>
-              </div>
-            ))}
-          </CardContent>
-        </>
-      </ModalForm>
-    ),
+    cell: ({ row }) => {
+      return (
+        <ModalForm
+          triggerName="Ver componentes"
+          triggerVariant="outline"
+          closeWarning={false}
+          className="h-[60vh]"
+        >
+          <>
+            <CardHeader>
+              <CardTitle>Componentes relacionados</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              {row.original.componentes.map((componente) => {
+                return (
+                  <div key={componente.id} className="flex flex-col">
+                    <p>
+                      {componente.id} {componente.id_grado}
+                    </p>
+                    <p className="font-bold">{componente.componente.nombre}</p>
+                    <p>{componente.componente.descripcion}</p>
+                  </div>
+                )
+              })}
+            </CardContent>
+          </>
+        </ModalForm>
+      )
+    },
   },
   {
     id: 'acciones',

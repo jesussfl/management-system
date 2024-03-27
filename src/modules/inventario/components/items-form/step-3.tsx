@@ -8,37 +8,14 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-  FormDescription,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
-import { UnidadEmpaque } from '@prisma/client'
-import { useEffect, useState, useTransition } from 'react'
-import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
+import useGetWeight from '../../hooks/useGetWeight'
 
 export const Step3 = () => {
   const form = useFormContext()
-  const [isPending, startTransition] = useTransition()
-  const [packagingUnitsData, setPackagingUnitsData] = useState<UnidadEmpaque[]>(
-    []
-  )
-  const weight =
-    packagingUnitsData.length > 0 &&
-    packagingUnitsData.find(
-      (unit) => unit.id === form.getValues('unidadEmpaqueId')
-    )?.peso
+  const { weight } = useGetWeight()
 
-  useEffect(() => {
-    if (weight) {
-      form.setValue('peso', weight)
-    }
-  }, [weight, form])
-  useEffect(() => {
-    startTransition(() => {
-      getAllPackagingUnits().then((data) => {
-        setPackagingUnitsData(data)
-      })
-    })
-  }, [])
   return (
     <div className="flex flex-col gap-8 mb-8">
       <FormInstructions>
@@ -138,7 +115,7 @@ export const Step3 = () => {
           )}
         />
       </div>
-      {!isPending && (
+      {
         <FormField
           control={form.control}
           name="peso"
@@ -161,15 +138,15 @@ export const Step3 = () => {
                       shouldDirty: true,
                     })
                   }}
-                  value={field.value || 0}
-                  disabled={weight ? true : false}
+                  value={weight || field.value || 0}
+                  disabled={weight > 0 ? true : false}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-      )}
+      }
     </div>
   )
 }

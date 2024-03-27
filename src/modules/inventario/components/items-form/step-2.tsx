@@ -15,12 +15,10 @@ import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
 import useItemCreationData from '../../hooks/useItemCreationData'
-import { useEffect } from 'react'
 
 export const Step2 = () => {
   const form = useFormContext()
-  const { categories, classifications, packagingUnits } =
-    useItemCreationData(form)
+  const { categories, classifications, packagingUnits } = useItemCreationData()
 
   return (
     <div className="flex flex-col gap-5 mb-8">

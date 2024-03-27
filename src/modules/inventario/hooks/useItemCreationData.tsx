@@ -3,11 +3,13 @@ import { getAllClassifications } from '@/lib/actions/classifications'
 import { getPackagingUnitsByCategoryId } from '@/lib/actions/packaging-units'
 import { UnidadEmpaque } from '@prisma/client'
 import { useState, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 type ComboboxData = {
   value: number
   label: string
 }
-const useItemCreationData = (form: any) => {
+const useItemCreationData = () => {
+  const { watch, setValue } = useFormContext()
   const [categories, setCategories] = useState<ComboboxData[]>([])
   const [classifications, setClassifications] = useState<ComboboxData[]>([])
   const [packagingUnits, setPackagingUnits] = useState<ComboboxData[]>([])
@@ -19,47 +21,8 @@ const useItemCreationData = (form: any) => {
     useState(false)
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false)
 
-  const id_categoria = form.watch('categoriaId')
-  const id_clasificacion = form.watch('clasificacionId')
-
-  useEffect(() => {
-    setIsCategoriesLoading(true)
-
-    getCategoriesByClassificationId(id_clasificacion)
-      .then((data) => {
-        const transformedData = data.map((category) => ({
-          value: category.id,
-          label: category.nombre,
-        }))
-        setCategories(transformedData)
-        setIsCategoriesLoading(false)
-      })
-      .catch((error) => {
-        console.log(error)
-
-        setIsCategoriesLoading(false)
-      })
-  }, [id_clasificacion])
-
-  useEffect(() => {
-    setIsPackagingUnitsLoading(true)
-
-    getPackagingUnitsByCategoryId(id_categoria)
-      .then((data) => {
-        const transformedData = data.map((packagingUnit) => ({
-          value: packagingUnit.id,
-          label: packagingUnit.nombre,
-        }))
-        setPackagingUnits(transformedData)
-        setPackagingUnitsData(data)
-        setIsPackagingUnitsLoading(false)
-      })
-      .catch((error) => {
-        console.log(error)
-
-        setIsPackagingUnitsLoading(false)
-      })
-  }, [id_categoria, form])
+  const id_categoria = watch('categoriaId')
+  const id_clasificacion = watch('clasificacionId')
 
   useEffect(() => {
     setIsClassificationsLoading(true)
@@ -73,6 +36,52 @@ const useItemCreationData = (form: any) => {
       setIsClassificationsLoading(false)
     })
   }, [])
+
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) =>
+      console.log(value, name, type)
+    )
+    return () => subscription.unsubscribe()
+  }, [watch])
+
+  useEffect(() => {
+    setIsCategoriesLoading(true)
+
+    getCategoriesByClassificationId(id_clasificacion)
+      .then((data) => {
+        const transformedData = data.map((category) => ({
+          value: category.id,
+          label: category.nombre,
+        }))
+        setCategories(transformedData)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    setValue('categoriaId', undefined)
+    setValue('unidadEmpaqueId', undefined)
+    setIsCategoriesLoading(false)
+  }, [id_clasificacion, setValue])
+
+  useEffect(() => {
+    setIsPackagingUnitsLoading(true)
+
+    getPackagingUnitsByCategoryId(id_categoria)
+      .then((data) => {
+        const transformedData = data.map((packagingUnit) => ({
+          value: packagingUnit.id,
+          label: packagingUnit.nombre,
+        }))
+        setPackagingUnits(transformedData)
+        setPackagingUnitsData(data)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    setValue('unidadEmpaqueId', undefined)
+
+    setIsPackagingUnitsLoading(false)
+  }, [id_categoria, setValue])
 
   return {
     categories: {

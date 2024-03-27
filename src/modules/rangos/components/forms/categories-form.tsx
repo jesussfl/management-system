@@ -24,20 +24,17 @@ import {
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-
-type CategoriaType = Prisma.Categoria_MilitarGetPayload<{
-  include: { grados: true }
-}>
+import MultipleSelector, {
+  Option,
+} from '@/modules/common/components/multiple-selector'
+import { CategoriasWithGradosArray } from '@/types/types'
 
 interface Props {
-  defaultValues?: CategoriaType
+  defaultValues?: CategoriasWithGradosArray
 }
 
-type FormValues = Omit<CategoriaType, 'id'>
-type CheckboxType = {
-  id: number
-  label: string
-}
+type FormValues = Omit<CategoriasWithGradosArray, 'id'>
+
 export default function CategoriesForm({ defaultValues }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
@@ -48,12 +45,12 @@ export default function CategoriesForm({ defaultValues }: Props) {
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
 
-  const [grades, setGrades] = React.useState<CheckboxType[]>([])
+  const [grades, setGrades] = React.useState<Option[]>([])
   React.useEffect(() => {
     startTransition(() => {
       getAllGrades().then((data) => {
         const transformedData = data.map((grade) => ({
-          id: grade.id,
+          value: String(grade.id),
           label: grade.nombre,
         }))
 
@@ -64,7 +61,9 @@ export default function CategoriesForm({ defaultValues }: Props) {
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const formattedValues = {
       ...values,
-      grados: values.grados.filter((grados) => !!grados.id_grado),
+      grados: values.grados.map((grado) => ({
+        id_grado: Number(grado.value),
+      })),
     }
 
     startTransition(() => {
@@ -149,7 +148,9 @@ export default function CategoriesForm({ defaultValues }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -186,7 +187,9 @@ export default function CategoriesForm({ defaultValues }: Props) {
                       if (form.formState.errors[field.name]) {
                         form.clearErrors(field.name)
                       }
-                      form.setValue(field.name, e.target.value)
+                      form.setValue(field.name, e.target.value, {
+                        shouldDirty: true,
+                      })
                     }}
                   />
                 </FormControl>
@@ -199,7 +202,7 @@ export default function CategoriesForm({ defaultValues }: Props) {
             control={form.control}
             name={'grados'}
             rules={{ required: 'Este campo es necesario' }}
-            render={() => (
+            render={({ field }) => (
               <FormItem>
                 <div className="mb-4">
                   <FormLabel className="text-base">Grados</FormLabel>
@@ -207,37 +210,17 @@ export default function CategoriesForm({ defaultValues }: Props) {
                     Selecciona los grados asociados a esta categoría .
                   </FormDescription>
                 </div>
-                {grades.map((grade, index) => (
-                  <FormField
-                    key={grade.id}
-                    control={form.control}
-                    name={`grados.${index}.id_grado`} // Nombre único para cada campo Checkbox
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={grade.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value ? true : false}
-                              onCheckedChange={(value) => {
-                                if (value) {
-                                  field.onChange(grade.id)
-                                } else {
-                                  field.onChange('')
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="text-sm font-normal">
-                            {grade.label}
-                          </FormLabel>
-                        </FormItem>
-                      )
-                    }}
-                  />
-                ))}
+                <MultipleSelector
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={grades}
+                  placeholder="Selecciona los grados relacionados"
+                  emptyIndicator={
+                    <p className="text-center leading-10 text-gray-600 dark:text-gray-400">
+                      No hay grados
+                    </p>
+                  }
+                />
 
                 <FormMessage />
               </FormItem>

@@ -15,17 +15,19 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { createGrade, getAllComponents, updateGrade } from '@/lib/actions/ranks'
-import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { CheckboxDataType, GradosWithComponentes } from '@/types/types'
+import { GradosWithComponentesArray } from '@/types/types'
+import MultipleSelector, {
+  Option,
+} from '@/modules/common/components/multiple-selector'
 
-type FormValues = Omit<GradosWithComponentes, 'id'>
+type FormValues = Omit<GradosWithComponentesArray, 'id'>
 
 export default function GradesForm({
   defaultValues,
 }: {
-  defaultValues?: GradosWithComponentes
+  defaultValues?: GradosWithComponentesArray
 }) {
   const isEditEnabled = !!defaultValues
 
@@ -38,17 +40,16 @@ export default function GradesForm({
     defaultValues,
   })
   const { isDirty } = useFormState({ control: form.control })
-
   //States
   const [isPending, startTransition] = React.useTransition()
-  const [components, setComponents] = React.useState<CheckboxDataType[]>([])
+  const [components, setComponents] = React.useState<Option[]>([])
 
   React.useEffect(() => {
     startTransition(() => {
       // Get components data and transform it to CheckboxType
       getAllComponents().then((data) => {
         const transformedData = data.map((component) => ({
-          id: component.id,
+          value: String(component.id),
           label: component.nombre,
         }))
 
@@ -56,14 +57,16 @@ export default function GradesForm({
       })
     })
   }, [form])
-
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const formattedValues = {
       ...values,
-      componentes: values.componentes.filter(
-        (componente) => !!componente.id_componente
-      ),
+      componentes: values.componentes.map((componente) => ({
+        id_componente: Number(componente.value),
+      })),
     }
+
+    console.log(values, 'formattedValues')
+
     startTransition(() => {
       if (!isEditEnabled) {
         createGrade(formattedValues).then((data) => {
@@ -235,41 +238,23 @@ export default function GradesForm({
           <FormField
             control={form.control}
             name={`componentes`}
-            render={() => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel>Selecciona los componentes relacionados:</FormLabel>
-
-                {components.map((component, index) => (
-                  <FormField
-                    key={component.id}
-                    control={form.control}
-                    name={`componentes.${index}.id_componente`} // Nombre único para cada campo Checkbox
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={component.id}
-                          className="flex flex-row items-start space-x-3 space-y-0"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value ? true : false}
-                              onCheckedChange={(value) => {
-                                if (value) {
-                                  field.onChange(component.id)
-                                } else {
-                                  field.onChange('')
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="text-sm font-normal">
-                            {component.label}
-                          </FormLabel>
-                        </FormItem>
-                      )
-                    }}
+                <FormLabel>Componentes</FormLabel>
+                <FormControl>
+                  <MultipleSelector
+                    value={field.value}
+                    onChange={field.onChange}
+                    options={components}
+                    placeholder="Selecciona los componentes relacionados"
+                    emptyIndicator={
+                      <p className="text-center leading-10 text-gray-600 dark:text-gray-400">
+                        No hay componentes
+                      </p>
+                    }
                   />
-                ))}
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
