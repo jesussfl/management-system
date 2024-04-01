@@ -8,6 +8,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string
+      nombre: string
       rol: Rol
       rol_nombre: string
     } & DefaultSession['user']
@@ -15,6 +16,7 @@ declare module 'next-auth' {
 
   interface User {
     id: string
+    nombre: string
     rol_nombre: string
     rol: Rol
   }
@@ -23,6 +25,7 @@ declare module 'next-auth' {
 declare module '@auth/core/jwt' {
   interface JWT {
     id: string
+    nombre: string
     rol_nombre: string
     rol: Rol
   }

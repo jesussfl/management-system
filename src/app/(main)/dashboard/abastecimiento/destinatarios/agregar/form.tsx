@@ -161,7 +161,6 @@ export default function ReceiversForm({ defaultValues }: Props) {
                 )}
               />
             </div>
-            <Step2 />
             <div className="border-b border-base-300" />
             <div className="flex gap-4">
               <FormField

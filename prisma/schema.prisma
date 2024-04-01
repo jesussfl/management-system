@@ -42,7 +42,7 @@ model Session {
 
 model Usuario {
   id            String    @id @default(cuid())
-  nombre        String?   @map("name")
+  nombre        String
   email         String?   @unique
   contrasena    String?   @map("password")
   facialID      String?   @unique
@@ -103,15 +103,17 @@ model Permiso {
 
 //#endregion
 model Renglon {
-  id           Int            @id @default(autoincrement())
-  nombre       String         @unique
-  descripcion  String
-  tipo         String?
-  stock_minimo Int            @default(1)
-  stock_maximo Int?
-  numero_parte String?
-  peso         Float          @default(1)
-  estado       RenglonStates? @default(ACTIVO)
+  id                   Int            @id @default(autoincrement())
+  nombre               String         @unique
+  descripcion          String
+  tipo                 String?
+  stock_minimo         Int            @default(1)
+  stock_maximo         Int?
+  numero_parte         String?
+  peso                 Float          @default(1)
+  estado               RenglonStates? @default(ACTIVO)
+  fecha_creacion       DateTime       @default(now())
+  ultima_actualizacion DateTime       @updatedAt
 
   unidadEmpaqueId Int
   unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
@@ -136,15 +138,17 @@ enum Medidas {
 }
 
 model UnidadEmpaque {
-  id           Int       @id @default(autoincrement())
-  nombre       String    @unique
-  descripcion  String
-  abreviacion  String?
-  tipo_medida  Medidas
-  peso         Float?
-  renglones    Renglon[]
-  categoria    Categoria @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_categoria Int
+  id                   Int       @id @default(autoincrement())
+  nombre               String    @unique
+  descripcion          String
+  abreviacion          String?
+  tipo_medida          Medidas
+  peso                 Float?
+  renglones            Renglon[]
+  categoria            Categoria @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_categoria         Int
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
 }
 
 model Categoria {
@@ -153,17 +157,21 @@ model Categoria {
   descripcion      String
   id_clasificacion Int
 
-  renglones        Renglon[]
-  unidades_empaque UnidadEmpaque[]
-  clasificacion    Clasificacion   @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  renglones            Renglon[]
+  unidades_empaque     UnidadEmpaque[]
+  clasificacion        Clasificacion   @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime        @default(now())
+  ultima_actualizacion DateTime        @updatedAt
 }
 
 model Clasificacion {
-  id          Int         @id @default(autoincrement())
-  nombre      String      @unique
-  descripcion String
-  renglones   Renglon[]
-  categorias  Categoria[]
+  id                   Int         @id @default(autoincrement())
+  nombre               String      @unique
+  descripcion          String
+  renglones            Renglon[]
+  categorias           Categoria[]
+  fecha_creacion       DateTime    @default(now())
+  ultima_actualizacion DateTime    @updatedAt
 }
 
 model Sistema {
@@ -208,10 +216,12 @@ model almacenes {
 }
 
 model Recepcion {
-  id              Int                     @id @default(autoincrement())
-  fecha_recepcion DateTime
-  motivo          String?
-  renglones       Recepciones_Renglones[]
+  id                   Int                     @id @default(autoincrement())
+  fecha_recepcion      DateTime
+  motivo               String?
+  renglones            Recepciones_Renglones[]
+  fecha_creacion       DateTime                @default(now())
+  ultima_actualizacion DateTime                @updatedAt
 }
 
 model Recepciones_Renglones {
@@ -226,45 +236,54 @@ model Recepciones_Renglones {
   fabricante           String?
   precio               Float?
   codigo_solicitud     String?
-
-  fecha_fabricacion DateTime?
-  fecha_vencimiento DateTime?
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_fabricacion    DateTime?
+  fecha_vencimiento    DateTime?
 }
 
 model Serial {
-  serial       String                @id
-  id_recepcion Int
-  recepcion    Recepciones_Renglones @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  estado       String?
-  devoluciones Devolucion[]
-  id_despacho  Int?
-  despacho     Despachos_Renglones?  @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  serial               String                @id
+  id_recepcion         Int
+  recepcion            Recepciones_Renglones @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  estado               String?
+  devoluciones         Devolucion[]
+  id_despacho          Int?
+  despacho             Despachos_Renglones?  @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime              @default(now())
+  ultima_actualizacion DateTime              @updatedAt
 }
 
 model Devolucion {
-  id               Int      @id @default(autoincrement())
-  id_serial        String
-  serial           Serial   @relation(fields: [id_serial], references: [serial])
-  fecha_devolucion DateTime
-  motivo           String
+  id                   Int      @id @default(autoincrement())
+  id_serial            String
+  serial               Serial   @relation(fields: [id_serial], references: [serial])
+  fecha_devolucion     DateTime
+  motivo               String
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Despacho {
-  id                  Int                   @id @default(autoincrement())
-  fecha_despacho      DateTime
-  motivo              String?
-  renglones           Despachos_Renglones[]
-  cedula_destinatario String
-  destinatario        Destinatario          @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int                   @id @default(autoincrement())
+  fecha_despacho       DateTime
+  motivo               String?
+  renglones            Despachos_Renglones[]
+  cedula_destinatario  String
+  destinatario         Destinatario          @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime              @default(now())
+  ultima_actualizacion DateTime              @updatedAt
 }
 
 model Despachos_Renglones {
-  id          Int      @id @default(autoincrement())
-  id_renglon  Int
-  renglon     Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_despacho Int
-  despacho    Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  seriales    Serial[]
+  id                   Int      @id @default(autoincrement())
+  id_renglon           Int
+  renglon              Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_despacho          Int
+  despacho             Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  seriales             Serial[]
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 enum Tipos_Cedulas {
@@ -293,26 +312,32 @@ model Destinatario {
   id_componente         Int
   componente            Componente_Militar @relation(fields: [id_componente], references: [id])
   despachos             Despacho[]
+  fecha_creacion        DateTime           @default(now())
+  ultima_actualizacion  DateTime           @updatedAt
 }
 
 model Componente_Militar {
-  id               Int                  @id @default(autoincrement())
-  nombre           String               @unique
-  descripcion      String
-  estado           String?
+  id                   Int                  @id @default(autoincrement())
+  nombre               String               @unique
+  descripcion          String
+  estado               String?
   // ultima_edicion   DateTime
   // fecha_eliminado  DateTime
-  destinatario     Destinatario[]
-  personal_militar personal_militar[]
-  grados           Grados_Componentes[]
+  destinatario         Destinatario[]
+  personal_militar     personal_militar[]
+  grados               Grados_Componentes[]
+  fecha_creacion       DateTime             @default(now())
+  ultima_actualizacion DateTime             @updatedAt
 }
 
 model Grados_Componentes {
-  id            Int                @id @default(autoincrement())
-  id_grado      Int
-  grado         Grado_Militar      @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_componente Int
-  componente    Componente_Militar @relation(fields: [id_componente], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int                @id @default(autoincrement())
+  id_grado             Int
+  grado                Grado_Militar      @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_componente        Int
+  componente           Componente_Militar @relation(fields: [id_componente], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime           @default(now())
+  ultima_actualizacion DateTime           @updatedAt
 }
 
 model Grado_Militar {
@@ -324,40 +349,47 @@ model Grado_Militar {
 
   // ultima_edicion   DateTime
   // fecha_eliminado  DateTime
-  componentes      Grados_Componentes[]
-  categorias       Categorias_Grados[]
-  personal_militar personal_militar[]
-  destinatario     Destinatario[]
+  componentes          Grados_Componentes[]
+  categorias           Categorias_Grados[]
+  personal_militar     personal_militar[]
+  destinatario         Destinatario[]
+  fecha_creacion       DateTime             @default(now())
+  ultima_actualizacion DateTime             @updatedAt
 }
 
 model Categorias_Grados {
-  id           Int               @id @default(autoincrement())
-  id_categoria Int
-  categoria    Categoria_Militar @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  id_grado Int
-  grado    Grado_Militar @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                   Int               @id @default(autoincrement())
+  id_categoria         Int
+  categoria            Categoria_Militar @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime          @default(now())
+  ultima_actualizacion DateTime          @updatedAt
+  id_grado             Int
+  grado                Grado_Militar     @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Categoria_Militar {
-  id               Int                 @id @default(autoincrement())
-  nombre           String              @unique
-  abreviatura      String
-  estado           String?
-  destinatario     Destinatario[]
-  personal_militar personal_militar[]
-  grados           Categorias_Grados[]
+  id                   Int                 @id @default(autoincrement())
+  nombre               String              @unique
+  abreviatura          String
+  estado               String?
+  destinatario         Destinatario[]
+  personal_militar     personal_militar[]
+  grados               Categorias_Grados[]
+  fecha_creacion       DateTime            @default(now())
+  ultima_actualizacion DateTime            @updatedAt
 }
 
 model Unidad_Militar {
-  id            Int                @id @default(autoincrement())
-  nombre        String             @unique
-  descripcion   String
-  ubicacion     String
-  id_zodi       String
-  zodis         zodis              @relation(fields: [id_zodi], references: [id])
-  destinatarios Destinatario[]
-  personal      personal_militar[]
+  id                   Int                @id @default(autoincrement())
+  nombre               String             @unique
+  descripcion          String
+  ubicacion            String
+  id_zodi              String
+  zodis                zodis              @relation(fields: [id_zodi], references: [id])
+  destinatarios        Destinatario[]
+  personal             personal_militar[]
+  fecha_creacion       DateTime           @default(now())
+  ultima_actualizacion DateTime           @updatedAt
 }
 
 model zodis {

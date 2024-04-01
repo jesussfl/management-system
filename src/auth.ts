@@ -97,10 +97,12 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (trigger === 'update') {
+        token.nombre = session.user.nombre
         token.id = session.user.id
         token.rol = session.user.rol
         token.rol_nombre = session.user.rol_nombre
       } else if (user) {
+        token.nombre = user.nombre
         token.id = user.id
         token.rol_nombre = user.rol_nombre
         token.rol = user.rol
@@ -109,6 +111,7 @@ export const authOptions = {
     },
     async session({ session, token }) {
       if (session?.user) {
+        session.user.nombre = token.nombre
         session.user.id = token.id
         session.user.rol_nombre = token.rol_nombre
         session.user.rol = token.rol
