@@ -50,7 +50,10 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
 
-type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
+type SerialType = Omit<
+  Serial,
+  'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
+>
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     renglones: {
@@ -65,11 +68,17 @@ type RecepcionType = Prisma.RecepcionGetPayload<{
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
 }>
-type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'> & {
+type Detalles = Omit<
+  Recepciones_Renglones,
+  'id_recepcion' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: SerialType[]
 }
 
-type FormValues = Omit<Recepcion, 'id'> & {
+type FormValues = Omit<
+  Recepcion,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   renglones: Detalles[]
 }
 interface Props {

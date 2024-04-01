@@ -8,9 +8,15 @@ import {
   Recepciones_Renglones,
   Serial,
 } from '@prisma/client'
-type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
+type SerialType = Omit<
+  Serial,
+  'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
+>
 
-type Detalles = Omit<Recepciones_Renglones, 'id_recepcion' | 'id'> & {
+type Detalles = Omit<
+  Recepciones_Renglones,
+  'id_recepcion' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: SerialType[]
 }
 type RecepcionType = Prisma.RecepcionGetPayload<{
@@ -30,7 +36,10 @@ type RecepcionType = Prisma.RecepcionGetPayload<{
     }
   }
 }>
-type FormValues = Omit<Recepcion, 'id'> & {
+type FormValues = Omit<
+  Recepcion,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   renglones: Detalles[]
 }
 
