@@ -12,11 +12,17 @@ import {
 } from '@prisma/client'
 type SerialType = Omit<Serial, 'id_recepcion' | 'id_despacho' | 'estado'>
 
-type Detalles = Omit<Despachos_Renglones, 'id_despacho' | 'id'> & {
+type Detalles = Omit<
+  Despachos_Renglones,
+  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: string[]
 }
 
-type FormValues = Omit<Despacho, 'id'> & {
+type FormValues = Omit<
+  Despacho,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   renglones: Detalles[]
 }
 export const createDispatch = async (data: FormValues) => {

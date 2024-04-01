@@ -3,7 +3,9 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Clasificacion } from '@prisma/client'
-export const createClassification = async (data: Omit<Clasificacion, 'id'>) => {
+export const createClassification = async (
+  data: Omit<Clasificacion, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
+) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -32,7 +34,7 @@ export const createClassification = async (data: Omit<Clasificacion, 'id'>) => {
 
 export const updateClassification = async (
   id: number,
-  data: Omit<Clasificacion, 'id'>
+  data: Omit<Clasificacion, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
 ) => {
   const session = await auth()
   if (!session?.user) {

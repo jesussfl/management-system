@@ -58,14 +58,23 @@ type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
 type DespachoType = Prisma.Despachos_RenglonesGetPayload<{
   include: { renglon: true }
 }>
-type Detalles = Omit<Despachos_Renglones, 'id_despacho' | 'id'> & {
+type Detalles = Omit<
+  Despachos_Renglones,
+  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: string[]
 }
 
-type DefaultValues = Omit<Despachos_Renglones, 'id_despacho' | 'id'> & {
+type DefaultValues = Omit<
+  Despachos_Renglones,
+  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: string[]
 }
-type FormValues = Omit<Despacho, 'id'> & {
+type FormValues = Omit<
+  Despacho,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   renglones: Detalles[]
 }
 interface Props {
