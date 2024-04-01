@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import CategoriesForm from '@/modules/inventario/components/categories-form'
+import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
 
 export default async function Page() {
   return (
@@ -16,7 +16,7 @@ export default async function Page() {
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Crear Categoría
+            Agregar Categoría
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />

@@ -414,6 +414,21 @@ export const getGradesByComponentId = async (id: number) => {
 
   return grades
 }
+
+export const getCategoriesByGradeId = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const categories = await prisma.categoria_Militar.findMany({
+    where: {
+      grados: { some: { id_grado: id } },
+    },
+  })
+
+  return categories
+}
 export const getComponentById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {

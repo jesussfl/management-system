@@ -1,46 +1,20 @@
 'use client'
 
 import * as React from 'react'
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from '@radix-ui/react-icons'
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { Input } from '@/modules/common/components/input/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/common/components/table/table'
 import { UnidadEmpaque } from '@prisma/client'
-import TableActions from '@/modules/inventario/components/table-actions/packaging-units'
 import { MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 

@@ -111,7 +111,7 @@ export default function CategoriesForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
+        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
@@ -165,7 +165,7 @@ export default function CategoriesForm({ defaultValues }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto de lo que este permiso visualiza o modifica
+                  Es necesario que el nombre sea descriptivo
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -206,8 +206,8 @@ export default function CategoriesForm({ defaultValues }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto para ayudar a entender este permiso y el efecto
-                  que puede tener.
+                  Describe la categoría de la manera mas detallada posible para
+                  tener una mejor búsqueda
                 </FormDescription>
                 <FormMessage />
               </FormItem>

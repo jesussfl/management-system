@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
+import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
 
 export default async function Page({
   params: { id },

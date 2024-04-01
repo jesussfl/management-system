@@ -9,7 +9,7 @@ import {
 
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
-import { Clasificacion, Permiso } from '@prisma/client'
+import { Categoria, Clasificacion, Permiso } from '@prisma/client'
 
 import {
   Dialog,
@@ -19,13 +19,13 @@ import {
 import { useState } from 'react'
 
 //   import DeleteDialog from '../permissions-delete-dialog'
-import ClassificationsForm from '@/modules/inventario/components/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
 
 type Props = {
-  classification: Clasificacion
+  category: Categoria
 }
 
-export default function TableActions({ classification }: Props) {
+export default function TableActions({ category }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [dialogType, setDialogType] = useState('')
   const toggleModal = () => setIsOpen(!isOpen)
@@ -41,9 +41,7 @@ export default function TableActions({ classification }: Props) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() =>
-              navigator.clipboard.writeText(String(classification.id))
-            }
+            onClick={() => navigator.clipboard.writeText(String(category.id))}
           >
             Copiar código
           </DropdownMenuItem>
@@ -60,10 +58,7 @@ export default function TableActions({ classification }: Props) {
       {
         dialogType === 'edit' ? (
           <DialogContent className={'lg:max-w-screen-lg overflow-hidden p-0'}>
-            <ClassificationsForm
-              defaultValues={classification}
-              close={toggleModal}
-            />
+            <ClassificationsForm defaultValues={category} close={toggleModal} />
           </DialogContent>
         ) : null
         //   <DeleteDialog permiso={permiso} close={toggleModal} />

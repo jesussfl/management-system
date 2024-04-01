@@ -130,7 +130,7 @@ export const getAllItems = async () => {
       categoria: true,
     },
   })
-  return JSON.parse(JSON.stringify(renglones))
+  return renglones
 }
 
 export const getItemById = async (id: number) => {
@@ -152,5 +152,5 @@ export const getItemById = async (id: number) => {
   if (!renglon) {
     throw new Error('Renglon no existe')
   }
-  return JSON.parse(JSON.stringify(renglon))
+  return renglon
 }

@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '@/modules/inventario/components/items-form'
+import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
 import { Button } from '@/modules/common/components/button'
 import { Plus } from 'lucide-react'
 

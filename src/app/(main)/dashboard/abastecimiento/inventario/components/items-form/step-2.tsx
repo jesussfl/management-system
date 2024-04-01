@@ -14,7 +14,7 @@ import { Input } from '@/modules/common/components/input/input'
 import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
-import useItemCreationData from '../../hooks/useItemCreationData'
+import useItemCreationData from '../../../../../../../modules/inventario/hooks/useItemCreationData'
 
 export const Step2 = () => {
   const form = useFormContext()

@@ -110,7 +110,7 @@ model Renglon {
   stock_minimo Int            @default(1)
   stock_maximo Int?
   numero_parte String?
-  peso         Decimal        @default(1)
+  peso         Float          @default(1)
   estado       RenglonStates? @default(ACTIVO)
 
   unidadEmpaqueId Int
@@ -141,7 +141,7 @@ model UnidadEmpaque {
   descripcion  String
   abreviacion  String?
   tipo_medida  Medidas
-  peso         Decimal?
+  peso         Float?
   renglones    Renglon[]
   categoria    Categoria @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
   id_categoria Int

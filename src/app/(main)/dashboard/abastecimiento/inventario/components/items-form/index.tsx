@@ -135,7 +135,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-scroll p-6 gap-8"
+        className="flex-1 overflow-y-auto p-6 gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">

@@ -9,7 +9,7 @@ import {
 
 import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
-import { Clasificacion, Permiso, UnidadEmpaque } from '@prisma/client'
+import { Clasificacion, Permiso } from '@prisma/client'
 
 import {
   Dialog,
@@ -19,15 +19,13 @@ import {
 import { useState } from 'react'
 
 //   import DeleteDialog from '../permissions-delete-dialog'
-import ClassificationsForm from '@/modules/inventario/components/classification-form'
-import PackagingUnitsForm from '../packaging-units-form'
+import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
 
 type Props = {
-  packagingUnit: UnidadEmpaque
+  classification: Clasificacion
 }
 
-//TODO: Implement DELETE DIALOG component
-export default function TableActions({ packagingUnit }: Props) {
+export default function TableActions({ classification }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [dialogType, setDialogType] = useState('')
   const toggleModal = () => setIsOpen(!isOpen)
@@ -44,7 +42,7 @@ export default function TableActions({ packagingUnit }: Props) {
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() =>
-              navigator.clipboard.writeText(String(packagingUnit.id))
+              navigator.clipboard.writeText(String(classification.id))
             }
           >
             Copiar código
@@ -62,8 +60,8 @@ export default function TableActions({ packagingUnit }: Props) {
       {
         dialogType === 'edit' ? (
           <DialogContent className={'lg:max-w-screen-lg overflow-hidden p-0'}>
-            <PackagingUnitsForm
-              defaultValues={packagingUnit}
+            <ClassificationsForm
+              defaultValues={classification}
               close={toggleModal}
             />
           </DialogContent>

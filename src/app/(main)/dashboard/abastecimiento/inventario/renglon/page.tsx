@@ -1,4 +1,4 @@
-import ItemsForm from '@/modules/inventario/components/items-form'
+import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
 
 import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
 

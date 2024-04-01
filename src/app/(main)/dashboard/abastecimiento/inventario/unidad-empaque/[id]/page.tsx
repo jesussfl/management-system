@@ -1,7 +1,6 @@
 import { getPackagingUnitById } from '@/lib/actions/packaging-units'
-import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
-
-import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
+import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
+import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({
   params: { id },
@@ -10,11 +9,11 @@ export default async function Page({
 }) {
   const packagingUnit = await getPackagingUnitById(Number(id))
   return (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Editar Unidad de Empaque</PageHeaderTitle>
-      </PageHeader>
+    <PageForm
+      title="Editar Unidad de Empaque"
+      backLink="/dashboard/abastecimiento/inventario"
+    >
       <PackagingUnitsForm defaultValues={packagingUnit} />
-    </>
+    </PageForm>
   )
 }

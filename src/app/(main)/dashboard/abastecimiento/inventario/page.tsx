@@ -23,9 +23,9 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns as categoriesColumns } from '@/modules/inventario/components/categories-table'
-import { columns as classificationsColumns } from '@/modules/inventario/components/classification-table'
-import { columns as packagingUnitsColumns } from '@/modules/inventario/components/packaging-units-table'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-columns'
 import {
   Card,
   CardContent,
@@ -82,7 +82,11 @@ export default async function Page() {
         </TabsList>
         <TabsContent value="items">
           <PageContent>
-            <DataTable columns={columns} data={itemsData} />
+            <Card>
+              <CardContent>
+                <DataTable columns={columns} data={itemsData} />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
         <TabsContent value="categories">
@@ -90,10 +94,12 @@ export default async function Page() {
             <div className="flex w-full gap-8">
               <Card>
                 <CardHeader className="flex flex-row justify-between">
-                  <CardTitle>Lista de Clasificaciones</CardTitle>
+                  <CardTitle className="text-xl">
+                    Lista de Clasificaciones
+                  </CardTitle>
                   <Link
                     href="/dashboard/abastecimiento/inventario/clasificacion"
-                    className={buttonVariants({ variant: 'outline' })}
+                    className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Agregar Clasificación
@@ -108,10 +114,10 @@ export default async function Page() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row justify-between">
-                  <CardTitle>Lista de Categorías</CardTitle>
+                  <CardTitle className="text-xl">Lista de Categorías</CardTitle>
                   <Link
                     href="/dashboard/abastecimiento/inventario/categoria"
-                    className={buttonVariants({ variant: 'outline' })}
+                    className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Agregar Categoría
@@ -131,9 +137,13 @@ export default async function Page() {
           <PageContent>
             <Card>
               <CardHeader className="flex flex-row justify-between">
+                <CardTitle className="text-xl">
+                  Lista de Unidades de Empaque
+                </CardTitle>
+
                 <Link
                   href="/dashboard/abastecimiento/inventario/unidad-empaque"
-                  className={buttonVariants({ variant: 'outline' })}
+                  className={buttonVariants({ variant: 'secondary' })}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Agregar Unidad de Empaque

@@ -1,15 +1,13 @@
-import CategoriesForm from '@/modules/inventario/components/categories-form'
-import ItemsForm from '@/modules/inventario/components/items-form'
-
-import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
+import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
+import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {
   return (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Crear Categoría</PageHeaderTitle>
-      </PageHeader>
+    <PageForm
+      title="Agregar Categoría"
+      backLink="/dashboard/abastecimiento/inventario"
+    >
       <CategoriesForm />
-    </>
+    </PageForm>
   )
 }

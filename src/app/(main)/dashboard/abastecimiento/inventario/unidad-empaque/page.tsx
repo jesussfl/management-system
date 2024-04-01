@@ -1,14 +1,13 @@
-import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
-
-import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
+import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
+import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {
   return (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Crear Unidad de Empaque</PageHeaderTitle>
-      </PageHeader>
+    <PageForm
+      title="Agregar Unidad de Empaque"
+      backLink="/dashboard/abastecimiento/inventario"
+    >
       <PackagingUnitsForm />
-    </>
+    </PageForm>
   )
 }

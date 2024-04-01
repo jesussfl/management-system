@@ -1,7 +1,6 @@
 import { getCategoryById } from '@/lib/actions/categories'
-import CategoriesForm from '@/modules/inventario/components/categories-form'
-
-import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
+import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
+import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({
   params: { id },
@@ -10,11 +9,11 @@ export default async function Page({
 }) {
   const categoryData = await getCategoryById(Number(id))
   return (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Editar Categoría</PageHeaderTitle>
-      </PageHeader>
+    <PageForm
+      title="Editar Categoría"
+      backLink="/dashboard/abastecimiento/inventario"
+    >
       <CategoriesForm defaultValues={categoryData} />
-    </>
+    </PageForm>
   )
 }

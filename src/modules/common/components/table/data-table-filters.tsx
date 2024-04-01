@@ -10,18 +10,24 @@ import {
 export default function DataTableFilters({
   table,
   isColumnFilterEnabled,
+  filtering,
+  setFiltering,
 }: {
   table: any
   isColumnFilterEnabled: boolean
+  filtering: any
+  setFiltering: (filtering: any) => void
 }) {
   return (
     <div className="flex flex-1 items-center py-4">
       <Input
         placeholder="Filtrar..."
-        value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
-        onChange={(event) =>
-          table.getColumn('nombre')?.setFilterValue(event.target.value)
-        }
+        value={filtering}
+        onChange={(event) => setFiltering(event.target.value)}
+        // value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
+        // onChange={(event) =>
+        //   table.getColumn('nombre')?.setFilterValue(event.target.value)
+        // }
         className="max-w-sm"
       />
       {isColumnFilterEnabled && (

@@ -14,10 +14,6 @@ import {
 } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
 import { UnidadEmpaque } from '@prisma/client'
 import {
@@ -29,6 +25,9 @@ import { getAllCategories } from '@/lib/actions/categories'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
+
+import { NumericFormat } from 'react-number-format'
+
 interface Props {
   defaultValues?: UnidadEmpaque
   close?: () => void
@@ -75,9 +74,14 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   }, [])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    const parsedValues = {
+      ...values,
+      peso: Number(values.peso) || null,
+    }
+
     startTransition(() => {
       if (!isEditEnabled) {
-        createPackagingUnit(values).then((data) => {
+        createPackagingUnit(parsedValues).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -107,7 +111,10 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
         return
       }
 
-      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(
+        dirtyFields,
+        parsedValues
+      ) as FormValues
 
       updatePackagingUnit(defaultValues.id, dirtyValues).then((data) => {
         if (data?.error) {
@@ -134,7 +141,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-scroll p-6 gap-8 mb-32"
+        className="flex-1 overflow-y-auto p-6 gap-8 mb-32"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
@@ -188,7 +195,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto de lo que este permiso visualiza o modifica
+                  El nombre debe ser lo más descriptivo posible
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -229,8 +236,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto para ayudar a entender este permiso y el efecto
-                  que puede tener.
+                  Describe el empaque de manera clara y concisa
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -252,7 +258,10 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                   field={field}
                   isValueString={true}
                 />
-                <FormDescription></FormDescription>
+                <FormDescription>
+                  Selecciona en qué tipo de medida se maneja el empaque, Ej. Una
+                  botella se maneja en litros.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -289,7 +298,8 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Este campo es util para identificar la unidad de peso
+                  Este campo es util para identificar la unidad de medida del
+                  peso, Ej. Una botella de 1.5 LTS
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -298,22 +308,24 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
           <FormField
             control={form.control}
             name={'peso'}
-            render={({ field }) => (
+            render={({ field: { ref, ...rest } }) => (
               <FormItem className="flex flex-col w-full">
                 <FormLabel>{'Peso de la unidad (Opcional)'} </FormLabel>
                 <FormDescription>
-                  Este campo es util si la unidad de empaque tiene un peso fijo
+                  Este campo es util si la unidad de empaque tiene un peso fijo.
+                  Si el empaque no tendrá el mismo peso, debe dejar este campo
+                  en blanco.
                 </FormDescription>
                 <FormControl>
-                  <Input
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    {...field}
-                    value={Number(field.value).toFixed(2) || ''}
-                    onChange={(event) => {
-                      field.onChange(Number(event.target.value).toFixed(2))
-                    }}
+                  <NumericFormat
+                    className="w-full rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    allowNegative={false}
+                    thousandSeparator=""
+                    decimalSeparator="."
+                    prefix=""
+                    decimalScale={2}
+                    getInputRef={ref}
+                    {...rest}
                   />
                 </FormControl>
 

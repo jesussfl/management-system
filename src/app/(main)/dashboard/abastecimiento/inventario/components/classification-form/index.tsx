@@ -89,10 +89,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
   return (
     <Form {...form}>
       <form
-        style={{
-          scrollbarGutter: 'stable both-edges',
-        }}
-        className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
+        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
@@ -127,7 +124,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto de lo que este permiso visualiza o modifica
+                  Se recomienda que el nombre sea descriptivo
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -145,7 +142,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
               },
               maxLength: {
                 value: 200,
-                message: 'Debe tener un máximo de 200 carácteres',
+                message: 'Debe tener un máximo de 300 carácteres',
               },
             }}
             render={({ field }) => (
@@ -168,8 +165,8 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Da contexto para ayudar a entender este permiso y el efecto
-                  que puede tener.
+                  Da contexto para ayudar a entender esta clasificación y así
+                  asignar renglones de manera precisa.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

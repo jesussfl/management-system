@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import PackagingUnitsForm from '@/modules/inventario/components/packaging-units-form'
+import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
 
 export default async function Page() {
   return (
@@ -16,7 +16,7 @@ export default async function Page() {
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Crear Unidad de Empaque
+            Agregar Unidad de Empaque
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />

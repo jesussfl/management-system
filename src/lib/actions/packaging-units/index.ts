@@ -43,19 +43,21 @@ export const updatePackagingUnit = async (
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const { nombre } = data
-  const exist = await prisma.unidadEmpaque.findUnique({
-    where: {
-      nombre,
-    },
-  })
 
-  if (exist) {
-    return {
-      field: 'nombre',
-      error: 'Esta Unidad de empaque ya existe',
+  if (data.nombre) {
+    const exist = await prisma.unidadEmpaque.findUnique({
+      where: {
+        nombre: data.nombre,
+      },
+    })
+    if (exist) {
+      return {
+        field: 'nombre',
+        error: 'Esta Unidad de empaque ya existe',
+      }
     }
   }
+
   await prisma.unidadEmpaque.update({
     where: {
       id,
@@ -92,7 +94,7 @@ export const getAllPackagingUnits = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const packagingUnits = await prisma.unidadEmpaque.findMany()
-  return JSON.parse(JSON.stringify(packagingUnits))
+  return packagingUnits
 }
 
 export const getPackagingUnitById = async (id: number) => {
@@ -109,7 +111,7 @@ export const getPackagingUnitById = async (id: number) => {
   if (!packagingUnit) {
     throw new Error('Unidad de empaque no existe')
   }
-  return JSON.parse(JSON.stringify(packagingUnit)) as UnidadEmpaque
+  return packagingUnit
 }
 
 export const getPackagingUnitsByCategoryId = async (id: number) => {
@@ -122,5 +124,5 @@ export const getPackagingUnitsByCategoryId = async (id: number) => {
       id_categoria: id,
     },
   })
-  return JSON.parse(JSON.stringify(packagingUnits)) as UnidadEmpaque[]
+  return packagingUnits
 }

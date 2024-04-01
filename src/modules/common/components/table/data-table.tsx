@@ -49,7 +49,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [selectedRows, setSelectedRows] = useState<any[]>([])
   const [lastSelectedRow, setLastSelectedRow] = useState<any>('')
-
+  const [filtering, setFiltering] = useState('')
   //Memoization
   const data = useMemo(() => tableData, [tableData])
   const columns = useMemo(() => tableColumns, [tableColumns])
@@ -85,11 +85,13 @@ export function DataTable<TData extends { id: any }, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setSelectedData || setRowSelection,
     onSortingChange: setSorting,
+    onGlobalFilterChange: setFiltering,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection: selectedData || rowSelection,
+      globalFilter: filtering,
     },
   })
 
@@ -97,6 +99,8 @@ export function DataTable<TData extends { id: any }, TValue>({
     <div className="flex flex-col px-2 gap-2">
       <DataTableFilters
         table={table}
+        filtering={filtering}
+        setFiltering={setFiltering}
         isColumnFilterEnabled={isColumnFilterEnabled}
       />
       <div className="bg-background rounded-md border">

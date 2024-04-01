@@ -20,54 +20,33 @@ const useItemCreationData = () => {
   const [isClassificationsLoading, setIsClassificationsLoading] =
     useState(false)
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(false)
+  const categoryId = watch('categoriaId')
+  const classificationId = watch('clasificacionId')
 
-  const id_categoria = watch('categoriaId')
-  const id_clasificacion = watch('clasificacionId')
-
+  // This effect is used to fetch classifications, categories, and packaging units when the component mounts
   useEffect(() => {
     setIsClassificationsLoading(true)
-
+    setIsCategoriesLoading(true)
+    setIsPackagingUnitsLoading(true)
     getAllClassifications().then((data) => {
       const transformedData = data.map((classification) => ({
         value: classification.id,
         label: classification.nombre,
       }))
       setClassifications(transformedData)
-      setIsClassificationsLoading(false)
     })
-  }, [])
 
-  useEffect(() => {
-    const subscription = watch((value, { name, type }) =>
-      console.log(value, name, type)
-    )
-    return () => subscription.unsubscribe()
-  }, [watch])
-
-  useEffect(() => {
-    setIsCategoriesLoading(true)
-
-    getCategoriesByClassificationId(id_clasificacion)
-      .then((data) => {
+    classificationId &&
+      getCategoriesByClassificationId(classificationId).then((data) => {
         const transformedData = data.map((category) => ({
           value: category.id,
           label: category.nombre,
         }))
         setCategories(transformedData)
       })
-      .catch((error) => {
-        console.log(error)
-      })
-    setValue('categoriaId', undefined)
-    setValue('unidadEmpaqueId', undefined)
-    setIsCategoriesLoading(false)
-  }, [id_clasificacion, setValue])
 
-  useEffect(() => {
-    setIsPackagingUnitsLoading(true)
-
-    getPackagingUnitsByCategoryId(id_categoria)
-      .then((data) => {
+    categoryId &&
+      getPackagingUnitsByCategoryId(categoryId).then((data) => {
         const transformedData = data.map((packagingUnit) => ({
           value: packagingUnit.id,
           label: packagingUnit.nombre,
@@ -75,13 +54,50 @@ const useItemCreationData = () => {
         setPackagingUnits(transformedData)
         setPackagingUnitsData(data)
       })
-      .catch((error) => {
-        console.log(error)
-      })
-    setValue('unidadEmpaqueId', undefined)
 
+    setIsClassificationsLoading(false)
+    setIsCategoriesLoading(false)
     setIsPackagingUnitsLoading(false)
-  }, [id_categoria, setValue])
+  }, [])
+
+  // This effect is used to update categories and packaging units based on the selected fields
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
+      if (name === 'clasificacionId') {
+        setIsCategoriesLoading(true)
+
+        getCategoriesByClassificationId(value.clasificacionId).then((data) => {
+          const transformedData = data.map((category) => ({
+            value: category.id,
+            label: category.nombre,
+          }))
+          setCategories(transformedData)
+        })
+        setValue('categoriaId', undefined)
+        setValue('unidadEmpaqueId', undefined)
+        setIsCategoriesLoading(false)
+      }
+
+      if (name === 'categoriaId') {
+        setIsPackagingUnitsLoading(true)
+
+        getPackagingUnitsByCategoryId(value.categoriaId).then((data) => {
+          const transformedData = data.map((packagingUnit) => ({
+            value: packagingUnit.id,
+            label: packagingUnit.nombre,
+          }))
+          setPackagingUnits(transformedData)
+          setPackagingUnitsData(data)
+        })
+
+        setValue('unidadEmpaqueId', undefined)
+
+        setIsPackagingUnitsLoading(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch, setValue])
 
   return {
     categories: {
