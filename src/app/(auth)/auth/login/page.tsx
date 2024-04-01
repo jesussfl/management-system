@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
-import LoginForm from '@/modules/auth/components/login-form'
-import { CardWrapper } from '@/modules/auth/components/card-wrapper'
+import LoginForm from '@/app/(auth)/components/login-form'
+import { CardWrapper } from '@/app/(auth)/components/card-wrapper'
 
 export const metadata: Metadata = {
   title: 'Inicio de sesión',

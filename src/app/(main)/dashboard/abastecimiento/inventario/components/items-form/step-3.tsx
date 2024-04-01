@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
-import useGetWeight from '../../../../../../../modules/inventario/hooks/useGetWeight'
+import useGetWeight from '../../lib/hooks/useGetWeight'
 
 export const Step3 = () => {
   const form = useFormContext()

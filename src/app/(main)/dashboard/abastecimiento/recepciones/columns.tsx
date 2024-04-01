@@ -7,7 +7,7 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
-import TableActions from '@/modules/recepciones/components/table-actions'
+import TableActions from '@/app/(main)/dashboard/abastecimiento/recepciones/components/table-actions'
 import {
   DropdownMenu,
   DropdownMenuContent,

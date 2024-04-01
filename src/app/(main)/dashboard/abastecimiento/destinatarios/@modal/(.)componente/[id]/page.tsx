@@ -1,5 +1,5 @@
-import { getCategoryById } from '@/lib/actions/categories'
-import { getComponentById } from '@/lib/actions/ranks'
+import { getCategoryById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+import { getComponentById } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

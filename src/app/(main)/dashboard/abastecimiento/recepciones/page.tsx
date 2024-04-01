@@ -12,7 +12,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllReceptions } from '@/lib/actions/receptions'
+import { getAllReceptions } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'

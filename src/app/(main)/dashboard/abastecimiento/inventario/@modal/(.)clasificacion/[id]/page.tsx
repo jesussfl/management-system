@@ -1,4 +1,4 @@
-import { getClassificationById } from '@/lib/actions/classifications'
+import { getClassificationById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

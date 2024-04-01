@@ -1,4 +1,4 @@
-import { getItemById } from '@/lib/actions/items'
+import { getItemById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

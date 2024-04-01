@@ -1,4 +1,4 @@
-import { getGradeById } from '@/lib/actions/ranks'
+import { getGradeById } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

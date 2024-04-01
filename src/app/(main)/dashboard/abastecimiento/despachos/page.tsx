@@ -16,7 +16,7 @@ import {
   PageTemplate,
 } from '@/modules/layout/templates/page'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { getAllDispatches } from '@/lib/actions/dispatches'
+import { getAllDispatches } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { columns } from './columns'
 import Link from 'next/link'
 

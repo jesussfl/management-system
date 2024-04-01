@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/modules/despachos/components/form/dispatches-form'
+import DispatchesForm from '@/app/(main)/dashboard/abastecimiento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,12 +7,12 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { Prisma } from '@prisma/client'
-import { getDispatchById } from '@/lib/actions/dispatches'
+import { getDispatchById } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 
 export const metadata: Metadata = {
   title: 'Despachos',

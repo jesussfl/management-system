@@ -12,7 +12,7 @@ import {
 import { DataTable } from '@/modules/common/components/table/data-table'
 import Link from 'next/link'
 import { columns } from './columns'
-import { getAllReceivers } from '@/lib/actions/receivers'
+import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import {
   Tabs,
   TabsContent,
@@ -29,7 +29,7 @@ import {
   getAllCategories,
   getAllComponents,
   getAllGrades,
-} from '@/lib/actions/ranks'
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import { columns as categoryColumns } from '@/modules/rangos/components/columns/category-columns'
 import { columns as gradeColumns } from '@/modules/rangos/components/columns/grade-columns'
 import { columns as componentColumns } from '@/modules/rangos/components/columns/component-columns'

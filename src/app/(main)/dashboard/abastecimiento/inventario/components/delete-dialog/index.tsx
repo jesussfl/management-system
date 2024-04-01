@@ -12,7 +12,7 @@ import { Label } from '@/modules/common/components/label/label'
 import { Input } from '@/modules/common/components/input/input'
 import { Renglon } from '@prisma/client'
 import { Button } from '@/modules/common/components/button'
-import { deleteItem } from '@/lib/actions/items'
+import { deleteItem } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 function DeleteDialog({ renglon }: { renglon: Renglon }) {
   const { toast } = useToast()

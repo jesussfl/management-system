@@ -1,4 +1,4 @@
-import { getGradeById } from '@/lib/actions/ranks'
+import { getGradeById } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 
 import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
 import GradesForm from '@/modules/rangos/components/forms/grades-form'

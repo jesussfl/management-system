@@ -1,4 +1,7 @@
-import { getCategoryById, getGradeById } from '@/lib/actions/ranks'
+import {
+  getCategoryById,
+  getGradeById,
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 
 import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
 import CategoriesForm from '@/modules/rangos/components/forms/categories-form'

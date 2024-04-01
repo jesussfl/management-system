@@ -10,7 +10,7 @@ import { Button } from '@/modules/common/components/button'
 import { MoreHorizontal } from 'lucide-react'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { DestinatarioType } from '@/types/types'
-import { deleteReceiver } from '@/lib/actions/receivers'
+import { deleteReceiver } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 
 export default function TableActions({
   cedula,

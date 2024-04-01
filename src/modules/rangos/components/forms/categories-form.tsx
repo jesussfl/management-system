@@ -20,7 +20,7 @@ import {
   createCategory,
   getAllGrades,
   updateCategory,
-} from '@/lib/actions/ranks'
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'

@@ -1,5 +1,5 @@
 'use client'
-import { backup, restore } from '@/lib/actions/admin'
+import { backup, restore } from '@/app/(main)/dashboard/lib/actions/admin'
 import { Button } from '@/modules/common/components/button'
 
 function BackupButton() {

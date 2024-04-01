@@ -19,7 +19,7 @@ import { Clasificacion } from '@prisma/client'
 import {
   createClassification,
   updateClassification,
-} from '@/lib/actions/classifications'
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'

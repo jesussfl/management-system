@@ -16,8 +16,11 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { Categoria, Prisma } from '@prisma/client'
-import { createCategory, updateCategory } from '@/lib/actions/categories'
-import { getAllClassifications } from '@/lib/actions/classifications'
+import {
+  createCategory,
+  updateCategory,
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
 import { CategoriaType } from '@/types/types'
 import { useRouter } from 'next/navigation'

@@ -3,7 +3,7 @@ import {
   getAllComponents,
   getCategoriesByGradeId,
   getGradesByComponentId,
-} from '../actions/ranks'
+} from '../../app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import { ComboboxData } from '@/types/types'
 import { useFormContext } from 'react-hook-form'
 

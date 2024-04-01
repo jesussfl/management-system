@@ -11,10 +11,10 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import { getAllItems } from '@/lib/actions/items'
-import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
-import { getAllClassifications } from '@/lib/actions/classifications'
-import { getAllCategories } from '@/lib/actions/categories'
+import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getAllPackagingUnits } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
+import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+import { getAllCategories } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
 import {
   HeaderLeftSide,
   HeaderRightSide,

@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/modules/recepciones/components/form/receptions-form'
+import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,7 +7,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'

@@ -15,7 +15,10 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { Componente_Militar } from '@prisma/client'
-import { createComponent, updateComponent } from '@/lib/actions/ranks'
+import {
+  createComponent,
+  updateComponent,
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {

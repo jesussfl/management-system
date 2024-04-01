@@ -1,4 +1,4 @@
-import { getPackagingUnitById } from '@/lib/actions/packaging-units'
+import { getPackagingUnitById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

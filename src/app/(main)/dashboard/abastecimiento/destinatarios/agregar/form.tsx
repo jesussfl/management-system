@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { createReceiver } from '@/lib/actions/receivers'
+import { createReceiver } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import { Step2 } from './form-step-2'
 import { useRouter } from 'next/navigation'
 

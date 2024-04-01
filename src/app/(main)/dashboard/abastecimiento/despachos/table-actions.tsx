@@ -9,7 +9,7 @@ import {
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { MoreHorizontal, Plus } from 'lucide-react'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { deleteDispatch } from '@/lib/actions/dispatches'
+import { deleteDispatch } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { Despacho, Prisma } from '@prisma/client'
 import Link from 'next/link'
 

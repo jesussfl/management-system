@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/modules/despachos/components/form/dispatches-form'
+import DispatchesForm from '@/app/(main)/dashboard/abastecimiento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,12 +7,12 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import ReceptionsForm from '@/modules/recepciones/components/form/receptions-form'
-import { getReceptionById } from '@/lib/actions/receptions'
+import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
+import { getReceptionById } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 
 export const metadata: Metadata = {
   title: 'Recepciones',

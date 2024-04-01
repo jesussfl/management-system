@@ -1,4 +1,4 @@
-import { getCategoryById } from '@/lib/actions/categories'
+import { getCategoryById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
 import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
 import PageForm from '@/modules/layout/components/page-form'
 
