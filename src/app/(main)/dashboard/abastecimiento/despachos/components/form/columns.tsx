@@ -17,13 +17,19 @@ export const columns: ColumnDef<RenglonType>[] = [
 
   {
     accessorKey: 'stock',
+    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
     cell: ({ row }) => {
       const stock = row.original.recepciones.reduce(
         (total, item) => total + item.cantidad,
         0
       )
 
-      return <div>{stock}</div>
+      const dispatchedSerials = row.original.despachos.reduce(
+        (total, item) => total + item.seriales.length,
+        0
+      )
+
+      return <div>{stock - dispatchedSerials}</div>
     },
   },
   {
@@ -125,3 +131,15 @@ export const columns: ColumnDef<RenglonType>[] = [
     },
   },
 ]
+
+const HeaderCell = ({ column, value }: { column: any; value: any }) => (
+  <Button
+    variant="ghost"
+    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+    size={'sm'}
+    className="text-xs"
+  >
+    {value}
+    <ArrowUpDown className="ml-2 h-3 w-3" />
+  </Button>
+)

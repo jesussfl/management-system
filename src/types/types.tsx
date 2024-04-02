@@ -76,3 +76,9 @@ export type ComboboxData = {
   value: number
   label: string
 }
+
+export type SerialWithRenglon = Prisma.SerialGetPayload<{
+  include: {
+    renglon: true
+  }
+}>

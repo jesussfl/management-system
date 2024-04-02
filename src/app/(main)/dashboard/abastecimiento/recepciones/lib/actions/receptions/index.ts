@@ -103,6 +103,11 @@ export const createReception = async (data: FormValues) => {
           seriales: {
             create: renglon.seriales.map((serial) => ({
               serial: serial.serial,
+              renglon: {
+                connect: {
+                  id: renglon.id_renglon,
+                },
+              },
             })),
           },
         })),
@@ -160,6 +165,11 @@ export const updateReception = async (id: number, data: FormValues) => {
           seriales: {
             create: renglon.seriales.map((serial) => ({
               serial: serial.serial,
+              renglon: {
+                connect: {
+                  id: renglon.id_renglon,
+                },
+              },
             })),
           },
         })),

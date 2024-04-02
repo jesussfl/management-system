@@ -53,11 +53,8 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
+import { SerialsFormNew } from './serials-form-new'
 
-type SerialType = Omit<Serial, 'id' | 'id_recepcion'>
-type DespachoType = Prisma.Despachos_RenglonesGetPayload<{
-  include: { renglon: true }
-}>
 type Detalles = Omit<
   Despachos_Renglones,
   'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -65,12 +62,6 @@ type Detalles = Omit<
   seriales: string[]
 }
 
-type DefaultValues = Omit<
-  Despachos_Renglones,
-  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  seriales: string[]
-}
 type FormValues = Omit<
   Despacho,
   'id' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -112,7 +103,7 @@ export default function DispatchesForm({
   }>({})
   const [receivers, setReceivers] = useState<ComboboxData[]>([])
   const [selectedData, setSelectedData] = useState<RenglonType[]>([])
-  console.log(selectedData)
+  // console.log(selectedData)
   useEffect(() => {
     startTransition(() => {
       getAllReceivers().then((data) => {
@@ -442,7 +433,7 @@ export default function DispatchesForm({
                   )
 
                   const totalStock = receptions - dispatchedSerials
-                  console.log('stock', totalStock, dispatchedSerials)
+                  // console.log('stock', totalStock, dispatchedSerials)
                   const isEmpty = totalStock === 0
                   return (
                     <SelectedItemCard
@@ -529,11 +520,7 @@ export const SelectedItemCard = ({
             className="max-h-[80vh]"
             disabled={isEmpty ? true : false}
           >
-            <SerialsForm
-              index={index}
-              id={item.id}
-              quantity={form.watch(`renglones.${index}.cantidad`)}
-            />
+            <SerialsFormNew index={index} id={item.id} />
           </ModalForm>
         </div>
         <FormDescription className={`${isEmpty ? 'text-red-500' : ''}`}>

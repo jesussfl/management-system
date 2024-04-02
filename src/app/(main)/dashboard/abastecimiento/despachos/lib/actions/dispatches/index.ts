@@ -49,6 +49,7 @@ export const createDispatch = async (data: FormValues) => {
       fields: fields,
     }
   }
+  const serials = data.renglones.flatMap((renglon) => renglon.seriales)
 
   await prisma.despacho.create({
     data: {
@@ -66,6 +67,17 @@ export const createDispatch = async (data: FormValues) => {
           },
         })),
       },
+    },
+  })
+
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: serials,
+      },
+    },
+    data: {
+      estado: 'Despachado',
     },
   })
   revalidatePath('/dashboard/abastecimiento/despachos')
