@@ -1,6 +1,6 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { auth, update } from '@/auth'
+import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
 
@@ -64,10 +64,10 @@ export const updateRol = async (id: number, data: Rol) => {
 
   // if user has the same rol update the session
 
-  if (session?.user.rol.rol === data.rol) {
-    update({ user: { ...session.user, rol: data } }).catch(console.error)
-    console.log('updated session', data.permisos)
-  }
+  // if (session?.user.rol.rol === data.rol) {
+  //   update({ user: { ...session.user, rol: data } }).catch(console.error)
+  //   console.log('updated session', data.permisos)
+  // }
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
   return {

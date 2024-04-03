@@ -33,7 +33,7 @@ import {
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
 import { Prisma } from '@prisma/client'
-import { DateTimePicker } from '@/modules/common/components/date-time-picker'
+// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
 // import { DateTimePicker } from '@/modules/common/components/date-time-picker'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }

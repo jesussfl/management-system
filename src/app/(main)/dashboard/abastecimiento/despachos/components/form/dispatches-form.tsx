@@ -191,7 +191,7 @@ export default function DispatchesForm({
     if (itemsWithoutSerials.length > 0) {
       return
     }
-    createDispatch(data, false).then((res) => {
+    createDispatch(data).then((res) => {
       if (res?.error) {
         toast({
           title: 'Error',
