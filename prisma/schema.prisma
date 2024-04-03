@@ -286,6 +286,8 @@ model Despachos_Renglones {
   id_despacho          Int
   despacho             Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
   seriales             Serial[]
+  manualSelection      Boolean
+  cantidad             Int
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
 }

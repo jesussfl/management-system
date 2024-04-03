@@ -2,15 +2,7 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import {
-  Despacho,
-  Despachos_Renglones,
-  Prisma,
-  Recepcion,
-  Recepciones_Renglones,
-  Serial,
-} from '@prisma/client'
-type SerialType = Omit<Serial, 'id_recepcion' | 'id_despacho' | 'estado'>
+import { Despacho, Despachos_Renglones } from '@prisma/client'
 
 type Detalles = Omit<
   Despachos_Renglones,
@@ -39,17 +31,63 @@ export const createDispatch = async (data: FormValues) => {
       error: 'Missing Fields',
     }
   }
-  if (renglones.some((renglon, index) => renglon.seriales.length === 0)) {
+
+  if (renglones.length === 0) {
+    return {
+      error: 'No se han seleccionado renglones',
+    }
+  }
+  if (
+    renglones.some(
+      (renglon) => renglon.seriales.length === 0 && renglon.manualSelection
+    )
+  ) {
     const fields = renglones
-      .filter((renglon) => renglon.seriales.length === 0)
-      .map((renglon, index) => renglon.id_renglon)
+      .filter(
+        (renglon) => renglon.seriales.length === 0 && renglon.manualSelection
+      )
+      .map((renglon) => renglon.id_renglon)
 
     return {
-      error: 'Revisa que todos los renglones esten correctamente seleccionados',
+      error: 'Revisa que todos los renglones esten correctamente',
       fields: fields,
     }
   }
-  const serials = data.renglones.flatMap((renglon) => renglon.seriales)
+
+  const items = data.renglones
+  const serials: { id_renglon: number; serial: string }[] = []
+  for (const item of items) {
+    if (item.manualSelection) {
+      const serialsByItem = item.seriales.map((serial) => ({
+        id_renglon: item.id_renglon,
+        serial,
+      }))
+      serials.push(...serialsByItem)
+      continue
+    }
+    const serialsByItem = await prisma.serial.findMany({
+      where: {
+        id_renglon: item.id_renglon,
+        AND: {
+          estado: 'Disponible',
+        },
+      },
+      select: {
+        id_renglon: true,
+        serial: true,
+      },
+      take: item.cantidad,
+    })
+
+    if (serialsByItem.length < item.cantidad) {
+      return {
+        error: 'No hay suficientes seriales',
+        fields: [item.id_renglon],
+      }
+    }
+
+    serials.push(...serialsByItem)
+  }
 
   await prisma.despacho.create({
     data: {
@@ -60,10 +98,13 @@ export const createDispatch = async (data: FormValues) => {
         create: renglones.map((renglon) => ({
           ...renglon,
           id_renglon: renglon.id_renglon,
+          cantidad: serials.filter(
+            (serial) => serial.id_renglon === renglon.id_renglon
+          ).length,
           seriales: {
-            connect: renglon.seriales.map((serial) => ({
-              serial: serial,
-            })),
+            connect: serials
+              .filter((serial) => serial.id_renglon === renglon.id_renglon)
+              .map((serial) => ({ serial: serial.serial })),
           },
         })),
       },
@@ -73,14 +114,19 @@ export const createDispatch = async (data: FormValues) => {
   await prisma.serial.updateMany({
     where: {
       serial: {
-        in: serials,
+        in: serials.map((serial) => serial.serial),
       },
     },
     data: {
       estado: 'Despachado',
     },
   })
+
   revalidatePath('/dashboard/abastecimiento/despachos')
+
+  return {
+    success: true,
+  }
 }
 export const deleteDispatch = async (id: number) => {
   const session = await auth()

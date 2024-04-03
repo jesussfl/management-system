@@ -33,6 +33,8 @@ import {
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
 import { Prisma } from '@prisma/client'
+import { DateTimePicker } from '@/modules/common/components/date-time-picker'
+// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
 }>
@@ -203,9 +205,7 @@ export const CardItemSelected = ({
                       mode="single"
                       selected={new Date(field.value || '')}
                       onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
+                      disabled={(date) => date < new Date('1900-01-01')}
                       initialFocus
                     />
                   </PopoverContent>

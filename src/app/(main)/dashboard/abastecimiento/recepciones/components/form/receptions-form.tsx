@@ -98,7 +98,7 @@ export default function ReceptionsForm({
   const router = useRouter()
 
   const form = useForm<FormValues>({
-    mode: 'all',
+    mode: 'onChange',
     defaultValues,
   })
   const { isDirty } = useFormState({ control: form.control })
