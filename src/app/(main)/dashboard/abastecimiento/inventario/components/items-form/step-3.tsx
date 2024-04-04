@@ -11,11 +11,44 @@ import {
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
 import useGetWeight from '../../lib/hooks/useGetWeight'
-
+import { Combobox } from '@/modules/common/components/combobox'
+import { useEffect, useState } from 'react'
+import { Subsistema } from '@prisma/client'
+import { getAllSubsystems } from '../../lib/actions/subsystems'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/modules/common/components/popover/popover'
+import { cn } from '@/utils/utils'
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/modules/common/components/command/command'
+import { Button } from '@/modules/common/components/button'
+import { ComboboxData } from '@/types/types'
+import { CheckIcon, Loader2 } from 'lucide-react'
 export const Step3 = () => {
   const form = useFormContext()
   const { weight } = useGetWeight()
+  const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
+  const [isSubsystemLoading, setIsSubsystemLoading] = useState(false)
+  useEffect(() => {
+    setIsSubsystemLoading(true)
+    getAllSubsystems().then((data) => {
+      const transformedData = data.map((subsystem) => ({
+        value: subsystem.id,
+        label: subsystem.nombre,
+      }))
 
+      setSubsystems(transformedData)
+    })
+    setIsSubsystemLoading(false)
+  }, [])
   return (
     <div className="flex flex-col gap-8 mb-8">
       <FormInstructions>
@@ -27,6 +60,77 @@ export const Step3 = () => {
           y mejorar la experiencia en la gestión del inventario
         </FormInstructionsDescription>
       </FormInstructions>
+      <FormField
+        control={form.control}
+        name="id_subsistema"
+        render={({ field }) => (
+          <FormItem className="flex flex-1 justify-between gap-4 items-center">
+            <FormLabel>Subsistema:</FormLabel>
+            <div className="w-[70%]">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value
+                        ? subsystems.find(
+                            (subsystem) => subsystem.value === field.value
+                          )?.label
+                        : 'Seleccionar subsistema'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="PopoverContent">
+                  <Command>
+                    <CommandInput
+                      placeholder="Buscar subsistema..."
+                      className="h-9"
+                    />
+                    <CommandEmpty>No se encontaron resultados.</CommandEmpty>
+                    <CommandGroup>
+                      {isSubsystemLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        subsystems.map((subsystem) => (
+                          <CommandItem
+                            value={subsystem.label}
+                            key={subsystem.value}
+                            onSelect={() => {
+                              form.setValue('id_subsistema', subsystem.value, {
+                                shouldDirty: true,
+                              })
+                            }}
+                          >
+                            {subsystem.label}
+                            <CheckIcon
+                              className={cn(
+                                'ml-auto h-4 w-4',
+                                subsystem.value === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </CommandItem>
+                        ))
+                      )}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              <FormMessage />
+            </div>
+          </FormItem>
+        )}
+      />
+
       <FormField
         control={form.control}
         name="numero_parte"

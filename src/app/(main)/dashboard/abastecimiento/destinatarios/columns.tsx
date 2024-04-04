@@ -92,7 +92,7 @@ export const columns: ColumnDef<DestinatarioType>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Situación profesional
+          Cargo profesional
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )

@@ -121,6 +121,10 @@ model Renglon {
   clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
   categoriaId     Int
   categoria       Categoria     @relation(fields: [categoriaId], references: [id])
+  id_subsistema   Int?
+  subsistema      Subsistema?   @relation(fields: [id_subsistema], references: [id])
+  id_almacen      Int?
+  almacen         Almacen?      @relation(fields: [id_almacen], references: [id])
 
   despachos   Despachos_Renglones[]
   recepciones Recepciones_Renglones[]
@@ -176,29 +180,25 @@ model Clasificacion {
 }
 
 model Sistema {
-  id          String    @id
+  id          Int          @id @default(autoincrement())
   nombre      String
   descripcion String
-  existencia  Int
-  estado      String
-  id_almacen  Int
-  almacen     almacenes @relation(fields: [id_almacen], references: [id])
-  // despachos_detalles Despachos_Renglones[]
+  subsistemas Subsistema[]
 
-  @@map("Sistemas")
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
-model Subsistemas {
-  id          String    @id
+model Subsistema {
+  id          Int       @id @default(autoincrement())
   nombre      String
   descripcion String
-  existencia  Int
-  estado      String
-  sistema     String
-  id_almacen  Int
-  almacen     almacenes @relation(fields: [id_almacen], references: [id])
-  // despachos_detalles Des[]
-  // recibimientos_detalles recibimientos_detalles[]
+  id_sistema  Int
+  sistema     Sistema   @relation(fields: [id_sistema], references: [id])
+  renglones   Renglon[]
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 enum RenglonStates {
@@ -208,12 +208,14 @@ enum RenglonStates {
   DESHABILITADO @map("Deshabilitado")
 }
 
-model almacenes {
-  id          Int           @id
-  nombre      String
-  ubicacion   String
-  Sistemas    Sistema[]
-  Subsistemas Subsistemas[]
+model Almacen {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  ubicacion String
+  renglones Renglon[]
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Recepcion {

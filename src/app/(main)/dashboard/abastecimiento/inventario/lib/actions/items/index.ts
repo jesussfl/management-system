@@ -23,6 +23,7 @@ export const createItem = async (data: FormValues) => {
     console.log('data', data)
     await prisma.renglon.create({
       data: {
+        ...data,
         nombre: data.nombre,
         descripcion: data.descripcion,
         tipo: data.tipo,
@@ -30,23 +31,32 @@ export const createItem = async (data: FormValues) => {
         stock_maximo: data.stock_maximo,
         numero_parte: data.numero_parte,
         peso: data.peso,
-        clasificacion: {
-          connect: {
-            id: data.clasificacionId,
-          },
-        },
+        id_subsistema: data.id_subsistema,
+        clasificacionId: data.clasificacionId,
+        categoriaId: data.categoriaId,
+        unidadEmpaqueId: data.unidadEmpaqueId,
+        // subsistema: {
+        // connect: {
+        // id: data.id_subsistema,
+        // },
 
-        categoria: {
-          connect: {
-            id: data.categoriaId,
-          },
-        },
+        // clasificacion: {
+        //   connect: {
+        //     id: data.clasificacionId,
+        //   },
+        // },
 
-        unidad_empaque: {
-          connect: {
-            id: data.unidadEmpaqueId,
-          },
-        },
+        // categoria: {
+        //   connect: {
+        //     id: data.categoriaId,
+        //   },
+        // },
+
+        // unidad_empaque: {
+        //   connect: {
+        //     id: data.unidadEmpaqueId,
+        //   },
+        // },
       },
     })
     revalidatePath('/dashboard/abastecimiento/renglones')
@@ -128,6 +138,7 @@ export const getAllItems = async () => {
       clasificacion: true,
       unidad_empaque: true,
       categoria: true,
+      subsistema: true,
     },
   })
   return renglones

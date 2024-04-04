@@ -26,6 +26,8 @@ import {
 import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-columns'
 import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-columns'
 import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/system-columns'
 import {
   Card,
   CardContent,
@@ -35,6 +37,8 @@ import {
 import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
+import { getAllSubsystems } from './lib/actions/subsystems'
+import { getAllSystems } from './lib/actions/systems'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -50,6 +54,8 @@ export default async function Page() {
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
   const packagingUnitsData = await getAllPackagingUnits()
+  const systemsData = await getAllSystems()
+  const subsystemsData = await getAllSubsystems()
   return (
     <>
       <PageHeader>
@@ -94,6 +100,7 @@ export default async function Page() {
             Clasificaciones y Categorías{' '}
           </TabsTrigger>
           <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
+          <TabsTrigger value="systems">Sistemas y Subsistemas</TabsTrigger>
         </TabsList>
         <TabsContent value="items">
           <PageContent>
@@ -171,6 +178,44 @@ export default async function Page() {
                 />
               </CardContent>
             </Card>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="systems">
+          <PageContent>
+            <div className="flex w-full gap-8">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Sistemas</CardTitle>
+                  <Link
+                    href="/dashboard/abastecimiento/inventario/sistema"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Sistema
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={systemColumns} data={systemsData} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">
+                    Lista de Subsistemas
+                  </CardTitle>
+                  <Link
+                    href="/dashboard/abastecimiento/inventario/subsistema"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Subsistema
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={subsystemColumns} data={subsystemsData} />
+                </CardContent>
+              </Card>
+            </div>
           </PageContent>
         </TabsContent>
       </Tabs>

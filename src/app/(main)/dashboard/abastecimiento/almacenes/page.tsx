@@ -1,32 +1,48 @@
-import { Button } from '@/modules/common/components/button'
-import { Plus, FileDown, PackageMinus } from 'lucide-react'
+import { columns } from './columns'
+import { DataTable } from '@/modules/common/components/table/data-table'
+
 import { Metadata } from 'next'
+
+import { PageContent } from '@/modules/layout/templates/page'
 import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/modules/common/components/dialog/dialog'
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/modules/common/components/tabs/tabs'
+
 import {
   HeaderLeftSide,
   HeaderRightSide,
-  PageContent,
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
-  PageTemplate,
 } from '@/modules/layout/templates/page'
 
+import { Card, CardContent } from '@/modules/common/components/card/card'
+import { Boxes, PackagePlus } from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import Link from 'next/link'
+import { getAllWarehouses } from './lib/actions/warehouse'
+
 export const metadata: Metadata = {
-  title: 'Recepciones',
-  description: 'Desde aquí puedes administrar la entrada del inventario',
+  title: 'Almacenes',
+  description: 'Desde aquí puedes ver todos los almacenes',
 }
+
 export default async function Page() {
+  // const isAuthorized = await validateUserPermissions({
+  //   section: SECTION_NAMES.INVENTARIO,
+  // })
+
+  const warehousesData = await getAllWarehouses()
+
   return (
     <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackageMinus size={24} />
+            <Boxes size={24} />
             Almacenes
           </PageHeaderTitle>
           <PageHeaderDescription>
@@ -34,26 +50,29 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="default" size={'sm'}>
-                <Plus className="mr-2 h-4 w-4" />
-                Añadir Almacén
-              </Button>
-            </DialogTrigger>
-
-            <DialogContent
-              className={'lg:max-w-screen-xl overflow-y-auto max-h-[90vh] pb-0'}
-            ></DialogContent>
-          </Dialog>
+          <Link
+            href="/dashboard/abastecimiento/almacenes/almacen"
+            className={buttonVariants({ variant: 'default' })}
+          >
+            <PackagePlus className="mr-2 h-4 w-4" />
+            Agregar Almacén
+          </Link>
         </HeaderRightSide>
       </PageHeader>
-
-      <PageContent></PageContent>
+      <Tabs defaultValue="almacenes">
+        <TabsList className="mx-5">
+          <TabsTrigger value="almacenes">Almacenes</TabsTrigger>
+        </TabsList>
+        <TabsContent value="almacenes">
+          <PageContent>
+            <Card>
+              <CardContent>
+                <DataTable columns={columns} data={warehousesData} />
+              </CardContent>
+            </Card>
+          </PageContent>
+        </TabsContent>
+      </Tabs>
     </>
   )
 }

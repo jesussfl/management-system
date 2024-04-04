@@ -21,6 +21,7 @@ import Link from 'next/link'
 
 type RenglonType = Prisma.RenglonGetPayload<{
   include: {
+    subsistema: true
     recepciones: {
       include: {
         seriales: true
@@ -140,7 +141,10 @@ export const columns: ColumnDef<RenglonType>[] = [
       <HeaderCell column={column} value="Unidad de empaque" />
     ),
   },
-
+  {
+    accessorKey: 'subsistema.nombre',
+    header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
+  },
   {
     accessorKey: 'numero_parte',
     header: ({ column }) => (
