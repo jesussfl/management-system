@@ -9,7 +9,7 @@ import {
   useFieldArray,
   useFormState,
 } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
 import {
   Form,
@@ -24,7 +24,7 @@ import {
 // import { RenglonType } from '@/types/types'
 import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
+import { Calendar as CalendarIcon, Loader2, Plus } from 'lucide-react'
 import {
   Popover,
   PopoverContent,
@@ -52,6 +52,7 @@ import {
 import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
+import Link from 'next/link'
 
 type SerialType = Omit<
   Serial,
@@ -366,6 +367,19 @@ export default function ReceptionsForm({
                   <CardDescription>
                     Encuentra y elige los productos que se han recibido en el
                     CESERLODAI. Usa la búsqueda para agilizar el proceso.
+                  </CardDescription>
+                  <CardDescription>
+                    Si no encuentras el renglón que buscas, puedes crearlo
+                    <Link
+                      href="/dashboard/abastecimiento/inventario/renglon"
+                      className={cn(
+                        buttonVariants({ variant: 'secondary' }),
+                        'mx-4'
+                      )}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Crear Renglón
+                    </Link>
                   </CardDescription>
                   <DataTable
                     columns={columns}

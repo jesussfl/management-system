@@ -8,9 +8,8 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import { buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, PackagePlus } from 'lucide-react'
-import Link from 'next/link'
+import { PackagePlus } from 'lucide-react'
+import { BackLinkButton } from '@/app/(auth)/components/back-button'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -24,13 +23,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     <>
       <PageHeader className="mb-0">
         <HeaderLeftSide className="flex-row items-center gap-8">
-          <Link
-            href="/dashboard/abastecimiento/recepciones"
-            className={buttonVariants({ variant: 'outline' })}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver
-          </Link>
+          <BackLinkButton label="Volver" variant="outline" />
+
           <div>
             <PageHeaderTitle>
               <PackagePlus size={24} />

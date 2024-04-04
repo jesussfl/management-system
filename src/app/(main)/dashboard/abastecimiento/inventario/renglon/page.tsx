@@ -1,14 +1,13 @@
 import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
-
-import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
+import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {
   return (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Crear Renglón</PageHeaderTitle>
-      </PageHeader>
+    <PageForm
+      title="Crear Renglón"
+      backLink="/dashboard/abastecimiento/inventario"
+    >
       <ItemsForm />
-    </>
+    </PageForm>
   )
 }

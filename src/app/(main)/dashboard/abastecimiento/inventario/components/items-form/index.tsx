@@ -148,7 +148,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
           {currentStep === 3 && <Step3 />}
         </div>
 
-        <DialogFooter className="sticky bottom-0 bg-white pt-4 border-t border-border gap-4 items-center">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
           {(form.formState.errors.nombre ||
             form.formState.errors.descripcion) && (
             <p className="text-sm font-medium text-destructive">

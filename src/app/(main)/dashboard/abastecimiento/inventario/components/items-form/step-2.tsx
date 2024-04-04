@@ -15,6 +15,9 @@ import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
 import useItemCreationData from '../../lib/hooks/useItemCreationData'
+import Link from 'next/link'
+import { buttonVariants } from '@/modules/common/components/button'
+import { cn } from '@/utils/utils'
 
 export const Step2 = () => {
   const form = useFormContext()
@@ -47,6 +50,15 @@ export const Step2 = () => {
               form={form}
               field={field}
             />
+            <FormDescription>
+              Si no encuentras la clasificación que buscas, puedes crearla
+              <Link
+                href="/dashboard/abastecimiento/inventario/clasificacion"
+                className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
+              >
+                Crear clasificación
+              </Link>
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -63,8 +75,9 @@ export const Step2 = () => {
               return <Loader2 className="w-6 h-6 animate-spin" />
 
             return (
-              <FormItem className="flex flex-col w-full ">
+              <FormItem className="flex flex-col">
                 <FormLabel>Categoría</FormLabel>
+
                 <Combobox
                   name={field.name}
                   data={categories.data}
@@ -72,7 +85,18 @@ export const Step2 = () => {
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
                 />
-                <FormDescription></FormDescription>
+                <FormDescription>
+                  Si no encuentras la categoría que buscas, puedes crearla
+                  <Link
+                    href="/dashboard/abastecimiento/inventario/categoria"
+                    className={cn(
+                      buttonVariants({ variant: 'link' }),
+                      'h-[1px]'
+                    )}
+                  >
+                    Crear categoría
+                  </Link>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )
@@ -99,7 +123,19 @@ export const Step2 = () => {
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
                 />
-                <FormDescription></FormDescription>
+                <FormDescription>
+                  Si no encuentras la unidad de empaque que buscas, puedes
+                  crearla
+                  <Link
+                    href="/dashboard/abastecimiento/inventario/unidad-empaque"
+                    className={cn(
+                      buttonVariants({ variant: 'link' }),
+                      'h-[1px]'
+                    )}
+                  >
+                    Crear unidad de empaque
+                  </Link>
+                </FormDescription>
 
                 <FormMessage />
               </FormItem>

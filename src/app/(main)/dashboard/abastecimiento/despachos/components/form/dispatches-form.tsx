@@ -9,9 +9,9 @@ import {
   useFieldArray,
   useFormContext,
 } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { Box, CheckIcon, Trash } from 'lucide-react'
+import { Box, CheckIcon, Plus, Trash } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -56,6 +56,7 @@ import {
 import { SerialsFormNew } from './serials-form-new'
 import { Input } from '@/modules/common/components/input/input'
 import { Switch } from '@/modules/common/components/switch/switch'
+import Link from 'next/link'
 
 type Detalles = Omit<
   Despachos_Renglones,
@@ -290,6 +291,20 @@ export default function DispatchesForm({
                       </PopoverContent>
                     </Popover>
 
+                    <FormDescription>
+                      Si no encuentras el destinatario que buscas, puedes
+                      crearlo
+                      <Link
+                        href="/dashboard/abastecimiento/destinatarios/agregar"
+                        className={cn(
+                          buttonVariants({ variant: 'link' }),
+                          'text-sm h-[30px]'
+                        )}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Crear Destinatario
+                      </Link>
+                    </FormDescription>
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -401,6 +416,19 @@ export default function DispatchesForm({
                   <CardDescription>
                     Encuentra y elige los productos que se han despachado en el
                     CESERLODAI. Usa la búsqueda para agilizar el proceso.
+                  </CardDescription>
+                  <CardDescription>
+                    Si no encuentras el renglón que buscas, puedes crearlo
+                    <Link
+                      href="/dashboard/abastecimiento/inventario/renglon"
+                      className={cn(
+                        buttonVariants({ variant: 'secondary' }),
+                        'mx-4'
+                      )}
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Crear Renglón
+                    </Link>
                   </CardDescription>
                   <DataTable
                     columns={columns}

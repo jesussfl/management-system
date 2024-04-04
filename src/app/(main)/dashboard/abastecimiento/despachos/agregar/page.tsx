@@ -11,6 +11,7 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
+import { BackLinkButton } from '@/app/(auth)/components/back-button'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -23,13 +24,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     <>
       <PageHeader className="mb-0">
         <HeaderLeftSide className="flex-row items-center gap-4">
-          <Link
-            href="/dashboard/abastecimiento/despachos"
-            className={buttonVariants({ variant: 'outline' })}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver
-          </Link>
+          <BackLinkButton label="Volver" variant="outline" />
+
           <div>
             <PageHeaderTitle>
               <PackagePlus size={24} />
