@@ -6,6 +6,7 @@ import { Button } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,11 +31,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { createReceiver } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
-import { Step2 } from './form-step-2'
+import {
+  createReceiver,
+  updateReceiver,
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
+import { FormMilitar } from './form-militar'
 import { useRouter } from 'next/navigation'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { Destinatario } from '@prisma/client'
 
-type FormValues = Omit<DestinatarioType, 'id'>
+type FormValues = Destinatario
 interface Props {
   defaultValues?: FormValues
 }
@@ -42,19 +48,26 @@ interface Props {
 export default function ReceiversForm({ defaultValues }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
-  const form = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    formState,
+    watch,
+    unregister,
+    setValue,
+    ...rest
+  } = useForm<FormValues>({
     defaultValues,
   })
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
-  const { isDirty, dirtyFields } = useFormState({ control: form.control })
-
+  const { isDirty, dirtyFields } = useFormState({ control: control })
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     startTransition(() => {
       if (!isEditEnabled) {
         createReceiver(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
+            rest.setError(data.field as any, {
               type: 'custom',
               message: data.error,
             })
@@ -80,14 +93,68 @@ export default function ReceiversForm({ defaultValues }: Props) {
 
         return
       }
+
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      //check if dirtyValues has undefined values and convert them to null
+
+      Object.keys(dirtyValues).forEach((key) => {
+        if (dirtyValues[key as keyof FormValues] === undefined) {
+          // @ts-ignore
+          dirtyValues[key] = null
+        }
+      })
+
+      updateReceiver(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Destinatario actualizado',
+            description: 'El destinatario se ha actualizado correctamente',
+            variant: 'success',
+          })
+          router.replace('/dashboard/abastecimiento/destinatarios')
+        }
+      })
     })
   }
+  const isMilitar = watch('tipo')
+  React.useEffect(() => {
+    if (isMilitar === 'Civil') {
+      setValue('id_categoria', null, {
+        shouldDirty: true,
+      })
+      setValue('id_componente', null, {
+        shouldDirty: true,
+      })
+
+      setValue('id_grado', null, {
+        shouldDirty: true,
+      })
+
+      unregister('id_categoria', {
+        keepDefaultValue: true,
+        keepDirty: true,
+      })
+      unregister('id_componente', {
+        keepDefaultValue: true,
+        keepDirty: true,
+      })
+      unregister('id_grado', { keepDefaultValue: true, keepDirty: true })
+    }
+  }, [isMilitar, unregister, setValue])
 
   return (
-    <Form {...form}>
+    <Form
+      watch={watch}
+      control={control}
+      formState={formState}
+      setValue={setValue}
+      handleSubmit={handleSubmit}
+      unregister={unregister}
+      {...rest}
+    >
       <form
         className=" space-y-10 mb-[8rem] "
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <Card>
           <CardHeader>
@@ -101,8 +168,11 @@ export default function ReceiversForm({ defaultValues }: Props) {
           <CardContent className="flex flex-col gap-8 pt-4">
             <div className="flex gap-12">
               <FormField
-                control={form.control}
+                control={control}
                 name="tipo_cedula"
+                rules={{
+                  required: 'Tipo de cédula es requerido',
+                }}
                 render={({ field }) => (
                   <FormItem className="flex flex-1 items-center gap-4 justify-between">
                     <FormLabel className="mb-3">Tipo de cédula</FormLabel>
@@ -133,7 +203,7 @@ export default function ReceiversForm({ defaultValues }: Props) {
                 )}
               />
               <FormField
-                control={form.control}
+                control={control}
                 name={`cedula`}
                 rules={{
                   required: 'Este campo es requerido',
@@ -164,8 +234,11 @@ export default function ReceiversForm({ defaultValues }: Props) {
             <div className="border-b border-base-300" />
             <div className="flex gap-4">
               <FormField
-                control={form.control}
+                control={control}
                 name={`nombres`}
+                rules={{
+                  required: 'Este campo es requerido',
+                }}
                 render={({ field }) => (
                   <FormItem className="items-center flex flex-1 gap-4">
                     <FormLabel className="mb-3">{`Nombres:`}</FormLabel>
@@ -179,8 +252,11 @@ export default function ReceiversForm({ defaultValues }: Props) {
                 )}
               />
               <FormField
-                control={form.control}
+                control={control}
                 name={`apellidos`}
+                rules={{
+                  required: 'Este campo es requerido',
+                }}
                 render={({ field }) => (
                   <FormItem className="items-center flex flex-1 justify-between gap-4">
                     <FormLabel className="mb-3">{`Apellidos:`}</FormLabel>
@@ -197,8 +273,11 @@ export default function ReceiversForm({ defaultValues }: Props) {
 
             <div className="border-b border-base-300" />
             <FormField
-              control={form.control}
+              control={control}
               name={`telefono`}
+              rules={{
+                required: 'Este campo es requerido',
+              }}
               render={({ field }) => (
                 <FormItem className="items-center flex flex-1 justify-between gap-2">
                   <FormLabel className="mb-3">{`Numero telefónico:`}</FormLabel>
@@ -216,17 +295,89 @@ export default function ReceiversForm({ defaultValues }: Props) {
               )}
             />
             <div className="border-b border-base-300" />
-            <Step2 />
+            <FormField
+              control={control}
+              name="sexo"
+              rules={{ required: 'Este campo es requerido' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sexo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Masculino">Masculino</SelectItem>
+                      <SelectItem value="Femenino">Femenino</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="tipo"
+              rules={{ required: 'Este campo es requerido' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo de persona</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Civil">Civil</SelectItem>
+                      <SelectItem value="Militar">Militar</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {isMilitar === 'Militar' ? <FormMilitar /> : null}
+
             <div className="border-b border-base-300" />
             <FormField
-              control={form.control}
-              name={`situacion_profesional`}
+              control={control}
+              name={`direccion`}
+              rules={{
+                required: 'Este campo es requerido',
+              }}
               render={({ field }) => (
                 <FormItem className="items-center flex flex-1 justify-between gap-4">
-                  <FormLabel className="mb-3">{`Situación Profesional:`}</FormLabel>
+                  <FormLabel className="mb-3">{`Cargo Profesional:`}</FormLabel>
                   <div className="w-[70%]">
                     <FormControl>
-                      <Input type="text" {...field} />
+                      <Input type="text" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name={`cargo_profesional`}
+              render={({ field }) => (
+                <FormItem className="items-center flex flex-1 justify-between gap-4">
+                  <FormLabel className="mb-3">{`Cargo Profesional:`}</FormLabel>
+                  <div className="w-[70%]">
+                    <FormControl>
+                      <Input type="text" {...field} value={field.value || ''} />
                     </FormControl>
                     <FormMessage />
                   </div>

@@ -1,15 +1,22 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
-import TableActions from './table-actions'
-import { DestinatarioType } from '@/types/types'
 
+import { DestinatarioType } from '@/types/types'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import Link from 'next/link'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
   {
@@ -81,9 +88,9 @@ export const columns: ColumnDef<DestinatarioType>[] = [
       )
     },
   },
-  ,
+
   {
-    accessorKey: 'situacion_profesional',
+    accessorKey: 'cargo_profesional',
     header: ({ column }) => {
       return (
         <Button
@@ -93,6 +100,23 @@ export const columns: ColumnDef<DestinatarioType>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Cargo profesional
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'direccion',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Dirección
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -114,7 +138,22 @@ export const columns: ColumnDef<DestinatarioType>[] = [
       )
     },
   },
-
+  {
+    accessorKey: 'tipo',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Tipo
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
   {
     accessorKey: 'unidad.nombre',
     header: ({ column }) => {
@@ -187,7 +226,32 @@ export const columns: ColumnDef<DestinatarioType>[] = [
     cell: ({ row }) => {
       const receiver = row.original
 
-      return <TableActions cedula={receiver.cedula} data={receiver} />
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir Menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(String(receiver.id))}
+            >
+              Copiar código
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <Link
+              href={`/dashboard/abastecimiento/destinatarios/${receiver.id}`}
+            >
+              <DropdownMenuItem> Editar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
     },
   },
 ]

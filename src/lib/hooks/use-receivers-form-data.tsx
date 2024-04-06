@@ -16,10 +16,14 @@ export const useReceiversFormData = () => {
   const [isCategoriesLoading, setCategoriesLoading] = useState(false)
   const [isComponentsLoading, setComponentsLoading] = useState(false)
   const [isGradesLoading, setGradesLoading] = useState(false)
+  const componentId = watch('id_componente')
+  const gradeId = watch('id_grado')
 
   //This effect is used to get all the components
   useEffect(() => {
     setComponentsLoading(true)
+    setCategoriesLoading(true)
+    setGradesLoading(true)
 
     getAllComponents().then((data) => {
       const transformedData = data.map((component) => ({
@@ -30,6 +34,28 @@ export const useReceiversFormData = () => {
       setComponents(transformedData)
     })
 
+    componentId &&
+      getGradesByComponentId(componentId).then((data) => {
+        const transformedData = data.map((grade) => ({
+          value: grade.id,
+          label: grade.nombre,
+        }))
+
+        setGrades(transformedData)
+      })
+
+    gradeId &&
+      getCategoriesByGradeId(gradeId).then((data) => {
+        const transformedData = data.map((category) => ({
+          value: category.id,
+          label: category.nombre,
+        }))
+
+        setCategories(transformedData)
+      })
+
+    setGradesLoading(false)
+    setCategoriesLoading(false)
     setComponentsLoading(false)
   }, [])
 

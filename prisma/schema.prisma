@@ -303,25 +303,41 @@ enum Tipos_Cedulas {
   P
 }
 
+enum Tipos_Destinatarios {
+  Civil
+  Militar
+}
+
+enum Generos {
+  Femenino
+  Masculino
+}
+
 model Destinatario {
-  id                    Int                @id @default(autoincrement())
-  tipo_cedula           Tipos_Cedulas
-  cedula                String             @unique
-  nombres               String
-  telefono              String
-  apellidos             String
-  situacion_profesional String
-  id_unidad             Int?
-  unidad                Unidad_Militar?    @relation(fields: [id_unidad], references: [id])
-  id_categoria          Int
-  categoria             Categoria_Militar  @relation(fields: [id_categoria], references: [id])
-  id_grado              Int
-  grado                 Grado_Militar      @relation(fields: [id_grado], references: [id])
-  id_componente         Int
-  componente            Componente_Militar @relation(fields: [id_componente], references: [id])
-  despachos             Despacho[]
-  fecha_creacion        DateTime           @default(now())
-  ultima_actualizacion  DateTime           @updatedAt
+  id                Int                 @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String              @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  tipo              Tipos_Destinatarios
+  sexo              Generos
+
+  id_unidad     Int?
+  unidad        Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
+  id_categoria  Int?
+  categoria     Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
+  id_grado      Int?
+  grado         Grado_Militar?      @relation(fields: [id_grado], references: [id])
+  id_componente Int?
+  componente    Componente_Militar? @relation(fields: [id_componente], references: [id])
+
+  despachos Despacho[]
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Componente_Militar {

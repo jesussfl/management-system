@@ -65,3 +65,62 @@ export const deleteReceiver = async (cedula: string) => {
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 }
+
+export const updateReceiver = async (data: Destinatario, id: number) => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  console.log(data, 'DATAAAAAAAAA')
+  const exists = await prisma.destinatario.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Receiver not found',
+    }
+  }
+
+  await prisma.destinatario.update({
+    where: {
+      id,
+    },
+    data: {
+      ...data,
+    },
+  })
+
+  revalidatePath('/dashboard/abastecimiento/destinatarios')
+
+  return {
+    success: 'Receiver updated successfully',
+  }
+}
+
+export const getReceiverById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const receiver = await prisma.destinatario.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      despachos: true,
+      grado: true,
+      categoria: true,
+      componente: true,
+      unidad: true,
+    },
+  })
+
+  if (!receiver) {
+    throw new Error('Receiver not found')
+  }
+  return receiver
+}

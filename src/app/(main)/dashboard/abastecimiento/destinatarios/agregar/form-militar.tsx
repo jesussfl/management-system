@@ -31,7 +31,7 @@ import {
 import { CheckIcon } from 'lucide-react'
 import { useReceiversFormData } from '@/lib/hooks/use-receivers-form-data'
 
-export const Step2 = () => {
+export const FormMilitar = () => {
   const form = useFormContext()
   const { categories, components, grades } = useReceiversFormData()
 
@@ -81,7 +81,13 @@ export const Step2 = () => {
                               value={component.label}
                               key={component.value}
                               onSelect={() => {
-                                form.setValue('id_componente', component.value)
+                                form.setValue(
+                                  'id_componente',
+                                  component.value,
+                                  {
+                                    shouldDirty: true,
+                                  }
+                                )
                               }}
                             >
                               {component.label}
@@ -150,7 +156,9 @@ export const Step2 = () => {
                               value={grade.label}
                               key={grade.value}
                               onSelect={() => {
-                                form.setValue('id_grado', grade.value)
+                                form.setValue('id_grado', grade.value, {
+                                  shouldDirty: true,
+                                })
                               }}
                             >
                               {grade.label}
@@ -220,7 +228,9 @@ export const Step2 = () => {
                             value={category.label}
                             key={category.value}
                             onSelect={() => {
-                              form.setValue('id_categoria', category.value)
+                              form.setValue('id_categoria', category.value, {
+                                shouldDirty: true,
+                              })
                             }}
                           >
                             {category.label}
