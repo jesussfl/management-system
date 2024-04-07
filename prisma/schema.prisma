@@ -271,14 +271,15 @@ model Devolucion {
 }
 
 model Despacho {
-  id                   Int                   @id @default(autoincrement())
+  id                   Int                      @id @default(autoincrement())
   fecha_despacho       DateTime
   motivo               String?
   renglones            Despachos_Renglones[]
   cedula_destinatario  String
-  destinatario         Destinatario          @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  fecha_creacion       DateTime              @default(now())
-  ultima_actualizacion DateTime              @updatedAt
+  destinatario         Destinatario             @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime                 @default(now())
+  ultima_actualizacion DateTime                 @updatedAt
+  profesionales        Profesionales_Despacho[]
 }
 
 model Despachos_Renglones {
@@ -340,9 +341,44 @@ model Destinatario {
   ultima_actualizacion DateTime @updatedAt
 }
 
+model Profesional_Abastecimiento {
+  id                Int           @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String        @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  sexo              Generos
+
+  id_unidad     Int?
+  unidad        Unidad_Militar?    @relation(fields: [id_unidad], references: [id])
+  id_categoria  Int
+  categoria     Categoria_Militar  @relation(fields: [id_categoria], references: [id])
+  id_grado      Int
+  grado         Grado_Militar      @relation(fields: [id_grado], references: [id])
+  id_componente Int
+  componente    Componente_Militar @relation(fields: [id_componente], references: [id])
+
+  fecha_creacion       DateTime                 @default(now())
+  ultima_actualizacion DateTime                 @updatedAt
+  despachos            Profesionales_Despacho[]
+}
+
+model Profesionales_Despacho {
+  id                   Int                        @id @default(autoincrement())
+  id_profesional       Int
+  profesional          Profesional_Abastecimiento @relation(fields: [id_profesional], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_despacho          Int
+  despacho             Despacho                   @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_creacion       DateTime                   @default(now())
+  ultima_actualizacion DateTime                   @updatedAt
+}
+
 model Componente_Militar {
-  id                   Int                  @id @default(autoincrement())
-  nombre               String               @unique
+  id                   Int                          @id @default(autoincrement())
+  nombre               String                       @unique
   descripcion          String
   estado               String?
   // ultima_edicion   DateTime
@@ -350,8 +386,9 @@ model Componente_Militar {
   destinatario         Destinatario[]
   personal_militar     personal_militar[]
   grados               Grados_Componentes[]
-  fecha_creacion       DateTime             @default(now())
-  ultima_actualizacion DateTime             @updatedAt
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
 }
 
 model Grados_Componentes {
@@ -377,8 +414,9 @@ model Grado_Militar {
   categorias           Categorias_Grados[]
   personal_militar     personal_militar[]
   destinatario         Destinatario[]
-  fecha_creacion       DateTime             @default(now())
-  ultima_actualizacion DateTime             @updatedAt
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
 }
 
 model Categorias_Grados {
@@ -392,46 +430,48 @@ model Categorias_Grados {
 }
 
 model Categoria_Militar {
-  id                   Int                 @id @default(autoincrement())
-  nombre               String              @unique
+  id                   Int                          @id @default(autoincrement())
+  nombre               String                       @unique
   abreviatura          String
   estado               String?
   destinatario         Destinatario[]
   personal_militar     personal_militar[]
   grados               Categorias_Grados[]
-  fecha_creacion       DateTime            @default(now())
-  ultima_actualizacion DateTime            @updatedAt
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
 }
 
 model Unidad_Militar {
-  id                   Int                @id @default(autoincrement())
-  nombre               String             @unique
+  id                   Int                          @id @default(autoincrement())
+  nombre               String                       @unique
   descripcion          String
   ubicacion            String
-  id_zodi              String
-  zodis                zodis              @relation(fields: [id_zodi], references: [id])
+  id_zodi              Int
+  zodi                 Zodi                         @relation(fields: [id_zodi], references: [id])
   destinatarios        Destinatario[]
   personal             personal_militar[]
-  fecha_creacion       DateTime           @default(now())
-  ultima_actualizacion DateTime           @updatedAt
+  fecha_creacion       DateTime                     @default(now())
+  ultima_actualizacion DateTime                     @updatedAt
+  profesionales        Profesional_Abastecimiento[]
 }
 
-model zodis {
-  id          String           @id
+model Zodi {
+  id          Int              @id @default(autoincrement())
   nombre      String           @unique
   descripcion String
   ubicacion   String
-  id_redi     String
-  redi        redis            @relation(fields: [id_redi], references: [id])
-  unidad      Unidad_Militar[]
+  id_redi     Int
+  redi        Redi             @relation(fields: [id_redi], references: [id])
+  unidades    Unidad_Militar[]
 }
 
-model redis {
-  id          String  @id
-  nombre      String  @unique
+model Redi {
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
   descripcion String
   ubicacion   String
-  zodis       zodis[]
+  zodis       Zodi[]
 }
 
 model personal_militar {

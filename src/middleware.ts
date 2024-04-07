@@ -17,7 +17,6 @@ export default auth(async (req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname)
   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
-  console.log(isLoggedIn)
   // if (req.auth?.user) {
   //   const isUserInDatabase = await prisma.usuario.findUnique({
   //     where: {

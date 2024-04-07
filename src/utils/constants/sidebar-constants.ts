@@ -16,6 +16,7 @@ import {
   PackageMinus,
   HelpCircle,
   UserCircle,
+  LocateIcon,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -77,6 +78,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         path: '/dashboard/abastecimiento/destinatarios',
         icon: UserSquare2,
       },
+      {
+        title: 'Profesionales',
+        path: '/dashboard/abastecimiento/profesionales',
+        icon: Contact2,
+      },
     ],
   },
   {
@@ -96,6 +102,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: Contact2,
       },
     ],
+  },
+  {
+    title: 'Unidades',
+    path: '/dashboard/unidades',
+    icon: LocateIcon,
   },
   {
     title: 'Usuarios',

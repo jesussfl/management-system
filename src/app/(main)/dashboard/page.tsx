@@ -41,6 +41,7 @@ import { auth } from '@/auth'
 import { Overview } from '@/modules/common/components/overview/overview'
 import { RecentSales } from '@/modules/common/components/recent-users/recent-users'
 import { getStatistics } from './lib/actions/statistics'
+import Document from '@/components/docx-templater'
 
 export const metadata: Metadata = {
   title: 'Administrador',
@@ -145,6 +146,7 @@ export default async function Page() {
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <Overview />
+              <Document />
               <Card className="col-span-3">
                 <CardHeader>
                   <CardTitle>Recent Sales</CardTitle>

@@ -39,7 +39,15 @@ export type DestinatarioType = Prisma.DestinatarioGetPayload<{
     grado: true
   }
 }>
-
+export type ProfesionalType = Prisma.Profesional_AbastecimientoGetPayload<{
+  include: {
+    unidad: true
+    despachos: true
+    categoria: true
+    componente: true
+    grado: true
+  }
+}>
 export type GradosWithComponentes = Prisma.Grado_MilitarGetPayload<{
   include: {
     componentes: true
@@ -80,5 +88,17 @@ export type ComboboxData = {
 export type SerialWithRenglon = Prisma.SerialGetPayload<{
   include: {
     renglon: true
+  }
+}>
+
+export type UnidadesType = Prisma.Unidad_MilitarGetPayload<{
+  include: {
+    zodi: true
+  }
+}>
+
+export type ZodiType = Prisma.ZodiGetPayload<{
+  include: {
+    redi: true
   }
 }>
