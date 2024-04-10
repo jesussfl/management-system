@@ -52,6 +52,13 @@ export const Step3 = () => {
     })
     setIsSubsystemLoading(false)
   }, [])
+
+  const subsystemId = form.watch('id_subsistema')
+
+  useEffect(() => {
+    setHasSubsystem(!!subsystemId)
+  }, [subsystemId])
+
   return (
     <div className="flex flex-col gap-8 mb-8">
       <FormInstructions>
