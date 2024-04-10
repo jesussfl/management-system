@@ -42,6 +42,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const [isPending, startTransition] = React.useTransition()
   const [isLoading, setIsLoading] = React.useState(false)
   const [currentStep, setCurrentStep] = React.useState(1)
+  const [ref, setRef] = React.useState<any>(null)
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     startTransition(() => {
       if (!isEditEnabled) {
@@ -133,61 +134,67 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const handleBackStep = () => {
     setCurrentStep((prev) => prev - 1)
   }
+
+  React.useEffect(() => {
+    ref?.scrollTo(0, 0)
+  }, [currentStep, ref])
   return (
-    <Form {...form}>
-      <form
-        style={{
-          scrollbarGutter: 'stable both-edges',
-        }}
-        className="flex-1 overflow-y-auto p-6 mb-10 gap-8"
-        onSubmit={form.handleSubmit(onSubmit)}
-      >
-        <div className="px-24">
-          {currentStep === 1 && <Step1 />}
-          {currentStep === 2 && <Step2 />}
-          {currentStep === 3 && <Step3 />}
-        </div>
+    <div
+      ref={(ref) => setRef(ref)}
+      style={{
+        scrollbarGutter: 'stable both-edges',
+      }}
+      className="flex-1 overflow-y-auto p-6 mb-10 gap-8"
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="px-24">
+            {currentStep === 1 && <Step1 />}
+            {currentStep === 2 && <Step2 />}
+            {currentStep === 3 && <Step3 />}
+          </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          {(form.formState.errors.nombre ||
-            form.formState.errors.descripcion) && (
-            <p className="text-sm font-medium text-destructive">
-              Corrige los campos en rojo
-            </p>
-          )}
-          <p className="text-xs text-muted-foreground">
-            Paso {currentStep} de {'3'}
-          </p>
-          <Button
-            variant="outline"
-            disabled={currentStep === 1}
-            onClick={(e) => {
-              e.preventDefault()
-              handleBackStep()
-            }}
-          >
-            Volver
-          </Button>
-
-          <Button
-            disabled={isPending || isLoading}
-            onClick={(e) => {
-              if (currentStep === 3) return
-
-              e.preventDefault()
-              handleNextStep()
-            }}
-          >
-            {isPending || isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : currentStep === 3 ? (
-              'Guardar'
-            ) : (
-              'Siguiente'
+          <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+            {(form.formState.errors.nombre ||
+              form.formState.errors.descripcion) && (
+              <p className="text-sm font-medium text-destructive">
+                Corrige los campos en rojo
+              </p>
             )}
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+            <p className="text-xs text-muted-foreground">
+              Paso {currentStep} de {'3'}
+            </p>
+            <Button
+              variant="outline"
+              disabled={currentStep === 1}
+              onClick={(e) => {
+                e.preventDefault()
+                handleBackStep()
+              }}
+            >
+              Volver
+            </Button>
+
+            <Button
+              disabled={isPending || isLoading}
+              onClick={(e) => {
+                if (currentStep === 3) return
+
+                e.preventDefault()
+                handleNextStep()
+              }}
+            >
+              {isPending || isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : currentStep === 3 ? (
+                'Guardar'
+              ) : (
+                'Siguiente'
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </div>
   )
 }

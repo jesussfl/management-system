@@ -34,14 +34,18 @@ import { Button } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
+import { getAllWarehouses } from '../../../almacenes/lib/actions/warehouse'
 export const Step3 = () => {
   const form = useFormContext()
   const { weight } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
+  const [warehouses, setWarehouses] = useState<ComboboxData[]>([])
   const [hasSubsystem, setHasSubsystem] = useState(false)
   const [isSubsystemLoading, setIsSubsystemLoading] = useState(false)
+  const [isWarehouseLoading, setIsWarehouseLoading] = useState(false)
   useEffect(() => {
     setIsSubsystemLoading(true)
+    setIsWarehouseLoading(true)
     getAllSubsystems().then((data) => {
       const transformedData = data.map((subsystem) => ({
         value: subsystem.id,
@@ -50,6 +54,14 @@ export const Step3 = () => {
 
       setSubsystems(transformedData)
     })
+    getAllWarehouses().then((data) => {
+      const transformedData = data.map((warehouse) => ({
+        value: warehouse.id,
+        label: warehouse.nombre,
+      }))
+      setWarehouses(transformedData)
+    })
+    setIsWarehouseLoading(false)
     setIsSubsystemLoading(false)
   }, [])
 
@@ -70,6 +82,77 @@ export const Step3 = () => {
           y mejorar la experiencia en la gestión del inventario
         </FormInstructionsDescription>
       </FormInstructions>
+      <FormField
+        control={form.control}
+        name="id_almacen"
+        rules={{ required: 'Este campo es requerido' }}
+        render={({ field }) => (
+          <FormItem className="flex flex-1 justify-between gap-4 items-center">
+            <FormLabel>En qué almacen se encuentra:</FormLabel>
+            <div className="w-[70%]">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value
+                        ? warehouses.find(
+                            (warehouse) => warehouse.value === field.value
+                          )?.label
+                        : 'Seleccionar almacén...'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="PopoverContent">
+                  <Command>
+                    <CommandInput
+                      placeholder="Buscar almacén..."
+                      className="h-9"
+                    />
+                    <CommandEmpty>No se encontaron resultados.</CommandEmpty>
+                    <CommandGroup>
+                      {isWarehouseLoading ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        warehouses.map((warehouse) => (
+                          <CommandItem
+                            value={warehouse.label}
+                            key={warehouse.value}
+                            onSelect={() => {
+                              form.setValue('id_almacen', warehouse.value, {
+                                shouldDirty: true,
+                              })
+                            }}
+                          >
+                            {warehouse.label}
+                            <CheckIcon
+                              className={cn(
+                                'ml-auto h-4 w-4',
+                                warehouse.value === field.value
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                          </CommandItem>
+                        ))
+                      )}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              <FormMessage />
+            </div>
+          </FormItem>
+        )}
+      />
       <FormLabel>¿Este renglón pertenece a un subsistema?</FormLabel>
       <div className="flex gap-4 items-center">
         <FormDescription>No</FormDescription>
@@ -79,7 +162,7 @@ export const Step3 = () => {
             if (value) {
               setHasSubsystem(true)
             } else {
-              form.setValue('id_subsistema', null)
+              form.setValue('id_subsistema', null, { shouldDirty: true })
               setHasSubsystem(false)
             }
           }}
