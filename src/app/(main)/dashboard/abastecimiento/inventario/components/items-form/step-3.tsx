@@ -8,6 +8,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
 import useGetWeight from '../../lib/hooks/useGetWeight'
@@ -32,10 +33,12 @@ import {
 import { Button } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
 import { CheckIcon, Loader2 } from 'lucide-react'
+import { Switch } from '@/modules/common/components/switch/switch'
 export const Step3 = () => {
   const form = useFormContext()
   const { weight } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
+  const [hasSubsystem, setHasSubsystem] = useState(false)
   const [isSubsystemLoading, setIsSubsystemLoading] = useState(false)
   useEffect(() => {
     setIsSubsystemLoading(true)
@@ -60,76 +63,99 @@ export const Step3 = () => {
           y mejorar la experiencia en la gestión del inventario
         </FormInstructionsDescription>
       </FormInstructions>
-      <FormField
-        control={form.control}
-        name="id_subsistema"
-        render={({ field }) => (
-          <FormItem className="flex flex-1 justify-between gap-4 items-center">
-            <FormLabel>Subsistema:</FormLabel>
-            <div className="w-[70%]">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value
-                        ? subsystems.find(
-                            (subsystem) => subsystem.value === field.value
-                          )?.label
-                        : 'Seleccionar subsistema'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="PopoverContent">
-                  <Command>
-                    <CommandInput
-                      placeholder="Buscar subsistema..."
-                      className="h-9"
-                    />
-                    <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                    <CommandGroup>
-                      {isSubsystemLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        subsystems.map((subsystem) => (
-                          <CommandItem
-                            value={subsystem.label}
-                            key={subsystem.value}
-                            onSelect={() => {
-                              form.setValue('id_subsistema', subsystem.value, {
-                                shouldDirty: true,
-                              })
-                            }}
-                          >
-                            {subsystem.label}
-                            <CheckIcon
-                              className={cn(
-                                'ml-auto h-4 w-4',
-                                subsystem.value === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )}
-                            />
-                          </CommandItem>
-                        ))
-                      )}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+      <FormLabel>¿Este renglón pertenece a un subsistema?</FormLabel>
+      <div className="flex gap-4 items-center">
+        <FormDescription>No</FormDescription>
+        <Switch
+          checked={hasSubsystem}
+          onCheckedChange={(value) => {
+            if (value) {
+              setHasSubsystem(true)
+            } else {
+              form.setValue('id_subsistema', null)
+              setHasSubsystem(false)
+            }
+          }}
+        />
+        <FormDescription>Si</FormDescription>
+      </div>
+      {hasSubsystem && (
+        <FormField
+          control={form.control}
+          name="id_subsistema"
+          render={({ field }) => (
+            <FormItem className="flex flex-1 justify-between gap-4 items-center">
+              <FormLabel>Subsistema:</FormLabel>
+              <div className="w-[70%]">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        disabled={!hasSubsystem}
+                        variant="outline"
+                        role="combobox"
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? subsystems.find(
+                              (subsystem) => subsystem.value === field.value
+                            )?.label
+                          : 'Seleccionar subsistema'}
+                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="PopoverContent">
+                    <Command>
+                      <CommandInput
+                        placeholder="Buscar subsistema..."
+                        className="h-9"
+                      />
+                      <CommandEmpty>No se encontaron resultados.</CommandEmpty>
+                      <CommandGroup>
+                        {isSubsystemLoading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          subsystems.map((subsystem) => (
+                            <CommandItem
+                              value={subsystem.label}
+                              key={subsystem.value}
+                              onSelect={() => {
+                                form.setValue(
+                                  'id_subsistema',
+                                  subsystem.value,
+                                  {
+                                    shouldDirty: true,
+                                  }
+                                )
+                              }}
+                            >
+                              {subsystem.label}
+                              <CheckIcon
+                                className={cn(
+                                  'ml-auto h-4 w-4',
+                                  subsystem.value === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                            </CommandItem>
+                          ))
+                        )}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
 
-              <FormMessage />
-            </div>
-          </FormItem>
-        )}
-      />
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+      )}
 
       <FormField
         control={form.control}
