@@ -99,9 +99,7 @@ export const columns: ColumnDef<RenglonType>[] = [
 
     cell: ({ row }) => {
       return (
-        <div>{`${String(row.original.peso)} ${
-          row.original.unidad_empaque.abreviacion
-        }`}</div>
+        <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
       )
     },
   },

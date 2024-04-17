@@ -67,6 +67,9 @@ export const Step3 = () => {
   }, [])
 
   const subsystemId = form.watch('id_subsistema')
+  useEffect(() => {
+    form.setValue('peso', weight)
+  }, [weight])
 
   useEffect(() => {
     setHasSubsystem(!!subsystemId)
@@ -374,14 +377,7 @@ export const Step3 = () => {
                   type="number"
                   placeholder="Ingresa el peso del renglón"
                   {...field}
-                  onChange={(event) => {
-                    if (form.formState.errors[field.name]) {
-                      form.clearErrors(field.name)
-                    }
-                    form.setValue(field.name, Number(event.target.value), {
-                      shouldDirty: true,
-                    })
-                  }}
+                  onChange={field.onChange}
                   value={weight || field.value || 0}
                   disabled={weight > 0 ? true : false}
                 />

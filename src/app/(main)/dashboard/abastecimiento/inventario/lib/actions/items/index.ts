@@ -71,7 +71,7 @@ export const updateItem = async (id: number, data: FormValues) => {
     if (!session?.user) {
       throw new Error('You must be signed in to perform this action')
     }
-
+    console.log('data', data)
     await prisma.renglon.update({
       where: {
         id,

@@ -40,7 +40,13 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { Prisma, Despacho, Despachos_Renglones, Serial } from '@prisma/client'
+import {
+  Prisma,
+  Despacho,
+  Despachos_Renglones,
+  Serial,
+  Profesional_Abastecimiento,
+} from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
 import { createDispatch } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
@@ -57,6 +63,15 @@ import { SerialsFormNew } from './serials-form-new'
 import { Input } from '@/modules/common/components/input/input'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
+import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
+type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
+  include: {
+    grado: true
+    categoria: true
+    componente: true
+    unidad: true
+  }
+}>
 
 type Detalles = Omit<
   Despachos_Renglones,
@@ -69,6 +84,10 @@ type FormValues = Omit<
   Despacho,
   'id' | 'fecha_creacion' | 'ultima_actualizacion'
 > & {
+  destinatario: DestinatarioWithRelations
+  supervisor?: Profesional_Abastecimiento
+  abastecedor?: Profesional_Abastecimiento
+  autorizador?: Profesional_Abastecimiento
   renglones: Detalles[]
 }
 interface Props {
@@ -104,6 +123,7 @@ export default function DispatchesForm({
     [key: number]: boolean
   }>({})
   const [receivers, setReceivers] = useState<ComboboxData[]>([])
+  const [professionals, setProfessionals] = useState<ComboboxData[]>([])
   const [selectedData, setSelectedData] = useState<RenglonType[]>([])
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
 
@@ -116,6 +136,15 @@ export default function DispatchesForm({
         }))
 
         setReceivers(transformedData)
+      })
+
+      getAllProfessionals().then((data) => {
+        const transformedData = data.map((receiver) => ({
+          value: receiver.cedula,
+          label: receiver.cedula + '-' + receiver.nombres,
+        }))
+
+        setProfessionals(transformedData)
       })
     })
   }, [])
@@ -217,7 +246,7 @@ export default function DispatchesForm({
       >
         <Card>
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-xl">
               Complete la información solicitada para el despacho de los
               renglones
             </CardTitle>
@@ -305,6 +334,260 @@ export default function DispatchesForm({
                         Crear Destinatario
                       </Link>
                     </FormDescription>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cedula_abastecedor"
+              rules={{ required: 'Este campo es obligatorio' }}
+              render={({ field }) => (
+                <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                  <FormLabel>Profesional que entregará el despacho:</FormLabel>
+                  <div className="w-[70%]">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? professionals.find(
+                                  (professional) =>
+                                    professional.value === field.value
+                                )?.label
+                              : 'Seleccionar profesional'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <CommandInput
+                            placeholder="Buscar profesional..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {professionals.map((professional) => (
+                              <CommandItem
+                                value={professional.label}
+                                key={professional.value}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'cedula_abastecedor',
+                                    professional.value
+                                  )
+                                }}
+                              >
+                                {professional.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    professional.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    <FormDescription>
+                      Si no encuentras el profesional que buscas, puedes crearlo
+                      <Link
+                        href="/dashboard/abastecimiento/profesionales/agregar"
+                        className={cn(
+                          buttonVariants({ variant: 'link' }),
+                          'text-sm h-[30px]'
+                        )}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Crear Profesional
+                      </Link>
+                    </FormDescription>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cedula_autorizador"
+              rules={{ required: 'Este campo es obligatorio' }}
+              render={({ field }) => (
+                <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                  <FormLabel>Profesional que autorizará el despacho:</FormLabel>
+                  <div className="w-[70%]">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? professionals.find(
+                                  (professional) =>
+                                    professional.value === field.value
+                                )?.label
+                              : 'Seleccionar profesional'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <CommandInput
+                            placeholder="Buscar profesional..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {professionals.map((professional) => (
+                              <CommandItem
+                                value={professional.label}
+                                key={professional.value}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'cedula_autorizador',
+                                    professional.value
+                                  )
+                                }}
+                              >
+                                {professional.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    professional.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    {/* <FormDescription>
+                      Si no encuentras el profesional que buscas, puedes crearlo
+                      <Link
+                        href="/dashboard/abastecimiento/profesionales/agregar"
+                        className={cn(
+                          buttonVariants({ variant: 'link' }),
+                          'text-sm h-[30px]'
+                        )}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Crear Profesional
+                      </Link>
+                    </FormDescription> */}
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cedula_supervisor"
+              rules={{ required: 'Este campo es obligatorio' }}
+              render={({ field }) => (
+                <FormItem className="flex flex-1 justify-between gap-4 items-center">
+                  <FormLabel>
+                    Profesional que supervisará el despacho:
+                  </FormLabel>
+                  <div className="w-[70%]">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? professionals.find(
+                                  (professional) =>
+                                    professional.value === field.value
+                                )?.label
+                              : 'Seleccionar profesional'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <CommandInput
+                            placeholder="Buscar profesional..."
+                            className="h-9"
+                          />
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {professionals.map((professional) => (
+                              <CommandItem
+                                value={professional.label}
+                                key={professional.value}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'cedula_supervisor',
+                                    professional.value
+                                  )
+                                }}
+                              >
+                                {professional.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    professional.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+
+                    {/* <FormDescription>
+                      Si no encuentras el profesional que buscas, puedes crearlo
+                      <Link
+                        href="/dashboard/abastecimiento/profesionales/agregar"
+                        className={cn(
+                          buttonVariants({ variant: 'link' }),
+                          'text-sm h-[30px]'
+                        )}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Crear Profesional
+                      </Link>
+                    </FormDescription> */}
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -447,7 +730,7 @@ export default function DispatchesForm({
         {selectedData.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>
+              <CardTitle className="text-xl">
                 Detalle la información de cada renglón seleccionado
               </CardTitle>
               <CardDescription>
@@ -462,7 +745,6 @@ export default function DispatchesForm({
                     (total, item) => total + item.cantidad,
                     0
                   )
-
                   const dispatchedSerials = item.despachos.reduce(
                     (total, item) => total + item.seriales.length,
                     0

@@ -46,7 +46,9 @@ export const getAllProfessionals = async () => {
   }
   const professionals = await prisma.profesional_Abastecimiento.findMany({
     include: {
-      despachos: true,
+      abastecedor: true,
+      autorizador: true,
+      supervisor: true,
       grado: true,
       categoria: true,
       componente: true,
@@ -119,7 +121,9 @@ export const getProfessionalById = async (id: number) => {
       id,
     },
     include: {
-      despachos: true,
+      abastecedor: true,
+      autorizador: true,
+      supervisor: true,
       grado: true,
       categoria: true,
       componente: true,

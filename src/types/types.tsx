@@ -42,10 +42,12 @@ export type DestinatarioType = Prisma.DestinatarioGetPayload<{
 export type ProfesionalType = Prisma.Profesional_AbastecimientoGetPayload<{
   include: {
     unidad: true
-    despachos: true
     categoria: true
     componente: true
     grado: true
+    abastecedor: true
+    supervisor: true
+    autorizador: true
   }
 }>
 export type GradosWithComponentes = Prisma.Grado_MilitarGetPayload<{

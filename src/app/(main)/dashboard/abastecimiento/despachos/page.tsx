@@ -1,11 +1,6 @@
-import { Button, buttonVariants } from '@/modules/common/components/button'
-import { Plus, FileDown, PackageMinus, PackagePlus } from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import { Plus, PackagePlus } from 'lucide-react'
 import { Metadata } from 'next'
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from '@/modules/common/components/dialog/dialog'
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -13,12 +8,12 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
-  PageTemplate,
 } from '@/modules/layout/templates/page'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { getAllDispatches } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { columns } from './columns'
 import Link from 'next/link'
+import ButtonExport from './components/button-export'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -39,10 +34,7 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
+          <ButtonExport />
           <Link
             href="/dashboard/abastecimiento/despachos/agregar"
             className={buttonVariants({ variant: 'default' })}

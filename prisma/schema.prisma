@@ -271,15 +271,22 @@ model Devolucion {
 }
 
 model Despacho {
-  id                   Int                      @id @default(autoincrement())
-  fecha_despacho       DateTime
-  motivo               String?
-  renglones            Despachos_Renglones[]
-  cedula_destinatario  String
-  destinatario         Destinatario             @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  fecha_creacion       DateTime                 @default(now())
-  ultima_actualizacion DateTime                 @updatedAt
-  profesionales        Profesionales_Despacho[]
+  id                  Int                   @id @default(autoincrement())
+  fecha_despacho      DateTime
+  motivo              String?
+  renglones           Despachos_Renglones[]
+  cedula_destinatario String
+  cedula_autorizador  String?
+  cedula_abastecedor  String?
+  cedula_supervisor   String?
+
+  destinatario Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador  Profesional_Abastecimiento? @relation(name: "autorizador", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor  Profesional_Abastecimiento? @relation(name: "abastecedor", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Despachos_Renglones {
@@ -361,20 +368,23 @@ model Profesional_Abastecimiento {
   id_componente Int
   componente    Componente_Militar @relation(fields: [id_componente], references: [id])
 
-  fecha_creacion       DateTime                 @default(now())
-  ultima_actualizacion DateTime                 @updatedAt
-  despachos            Profesionales_Despacho[]
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+
+  abastecedor Despacho[] @relation("abastecedor")
+  autorizador Despacho[] @relation("autorizador")
+  supervisor  Despacho[] @relation("supervisor")
 }
 
-model Profesionales_Despacho {
-  id                   Int                        @id @default(autoincrement())
-  id_profesional       Int
-  profesional          Profesional_Abastecimiento @relation(fields: [id_profesional], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_despacho          Int
-  despacho             Despacho                   @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  fecha_creacion       DateTime                   @default(now())
-  ultima_actualizacion DateTime                   @updatedAt
-}
+// model Profesionales_Despacho {
+//   id                   Int                        @id @default(autoincrement())
+//   id_profesional       Int
+//   profesional          Profesional_Abastecimiento @relation(fields: [id_profesional], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   id_despacho          Int
+//   despacho             Despacho                   @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//   fecha_creacion       DateTime                   @default(now())
+//   ultima_actualizacion DateTime                   @updatedAt
+// }
 
 model Componente_Militar {
   id                   Int                          @id @default(autoincrement())

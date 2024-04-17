@@ -2,8 +2,21 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Despacho, Despachos_Renglones } from '@prisma/client'
-
+import {
+  Despacho,
+  Despachos_Renglones,
+  Destinatario,
+  Prisma,
+  Profesional_Abastecimiento,
+} from '@prisma/client'
+type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
+  include: {
+    grado: true
+    categoria: true
+    componente: true
+    unidad: true
+  }
+}>
 type Detalles = Omit<
   Despachos_Renglones,
   'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -11,10 +24,14 @@ type Detalles = Omit<
   seriales: string[]
 }
 
-type FormValues = Omit<
+export type FormValues = Omit<
   Despacho,
   'id' | 'fecha_creacion' | 'ultima_actualizacion'
 > & {
+  supervisor?: Profesional_Abastecimiento
+  abastecedor?: Profesional_Abastecimiento
+  autorizador?: Profesional_Abastecimiento
+  destinatario: DestinatarioWithRelations
   renglones: Detalles[]
 }
 export const createDispatch = async (data: FormValues) => {
@@ -92,8 +109,12 @@ export const createDispatch = async (data: FormValues) => {
   await prisma.despacho.create({
     data: {
       cedula_destinatario,
+      cedula_abastecedor: data.cedula_abastecedor,
+      cedula_supervisor: data.cedula_supervisor,
+      cedula_autorizador: data.cedula_autorizador,
       motivo,
       fecha_despacho,
+
       renglones: {
         create: renglones.map((renglon) => ({
           ...renglon,
@@ -171,6 +192,9 @@ export const getAllDispatches = async () => {
         },
       },
       destinatario: true,
+      supervisor: true,
+      abastecedor: true,
+      autorizador: true,
     },
   })
   return dispatch
@@ -186,12 +210,49 @@ export const getDispatchById = async (id: number): Promise<FormValues> => {
       id,
     },
     include: {
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
       renglones: {
         include: {
           renglon: {
             include: {
               unidad_empaque: true,
               recepciones: true,
+              despachos: {
+                include: {
+                  seriales: true,
+                },
+              },
             },
           },
           seriales: {
@@ -207,8 +268,12 @@ export const getDispatchById = async (id: number): Promise<FormValues> => {
   if (!dispatch) {
     throw new Error('Despacho no existe')
   }
+
+  // @ts-ignore
+  //TODO: fix this ts-ignore
   return {
     ...dispatch,
+
     renglones: dispatch.renglones.map((renglon) => ({
       ...renglon,
       seriales: renglon.seriales.map((serial) => serial.serial),
