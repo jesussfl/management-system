@@ -1,6 +1,6 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
-
+import { useEffect } from 'react'
 import { cn } from '@/utils/utils'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
@@ -51,7 +51,8 @@ export const CardItemSelected = ({
   deleteItem: (index: number) => void
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
-  const form = useFormContext()
+  const { watch, control, setValue } = useFormContext()
+
   return (
     <Card
       key={item.id}
@@ -77,7 +78,7 @@ export const CardItemSelected = ({
       </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-end">
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.codigo_solicitud`}
           render={({ field }) => (
             <FormItem className="items-center flex flex-1 justify-between gap-2">
@@ -94,7 +95,7 @@ export const CardItemSelected = ({
         />
 
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.cantidad`}
           rules={{
             required: 'La cantidad es requerida',
@@ -121,9 +122,10 @@ export const CardItemSelected = ({
                   <Input
                     type="number"
                     {...field}
-                    onChange={(event) =>
+                    onChange={(event) => {
                       field.onChange(parseInt(event.target.value))
-                    }
+                      setValue(`renglones.${index}.seriales`, [])
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -132,7 +134,7 @@ export const CardItemSelected = ({
           )}
         />
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.fecha_fabricacion`}
           render={({ field }) => (
             <FormItem className="items-center flex flex-1 justify-between gap-2">
@@ -175,7 +177,7 @@ export const CardItemSelected = ({
           )}
         />
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.fecha_vencimiento`}
           render={({ field }) => (
             <FormItem className=" items-center flex  justify-between gap-2">
@@ -216,7 +218,7 @@ export const CardItemSelected = ({
           )}
         />
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.fabricante`}
           render={({ field }) => (
             <FormItem className="items-center flex flex-1 justify-between gap-2">
@@ -232,7 +234,7 @@ export const CardItemSelected = ({
           )}
         />
         <FormField
-          control={form.control}
+          control={control}
           name={`renglones.${index}.precio`}
           render={({ field }) => (
             <FormItem className="items-center flex flex-1 justify-between gap-2">
@@ -266,23 +268,23 @@ export const CardItemSelected = ({
         >
           <ModalForm
             triggerName={`${
-              form.watch(`renglones.${index}.seriales`).length > 0
+              watch(`renglones.${index}.seriales`).length > 0
                 ? 'Ver seriales'
                 : 'Agregar seriales'
             }  `}
             triggerVariant={`${
-              form.watch(`renglones.${index}.seriales`).length > 0
+              watch(`renglones.${index}.seriales`).length > 0
                 ? 'outline'
                 : 'default'
             }`}
             closeWarning={false}
             className="max-h-[80vh]"
-            disabled={!form.watch(`renglones.${index}.cantidad`)}
+            disabled={!watch(`renglones.${index}.cantidad`)}
           >
             <SerialsForm
               index={index}
-              id={form.watch(`renglones.${index}.id`)}
-              quantity={form.watch(`renglones.${index}.cantidad`)}
+              id={watch(`renglones.${index}.id`)}
+              quantity={watch(`renglones.${index}.cantidad`)}
             />
           </ModalForm>
         </div>
