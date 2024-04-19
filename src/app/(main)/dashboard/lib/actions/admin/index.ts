@@ -55,12 +55,16 @@ export const backup = async () => {
 
     const execAsync = promisify(exec)
 
+    // await execAsync(
+    //   `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST}  -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
+    //     backupFilePath +
+    //     ' -F t'
+    // )
     await execAsync(
-      `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST}  -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
+      `PGPASSWORD=${process.env.PGPASSWORD} pg_dump -h ${process.env.PGHOST}  -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
         backupFilePath +
         ' -F t'
     )
-
     console.log('Backup Created!', fileName)
     return fileName
   } catch (error) {
