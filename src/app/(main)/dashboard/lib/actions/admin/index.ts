@@ -52,7 +52,7 @@ export const backup = async () => {
   try {
     const fileName = 'database-backup-' + new Date().valueOf() + '.tar'
     // const backupFilePath = path.resolve('./public/backups', fileName)
-    const backupFilePath = path.join(process.cwd(), 'public', fileName)
+    const backupFilePath = path.join(process.cwd(), 'assets', fileName)
     const execAsync = promisify(exec)
 
     // await execAsync(
