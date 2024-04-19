@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const receptionsData = await getAllReceptions()
-  console.log(receptionsData)
   return (
     <>
       <PageHeader>

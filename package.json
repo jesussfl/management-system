@@ -83,6 +83,7 @@
     "remixicon": "^3.5.0",
     "resend": "^2.1.0",
     "sass": "^1.69.7",
+    "send": "^0.18.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.1",
