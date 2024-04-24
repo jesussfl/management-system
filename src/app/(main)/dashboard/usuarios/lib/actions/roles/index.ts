@@ -3,10 +3,11 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
+import { CreateRolesWithPermissions } from '@/types/types'
 
 type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
-export const createRol = async (data: Rol) => {
+export const createRol = async (data: CreateRolesWithPermissions) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -29,7 +30,13 @@ export const createRol = async (data: Rol) => {
       rol,
       descripcion,
       permisos: {
-        create: permisos,
+        create: permisos.map((permiso) => ({
+          permiso: {
+            connect: {
+              key: permiso.permiso_key,
+            },
+          },
+        })),
       },
     },
   })
@@ -39,7 +46,10 @@ export const createRol = async (data: Rol) => {
   }
 }
 
-export const updateRol = async (id: number, data: Rol) => {
+export const updateRol = async (
+  id: number,
+  data: CreateRolesWithPermissions
+) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -102,4 +112,30 @@ export const getAllRoles = async () => {
     },
   })
   return roles
+}
+
+export const getRolById = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const rol = await prisma.rol.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      permisos: true,
+    },
+  })
+
+  if (!rol) {
+    throw new Error('Rol not found')
+  }
+  return {
+    ...rol,
+    permisos: rol.permisos.map((permiso) => ({
+      value: permiso.permiso_key,
+      label: permiso.permiso_key,
+    })),
+  }
 }

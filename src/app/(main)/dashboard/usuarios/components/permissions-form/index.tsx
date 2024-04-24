@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -15,13 +15,9 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import {
-  createPermiso,
+  createPermission,
   updatePermiso,
 } from '@/app/(main)/dashboard/usuarios/lib/actions/permissions'
-import {
-  DialogHeader,
-  DialogTitle,
-} from '@/modules/common/components/dialog/dialog'
 import { Input } from '@/modules/common/components/input/input'
 import { Permiso } from '@prisma/client'
 import {
@@ -33,9 +29,10 @@ import {
 } from '@/modules/common/components/select/select'
 import Link from 'next/link'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { useRouter } from 'next/navigation'
 interface Props {
   defaultValues?: Permiso
-  close?: () => void
 }
 
 enum Permissions {
@@ -79,66 +76,68 @@ const formatDefaultValues = (defaultValues?: Permiso) => {
   const { seccion, permiso } = destructureKey(defaultValues?.key)
   return {
     ...defaultValues,
+    nombre: defaultValues?.permiso,
     seccion,
     permiso,
   }
 }
 
-export default function PermissionsForm({ defaultValues, close }: Props) {
+export default function PermissionsForm({ defaultValues }: Props) {
   const { toast } = useToast()
-
+  const isEditEnabled = !!defaultValues
   const form = useForm<FormValues>({
     defaultValues: formatDefaultValues(defaultValues),
   })
+  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const router = useRouter()
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    if (!values.permiso && !values.seccion) {
-      form.setError('permiso', {
-        type: 'custom',
-        message: 'Debe seleccionar un permiso y una sección',
-      })
-      return
-    }
-
     const formattedValues = {
       permiso: values.nombre,
       descripcion: values.descripcion,
       key: `${values.seccion}:${values.permiso}`,
     }
+    if (!isEditEnabled) {
+      createPermission(formattedValues).then((data) => {
+        if (data?.error) {
+          form.setError(data.field as any, {
+            type: 'custom',
+            message: data.error,
+          })
+        }
 
-    if (defaultValues) {
-      React.startTransition(() => {
-        updatePermiso(defaultValues.id, formattedValues).then((data) => {
-          if (data?.success) {
-            toast({
-              title: 'Permiso actualizado',
-              description: 'El permiso se ha actualizado correctamente',
-              variant: 'success',
-            })
-            close && close()
-          }
-        })
-      })
-    } else {
-      React.startTransition(() => {
-        createPermiso(formattedValues).then((data) => {
-          if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
-            })
-          }
+        if (data?.success) {
+          toast({
+            title: 'Permiso creado',
+            description: 'El permiso se ha creado correctamente',
+            variant: 'success',
+          })
 
-          if (data?.success) {
-            toast({
-              title: 'Permiso creado',
-              description: 'El permiso se ha creado correctamente',
-              variant: 'success',
-            })
-            close && close()
-          }
-        })
+          router.back()
+        }
       })
+
+      return
     }
+
+    if (!isDirty) {
+      toast({
+        title: 'No se han detectado cambios',
+      })
+
+      return
+    }
+
+    updatePermiso(defaultValues.id, formattedValues).then((data) => {
+      if (data?.success) {
+        toast({
+          title: 'Permiso actualizado',
+          description: 'El permiso se ha actualizado correctamente',
+          variant: 'success',
+        })
+
+        router.back()
+      }
+    })
   }
 
   return (
@@ -147,14 +146,9 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-scroll p-6 gap-8 mb-36"
+        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <DialogHeader className="pb-3 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
-            Agrega un nuevo permiso
-          </DialogTitle>
-        </DialogHeader>
         <div className="px-24">
           <FormField
             control={form.control}
@@ -167,22 +161,14 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
               },
               maxLength: {
                 value: 70,
-                message: 'Debe tener un maximo de 70 caracteres',
+                message: 'Debe tener un máximo de 70 caracteres',
               },
             }}
             render={({ field }) => (
               <FormItem className="">
                 <FormLabel>Permiso</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value)
-                    }}
-                  />
+                  <Input {...field} />
                 </FormControl>
                 <FormDescription>
                   Da contexto de lo que este permiso visualiza o modifica
@@ -215,12 +201,6 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
                     rows={3}
                     className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value)
-                    }}
                   />
                 </FormControl>
                 <FormDescription>
@@ -235,6 +215,7 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
           <FormField
             control={form.control}
             name="permiso"
+            rules={{ required: 'Este campo es necesario' }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Permiso</FormLabel>
@@ -266,9 +247,10 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
           <FormField
             control={form.control}
             name="seccion"
+            rules={{ required: 'Este campo es necesario' }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Seccion</FormLabel>
+                <FormLabel>Sección</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -297,13 +279,6 @@ export default function PermissionsForm({ defaultValues, close }: Props) {
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          {(form.formState.errors.permiso ||
-            form.formState.errors.descripcion) && (
-            <p className="text-sm font-medium text-destructive">
-              Corrige los campos en rojo
-            </p>
-          )}
-
           <Button variant="default" type="submit">
             Guardar
           </Button>

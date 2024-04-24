@@ -1,5 +1,5 @@
 import { Option } from '@/modules/common/components/multiple-selector'
-import { Categoria_Militar, Grado_Militar, Prisma } from '@prisma/client'
+import { Categoria_Militar, Grado_Militar, Prisma, Rol } from '@prisma/client'
 
 export type SideMenuItem = {
   title: string
@@ -63,6 +63,10 @@ export type GradosWithComponentesArray = Grado_Militar & {
   componentes: Option[]
 }
 
+export type RolesWithPermissionsArray = Rol & {
+  permisos: Option[]
+}
+
 export type CreateCategoriasWithGrados = Omit<
   Categoria_Militar & { grados: { id_grado: number }[] },
   'id'
@@ -71,6 +75,10 @@ export type CreateGradosWithComponentes = Omit<
   Grado_Militar & {
     componentes: { id_componente: number }[]
   },
+  'id'
+>
+export type CreateRolesWithPermissions = Omit<
+  Rol & { permisos: { permiso_key: string }[] },
   'id'
 >
 export type GradosWithComponentesAndIncludeComponente =

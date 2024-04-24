@@ -1,7 +1,7 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Button } from '@/modules/common/components/button'
-import { FileDown, User2 } from 'lucide-react'
+import { Button, buttonVariants } from '@/modules/common/components/button'
+import { FileDown, Plus, User2 } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
@@ -17,7 +17,12 @@ import {
   TabsTrigger,
   TabsList,
 } from '@/modules/common/components/tabs/tabs'
-
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
 import { RolesTable } from '@/app/(main)/dashboard/usuarios/components/roles-table'
 import { PermissionsTable } from '@/app/(main)/dashboard/usuarios/components/permissions-table'
 
@@ -30,10 +35,12 @@ import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 import { getAllPermissions } from '@/app/(main)/dashboard/usuarios/lib/actions/permissions'
 import { validateUserPermissions } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-
+import Link from 'next/link'
+import { columns as permissionsColumns } from './components/permissions-table'
+import { columns as rolesColumns } from './components/roles-table'
 export const metadata: Metadata = {
-  title: 'Recepciones',
-  description: 'Desde aquí puedes administrar la entrada del inventario',
+  title: 'Usuarios',
+  description: 'Administra los usuarios registrados y sus roles',
 }
 
 export default async function Page() {
@@ -76,25 +83,40 @@ export default async function Page() {
         </TabsContent>
         <TabsContent value="roles">
           <PageContent>
-            <div className="flex w-full gap-8 p-3">
-              <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold">Lista de Roles</h4>
-                  <ModalForm triggerName="Nuevo rol">
-                    <RolesForm permissions={permissionsData} />
-                  </ModalForm>
-                </div>
-                <RolesTable data={rolesData} />
-              </div>
-              <div className="flex flex-col flex-1 border border-border rounded-sm p-5 gap-5">
-                <div className="flex justify-between">
-                  <h4 className="font-semibold">Lista de Permisos</h4>
-                  <ModalForm triggerName="Nuevo permiso">
-                    <PermissionsForm />
-                  </ModalForm>
-                </div>
-                <PermissionsTable data={permissionsData} />
-              </div>
+            <div className="flex w-full gap-8">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Permisos</CardTitle>
+                  <Link
+                    href="/dashboard/usuarios/permiso"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Permiso
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={permissionsColumns}
+                    data={permissionsData}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Roles</CardTitle>
+                  <Link
+                    href="/dashboard/usuarios/rol"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Rol
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={rolesColumns} data={rolesData} />
+                </CardContent>
+              </Card>
             </div>
           </PageContent>
         </TabsContent>
