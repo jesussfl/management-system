@@ -7,6 +7,7 @@ export type SideMenuItem = {
   icon?: any
   submenu?: boolean
   submenuItems?: SideMenuItem[]
+  requiredPermissions?: string[]
 }
 
 export type RenglonType = Prisma.RenglonGetPayload<{

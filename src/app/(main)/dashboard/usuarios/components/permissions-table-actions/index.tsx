@@ -57,7 +57,7 @@ export default function TableActions({ permiso }: Props) {
       </DropdownMenu>
       {dialogType === 'edit' ? (
         <DialogContent className={'lg:max-w-screen-lg overflow-hidden p-0'}>
-          <PermissionsForm defaultValues={permiso} close={toggleModal} />
+          <PermissionsForm defaultValues={permiso} />
         </DialogContent>
       ) : (
         <DeleteDialog permiso={permiso} close={toggleModal} />

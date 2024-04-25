@@ -41,6 +41,26 @@ const DEFAULT_ICON_SIZE = 20
  }
  ]
  */
+
+export enum SECTION_NAMES {
+  INICIO = 'INICIO',
+  INVENTARIO = 'INVENTARIO',
+  RECEPCION = 'RECEPCION',
+  DESPACHOS = 'DESPACHOS',
+  ALMACENES = 'ALMACENES',
+  DESTINATARIOS = 'DESTINATARIOS',
+  ARMAMENTO = 'ARMAMENTO',
+  PERSONAL = 'PERSONAL',
+  USUARIOS = 'USUARIOS',
+  ESTADISTICAS = 'ESTADISTICAS',
+  AUDITORIA = 'AUDITORIA',
+  REPORTES = 'REPORTES',
+  CONFIGURACION = 'CONFIGURACION',
+  UNIDADES = 'UNIDADES',
+  AYUDA = 'AYUDA',
+  TODAS = 'TODAS',
+}
+
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
   {
     title: 'Inicio',
@@ -52,6 +72,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     path: '/dashboard/abastecimiento',
     icon: Package,
     submenu: true,
+    requiredPermissions: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Inventario',
@@ -89,12 +110,14 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Armamento',
     path: '/dashboard/armamento',
     icon: Bomb,
+    requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
   },
   {
     title: 'Personal',
     path: '/dashboard/personal',
     icon: Users2,
     submenu: true,
+    requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Asistencias',
@@ -107,27 +130,32 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Unidades',
     path: '/dashboard/unidades',
     icon: LocateIcon,
+    requiredPermissions: [SECTION_NAMES.UNIDADES, SECTION_NAMES.TODAS],
   },
   {
     title: 'Usuarios',
     path: '/dashboard/usuarios',
     icon: UserCircle,
+    // requiredPermissions: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
   },
-  {
-    title: 'Estadísticas',
-    path: '/dashboard/estadisticas',
-    icon: PieChart,
-  },
+  // {
+  //   title: 'Estadísticas',
+  //   path: '/dashboard/estadisticas',
+  //   icon: PieChart,
+  //   requiredPermissions: [SECTION_NAMES.ESTADISTICAS],
+  // },
   {
     title: 'Auditoria',
     path: '/dashboard/auditoria',
     icon: FolderSearch,
+    requiredPermissions: [SECTION_NAMES.AUDITORIA, SECTION_NAMES.TODAS],
   },
-  {
-    title: 'Reportes',
-    path: '/dashboard/reportes',
-    icon: FileText,
-  },
+  // {
+  //   title: 'Reportes',
+  //   path: '/dashboard/reportes',
+  //   icon: FileText,
+  //   requiredPermissions: [SECTION_NAMES.REPORTES, SECTION_NAMES.TODAS],
+  // },
   {
     title: 'Configuraciones',
     path: '/dashboard/configuracion',
@@ -137,23 +165,6 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Ayuda',
     path: '/dashboard/ayuda',
     icon: HelpCircle,
+    requiredPermissions: [SECTION_NAMES.AYUDA, SECTION_NAMES.TODAS],
   },
 ]
-
-export enum SECTION_NAMES {
-  INICIO = 'INICIO',
-  INVENTARIO = 'INVENTARIO',
-  RECEPCION = 'RECEPCION',
-  DESPACHOS = 'DESPACHOS',
-  ALMACENES = 'ALMACENES',
-  DESTINATARIOS = 'DESTINATARIOS',
-  ARMAMENTO = 'ARMAMENTO',
-  PERSONAL = 'PERSONAL',
-  USUARIOS = 'USUARIOS',
-  ESTADISTICAS = 'ESTADISTICAS',
-  AUDITORIA = 'AUDITORIA',
-  REPORTES = 'REPORTES',
-  CONFIGURACION = 'CONFIGURACION',
-  AYUDA = 'AYUDA',
-  TODAS = 'TODAS',
-}

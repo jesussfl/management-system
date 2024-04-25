@@ -1,7 +1,6 @@
 import PageForm from '@/modules/layout/components/page-form'
 
 import RolesForm from '../../components/roles-form'
-import { getAllPermissions } from '../../lib/actions/permissions'
 import { getRolById } from '../../lib/actions/roles'
 
 export default async function Page({

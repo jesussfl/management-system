@@ -54,7 +54,8 @@ export const updateRol = async (
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  console.log('data', data.permisos)
+
+  console.log(data, 'dataaa')
   await prisma.rol.update({
     where: {
       id,
@@ -124,7 +125,11 @@ export const getRolById = async (id: number) => {
       id,
     },
     include: {
-      permisos: true,
+      permisos: {
+        include: {
+          permiso: true,
+        },
+      },
     },
   })
 
@@ -134,8 +139,8 @@ export const getRolById = async (id: number) => {
   return {
     ...rol,
     permisos: rol.permisos.map((permiso) => ({
-      value: permiso.permiso_key,
-      label: permiso.permiso_key,
+      value: permiso.permiso.key,
+      label: permiso.permiso.permiso,
     })),
   }
 }

@@ -35,6 +35,7 @@ interface Props {
 }
 
 export default function RolesForm({ defaultValues }: Props) {
+  console.log(defaultValues, 'defaultValues')
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues
@@ -54,7 +55,7 @@ export default function RolesForm({ defaultValues }: Props) {
 
       setPermissions(formattedPermissions)
     })
-  }, [form])
+  }, [])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const formattedValues = {

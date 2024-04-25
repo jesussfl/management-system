@@ -14,6 +14,7 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Usuario } from '@prisma/client'
+import Link from 'next/link'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
@@ -21,6 +22,7 @@ export const columns: ColumnDef<Usuario>[] = [
     accessorKey: 'id',
     header: 'ID',
   },
+
   {
     accessorKey: 'nombre',
     header: ({ column }) => {
@@ -73,7 +75,7 @@ export const columns: ColumnDef<Usuario>[] = [
   {
     id: 'actions',
     cell: ({ row }) => {
-      const renglon = row.original
+      const user = row.original
 
       return (
         <DropdownMenu>
@@ -86,13 +88,16 @@ export const columns: ColumnDef<Usuario>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(renglon.id))}
+              onClick={() => navigator.clipboard.writeText(String(user.id))}
             >
               Copiar código
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+
+            <Link href={`/dashboard/usuarios/${user.id}`}>
+              <DropdownMenuItem> Editar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem>Eliminar</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

@@ -22,10 +22,12 @@ export const validateUserPermissions = async ({ section, action }: Params) => {
     )
   })
   if (!isPageAuthorized) {
+    return false
     throw new Error('No tienes permisos para acceder a esta sección')
   }
 
   if (!isActionAuthorized && action) {
+    return false
     throw new Error('No tienes permisos para realizar esta accion')
   }
 

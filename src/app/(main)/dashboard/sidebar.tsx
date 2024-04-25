@@ -1,12 +1,15 @@
+'use client'
 import { useSidebarContext } from '@/lib/context/sidebar-context'
 import { CustomFlowbiteTheme, Sidebar } from 'flowbite-react'
-import type { FC } from 'react'
+import { useEffect, useState, type FC } from 'react'
 
 import { twMerge } from 'tailwind-merge'
 import { SIDE_MENU_ITEMS } from '@/utils/constants/sidebar-constants'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { getUserPermissions } from '@/lib/auth'
+import { Permiso } from '@prisma/client'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
   root: {
@@ -85,9 +88,50 @@ const customTheme: CustomFlowbiteTheme['sidebar'] = {
     img: 'mr-3 h-6 sm:h-7',
   },
 }
+
+type UserPermissions = {
+  id: number
+  permiso_key: string
+  rol_nombre: string
+  active: boolean | null
+}[]
 export const DashboardSidebar: FC = function () {
   const { isCollapsed } = useSidebarContext()
   const pathname = usePathname()
+  const [permissions, setPermissions] = useState<UserPermissions>([])
+
+  useEffect(() => {
+    const fetchedPermissions = async () => {
+      const permissions = await getUserPermissions()
+      if (!permissions) {
+        return
+      }
+      setPermissions(permissions)
+    }
+
+    fetchedPermissions()
+  }, [])
+  const userSection = permissions?.map(
+    (permission) => permission.permiso_key.split(':')[0]
+  )
+  console.log('permissions', userSection)
+  // Filtrar los elementos del menú lateral que coinciden con la sección del usuario
+  const userPermissions = permissions?.map(
+    (permission) => permission.permiso_key
+  )
+
+  // Filtrar los elementos del menú lateral que coinciden con los permisos del usuario
+  const filteredMenuItems = SIDE_MENU_ITEMS.filter((item) => {
+    if (item.requiredPermissions) {
+      // Verificar si el usuario tiene al menos uno de los permisos requeridos
+      return item.requiredPermissions.some(
+        (permission) => userSection?.includes(permission)
+      )
+    } else {
+      // Si no hay permisos requeridos, mostrar el elemento
+      return true
+    }
+  })
 
   return (
     <Sidebar
@@ -102,7 +146,9 @@ export const DashboardSidebar: FC = function () {
     >
       <Sidebar.Items>
         <Sidebar.ItemGroup title="Main">
-          {SIDE_MENU_ITEMS.map((item, idx) => {
+          {filteredMenuItems.map((item, idx) => {
+            console.log(permissions, 'permissions')
+
             if (item.submenu) {
               return (
                 <Sidebar.Collapse
