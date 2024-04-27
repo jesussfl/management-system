@@ -15,7 +15,10 @@ import { useToast } from '../toast/use-toast'
 type props = {
   title: string
   description: string
-  actionMethod: () => Promise<void>
+  actionMethod: () => Promise<{
+    error: boolean | string | null
+    success: boolean | string | null
+  }>
 }
 
 export const DeleteDialog = ({ title, description, actionMethod }: props) => {
@@ -23,20 +26,26 @@ export const DeleteDialog = ({ title, description, actionMethod }: props) => {
   const { toast } = useToast()
   const handleActionMethod = async () => {
     setIsLoading(true)
-    actionMethod()
-      .then(() => {
+    actionMethod().then((res) => {
+      if (res?.error) {
+        toast({
+          title: 'Error',
+          description: res.error,
+          variant: 'destructive',
+        })
+
+        return
+      }
+
+      if (res?.success) {
         toast({
           title: 'Eliminado',
           description: 'Se eliminó correctamente',
           variant: 'success',
         })
-      })
-      .catch((err) => {
-        toast({
-          title: 'Error',
-          description: err.message,
-        })
-      })
+      }
+    })
+
     setIsLoading(false)
   }
 

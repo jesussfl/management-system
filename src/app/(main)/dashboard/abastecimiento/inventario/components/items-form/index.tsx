@@ -23,7 +23,6 @@ interface Props {
   defaultValues?: Renglon
   close?: () => void
 }
-type FormValues = Omit<Renglon, 'id'>
 
 /**
  * Form component that allows the user to add or update a "row item" with multiple steps and form validation.
@@ -33,7 +32,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const isEditEnabled = !!defaultValues
   const router = useRouter()
 
-  const form = useForm<FormValues>({
+  const form = useForm<Renglon>({
     mode: 'all',
     defaultValues,
   })
@@ -43,10 +42,19 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const [isLoading, setIsLoading] = React.useState(false)
   const [currentStep, setCurrentStep] = React.useState(1)
   const [ref, setRef] = React.useState<any>(null)
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<Renglon> = async (data) => {
     startTransition(() => {
       if (!isEditEnabled) {
-        createItem(data).then(() => {
+        createItem(data).then((res) => {
+          if (res?.error) {
+            toast({
+              title: 'Error',
+              description: res?.error,
+              variant: 'destructive',
+            })
+            return
+          }
+
           toast({
             title: 'Renglon creado',
             description: 'El renglon se ha creado correctamente',
@@ -65,7 +73,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
 
         return
       }
-      const dirtyValues = getDirtyValues(dirtyFields, data) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, data) as Renglon
       updateItem(defaultValues.id, dirtyValues).then(() => {
         toast({
           title: 'Renglon actualizado',
@@ -78,7 +86,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   }
 
   const validateAndProceed = async (
-    fields: Array<keyof FormValues>
+    fields: Array<keyof Renglon>
   ): Promise<void> => {
     await form.trigger(fields)
 

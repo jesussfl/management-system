@@ -12,9 +12,7 @@ import {
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
 import useGetWeight from '../../lib/hooks/useGetWeight'
-import { Combobox } from '@/modules/common/components/combobox'
 import { useEffect, useState } from 'react'
-import { Subsistema } from '@prisma/client'
 import { getAllSubsystems } from '../../lib/actions/subsystems'
 import {
   Popover,

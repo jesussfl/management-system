@@ -15,18 +15,16 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
-import { Categoria, Prisma } from '@prisma/client'
+import { Categoria } from '@prisma/client'
 import {
   createCategory,
   updateCategory,
 } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
 import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
-import { CategoriaType } from '@/types/types'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
-// import useFormPersist from 'react-hook-form-persist'
 interface Props {
   defaultValues?: Categoria
 }
@@ -47,11 +45,6 @@ export default function CategoriesForm({ defaultValues }: Props) {
     defaultValues,
   })
 
-  // useFormPersist('categories-form', {
-  //   watch: form.watch,
-  //   setValue: form.setValue,
-  //   storage: window.localStorage,
-  // })
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
 
@@ -72,10 +65,13 @@ export default function CategoriesForm({ defaultValues }: Props) {
       if (!isEditEnabled) {
         createCategory(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Parece que hubo un problema',
+              description: data.error,
+              variant: 'destructive',
             })
+
+            return
           }
 
           if (data?.success) {
@@ -101,6 +97,7 @@ export default function CategoriesForm({ defaultValues }: Props) {
       }
 
       const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+
       updateCategory(defaultValues.id, dirtyValues).then((data) => {
         if (data?.success) {
           toast({

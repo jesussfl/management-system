@@ -1,13 +1,29 @@
 'use server'
-import { auth } from '@/auth'
+import { registerAuditAction } from '@/lib/actions/audit'
 import { prisma } from '@/lib/prisma'
-import { UnidadEmpaque } from '@prisma/client'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
-export const createPackagingUnit = async (data: Omit<UnidadEmpaque, 'id'>) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+export const createPackagingUnit = async (
+  data: Prisma.UnidadEmpaqueUncheckedCreateInput
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
@@ -20,6 +36,7 @@ export const createPackagingUnit = async (data: Omit<UnidadEmpaque, 'id'>) => {
   if (exist) {
     return {
       field: 'nombre',
+      success: false,
       error: 'Esta Unidad de empaque ya existe',
     }
   }
@@ -28,33 +45,46 @@ export const createPackagingUnit = async (data: Omit<UnidadEmpaque, 'id'>) => {
     data,
   })
 
+  await registerAuditAction(`Se ha creado la Unidad de empaque ${nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
     success: 'Unidad de empaque creada exitosamente',
+    error: false,
   }
 }
 
 export const updatePackagingUnit = async (
   id: number,
-  data: Omit<UnidadEmpaque, 'id'>
+  data: Prisma.UnidadEmpaqueUpdateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
-  if (data.nombre) {
-    const exist = await prisma.unidadEmpaque.findUnique({
-      where: {
-        nombre: data.nombre,
-      },
-    })
-    if (exist) {
-      return {
-        field: 'nombre',
-        error: 'Esta Unidad de empaque ya existe',
-      }
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.unidadEmpaque.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      field: 'nombre',
+      error: 'Esta Unidad de empaque no existe',
+      success: false,
     }
   }
 
@@ -65,18 +95,33 @@ export const updatePackagingUnit = async (
     data,
   })
 
+  await registerAuditAction(
+    `Se ha actualizado la Unidad de empaque ${exist?.nombre}`
+  )
+
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
+    error: false,
     success: 'Unidad de empaque actualizada exitosamente',
   }
 }
 
 export const deletePackagingUnit = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   await prisma.unidadEmpaque.delete({
@@ -89,19 +134,24 @@ export const deletePackagingUnit = async (id: number) => {
 }
 
 export const getAllPackagingUnits = async () => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return []
   }
+
   const packagingUnits = await prisma.unidadEmpaque.findMany()
+
   return packagingUnits
 }
 
 export const getPackagingUnitById = async (id: number) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return []
   }
+
   const packagingUnit = await prisma.unidadEmpaque.findUnique({
     where: {
       id,
@@ -115,10 +165,12 @@ export const getPackagingUnitById = async (id: number) => {
 }
 
 export const getPackagingUnitsByCategoryId = async (id: number) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return []
   }
+
   const packagingUnits = await prisma.unidadEmpaque.findMany({
     where: {
       id_categoria: id,

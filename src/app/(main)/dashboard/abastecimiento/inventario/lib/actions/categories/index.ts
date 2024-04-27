@@ -1,42 +1,91 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Categoria } from '@prisma/client'
-export const createCategory = async (data: Omit<Categoria, 'id'>) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+import { Prisma } from '@prisma/client'
+import { registerAuditAction } from '@/lib/actions/audit'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+
+export const createCategory = async (
+  data: Prisma.CategoriaUncheckedCreateInput
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
   const { nombre } = data
+
   const exist = await prisma.categoria.findUnique({
     where: {
       nombre,
     },
   })
+
   if (exist) {
     return {
-      field: 'nombre',
-      error: 'Esta Categoria ya existe',
+      error: 'El nombre de esta categoria ya existe',
+      success: null,
     }
   }
 
   await prisma.categoria.create({
     data,
   })
+
+  await registerAuditAction(`Se creó una nueva categoría llamada ${nombre}`)
+
   revalidatePath('/dashboard/abastecimiento/inventario')
+
   return {
     success: 'Categoria creada exitosamente',
+    error: null,
   }
 }
 
 export const updateCategory = async (
   id: number,
-  data: Omit<Categoria, 'id'>
+  data: Prisma.CategoriaUpdateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.categoria.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La categoria no existe',
+      success: null,
+    }
   }
 
   await prisma.categoria.update({
@@ -45,17 +94,44 @@ export const updateCategory = async (
     },
     data,
   })
+
+  await registerAuditAction(`Se actualizo la categoria ${exist?.nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
+
   return {
+    error: null,
     success: 'Categoria actualizada exitosamente',
   }
 }
 
 export const deleteCategory = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.categoria.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La categoria no existe',
+      success: null,
+    }
   }
 
   await prisma.categoria.delete({
@@ -64,13 +140,31 @@ export const deleteCategory = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`Se elimino la categoria ${exist?.nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    error: null,
+    success: 'Categoria eliminada exitosamente',
+  }
 }
 export const getCategoryById = async (id: number) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'VISUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
   const category = await prisma.categoria.findUnique({
     where: {
       id,
@@ -81,16 +175,21 @@ export const getCategoryById = async (id: number) => {
   })
 
   if (!category) {
-    throw new Error('Categoria no existe')
+    return {
+      error: 'La categoria no existe',
+      success: null,
+    }
   }
 
   return category
 }
 export const getAllCategories = async () => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return []
   }
+
   const categories = await prisma.categoria.findMany({
     include: {
       clasificacion: true,
@@ -101,10 +200,10 @@ export const getAllCategories = async () => {
 }
 
 export const getCategoriesByClassificationId = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
   const categories = await prisma.categoria.findMany({

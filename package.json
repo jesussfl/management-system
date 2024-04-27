@@ -74,6 +74,7 @@
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
     "react-hook-form": "^7.49.2",
+    "react-hook-form-persist": "^3.0.0",
     "react-international-phone": "^4.2.6",
     "react-number-format": "^5.3.4",
     "react-phone-input-2": "^2.15.1",

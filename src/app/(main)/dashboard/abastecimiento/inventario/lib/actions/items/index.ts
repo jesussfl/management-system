@@ -2,93 +2,127 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Renglon } from '@prisma/client'
+import { Prisma, Renglon } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { registerAuditAction } from '@/lib/actions/audit'
 
 type FormValues = Omit<Renglon, 'id'>
-export const createItem = async (data: FormValues) => {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      throw new Error('You must be signed in to perform this action')
+export const createItem = async (data: Prisma.RenglonUncheckedCreateInput) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+  const { nombre } = data
+  const exist = await prisma.renglon.findUnique({
+    where: {
+      nombre,
+    },
+  })
+  if (exist) {
+    return {
+      field: 'nombre',
+      success: false,
+      error: 'El nombre de este renglón ya existe',
     }
-    const { nombre } = data
-    const exist = await prisma.renglon.findUnique({
-      where: {
-        nombre,
-      },
-    })
-    if (exist) {
-      throw new Error('Renglon already exists')
-    }
-    console.log('data', data)
-    await prisma.renglon.create({
-      data: {
-        ...data,
-        nombre: data.nombre,
-        descripcion: data.descripcion,
-        tipo: data.tipo,
-        stock_minimo: data.stock_minimo,
-        stock_maximo: data.stock_maximo,
-        numero_parte: data.numero_parte,
-        peso: data.peso,
-        id_subsistema: data.id_subsistema,
-        clasificacionId: data.clasificacionId,
-        categoriaId: data.categoriaId,
-        unidadEmpaqueId: data.unidadEmpaqueId,
-        // subsistema: {
-        // connect: {
-        // id: data.id_subsistema,
-        // },
+  }
+  await prisma.renglon.create({
+    data,
+  })
 
-        // clasificacion: {
-        //   connect: {
-        //     id: data.clasificacionId,
-        //   },
-        // },
+  await registerAuditAction(`Se ha creado el renglon ${nombre}`)
+  revalidatePath('/dashboard/abastecimiento/renglones')
 
-        // categoria: {
-        //   connect: {
-        //     id: data.categoriaId,
-        //   },
-        // },
-
-        // unidad_empaque: {
-        //   connect: {
-        //     id: data.unidadEmpaqueId,
-        //   },
-        // },
-      },
-    })
-    revalidatePath('/dashboard/abastecimiento/renglones')
-  } catch (error) {
-    console.log(error)
+  return {
+    success: 'Se ha creado el renglón correctamente',
+    error: false,
   }
 }
 
-export const updateItem = async (id: number, data: FormValues) => {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      throw new Error('You must be signed in to perform this action')
-    }
-    console.log('data', data)
-    await prisma.renglon.update({
-      where: {
-        id,
-      },
-      data,
-    })
-    revalidatePath('/dashboard/abastecimiento/inventario')
-  } catch (error) {
-    console.log(error)
+export const updateItem = async (
+  id: number,
+  data: Prisma.RenglonUpdateInput
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.renglon.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El renglón no existe',
+      success: null,
+    }
+  }
+
+  await prisma.renglon.update({
+    where: {
+      id,
+    },
+    data,
+  })
+
+  await registerAuditAction(`Se ha actualizado el renglón ${exist?.nombre}`)
+  revalidatePath('/dashboard/abastecimiento/inventario')
 }
 
 export const deleteItem = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.renglon.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El renglón no existe',
+      success: false,
+    }
   }
 
   await prisma.renglon.delete({
@@ -97,7 +131,13 @@ export const deleteItem = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`Se ha eliminado el renglon ${id}`)
   revalidatePath('/dashboard/abastecimiento/recepciones')
+
+  return {
+    success: 'Se ha eliminado el renglón correctamente',
+    error: false,
+  }
 }
 export const checkItemExistance = async (name: string) => {
   const session = await auth()
@@ -119,10 +159,12 @@ export const checkItemExistance = async (name: string) => {
 }
 
 export const getAllItems = async () => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
   const renglones = await prisma.renglon.findMany({
     include: {
       recepciones: {
@@ -162,9 +204,10 @@ export const getAllItems = async () => {
 }
 
 export const getItemById = async (id: number) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
   const renglon = await prisma.renglon.findUnique({
     where: {
@@ -178,15 +221,10 @@ export const getItemById = async (id: number) => {
   })
 
   if (!renglon) {
-    throw new Error('Renglon no existe')
+    return {
+      error: 'El renglón no existe',
+      success: false,
+    }
   }
   return renglon
 }
-
-// export const getLowStockItems = async () => {
-//   const session = await auth()
-//   if (!session?.user) {
-//     throw new Error('You must be signed in to perform this action')
-//   }
-
-// }

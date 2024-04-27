@@ -48,10 +48,13 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
       if (!isEditEnabled) {
         createClassification(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Error',
+              description: data.error,
+              variant: 'destructive',
             })
+
+            return
           }
 
           if (data?.success) {

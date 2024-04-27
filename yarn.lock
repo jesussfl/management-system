@@ -9408,6 +9408,11 @@ react-focus-lock@^2.9.4:
     use-callback-ref "^1.3.0"
     use-sidecar "^1.1.2"
 
+react-hook-form-persist@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/react-hook-form-persist/-/react-hook-form-persist-3.0.0.tgz#4aa1f7150d3f836408240cbfbfdb0fe4842f31a2"
+  integrity sha512-6nwW65JyFpBem9RjLYAWvIFxOLoCk0E13iB9e5yeF5jeHlwx1ua0M77FvwhPpD8eaCz7hG4ziCdOxRcnJVUSxQ==
+
 react-hook-form@^7.49.2:
   version "7.49.2"
   resolved "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.49.2.tgz"
