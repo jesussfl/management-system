@@ -22,7 +22,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { RenglonType } from '@/types/types'
+import { RenglonWithAllRelations } from '@/types/types'
 import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
@@ -91,7 +91,7 @@ type FormValues = Omit<
   renglones: Detalles[]
 }
 interface Props {
-  renglonesData: RenglonType[]
+  renglonesData: RenglonWithAllRelations[]
   defaultValues?: FormValues
   close?: () => void
 }
@@ -124,7 +124,9 @@ export default function DispatchesForm({
   }>({})
   const [receivers, setReceivers] = useState<ComboboxData[]>([])
   const [professionals, setProfessionals] = useState<ComboboxData[]>([])
-  const [selectedData, setSelectedData] = useState<RenglonType[]>([])
+  const [selectedData, setSelectedData] = useState<RenglonWithAllRelations[]>(
+    []
+  )
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
 
   useEffect(() => {
@@ -787,7 +789,7 @@ export const SelectedItemCard = ({
   isError,
   setItemsWithoutSerials,
 }: {
-  item: RenglonType
+  item: RenglonWithAllRelations
   isEmpty?: string | boolean
   index: number
   deleteItem: (index: number) => void

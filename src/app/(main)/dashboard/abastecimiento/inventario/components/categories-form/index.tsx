@@ -26,7 +26,7 @@ import { CategoriaType } from '@/types/types'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
-
+// import useFormPersist from 'react-hook-form-persist'
 interface Props {
   defaultValues?: Categoria
 }
@@ -46,6 +46,12 @@ export default function CategoriesForm({ defaultValues }: Props) {
   const form = useForm<FormValues>({
     defaultValues,
   })
+
+  // useFormPersist('categories-form', {
+  //   watch: form.watch,
+  //   setValue: form.setValue,
+  //   storage: window.localStorage,
+  // })
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
 

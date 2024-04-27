@@ -59,7 +59,6 @@ export default async function Page() {
   const systemsData = await getAllSystems()
   const subsystemsData = await getAllSubsystems()
 
-  console.log(itemsData)
   return (
     <>
       <PageHeader>

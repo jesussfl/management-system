@@ -27,7 +27,6 @@ export function SerialsFormNew({
   useEffect(() => {
     const selectedSerials = watch(`renglones.${indexForm}.seriales`)
 
-    console.log(selectedSerials, 'selectedSerials')
     startTransition(() => {
       getSerialsByItemId(id).then((serials) => {
         setSerials(serials)
@@ -37,7 +36,6 @@ export function SerialsFormNew({
             selectedSerials.includes(serial.serial)
           )
 
-          console.log(filteredSerials, 'filtereeeeeed')
           const selectedItems = filteredSerials.reduce(
             (acc, serial) => {
               acc[serial.id] = true

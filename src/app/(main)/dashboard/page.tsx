@@ -41,16 +41,49 @@ import { auth } from '@/auth'
 import { Overview } from '@/modules/common/components/overview/overview'
 import { RecentSales } from '@/modules/common/components/recent-users/recent-users'
 import { getStatistics } from './lib/actions/statistics'
+import { DataTable } from '@/modules/common/components/table/data-table'
+import { getAllItems } from './abastecimiento/inventario/lib/actions/items'
+import { getUserPermissions } from '@/lib/auth'
+import { RenglonWithAllRelations } from '@/types/types'
+import { lowStockItemsColumns } from './components/home-columns'
 
 export const metadata: Metadata = {
   title: 'Administrador',
   description: 'Desde aquí puedes administrar las salidas del inventario',
 }
 
+const getLowStockItems = (items: RenglonWithAllRelations[]) => {
+  const lowStockItems = items.filter((item) => {
+    const stock = item.recepciones.reduce(
+      (total, item) => total + item.cantidad,
+      0
+    )
+    const dispatchedSerials = item.despachos.reduce(
+      (total, item) => total + item.seriales.length,
+      0
+    )
+    const returnedSerials = item.devoluciones.reduce(
+      (total, item) => total + item.seriales.length,
+      0
+    )
+
+    const totalStock = stock - dispatchedSerials + returnedSerials
+
+    return totalStock <= item.stock_minimo
+  })
+
+  return lowStockItems as RenglonWithAllRelations[]
+}
+
 export default async function Page() {
   const session = await auth()
-  const statistics = await getStatistics()
+  const userPermissions = await getUserPermissions()
 
+  console.log(userPermissions)
+
+  const statistics = await getStatistics()
+  const items = await getAllItems()
+  const lowStockItems = getLowStockItems(items)
   return (
     <>
       <PageHeader>
@@ -143,8 +176,30 @@ export default async function Page() {
                 </CardContent>
               </Card>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-              <Overview />
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">
+                    Estadística de Despachos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Overview />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">
+                    Renglones en alerta de stock
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={lowStockItemsColumns}
+                    data={lowStockItems}
+                  />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>

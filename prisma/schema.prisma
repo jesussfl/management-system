@@ -126,9 +126,10 @@ model Renglon {
   id_almacen      Int?
   almacen         Almacen?      @relation(fields: [id_almacen], references: [id])
 
-  despachos   Despachos_Renglones[]
-  recepciones Recepciones_Renglones[]
-  seriales    Serial[]
+  despachos    Despachos_Renglones[]
+  recepciones  Recepciones_Renglones[]
+  devoluciones Devoluciones_Renglones[]
+  seriales     Serial[]
 }
 
 enum Medidas {
@@ -246,28 +247,43 @@ model Recepciones_Renglones {
 }
 
 model Serial {
-  id                   Int                   @id @default(autoincrement())
-  serial               String                @unique
-  id_renglon           Int
-  renglon              Renglon               @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_recepcion         Int
-  recepcion            Recepciones_Renglones @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  estado               String?               @default("Disponible")
-  devoluciones         Devolucion[]
-  id_despacho          Int?
-  despacho             Despachos_Renglones?  @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  fecha_creacion       DateTime              @default(now())
-  ultima_actualizacion DateTime              @updatedAt
+  id            Int                     @id @default(autoincrement())
+  serial        String                  @unique
+  id_renglon    Int
+  renglon       Renglon                 @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_recepcion  Int
+  recepcion     Recepciones_Renglones   @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  estado        String?                 @default("Disponible")
+  id_despacho   Int?
+  despacho      Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  devolucion    Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_devolucion Int?
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Devolucion {
-  id                   Int      @id @default(autoincrement())
-  id_serial            Int
-  serial               Serial   @relation(fields: [id_serial], references: [id])
-  fecha_devolucion     DateTime
-  motivo               String
+  id                  Int                      @id @default(autoincrement())
+  fecha_devolucion    DateTime
+  motivo              String
+  renglones           Devoluciones_Renglones[]
+  cedula_destinatario String
+  destinatario        Destinatario             @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
+}
+
+model Devoluciones_Renglones {
+  id                   Int        @id @default(autoincrement())
+  id_renglon           Int
+  renglon              Renglon    @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_devolucion        Int
+  devolucion           Devolucion @relation(fields: [id_devolucion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  seriales             Serial[]
+  fecha_creacion       DateTime   @default(now())
+  ultima_actualizacion DateTime   @updatedAt
 }
 
 model Despacho {
@@ -344,8 +360,9 @@ model Destinatario {
 
   despachos Despacho[]
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime     @default(now())
+  ultima_actualizacion DateTime     @updatedAt
+  Devolucion           Devolucion[]
 }
 
 model Profesional_Abastecimiento {

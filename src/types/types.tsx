@@ -10,7 +10,7 @@ export type SideMenuItem = {
   requiredPermissions?: string[]
 }
 
-export type RenglonType = Prisma.RenglonGetPayload<{
+export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
   include: {
     recepciones: {
       include: {
@@ -22,7 +22,11 @@ export type RenglonType = Prisma.RenglonGetPayload<{
         seriales: true
       }
     }
-
+    devoluciones: {
+      include: {
+        seriales: true
+      }
+    }
     unidad_empaque: true
   }
 }>

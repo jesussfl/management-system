@@ -17,6 +17,7 @@ import {
   HelpCircle,
   UserCircle,
   LocateIcon,
+  IterationCcw,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -47,6 +48,8 @@ export enum SECTION_NAMES {
   INVENTARIO = 'INVENTARIO',
   RECEPCION = 'RECEPCION',
   DESPACHOS = 'DESPACHOS',
+  DEVOLUCIONES = 'DEVOLUCIONES',
+  Profesionales = 'PROFESIONALES',
   ALMACENES = 'ALMACENES',
   DESTINATARIOS = 'DESTINATARIOS',
   ARMAMENTO = 'ARMAMENTO',
@@ -88,6 +91,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         title: 'Despachos',
         path: '/dashboard/abastecimiento/despachos',
         icon: PackageMinus,
+      },
+      {
+        title: 'Devoluciones',
+        path: '/dashboard/abastecimiento/devoluciones',
+        icon: IterationCcw,
       },
       {
         title: 'Almacenes',

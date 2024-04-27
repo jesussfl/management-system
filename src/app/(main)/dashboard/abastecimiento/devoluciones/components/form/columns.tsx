@@ -6,9 +6,11 @@ import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { RenglonWithAllRelations } from '@/types/types'
-
-export const columns: ColumnDef<RenglonWithAllRelations>[] = [
+import { Prisma } from '@prisma/client'
+type RenglonType = Prisma.RenglonGetPayload<{
+  include: { unidad_empaque: true; recepciones: true }
+}>
+export const columns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -17,19 +19,13 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
 
   {
     accessorKey: 'stock',
-    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
     cell: ({ row }) => {
       const stock = row.original.recepciones.reduce(
         (total, item) => total + item.cantidad,
         0
       )
 
-      const dispatchedSerials = row.original.despachos.reduce(
-        (total, item) => total + item.seriales.length,
-        0
-      )
-
-      return <div>{stock - dispatchedSerials}</div>
+      return <div>{stock}</div>
     },
   },
   {
@@ -131,15 +127,3 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     },
   },
 ]
-
-const HeaderCell = ({ column, value }: { column: any; value: any }) => (
-  <Button
-    variant="ghost"
-    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-    size={'sm'}
-    className="text-xs"
-  >
-    {value}
-    <ArrowUpDown className="ml-2 h-3 w-3" />
-  </Button>
-)

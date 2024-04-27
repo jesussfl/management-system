@@ -127,12 +127,29 @@ export const getAllItems = async () => {
     include: {
       recepciones: {
         include: {
-          seriales: true,
+          seriales: {
+            include: {
+              renglon: true,
+            },
+          },
         },
       },
       despachos: {
         include: {
-          seriales: true,
+          seriales: {
+            include: {
+              renglon: true,
+            },
+          },
+        },
+      },
+      devoluciones: {
+        include: {
+          seriales: {
+            include: {
+              renglon: true,
+            },
+          },
         },
       },
       clasificacion: true,
@@ -165,3 +182,11 @@ export const getItemById = async (id: number) => {
   }
   return renglon
 }
+
+// export const getLowStockItems = async () => {
+//   const session = await auth()
+//   if (!session?.user) {
+//     throw new Error('You must be signed in to perform this action')
+//   }
+
+// }
