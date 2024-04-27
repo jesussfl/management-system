@@ -162,7 +162,7 @@ export const getAllItems = async () => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    return []
   }
 
   const renglones = await prisma.renglon.findMany({
@@ -207,7 +207,7 @@ export const getItemById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    throw new Error('You must be signed in to perform this action')
   }
   const renglon = await prisma.renglon.findUnique({
     where: {
@@ -221,10 +221,7 @@ export const getItemById = async (id: number) => {
   })
 
   if (!renglon) {
-    return {
-      error: 'El renglón no existe',
-      success: false,
-    }
+    throw new Error('El renglon no existe')
   }
   return renglon
 }

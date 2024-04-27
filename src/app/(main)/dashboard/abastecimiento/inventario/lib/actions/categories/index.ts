@@ -152,17 +152,7 @@ export const getCategoryById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
-  }
-
-  const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
-    actionName: 'VISUALIZAR',
-    userPermissions: sessionResponse.session?.user.rol.permisos,
-  })
-
-  if (!permissionsResponse.success) {
-    return permissionsResponse
+    throw new Error('You must be signed in to perform this action')
   }
 
   const category = await prisma.categoria.findUnique({
@@ -175,10 +165,7 @@ export const getCategoryById = async (id: number) => {
   })
 
   if (!category) {
-    return {
-      error: 'La categoria no existe',
-      success: null,
-    }
+    throw new Error('La categoria no existe')
   }
 
   return category

@@ -131,6 +131,11 @@ export const deletePackagingUnit = async (id: number) => {
   })
 
   revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    error: false,
+    success: 'Unidad de empaque eliminada exitosamente',
+  }
 }
 
 export const getAllPackagingUnits = async () => {
@@ -149,7 +154,7 @@ export const getPackagingUnitById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return []
+    throw new Error('You must be signed in to perform this action')
   }
 
   const packagingUnit = await prisma.unidadEmpaque.findUnique({

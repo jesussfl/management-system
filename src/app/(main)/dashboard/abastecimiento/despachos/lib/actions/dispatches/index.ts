@@ -9,6 +9,8 @@ import {
   Prisma,
   Profesional_Abastecimiento,
 } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { registerAuditAction } from '@/lib/actions/audit'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -150,10 +152,10 @@ export const createDispatch = async (data: FormValues) => {
   }
 }
 export const deleteDispatch = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
   const exist = await prisma.despacho.findUnique({
@@ -163,7 +165,10 @@ export const deleteDispatch = async (id: number) => {
   })
 
   if (!exist) {
-    throw new Error('Despacho no existe')
+    return {
+      error: 'Despacho no existe',
+      success: false,
+    }
   }
 
   await prisma.despacho.delete({
@@ -172,7 +177,13 @@ export const deleteDispatch = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`Se eliminó el despacho con id: ${id}`)
   revalidatePath('/dashboard/abastecimiento/despachos')
+
+  return {
+    success: true,
+    error: false,
+  }
 }
 export const getAllDispatches = async () => {
   const session = await auth()

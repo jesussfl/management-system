@@ -153,7 +153,7 @@ export const getAllClassifications = async () => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    return []
   }
 
   const classifications = await prisma.clasificacion.findMany()
@@ -164,7 +164,7 @@ export const getClassificationById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    throw new Error('You must be signed in to perform this action')
   }
 
   const classification = await prisma.clasificacion.findUnique({
@@ -174,10 +174,7 @@ export const getClassificationById = async (id: number) => {
   })
 
   if (!classification) {
-    return {
-      error: 'La clasificación no existe',
-      success: false,
-    }
+    throw new Error('La clasificación no existe')
   }
   return classification
 }
