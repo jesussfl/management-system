@@ -65,9 +65,10 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
       if (!isEditEnabled) {
         createProfessional(values).then((data) => {
           if (data?.error) {
-            rest.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Error',
+              description: data.error,
+              variant: 'destructive',
             })
           }
           if (data?.success) {

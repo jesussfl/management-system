@@ -8,7 +8,7 @@
 import { saveAs } from 'file-saver'
 import { createReport } from 'docx-templates'
 import { Despachos_Renglones, Prisma } from '@prisma/client'
-import { FormValues } from '.'
+import { FormValues } from './'
 
 type Profesional_AbastecimientoWithRelations =
   Prisma.Profesional_AbastecimientoGetPayload<{

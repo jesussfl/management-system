@@ -190,7 +190,7 @@ export const getCategoriesByClassificationId = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    return []
   }
 
   const categories = await prisma.categoria.findMany({

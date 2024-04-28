@@ -14,11 +14,30 @@ import { registerAuditAction } from '@/lib/actions/audit'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
-type Detalles = Prisma.Despachos_RenglonesUncheckedCreateInput & {
+type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
+  include: {
+    grado: true
+    categoria: true
+    componente: true
+    unidad: true
+  }
+}>
+
+type Detalles = Omit<
+  Despachos_Renglones,
+  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: string[]
 }
 
-export type FormValues = Prisma.DespachoUncheckedCreateInput & {
+export type FormValues = Omit<
+  Despacho,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
+  destinatario: DestinatarioWithRelations
+  supervisor?: Profesional_Abastecimiento
+  abastecedor?: Profesional_Abastecimiento
+  autorizador?: Profesional_Abastecimiento
   renglones: Detalles[]
 }
 export const createDispatch = async (data: FormValues) => {
@@ -284,6 +303,7 @@ export const getDispatchById = async (id: number): Promise<FormValues> => {
     throw new Error('Despacho no existe')
   }
 
+  // @ts-ignore
   return {
     ...dispatch,
 

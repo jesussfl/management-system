@@ -65,11 +65,30 @@ import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
 
-type Detalles = Prisma.Despachos_RenglonesCreateInput & {
+type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
+  include: {
+    grado: true
+    categoria: true
+    componente: true
+    unidad: true
+  }
+}>
+
+type Detalles = Omit<
+  Despachos_Renglones,
+  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
   seriales: string[]
 }
 
-type FormValues = Prisma.DespachoUncheckedCreateInput & {
+type FormValues = Omit<
+  Despacho,
+  'id' | 'fecha_creacion' | 'ultima_actualizacion'
+> & {
+  destinatario: DestinatarioWithRelations
+  supervisor?: Profesional_Abastecimiento
+  abastecedor?: Profesional_Abastecimiento
+  autorizador?: Profesional_Abastecimiento
   renglones: Detalles[]
 }
 interface Props {
@@ -83,7 +102,6 @@ type ComboboxData = {
 export default function DispatchesForm({
   renglonesData,
   defaultValues,
-  close,
 }: Props) {
   const { toast } = useToast()
   const router = useRouter()
