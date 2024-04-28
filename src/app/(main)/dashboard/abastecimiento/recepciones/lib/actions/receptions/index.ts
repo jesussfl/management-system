@@ -8,6 +8,10 @@ import {
   Recepciones_Renglones,
   Serial,
 } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { registerAuditAction } from '@/lib/actions/audit'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -70,10 +74,20 @@ const getAffectedFields = (renglones: Detalles[]) => {
   return fields
 }
 export const createReception = async (data: FormValues) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { motivo, fecha_recepcion, renglones } = data
@@ -81,6 +95,8 @@ export const createReception = async (data: FormValues) => {
   if (!fecha_recepcion || !renglones) {
     return {
       error: 'Missing Fields',
+      success: false,
+      fields: [],
     }
   }
 
@@ -90,6 +106,7 @@ export const createReception = async (data: FormValues) => {
     return {
       error: 'Hay algunos renglones sin seriales',
       fields: fields,
+      success: false,
     }
   }
 
@@ -114,13 +131,32 @@ export const createReception = async (data: FormValues) => {
       },
     },
   })
+
+  await registerAuditAction(`Se creó una recepción con motivo: ${data.motivo}`)
   revalidatePath('/dashboard/abastecimiento/recepciones')
+
+  return {
+    success: 'Recepcion creada exitosamente',
+    error: false,
+    fields: [],
+  }
 }
 
 export const updateReception = async (id: number, data: FormValues) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const reception = await prisma.recepcion.findUnique({
@@ -132,6 +168,7 @@ export const updateReception = async (id: number, data: FormValues) => {
   if (!reception) {
     return {
       error: 'Recepcion no existe',
+      success: false,
     }
   }
   if (allSerialsAreValid(data.renglones)) {
@@ -139,6 +176,7 @@ export const updateReception = async (id: number, data: FormValues) => {
 
     return {
       error: 'Hay algunos renglones sin seriales',
+      success: false,
       fields: fields,
     }
   }
@@ -177,10 +215,14 @@ export const updateReception = async (id: number, data: FormValues) => {
     },
   })
 
+  await registerAuditAction(
+    `Se actualizó una recepción con motivo: ${data.motivo}`
+  )
   revalidatePath('/dashboard/abastecimiento/recepciones')
 
   return {
     success: 'Recepcion actualizada exitosamente',
+    error: false,
   }
 }
 

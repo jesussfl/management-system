@@ -237,8 +237,7 @@ export default function PermissionsForm({ defaultValues }: Props) {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href="/examples/forms">email settings</Link>.
+                  Selecciona la acción que deseas realizar con este permiso.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -269,8 +268,8 @@ export default function PermissionsForm({ defaultValues }: Props) {
                   </SelectContent>
                 </Select>
                 <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href="/examples/forms">email settings</Link>.
+                  Selecciona la sección o subsección que deseas asignar al
+                  permiso.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

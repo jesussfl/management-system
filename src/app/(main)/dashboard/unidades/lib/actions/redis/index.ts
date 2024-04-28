@@ -1,6 +1,10 @@
 'use server'
 import { auth } from '@/auth'
+import { registerAuditAction } from '@/lib/actions/audit'
 import { prisma } from '@/lib/prisma'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { Prisma, Redi } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
@@ -43,11 +47,21 @@ export const getRediById = async (id: number) => {
   return redi
 }
 
-export const createRedi = async (data: Omit<Redi, 'id'>) => {
-  const session = await auth()
+export const createRedi = async (data: Prisma.RediCreateInput) => {
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.UNIDADES,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
@@ -55,6 +69,7 @@ export const createRedi = async (data: Omit<Redi, 'id'>) => {
   if (!nombre) {
     return {
       error: 'Name is required',
+      success: false,
     }
   }
 
@@ -68,6 +83,7 @@ export const createRedi = async (data: Omit<Redi, 'id'>) => {
     return {
       error: 'El nombre ya existe',
       field: 'nombre',
+      success: false,
     }
   }
 
@@ -75,19 +91,37 @@ export const createRedi = async (data: Omit<Redi, 'id'>) => {
     data,
   })
 
+  await registerAuditAction(`La redi ${nombre} fue creado`)
   revalidatePath('/dashboard/unidades')
 
   return {
     success: true,
+    error: false,
   }
 }
 
 export const deleteRedi = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.UNIDADES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.redi.findUnique({
+    where: {
+      id,
+    },
+  })
 
   await prisma.redi.delete({
     where: {
@@ -95,17 +129,30 @@ export const deleteRedi = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`La redi ${exists?.nombre} fue eliminada`)
   revalidatePath('/dashboard/unidades')
 
   return {
     success: true,
+    error: false,
   }
 }
 
 export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const exists = await prisma.redi.findUnique({
@@ -117,6 +164,7 @@ export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
   if (!exists) {
     return {
       error: 'redi not found',
+      success: false,
     }
   }
 
@@ -127,9 +175,11 @@ export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
     data,
   })
 
+  await registerAuditAction(`La redi ${exists?.nombre} fue actualizada`)
   revalidatePath('/dashboard/unidades')
 
   return {
     success: true,
+    error: false,
   }
 }

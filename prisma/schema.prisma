@@ -41,8 +41,11 @@ model Session {
 }
 
 model Usuario {
-  id            String      @id @default(cuid())
-  nombre        String
+  id          String         @id @default(cuid())
+  nombre      String
+  cedula      String?        @unique
+  tipo_cedula Tipos_Cedulas?
+
   email         String?     @unique
   contrasena    String?     @map("password")
   facialID      String?     @unique
@@ -87,7 +90,7 @@ model Rol {
 model Roles_Permisos {
   id          Int      @id @default(autoincrement())
   rol_nombre  String
-  permiso_key String   @unique
+  permiso_key String
   active      Boolean?
   rol         Rol      @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
   permiso     Permiso  @relation(fields: [permiso_key], references: [key], onDelete: Cascade, onUpdate: Cascade)

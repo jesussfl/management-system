@@ -194,7 +194,6 @@ export default function ReceiversForm({ defaultValues }: Props) {
                           <SelectItem value="P">P</SelectItem>
                           <SelectItem value="G">G</SelectItem>
                           <SelectItem value="R">R</SelectItem>
-                          <SelectItem value="P">P</SelectItem>
                         </SelectContent>
                       </Select>
 

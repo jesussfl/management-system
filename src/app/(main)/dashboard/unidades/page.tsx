@@ -12,7 +12,6 @@ import {
 import { DataTable } from '@/modules/common/components/table/data-table'
 import Link from 'next/link'
 import { columns } from './columns'
-import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import {
   Tabs,
   TabsContent,
@@ -68,13 +67,27 @@ export default async function Page() {
       </PageHeader>
       <Tabs defaultValue="unidades">
         <TabsList className="mx-5">
-          <TabsTrigger value="unidades">Unidades</TabsTrigger>
-          <TabsTrigger value="zodis">Zodis</TabsTrigger>
           <TabsTrigger value="redis">Redis</TabsTrigger>
+          <TabsTrigger value="zodis">Zodis</TabsTrigger>
+          <TabsTrigger value="unidades">Unidades</TabsTrigger>
         </TabsList>
-        <TabsContent value="unidades">
+        <TabsContent value="redis">
           <PageContent>
-            <DataTable columns={columns} data={unitsData} />
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle>Lista de Redis</CardTitle>
+                <Link
+                  href="/dashboard/unidades/redi"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Redi
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <DataTable columns={rediColumns} data={redisData} />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
         <TabsContent value="zodis">
@@ -96,23 +109,9 @@ export default async function Page() {
             </Card>
           </PageContent>
         </TabsContent>
-        <TabsContent value="redis">
+        <TabsContent value="unidades">
           <PageContent>
-            <Card>
-              <CardHeader className="flex flex-row justify-between">
-                <CardTitle>Lista de Redis</CardTitle>
-                <Link
-                  href="/dashboard/unidades/redi"
-                  className={buttonVariants({ variant: 'secondary' })}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Agregar Redi
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <DataTable columns={rediColumns} data={redisData} />
-              </CardContent>
-            </Card>
+            <DataTable columns={columns} data={unitsData} />
           </PageContent>
         </TabsContent>
       </Tabs>

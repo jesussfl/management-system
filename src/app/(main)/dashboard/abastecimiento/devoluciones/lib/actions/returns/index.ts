@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Devolucion, Devoluciones_Renglones, Prisma } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { registerAuditAction } from '@/lib/actions/audit'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -26,23 +30,34 @@ export type FormValues = Omit<
   renglones: Detalles[]
 }
 export const createReturn = async (data: FormValues) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
   const { motivo, fecha_devolucion, cedula_destinatario, renglones } = data
 
   if (!fecha_devolucion || !renglones) {
     return {
       error: 'Missing Fields',
+      success: false,
     }
   }
 
   if (renglones.length === 0) {
     return {
       error: 'No se han seleccionado renglones',
+      success: false,
     }
   }
 
@@ -67,9 +82,7 @@ export const createReturn = async (data: FormValues) => {
         create: renglones.map((renglon) => ({
           ...renglon,
           id_renglon: renglon.id_renglon,
-          // cantidad: serials.filter(
-          //   (serial) => serial.id_renglon === renglon.id_renglon
-          // ).length,
+
           seriales: {
             connect: serials
               .filter((serial) => serial.id_renglon === renglon.id_renglon)
@@ -91,17 +104,29 @@ export const createReturn = async (data: FormValues) => {
     },
   })
 
+  await registerAuditAction(`Devolucion creada con motivo: ${motivo}`)
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
   return {
     success: true,
+    error: false,
   }
 }
 export const deleteReturn = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const exist = await prisma.devolucion.findUnique({
@@ -120,6 +145,7 @@ export const deleteReturn = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`Devolucion eliminada con motivo: ${exist.motivo}`)
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 }
 export const getAllReturns = async () => {
@@ -191,8 +217,6 @@ export const getReturnById = async (id: number): Promise<FormValues> => {
     throw new Error('Despacho no existe')
   }
 
-  // @ts-ignore
-  //TODO: fix this ts-ignore
   return {
     ...devolution,
 

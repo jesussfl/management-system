@@ -29,10 +29,19 @@ import {
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
 type FormValues = {
   email: string
   name: string
   adminPassword: string
+  tipo_cedula: string
+  cedula: string
 }
 
 export function FaceSignupForm() {
@@ -199,6 +208,70 @@ export function FaceSignupForm() {
               </FormControl>
 
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="tipo_cedula"
+          rules={{
+            required: 'Tipo de documento es requerido',
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-1 items-center gap-4 justify-between">
+              <FormLabel className="mb-3">Tipo de documento</FormLabel>
+              <div className="w-[70%]">
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="V">V</SelectItem>
+                    <SelectItem value="E">E</SelectItem>
+                    <SelectItem value="J">J</SelectItem>
+                    <SelectItem value="P">P</SelectItem>
+                    <SelectItem value="G">G</SelectItem>
+                    <SelectItem value="R">R</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name={`cedula`}
+          rules={{
+            required: 'Este campo es requerido',
+            minLength: 5,
+            maxLength: 30,
+          }}
+          render={({ field }) => (
+            <FormItem className=" flex flex-1 items-center justify-between gap-4">
+              <FormLabel className="mb-3">{`Documento de identidad`}</FormLabel>
+
+              <div className="w-[70%]">
+                <FormControl>
+                  <Input
+                    type="text"
+                    onInput={(e) => {
+                      e.currentTarget.value = e.currentTarget.value.replace(
+                        /[^0-9]/g,
+                        ''
+                      )
+                    }}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />

@@ -4,7 +4,10 @@ import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { Prisma, Unidad_Militar } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
-
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { registerAuditAction } from '@/lib/actions/audit'
 export const getAllUnits = async () => {
   const session = await auth()
 
@@ -45,10 +48,20 @@ export const getUnitById = async (id: number) => {
 }
 
 export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
@@ -56,6 +69,8 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
   if (!nombre) {
     return {
       error: 'Name is required',
+      field: 'nombre',
+      success: false,
     }
   }
 
@@ -69,6 +84,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
     return {
       error: 'Name already exists',
       field: 'nombre',
+      success: false,
     }
   }
 
@@ -76,18 +92,43 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
     data,
   })
 
+  await registerAuditAction(`La unidad ${data?.nombre} fue creada`)
   revalidatePath('/dashboard/unidades')
 
   return {
     success: true,
+    error: false,
   }
 }
 
 export const deleteUnit = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.zodi.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'Unit not found',
+      success: false,
+    }
   }
 
   await prisma.unidad_Militar.delete({
@@ -96,6 +137,7 @@ export const deleteUnit = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`La unidad ${exist?.nombre}  fue eliminada`)
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -105,11 +147,22 @@ export const deleteUnit = async (id: number) => {
 
 export const updateUnit = async (
   id: number,
-  data: Omit<Unidad_Militar, 'id'>
+  data: Prisma.Unidad_MilitarUncheckedUpdateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const exists = await prisma.unidad_Militar.findUnique({
@@ -121,6 +174,7 @@ export const updateUnit = async (
   if (!exists) {
     return {
       error: 'Unit not found',
+      success: false,
     }
   }
 
@@ -131,9 +185,11 @@ export const updateUnit = async (
     data,
   })
 
+  await registerAuditAction(`La unidad ${data?.nombre}  fue actualizada`)
   revalidatePath('/dashboard/unidades')
 
   return {
     success: true,
+    error: false,
   }
 }

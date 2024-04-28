@@ -2,33 +2,41 @@ import { getUserPermissions } from '@/lib/auth'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 type Params = {
-  section: SECTION_NAMES
+  sections: SECTION_NAMES[]
   action?: string
 }
 
-export const validateUserPermissions = async ({ section, action }: Params) => {
+export const validateSectionsAndPermissions = async ({
+  sections,
+  action,
+}: Params) => {
   const permissions = await getUserPermissions()
 
+  console.log('permissions', permissions, sections)
   const isPageAuthorized = permissions?.some((permission) => {
     const [permisoSection, permisoAction] = permission.permiso_key.split(':')
-    return permisoSection === section || permisoSection === 'TODAS'
+    return (
+      sections.includes(permisoSection as SECTION_NAMES) ||
+      permisoSection === 'TODAS'
+    )
   })
 
   const isActionAuthorized = permissions?.some((permission) => {
     const [permisoSection, permisoAction] = permission.permiso_key.split(':')
     return (
-      permisoSection === section &&
+      sections.includes(permisoSection as SECTION_NAMES) &&
       (permisoAction === action || permisoAction === 'FULL')
     )
   })
+
   if (!isPageAuthorized) {
     return false
     throw new Error('No tienes permisos para acceder a esta sección')
   }
 
-  if (!isActionAuthorized && action) {
+  if (!isActionAuthorized) {
     return false
-    throw new Error('No tienes permisos para realizar esta accion')
+    throw new Error('No tienes permisos para realizar esta acción')
   }
 
   return true

@@ -1,38 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from '@radix-ui/react-icons'
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 
-import { Input } from '@/modules/common/components/input/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/common/components/table/table'
 import { Permiso } from '@prisma/client'
-import TableActions from '../permissions-table-actions'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,10 +16,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Usuario } from '@prisma/client'
 import Link from 'next/link'
 import { MoreHorizontal } from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
+import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { deletePermiso } from '../../lib/actions/permissions'
 interface DataTableProps {
   data: Permiso[]
 }
@@ -121,30 +100,41 @@ export const columns: ColumnDef<Permiso>[] = [
     cell: ({ row }) => {
       const permission = row.original
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(String(permission.id))
-              }
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir Menú</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(String(permission.id))
+                }
+              >
+                Copiar código
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
 
-            <Link href={`/dashboard/usuarios/permiso/${permission.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <Link href={`/dashboard/usuarios/permiso/${permission.id}`}>
+                <DropdownMenuItem> Editar</DropdownMenuItem>
+              </Link>
+
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem>Eliminar</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DeleteDialog
+            title="¿Estás seguro de que quieres eliminar este permiso?"
+            description="Estas a punto de eliminar este permiso y todas sus dependencias."
+            actionMethod={() => deletePermiso(permission.id)}
+          />
+        </AlertDialog>
       )
     },
   },

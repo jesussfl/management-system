@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Permiso, Prisma } from '@prisma/client'
+import { registerAuditAction } from '@/lib/actions/audit'
 export const createPermission = async (data: Prisma.PermisoCreateInput) => {
   const session = await auth()
   if (!session?.user) {
@@ -74,13 +75,32 @@ export const deletePermiso = async (id: number) => {
     throw new Error('You must be signed in to perform this action')
   }
 
+  const permiso = await prisma.permiso.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!permiso) {
+    return {
+      error: 'Permiso no encontrado',
+      success: false,
+    }
+  }
+
   await prisma.permiso.delete({
     where: {
       id,
     },
   })
 
+  await registerAuditAction(`Se eliminó el permiso ${permiso.key}`)
   revalidatePath('/dashboard/usuarios')
+
+  return {
+    success: 'Permiso eliminado exitosamente',
+    error: false,
+  }
 }
 
 export const getAllPermissions = async () => {

@@ -39,8 +39,9 @@ import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 import { getAllSubsystems } from './lib/actions/subsystems'
 import { getAllSystems } from './lib/actions/systems'
-import { validateUserPermissions } from '@/lib/data/validate-permissions'
+import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -48,9 +49,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const isAuthorized = await validateUserPermissions({
-    section: SECTION_NAMES.INVENTARIO,
-  })
+  // const isAuthorized = await validateUserPermissions({
+  //   section: SECTION_NAMES.INVENTARIO,
+  // })
+
+  // if (!isAuthorized) {
+  //   redirect('/dashboard')
+  // }
 
   const itemsData = await getAllItems()
   const classificationsData = await getAllClassifications()

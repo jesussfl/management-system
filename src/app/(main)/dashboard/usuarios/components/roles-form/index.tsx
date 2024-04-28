@@ -28,14 +28,14 @@ import MultipleSelector, {
 } from '@/modules/common/components/multiple-selector'
 import { RolesWithPermissionsArray } from '@/types/types'
 import { useRouter } from 'next/navigation'
+import { Rol } from '@prisma/client'
 
-type FormValues = Omit<RolesWithPermissionsArray, 'id'>
+type FormValues = Rol & { permisos: Option[] }
 interface Props {
-  defaultValues?: RolesWithPermissionsArray
+  defaultValues?: FormValues
 }
 
 export default function RolesForm({ defaultValues }: Props) {
-  console.log(defaultValues, 'defaultValues')
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues

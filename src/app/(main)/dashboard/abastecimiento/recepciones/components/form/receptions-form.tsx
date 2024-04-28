@@ -202,6 +202,7 @@ export default function ReceptionsForm({
               variant: 'destructive',
             })
 
+            //@ts-ignore
             res.fields?.map((field) => {
               setItemsWithoutSerials((prev) => [...prev, field])
             })

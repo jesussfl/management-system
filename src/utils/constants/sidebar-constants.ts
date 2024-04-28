@@ -45,11 +45,12 @@ const DEFAULT_ICON_SIZE = 20
 
 export enum SECTION_NAMES {
   INICIO = 'INICIO',
+  ABASTECIMIENTO = 'ABASTECIMIENTO',
   INVENTARIO = 'INVENTARIO',
   RECEPCION = 'RECEPCION',
   DESPACHOS = 'DESPACHOS',
   DEVOLUCIONES = 'DEVOLUCIONES',
-  Profesionales = 'PROFESIONALES',
+  PROFESIONALES = 'PROFESIONALES',
   ALMACENES = 'ALMACENES',
   DESTINATARIOS = 'DESTINATARIOS',
   ARMAMENTO = 'ARMAMENTO',
@@ -62,6 +63,7 @@ export enum SECTION_NAMES {
   UNIDADES = 'UNIDADES',
   AYUDA = 'AYUDA',
   TODAS = 'TODAS',
+  ASISTENCIAS = 'ASISTENCIAS',
 }
 
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
@@ -75,42 +77,77 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     path: '/dashboard/abastecimiento',
     icon: Package,
     submenu: true,
-    requiredPermissions: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.TODAS],
+    requiredPermissions: [SECTION_NAMES.ABASTECIMIENTO, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Inventario',
         path: '/dashboard/abastecimiento/inventario',
         icon: Boxes,
+        requiredPermissions: [
+          SECTION_NAMES.INVENTARIO,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Recepciones',
         path: '/dashboard/abastecimiento/recepciones',
         icon: PackagePlus,
+        requiredPermissions: [
+          SECTION_NAMES.RECEPCION,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Despachos',
         path: '/dashboard/abastecimiento/despachos',
         icon: PackageMinus,
+        requiredPermissions: [
+          SECTION_NAMES.DESPACHOS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Devoluciones',
         path: '/dashboard/abastecimiento/devoluciones',
         icon: IterationCcw,
+        requiredPermissions: [
+          SECTION_NAMES.DEVOLUCIONES,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Almacenes',
         path: '/dashboard/abastecimiento/almacenes',
         icon: Warehouse,
+        requiredPermissions: [
+          SECTION_NAMES.ALMACENES,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Destinatarios',
         path: '/dashboard/abastecimiento/destinatarios',
         icon: UserSquare2,
+        requiredPermissions: [
+          SECTION_NAMES.DESTINATARIOS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
       {
         title: 'Profesionales',
         path: '/dashboard/abastecimiento/profesionales',
         icon: Contact2,
+        requiredPermissions: [
+          SECTION_NAMES.PROFESIONALES,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
       },
     ],
   },
@@ -131,6 +168,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         title: 'Asistencias',
         path: '/dashboard/personal/asistencias',
         icon: Contact2,
+        requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
       },
     ],
   },
@@ -144,26 +182,16 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Usuarios',
     path: '/dashboard/usuarios',
     icon: UserCircle,
-    // requiredPermissions: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
+    requiredPermissions: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
   },
-  // {
-  //   title: 'Estadísticas',
-  //   path: '/dashboard/estadisticas',
-  //   icon: PieChart,
-  //   requiredPermissions: [SECTION_NAMES.ESTADISTICAS],
-  // },
+
   {
     title: 'Auditoria',
     path: '/dashboard/auditoria',
     icon: FolderSearch,
     requiredPermissions: [SECTION_NAMES.AUDITORIA, SECTION_NAMES.TODAS],
   },
-  // {
-  //   title: 'Reportes',
-  //   path: '/dashboard/reportes',
-  //   icon: FileText,
-  //   requiredPermissions: [SECTION_NAMES.REPORTES, SECTION_NAMES.TODAS],
-  // },
+
   {
     title: 'Configuraciones',
     path: '/dashboard/configuracion',

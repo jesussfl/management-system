@@ -142,6 +142,7 @@ export const updateProfessional = async (
   if (!exists) {
     return {
       error: 'professional not found',
+      success: false,
     }
   }
 
@@ -149,15 +150,18 @@ export const updateProfessional = async (
     where: {
       id,
     },
-    data: {
-      ...data,
-    },
+    data,
   })
+
+  await registerAuditAction(
+    'Se actualizó el profesional con la cedula ' + data.cedula
+  )
 
   revalidatePath('/dashboard/abastecimiento/profesionales')
 
   return {
     success: 'Professional updated successfully',
+    error: false,
   }
 }
 

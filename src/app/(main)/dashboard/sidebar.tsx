@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { getUserPermissions } from '@/lib/auth'
 import { Permiso } from '@prisma/client'
+import { SideMenuItem } from '@/types/types'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
   root: {
@@ -111,26 +112,44 @@ export const DashboardSidebar: FC = function () {
 
     fetchedPermissions()
   }, [])
-  const userSection = permissions?.map(
+  const userSections = permissions?.map(
     (permission) => permission.permiso_key.split(':')[0]
   )
-  console.log('permissions', userSection)
   // Filtrar los elementos del menú lateral que coinciden con la sección del usuario
   const userPermissions = permissions?.map(
     (permission) => permission.permiso_key
   )
 
-  // Filtrar los elementos del menú lateral que coinciden con los permisos del usuario
-  const filteredMenuItems = SIDE_MENU_ITEMS.filter((item) => {
-    if (item.requiredPermissions) {
-      // Verificar si el usuario tiene al menos uno de los permisos requeridos
-      return item.requiredPermissions.some(
-        (permission) => userSection?.includes(permission)
-      )
-    } else {
-      // Si no hay permisos requeridos, mostrar el elemento
-      return true
+  const filterMenuItems = (items: SideMenuItem[]) => {
+    return items.filter((item) => {
+      if (item.requiredPermissions) {
+        // Verificar si el usuario tiene al menos uno de los permisos requeridos
+        return item.requiredPermissions.some(
+          (permission) => userSections?.includes(permission)
+        )
+      } else {
+        // Si no hay permisos requeridos, mostrar el elemento
+        return true
+      }
+    })
+  }
+
+  // Filtrar los elementos principales del menú lateral
+  const filteredMenuItems = filterMenuItems(SIDE_MENU_ITEMS)
+
+  // Filtrar las subsecciones de los elementos principales del menú lateral
+  filteredMenuItems.forEach((item) => {
+    if (item.submenu && item.submenuItems) {
+      item.submenuItems = filterMenuItems(item.submenuItems)
     }
+  })
+
+  const menuItems = filteredMenuItems.filter((item) => {
+    if (item.submenu && item.submenuItems) {
+      if (item.submenuItems.length === 0) return false
+    }
+
+    return true
   })
 
   return (
@@ -146,9 +165,7 @@ export const DashboardSidebar: FC = function () {
     >
       <Sidebar.Items>
         <Sidebar.ItemGroup title="Main">
-          {filteredMenuItems.map((item, idx) => {
-            console.log(permissions, 'permissions')
-
+          {menuItems.map((item, idx) => {
             if (item.submenu) {
               return (
                 <Sidebar.Collapse
