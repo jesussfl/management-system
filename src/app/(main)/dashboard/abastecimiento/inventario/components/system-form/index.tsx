@@ -42,10 +42,13 @@ export default function SystemForm({ defaultValues }: Props) {
       if (!isEditEnabled) {
         createSystem(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Parece que hubo un problema',
+              description: data.error,
+              variant: 'destructive',
             })
+
+            return
           }
 
           if (data?.success) {

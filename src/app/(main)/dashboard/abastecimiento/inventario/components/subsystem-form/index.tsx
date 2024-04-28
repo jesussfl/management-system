@@ -30,14 +30,13 @@ type ComboboxData = {
   value: number
   label: string
 }
-type FormValues = Subsistema
 
 export default function SubsystemForm({ defaultValues }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
   const [systems, setSystems] = React.useState<ComboboxData[]>([])
-  const form = useForm<FormValues>({
+  const form = useForm<Subsistema>({
     defaultValues,
   })
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
@@ -55,15 +54,18 @@ export default function SubsystemForm({ defaultValues }: Props) {
       })
     })
   }, [])
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const onSubmit: SubmitHandler<Subsistema> = async (values) => {
     startTransition(() => {
       if (!isEditEnabled) {
         createSubsystem(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Error',
+              description: data.error,
+              variant: 'destructive',
             })
+
+            return
           }
 
           if (data?.success) {
@@ -88,7 +90,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
         return
       }
 
-      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as Subsistema
       updateSubsystem(defaultValues.id, dirtyValues).then((data) => {
         if (data?.success) {
           toast({

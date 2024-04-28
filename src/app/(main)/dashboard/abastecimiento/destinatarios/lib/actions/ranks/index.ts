@@ -1,31 +1,42 @@
 'use server'
 import { auth } from '@/auth'
+import { registerAuditAction } from '@/lib/actions/audit'
 import { prisma } from '@/lib/prisma'
 import {
-  CategoriasWithGradosArray,
   CreateCategoriasWithGrados,
   CreateGradosWithComponentes,
 } from '@/types/types'
-import {
-  Categoria_Militar,
-  Componente_Militar,
-  Grado_Militar,
-  Prisma,
-  Unidad_Militar,
-} from '@prisma/client'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { Componente_Militar, Prisma, Unidad_Militar } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
-export const createComponent = async (data: Omit<Componente_Militar, 'id'>) => {
-  const session = await auth()
+export const createComponent = async (
+  data: Prisma.Componente_MilitarCreateInput
+) => {
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
+
   if (!nombre) {
     return {
       error: 'Name is required',
+      success: false,
       field: 'nombre',
     }
   }
@@ -39,29 +50,44 @@ export const createComponent = async (data: Omit<Componente_Militar, 'id'>) => {
   if (exists) {
     return {
       error: 'Component already exists',
+      success: false,
     }
   }
 
   await prisma.componente_Militar.create({
     data,
   })
+
+  await registerAuditAction(`Componente ${data.nombre} creado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Component created successfully',
+    error: false,
   }
 }
 export const createGrade = async (data: CreateGradosWithComponentes) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
   if (!nombre) {
     return {
       error: 'Name is required',
+      success: false,
       field: 'nombre',
     }
   }
@@ -74,7 +100,8 @@ export const createGrade = async (data: CreateGradosWithComponentes) => {
 
   if (exists) {
     return {
-      error: 'Component already exists',
+      success: false,
+      error: 'El grado ya existe',
     }
   }
 
@@ -92,26 +119,43 @@ export const createGrade = async (data: CreateGradosWithComponentes) => {
       },
     },
   })
+
+  await registerAuditAction(`Grado ${data.nombre} creado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Grade created successfully',
+    error: false,
   }
 }
 export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
   if (!nombre) {
     return {
       error: 'Name is required',
+      success: false,
     }
   }
 
+  await prisma.unidad_Militar.create({
+    data,
+  })
   const exists = await prisma.unidad_Militar.findUnique({
     where: {
       nombre,
@@ -121,24 +165,38 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
   if (exists) {
     return {
       error: 'Component already exists',
+      success: false,
     }
   }
 
   await prisma.unidad_Militar.create({
     data,
   })
+
+  await registerAuditAction(`Unidad ${data.nombre} creada`)
+
+  revalidatePath('/dashboard/unidades')
 }
 
 export const updateComponent = async (
   id: number,
-  data: Omit<Componente_Militar, 'id'>
+  data: Prisma.Componente_MilitarUpdateInput
 ) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
   const exists = await prisma.componente_Militar.findUnique({
     where: {
       id,
@@ -148,6 +206,7 @@ export const updateComponent = async (
   if (!exists) {
     return {
       error: 'Component not found',
+      success: false,
     }
   }
 
@@ -158,9 +217,11 @@ export const updateComponent = async (
     data,
   })
 
+  await registerAuditAction(`Componente ${data.nombre} actualizado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
+    error: false,
     success: 'Component updated successfully',
   }
 }
@@ -169,10 +230,20 @@ export const updateGrade = async (
   id: number,
   data: CreateGradosWithComponentes
 ) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const exists = await prisma.grado_Militar.findUnique({
@@ -183,11 +254,10 @@ export const updateGrade = async (
 
   if (!exists) {
     return {
-      error: 'Grade not found',
-      field: 'nombre',
+      error: 'Grado no encontrado',
+      success: false,
     }
   }
-  console.log(data)
   await prisma.grado_Militar.update({
     where: {
       id,
@@ -203,9 +273,11 @@ export const updateGrade = async (
     },
   })
 
+  await registerAuditAction(`Grado ${data.nombre} actualizado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
+    error: false,
     success: 'Grade updated successfully',
   }
 }
@@ -213,10 +285,20 @@ export const updateCategory = async (
   id: number,
   data: CreateCategoriasWithGrados
 ) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { nombre } = data
@@ -237,6 +319,7 @@ export const updateCategory = async (
     return {
       error: 'Category not found',
       field: 'nombre',
+      success: false,
     }
   }
 
@@ -255,17 +338,42 @@ export const updateCategory = async (
     },
   })
 
+  await registerAuditAction(`Categoría ${data.nombre} actualizada`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Category actualizada exitosamente',
+    error: false,
   }
 }
 export const deleteComponent = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.componente_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Componente no encontrado',
+      success: false,
+    }
   }
 
   await prisma.componente_Militar.delete({
@@ -274,63 +382,123 @@ export const deleteComponent = async (id: number) => {
     },
   })
 
+  await registerAuditAction(`Componente ${exists.nombre} eliminado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Component deleted successfully',
+    error: false,
   }
 }
 export const deleteCategory = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.categoria_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Categoría no encontrada',
+      success: false,
+    }
+  }
   await prisma.categoria_Militar.delete({
     where: {
       id,
     },
   })
 
+  await registerAuditAction(`Categoría ${exists.nombre} eliminada`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Category deleted successfully',
+    error: false,
   }
 }
 export const deleteGrade = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.grado_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Grade not found',
+      success: false,
+    }
+  }
   await prisma.grado_Militar.delete({
     where: {
       id,
     },
   })
 
+  await registerAuditAction(`Grado ${exists.nombre} eliminado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
-    success: 'Grade deleted successfully',
+    success: 'Grado eliminado exitosamente',
+    error: false,
   }
 }
 
 export const createCategory = async (data: CreateCategoriasWithGrados) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
   const { nombre } = data
   if (!nombre) {
     return {
       error: 'Name is required',
       field: 'nombre',
+      success: false,
     }
   }
 
@@ -343,6 +511,7 @@ export const createCategory = async (data: CreateCategoriasWithGrados) => {
   if (exists) {
     return {
       error: 'Component already exists',
+      success: false,
     }
   }
 
@@ -361,9 +530,11 @@ export const createCategory = async (data: CreateCategoriasWithGrados) => {
     },
   })
 
+  await registerAuditAction(`Categoría ${data.nombre} creada`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
   return {
     success: 'Category created successfully',
+    error: false,
   }
 }
 export const getAllComponents = async () => {

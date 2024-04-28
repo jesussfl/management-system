@@ -64,38 +64,18 @@ import { Input } from '@/modules/common/components/input/input'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
-type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
-  include: {
-    grado: true
-    categoria: true
-    componente: true
-    unidad: true
-  }
-}>
 
-type Detalles = Omit<
-  Despachos_Renglones,
-  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
+type Detalles = Prisma.Despachos_RenglonesCreateInput & {
   seriales: string[]
 }
 
-type FormValues = Omit<
-  Despacho,
-  'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  destinatario: DestinatarioWithRelations
-  supervisor?: Profesional_Abastecimiento
-  abastecedor?: Profesional_Abastecimiento
-  autorizador?: Profesional_Abastecimiento
+type FormValues = Prisma.DespachoUncheckedCreateInput & {
   renglones: Detalles[]
 }
 interface Props {
   renglonesData: RenglonWithAllRelations[]
   defaultValues?: FormValues
-  close?: () => void
 }
-// type FormValues = Omit<RecepcionType, 'id' | 'renglones.id_recepcion'>
 type ComboboxData = {
   value: string
   label: string

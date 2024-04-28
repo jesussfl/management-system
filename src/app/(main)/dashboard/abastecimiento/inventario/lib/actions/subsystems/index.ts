@@ -2,67 +2,136 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Clasificacion, Subsistema } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { registerAuditAction } from '@/lib/actions/audit'
 export const createSubsystem = async (
-  data: Omit<Subsistema, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
+  data: Prisma.SubsistemaUncheckedCreateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
-  }
-  const { nombre } = data
+  const sessionResponse = await validateUserSession()
 
-  if (!nombre) {
-    return {
-      field: 'nombre',
-      error: 'El nombre es obligatorio',
-    }
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   await prisma.subsistema.create({
     data,
   })
+
+  await registerAuditAction(
+    'Se creó un nuevo subsistema llamado ' + data.nombre
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
   return {
     success: 'Subsistema creado exitosamente',
+    error: false,
   }
 }
 
 export const updateSubsystem = async (
   id: number,
-  data: Omit<Subsistema, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
+  data: Prisma.SubsistemaUpdateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.subsistema.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El subsistema no existe',
+      success: false,
+    }
+  }
   await prisma.subsistema.update({
     where: {
       id,
     },
     data,
   })
+
+  await registerAuditAction(
+    'Se actualizó el subsistema llamado ' + exist?.nombre
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
   return {
     success: 'Subsistema actualizado exitosamente',
+    error: false,
   }
 }
 
 export const deleteSubsystem = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.subsistema.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El subsistema no existe',
+      success: false,
+    }
+  }
   await prisma.subsistema.delete({
     where: {
       id,
     },
   })
 
+  await registerAuditAction('Se eliminó el subsistema llamado ' + exist?.nombre)
+
   revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Subsistema eliminado exitosamente',
+    error: false,
+  }
 }
 
 export const getAllSubsystems = async () => {

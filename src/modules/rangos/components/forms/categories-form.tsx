@@ -15,13 +15,11 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
-import { Prisma } from '@prisma/client'
 import {
   createCategory,
   getAllGrades,
   updateCategory,
 } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
-import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import MultipleSelector, {
@@ -70,9 +68,10 @@ export default function CategoriesForm({ defaultValues }: Props) {
       if (!isEditEnabled) {
         createCategory(formattedValues).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Parece que hubo un problema',
+              description: data.error,
+              variant: 'destructive',
             })
           }
           if (data?.success) {
@@ -97,9 +96,10 @@ export default function CategoriesForm({ defaultValues }: Props) {
       }
       updateCategory(defaultValues.id, formattedValues).then((data) => {
         if (data?.error) {
-          form.setError(data.field as any, {
-            type: 'custom',
-            message: data.error,
+          toast({
+            title: 'Parece que hubo un problema',
+            description: data.error,
+            variant: 'destructive',
           })
         }
         if (data?.success) {

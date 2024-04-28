@@ -11,36 +11,31 @@ import {
 } from '@prisma/client'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { registerAuditAction } from '@/lib/actions/audit'
-type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
-  include: {
-    grado: true
-    categoria: true
-    componente: true
-    unidad: true
-  }
-}>
-type Detalles = Omit<
-  Despachos_Renglones,
-  'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+
+type Detalles = Prisma.Despachos_RenglonesUncheckedCreateInput & {
   seriales: string[]
 }
 
-export type FormValues = Omit<
-  Despacho,
-  'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  supervisor?: Profesional_Abastecimiento
-  abastecedor?: Profesional_Abastecimiento
-  autorizador?: Profesional_Abastecimiento
-  destinatario: DestinatarioWithRelations
+export type FormValues = Prisma.DespachoUncheckedCreateInput & {
   renglones: Detalles[]
 }
 export const createDispatch = async (data: FormValues) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action.')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   const { motivo, fecha_despacho, cedula_destinatario, renglones } = data
@@ -48,12 +43,14 @@ export const createDispatch = async (data: FormValues) => {
   if (!fecha_despacho || !renglones) {
     return {
       error: 'Missing Fields',
+      success: false,
     }
   }
 
   if (renglones.length === 0) {
     return {
       error: 'No se han seleccionado renglones',
+      success: false,
     }
   }
   if (
@@ -69,6 +66,8 @@ export const createDispatch = async (data: FormValues) => {
 
     return {
       error: 'Revisa que todos los renglones esten correctamente',
+      success: false,
+
       fields: fields,
     }
   }
@@ -101,6 +100,8 @@ export const createDispatch = async (data: FormValues) => {
     if (serialsByItem.length < item.cantidad) {
       return {
         error: 'No hay suficientes seriales',
+        success: false,
+
         fields: [item.id_renglon],
       }
     }
@@ -145,10 +146,13 @@ export const createDispatch = async (data: FormValues) => {
     },
   })
 
+  await registerAuditAction(`Se realizó un despacho con motivo: ${motivo}`)
+
   revalidatePath('/dashboard/abastecimiento/despachos')
 
   return {
     success: true,
+    error: false,
   }
 }
 export const deleteDispatch = async (id: number) => {
@@ -280,8 +284,6 @@ export const getDispatchById = async (id: number): Promise<FormValues> => {
     throw new Error('Despacho no existe')
   }
 
-  // @ts-ignore
-  //TODO: fix this ts-ignore
   return {
     ...dispatch,
 

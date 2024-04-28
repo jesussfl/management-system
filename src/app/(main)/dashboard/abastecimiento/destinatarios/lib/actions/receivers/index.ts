@@ -1,15 +1,31 @@
 'use server'
 import { auth } from '@/auth'
+import { registerAuditAction } from '@/lib/actions/audit'
 import { prisma } from '@/lib/prisma'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { Destinatario, Prisma } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 
-export const createReceiver = async (data: Omit<Destinatario, 'id'>) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+export const createReceiver = async (
+  data: Prisma.DestinatarioUncheckedCreateInput
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
 
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
   const exists = await prisma.destinatario.findUnique({
     where: {
       cedula: data.cedula,
@@ -18,18 +34,24 @@ export const createReceiver = async (data: Omit<Destinatario, 'id'>) => {
 
   if (exists) {
     return {
-      error: 'Receiver already exists',
+      error: 'El destinatario ya existe',
       field: 'cedula',
+      success: false,
     }
   }
 
   await prisma.destinatario.create({
     data,
   })
+
+  await registerAuditAction(
+    `Se creó un nuevo destinatario con la cédula: ${data.cedula}`
+  )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
-    success: 'Receiver created successfully',
+    success: 'El destinatario se ha creado correctamente',
+    error: false,
   }
 }
 
@@ -51,10 +73,33 @@ export const getAllReceivers = async () => {
 }
 
 export const deleteReceiver = async (cedula: string) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.destinatario.findUnique({
+    where: {
+      cedula,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Receiver not found',
+      success: false,
+    }
   }
 
   await prisma.destinatario.delete({
@@ -63,16 +108,36 @@ export const deleteReceiver = async (cedula: string) => {
     },
   })
 
+  await registerAuditAction(
+    `Se eliminó el destinatario con la cedula: ${cedula}`
+  )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
+
+  return {
+    success: 'Receiver deleted successfully',
+    error: false,
+  }
 }
 
-export const updateReceiver = async (data: Destinatario, id: number) => {
-  const session = await auth()
+export const updateReceiver = async (
+  data: Prisma.DestinatarioUpdateInput,
+  id: number
+) => {
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
-  console.log(data, 'DATAAAAAAAAA')
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
   const exists = await prisma.destinatario.findUnique({
     where: {
       id,
@@ -82,6 +147,7 @@ export const updateReceiver = async (data: Destinatario, id: number) => {
   if (!exists) {
     return {
       error: 'Receiver not found',
+      success: false,
     }
   }
 
@@ -89,15 +155,18 @@ export const updateReceiver = async (data: Destinatario, id: number) => {
     where: {
       id,
     },
-    data: {
-      ...data,
-    },
+    data,
   })
+
+  await registerAuditAction(
+    `Se actualizo el destinatario con la cedula: ${data.cedula}`
+  )
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
     success: 'Receiver updated successfully',
+    error: false,
   }
 }
 

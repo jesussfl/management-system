@@ -2,13 +2,12 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Prisma, Renglon } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 
-type FormValues = Omit<Renglon, 'id'>
 export const createItem = async (data: Prisma.RenglonUncheckedCreateInput) => {
   const sessionResponse = await validateUserSession()
 

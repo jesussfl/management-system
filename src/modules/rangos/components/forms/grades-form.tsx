@@ -75,9 +75,10 @@ export default function GradesForm({
       if (!isEditEnabled) {
         createGrade(formattedValues).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Error',
+              description: data.error,
+              variant: 'destructive',
             })
           }
           if (data?.success) {

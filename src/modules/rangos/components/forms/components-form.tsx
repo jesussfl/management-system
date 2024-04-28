@@ -25,7 +25,7 @@ interface Props {
   defaultValues?: Componente_Militar
 }
 
-type FormValues = Omit<Componente_Militar, 'id'>
+type FormValues = Componente_Militar
 
 export default function ComponentsForm({ defaultValues }: Props) {
   const isEditEnabled = !!defaultValues
@@ -41,10 +41,12 @@ export default function ComponentsForm({ defaultValues }: Props) {
       if (!isEditEnabled) {
         createComponent(values).then((data) => {
           if (data?.error) {
-            form.setError(data.field as any, {
-              type: 'custom',
-              message: data.error,
+            toast({
+              title: 'Error',
+              description: data.error,
+              variant: 'destructive',
             })
+            return
           }
           if (data?.success) {
             toast({

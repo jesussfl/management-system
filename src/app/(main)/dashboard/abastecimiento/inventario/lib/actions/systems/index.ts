@@ -2,39 +2,72 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Clasificacion, Sistema } from '@prisma/client'
-export const createSystem = async (
-  data: Omit<Sistema, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
-) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
-  }
-  const { nombre } = data
+import { Prisma } from '@prisma/client'
+import { validateUserSession } from '@/utils/helpers/validate-user-session'
+import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { registerAuditAction } from '@/lib/actions/audit'
+export const createSystem = async (data: Prisma.SistemaCreateInput) => {
+  const sessionResponse = await validateUserSession()
 
-  if (!nombre) {
-    return {
-      field: 'nombre',
-      error: 'El nombre es obligatorio',
-    }
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'CREAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
   }
 
   await prisma.sistema.create({
     data,
   })
+
+  await registerAuditAction('Se creó un nuevo sistema llamado ' + data.nombre)
   revalidatePath('/dashboard/abastecimiento/inventario')
+
   return {
+    error: false,
     success: 'sistema creado exitosamente',
   }
 }
 
 export const updateSystem = async (
   id: number,
-  data: Omit<Sistema, 'id' | 'fecha_creacion' | 'ultima_actualizacion'>
+  data: Prisma.SistemaUpdateInput
 ) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.sistema.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'sistema no existe',
+      success: false,
+    }
   }
 
   await prisma.sistema.update({
@@ -43,18 +76,38 @@ export const updateSystem = async (
     },
     data,
   })
+
+  await registerAuditAction('Se actualizó el sistema llamado ' + exist.nombre)
   revalidatePath('/dashboard/abastecimiento/inventario')
+
   return {
+    error: false,
     success: 'sistema actualizado exitosamente',
   }
 }
 
 export const deleteSystem = async (id: number) => {
-  const session = await auth()
+  const sessionResponse = await validateUserSession()
 
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
   }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.sistema.findUnique({
+    where: {
+      id,
+    },
+  })
 
   await prisma.sistema.delete({
     where: {
@@ -62,14 +115,22 @@ export const deleteSystem = async (id: number) => {
     },
   })
 
+  await registerAuditAction('Se eliminó el sistema llamado ' + exist?.nombre)
   revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    error: false,
+    success: 'sistema eliminado exitosamente',
+  }
 }
 
 export const getAllSystems = async () => {
-  const session = await auth()
-  if (!session?.user) {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
     throw new Error('You must be signed in to perform this action')
   }
+
   const systems = await prisma.sistema.findMany()
   return systems
 }

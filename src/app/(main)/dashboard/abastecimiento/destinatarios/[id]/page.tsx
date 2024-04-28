@@ -20,7 +20,6 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
   const receiver = await getReceiverById(Number(params.id))
   return (
     <>
