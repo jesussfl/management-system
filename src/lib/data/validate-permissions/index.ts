@@ -12,32 +12,32 @@ export const validateSectionsAndPermissions = async ({
 }: Params) => {
   const permissions = await getUserPermissions()
 
-  console.log('permissions', permissions, sections)
   const isPageAuthorized = permissions?.some((permission) => {
     const [permisoSection, permisoAction] = permission.permiso_key.split(':')
+    console.log('fdgdfgdfgdfg', permisoSection)
     return (
       sections.includes(permisoSection as SECTION_NAMES) ||
       permisoSection === 'TODAS'
     )
   })
-
-  const isActionAuthorized = permissions?.some((permission) => {
-    const [permisoSection, permisoAction] = permission.permiso_key.split(':')
-    return (
-      sections.includes(permisoSection as SECTION_NAMES) &&
-      (permisoAction === action || permisoAction === 'FULL')
-    )
-  })
+  // console.log('isPageAuthorized', isPageAuthorized)
+  // const isActionAuthorized = permissions?.some((permission) => {
+  //   const [permisoSection, permisoAction] = permission.permiso_key.split(':')
+  //   return (
+  //     sections.includes(permisoSection as SECTION_NAMES) &&
+  //     (permisoAction === action || permisoAction === 'FULL')
+  //   )
+  // })
 
   if (!isPageAuthorized) {
     return false
     throw new Error('No tienes permisos para acceder a esta sección')
   }
 
-  if (!isActionAuthorized) {
-    return false
-    throw new Error('No tienes permisos para realizar esta acción')
-  }
+  // if (!isActionAuthorized) {
+  //   return false
+  //   throw new Error('No tienes permisos para realizar esta acción')
+  // }
 
   return true
 }

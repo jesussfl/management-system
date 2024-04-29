@@ -12,6 +12,7 @@ export default async function Layout({
     sections: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.ABASTECIMIENTO],
   })
 
+  console.log('isAuthorized', isAuthorized)
   if (!isAuthorized) {
     redirect('/dashboard')
   }
