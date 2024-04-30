@@ -1,0 +1,236 @@
+import { columns } from './columns'
+import { DataTable } from '@/modules/common/components/table/data-table'
+
+import { Metadata } from 'next'
+
+import {
+  PageContent,
+  PageHeaderDescription,
+} from '@/modules/layout/templates/page'
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/modules/common/components/tabs/tabs'
+
+import {
+  HeaderLeftSide,
+  HeaderRightSide,
+  PageHeader,
+  PageHeaderTitle,
+} from '@/modules/layout/templates/page'
+
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
+import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import Link from 'next/link'
+
+import { getAllGuns } from './lib/actions/guns'
+import { getAllGunTypes } from './lib/actions/type'
+import { getAllGunModels } from './lib/actions/model-actions'
+import { getAllBrands } from './lib/actions/brand'
+import { getAllGunParts } from './lib/actions/parts'
+import { getAllAccesories } from './lib/actions/accesories'
+import { getAllGunComponents } from './lib/actions/component-actions'
+import { gunModelColumns } from './components/columns/gun-model-columns'
+import { gunTypeColumns } from './components/columns/gun-type-columns'
+import { gunBrandColumns } from './components/columns/gun-brand-columns'
+import { gunComponentColumns } from './components/columns/gun-component-columns'
+import { gunPartColumns } from './components/columns/gun-part-columns'
+import { gunAccessoryColumns } from './components/columns/gun-accessory-columns'
+
+export const metadata: Metadata = {
+  title: 'Armas',
+  description: 'Desde aquí puedes ver todas las armas',
+}
+
+export default async function Page() {
+  const guns = await getAllGuns()
+  const gunModels = await getAllGunModels()
+  const gunBrands = await getAllBrands()
+  const gunParts = await getAllGunParts()
+  const gunAccessories = await getAllAccesories()
+  const gunComponents = await getAllGunComponents()
+  const gunTypes = await getAllGunTypes()
+  return (
+    <>
+      <PageHeader>
+        <HeaderLeftSide>
+          <PageHeaderTitle>
+            <Boxes size={24} />
+            Armas
+          </PageHeaderTitle>
+          <PageHeaderDescription>
+            Gestiona todas las armas del servicio de armamento
+          </PageHeaderDescription>
+        </HeaderLeftSide>
+        <HeaderRightSide>
+          <Link
+            href="/dashboard/abastecimiento/recepciones/agregar"
+            className={buttonVariants({ variant: 'secondary' })}
+          >
+            <PackagePlus className="mr-2 h-4 w-4" />
+            Agregar Recepción
+          </Link>
+
+          <Link
+            href="/dashboard/abastecimiento/despachos/agregar"
+            className={buttonVariants({ variant: 'secondary' })}
+          >
+            <PackageMinus className="mr-2 h-4 w-4" />
+            Agregar Despacho
+          </Link>
+          <Link
+            href="/dashboard/armamento/armas/agregar"
+            className={buttonVariants({ variant: 'default' })}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Agregar Arma
+          </Link>
+        </HeaderRightSide>
+      </PageHeader>
+      <Tabs defaultValue="guns">
+        <TabsList className="mx-5">
+          <TabsTrigger value="guns">Armas</TabsTrigger>
+          <TabsTrigger value="models">Modelos y Tipos</TabsTrigger>
+          <TabsTrigger value="components">Marcas y Componentes</TabsTrigger>
+          <TabsTrigger value="parts">Partes y Accesorios</TabsTrigger>
+        </TabsList>
+        <TabsContent value="guns">
+          <PageContent>
+            <Card>
+              <CardContent>
+                <DataTable columns={columns} data={guns} />
+              </CardContent>
+            </Card>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="models">
+          <PageContent>
+            <div className="flex w-full gap-8">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Modelos</CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/modelo"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Modelo
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={gunModelColumns} data={gunModels} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">
+                    Lista de Tipos de Armas
+                  </CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/tipo"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Tipo
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={gunTypeColumns} data={gunTypes} />
+                </CardContent>
+              </Card>
+            </div>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="components">
+          <PageContent>
+            <div className="flex w-full gap-8">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Marcas</CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/marca"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Marca
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={gunBrandColumns} data={gunBrands} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">
+                    Lista de Componentes
+                  </CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/componente"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Componente
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={gunComponentColumns}
+                    data={gunComponents}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </PageContent>
+        </TabsContent>
+
+        <TabsContent value="parts">
+          <PageContent>
+            <div className="flex w-full gap-8">
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Partes</CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/parte"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Parte
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable columns={gunPartColumns} data={gunParts} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row justify-between">
+                  <CardTitle className="text-xl">Lista de Accesorios</CardTitle>
+                  <Link
+                    href="/dashboard/armamento/armas/accesorio"
+                    className={buttonVariants({ variant: 'secondary' })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Accesorio
+                  </Link>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={gunAccessoryColumns}
+                    data={gunAccessories}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </PageContent>
+        </TabsContent>
+      </Tabs>
+    </>
+  )
+}

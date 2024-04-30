@@ -156,6 +156,25 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     path: '/dashboard/armamento',
     icon: Bomb,
     requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
+    submenu: true,
+    submenuItems: [
+      {
+        title: 'Inventario',
+        path: '/dashboard/armamento/inventario',
+        icon: Boxes,
+        requiredPermissions: [
+          SECTION_NAMES.INVENTARIO,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ARMAMENTO,
+        ],
+      },
+      {
+        title: 'Armas',
+        path: '/dashboard/armamento/armas',
+        icon: Bomb,
+        requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
+      },
+    ],
   },
   {
     title: 'Personal',

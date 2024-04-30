@@ -219,8 +219,9 @@ model Almacen {
   ubicacion String
   renglones Renglon[]
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime    @default(now())
+  ultima_actualizacion DateTime    @updatedAt
+  armamento            Armamento[]
 }
 
 model Recepcion {
@@ -485,6 +486,8 @@ model Unidad_Militar {
   fecha_creacion       DateTime                     @default(now())
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
+
+  armamento Armamento[]
 }
 
 model Zodi {
@@ -539,4 +542,91 @@ model Auditoria {
 
 model reposos {
   id String @id
+}
+
+model Marca_Armamento {
+  id      Int                @id @default(autoincrement())
+  nombre  String
+  modelos Modelo_Armamento[]
+}
+
+model Calibre {
+  id               Int                @id @default(autoincrement())
+  nombre           String
+  descripcion      String?
+  Modelo_Armamento Modelo_Armamento[]
+}
+
+model Parte_Arma {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo Int
+}
+
+model Componente_Arma {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  descripcion String
+
+  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo Int
+}
+
+model Accesorio_Arma {
+  id          Int               @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  modelo      Modelo_Armamento? @relation(fields: [id_modelo], references: [id])
+  id_modelo   Int?
+}
+
+model Tipo_Armamento {
+  id          Int                @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  modelos     Modelo_Armamento[]
+}
+
+model Modelo_Armamento {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  id_tipo_armamento Int
+  tipo              Tipo_Armamento  @relation(fields: [id_tipo_armamento], references: [id])
+  marca             Marca_Armamento @relation(fields: [id_marca], references: [id])
+  id_marca          Int
+  calibre           Calibre         @relation(fields: [id_calibre], references: [id])
+  id_calibre        Int
+
+  partes      Parte_Arma[]
+  accesorios  Accesorio_Arma[]
+  componentes Componente_Arma[]
+  Armamento   Armamento[]
+}
+
+model Armamento {
+  descripcion String?
+
+  id        Int              @id @default(autoincrement())
+  id_modelo Int
+  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+
+  serial_armazon    String
+  serial_canon      String
+  color             String
+  fecha_fabricacion DateTime
+  lugar_fabricacion String
+  condicion         String
+  estado            String
+  numero_causa      String
+
+  id_unidad Int
+  unidad    Unidad_Militar @relation(fields: [id_unidad], references: [id])
+
+  id_almacen Int
+  almacen    Almacen @relation(fields: [id_almacen], references: [id])
+  pasillo    String?
 }
