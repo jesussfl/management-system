@@ -6,37 +6,35 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
-export const getAllGunBrands = async () => {
+export const getAllGunCalibers = async () => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const brands = await prisma.marca_Armamento.findMany()
+  const gunCalibers = await prisma.calibre.findMany()
 
-  return brands
+  return gunCalibers
 }
 
-export const getGunBrandById = async (id: number) => {
+export const getGunCaliberById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const brand = await prisma.marca_Armamento.findUnique({
+  const gunCaliber = await prisma.calibre.findUnique({
     where: {
       id,
     },
   })
 
-  return brand
+  return gunCaliber
 }
 
-export const createGunBrand = async (
-  data: Prisma.Marca_ArmamentoUncheckedCreateInput
-) => {
+export const createGunCaliber = async (data: Prisma.CalibreCreateInput) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -53,15 +51,15 @@ export const createGunBrand = async (
     return permissionsResponse
   }
 
-  await prisma.marca_Armamento.create({
+  await prisma.calibre.create({
     data,
   })
 
-  await registerAuditAction('Se creó una nueva marca de arma: ' + data.nombre)
+  await registerAuditAction('Se creó un nuevo calibre: ' + data.nombre)
   revalidatePath('/dashboard/armamento/armas')
 
   return {
     error: false,
-    success: 'Marca creada exitosamente',
+    success: 'Calibre creado exitosamente',
   }
 }

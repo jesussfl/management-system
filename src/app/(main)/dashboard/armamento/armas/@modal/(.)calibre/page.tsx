@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import GunBrandsForm from '../../components/forms/gun-brands-form'
+import GunCalibersForm from '../../components/forms/gun-calibers-form'
 
 export default async function Page() {
   return (
@@ -16,11 +16,11 @@ export default async function Page() {
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Agregar Marca de Arma
+            Agregar Calibre
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <GunBrandsForm />
+        <GunCalibersForm />
       </DialogContent>
     </Dialog>
   )

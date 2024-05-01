@@ -34,16 +34,17 @@ import Link from 'next/link'
 import { getAllGuns } from './lib/actions/guns'
 import { getAllGunTypes } from './lib/actions/type'
 import { getAllGunModels } from './lib/actions/model-actions'
-import { getAllBrands } from './lib/actions/brand'
+import { getAllGunBrands } from './lib/actions/brand'
 import { getAllGunParts } from './lib/actions/parts'
 import { getAllAccesories } from './lib/actions/accesories'
 import { getAllGunComponents } from './lib/actions/component-actions'
 import { gunModelColumns } from './components/columns/gun-model-columns'
 import { gunTypeColumns } from './components/columns/gun-type-columns'
 import { gunBrandColumns } from './components/columns/gun-brand-columns'
-import { gunComponentColumns } from './components/columns/gun-component-columns'
+import { gunCaliberColumns } from './components/columns/gun-caliber-columns'
 import { gunPartColumns } from './components/columns/gun-part-columns'
 import { gunAccessoryColumns } from './components/columns/gun-accessory-columns'
+import { getAllGunCalibers } from './lib/actions/calibre'
 
 export const metadata: Metadata = {
   title: 'Armas',
@@ -53,10 +54,10 @@ export const metadata: Metadata = {
 export default async function Page() {
   const guns = await getAllGuns()
   const gunModels = await getAllGunModels()
-  const gunBrands = await getAllBrands()
+  const gunBrands = await getAllGunBrands()
   const gunParts = await getAllGunParts()
   const gunAccessories = await getAllAccesories()
-  const gunComponents = await getAllGunComponents()
+  const gunCalibers = await getAllGunCalibers()
   const gunTypes = await getAllGunTypes()
   return (
     <>
@@ -99,7 +100,7 @@ export default async function Page() {
         <TabsList className="mx-5">
           <TabsTrigger value="guns">Armas</TabsTrigger>
           <TabsTrigger value="models">Modelos y Tipos</TabsTrigger>
-          <TabsTrigger value="components">Marcas y Componentes</TabsTrigger>
+          <TabsTrigger value="components">Marcas y Calibres</TabsTrigger>
           <TabsTrigger value="parts">Partes y Accesorios</TabsTrigger>
         </TabsList>
         <TabsContent value="guns">
@@ -169,22 +170,17 @@ export default async function Page() {
               </Card>
               <Card>
                 <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">
-                    Lista de Componentes
-                  </CardTitle>
+                  <CardTitle className="text-xl">Lista de Calibres</CardTitle>
                   <Link
-                    href="/dashboard/armamento/armas/componente"
+                    href="/dashboard/armamento/armas/calibre"
                     className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Agregar Componente
+                    Agregar Calibre
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable
-                    columns={gunComponentColumns}
-                    data={gunComponents}
-                  />
+                  <DataTable columns={gunCaliberColumns} data={gunCalibers} />
                 </CardContent>
               </Card>
             </div>

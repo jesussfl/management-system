@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
+import GunAccessoriesForm from '../../components/forms/gun-accessories-form'
 
 export default async function Page() {
   return (
@@ -16,11 +16,11 @@ export default async function Page() {
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Agregar Accesorio
+            Agregar Accesorio de Arma
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <CategoriesForm />
+        <GunAccessoriesForm />
       </DialogContent>
     </Dialog>
   )

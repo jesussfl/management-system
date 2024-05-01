@@ -119,26 +119,26 @@ export const columns: ColumnDef<ArmamentoType>[] = [
       )
     },
   },
-  {
-    accessorKey: 'fecha_fabricacion',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Fecha Fabricación
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
+  // {
+  //   accessorKey: 'fecha_fabricacion',
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         size={'sm'}
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //         className="text-xs"
+  //       >
+  //         Fecha Fabricación
+  //         <ArrowUpDown className="ml-2 h-3 w-3" />
+  //       </Button>
+  //     )
+  //   },
 
-    cell: ({ row }) => {
-      return <div>{row.getValue<string>('fecha_fabricacion')}</div>
-    },
-  },
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue<string>('fecha_fabricacion')}</div>
+  //   },
+  // },
   {
     accessorKey: 'lugar_fabricacion',
     header: ({ column }) => {

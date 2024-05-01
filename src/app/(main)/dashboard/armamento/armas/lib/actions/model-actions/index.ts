@@ -13,7 +13,13 @@ export const getAllGunModels = async () => {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const gunModels = await prisma.modelo_Armamento.findMany()
+  const gunModels = await prisma.modelo_Armamento.findMany({
+    include: {
+      marca: true,
+      tipo: true,
+      calibre: true,
+    },
+  })
 
   return gunModels
 }

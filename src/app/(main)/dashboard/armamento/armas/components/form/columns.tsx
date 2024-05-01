@@ -18,17 +18,6 @@ export const columns: ColumnDef<RenglonType>[] = [
   },
 
   {
-    accessorKey: 'stock',
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-
-      return <div>{stock}</div>
-    },
-  },
-  {
     accessorKey: 'nombre',
     header: ({ column }) => {
       return (

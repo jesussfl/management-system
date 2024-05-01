@@ -32,6 +32,7 @@ import {
 import { cn } from '@/utils/utils'
 import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
 import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
+import { getAllGunModels } from '../../lib/actions/model-actions'
 interface Props {
   defaultValues?: Armamento
 }
@@ -54,10 +55,10 @@ export default function GunsForm({ defaultValues }: Props) {
 
   React.useEffect(() => {
     startTransition(() => {
-      getAllClassifications().then((data) => {
-        const transformedData = data.map((classification) => ({
-          value: classification.id,
-          label: classification.nombre,
+      getAllGunModels().then((data) => {
+        const transformedData = data.map((model) => ({
+          value: model.id,
+          label: model.nombre,
         }))
 
         setModels(transformedData)
@@ -278,6 +279,30 @@ export default function GunsForm({ defaultValues }: Props) {
                 <FormLabel>Condición</FormLabel>
                 <FormControl>
                   <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="pasillo"
+            rules={{
+              required: 'Este campo es necesario',
+              minLength: {
+                value: 3,
+                message: 'Debe tener al menos 3 caracteres',
+              },
+              maxLength: {
+                value: 100,
+                message: 'Debe tener un maximo de 100 caracteres',
+              },
+            }}
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Pasillo</FormLabel>
+                <FormControl>
+                  <Input {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

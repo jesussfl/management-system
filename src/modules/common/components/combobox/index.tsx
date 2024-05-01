@@ -61,34 +61,38 @@ export function Combobox({
       <PopoverContent className="w-[400px] p-0">
         <Command>
           <CommandInput placeholder="Buscar..." className="h-9" />
+
           <CommandEmpty>Sin resultados.</CommandEmpty>
+
           <CommandGroup>
-            {data.map((info) => (
-              <CommandItem
-                value={info.label}
-                key={info.value}
-                onSelect={() => {
-                  if (form.formState.errors[name]) {
-                    form.clearErrors(name)
-                  }
-                  form.setValue(
-                    name,
-                    isValueString ? info.label : Number(info.value),
-                    {
-                      shouldDirty: true,
-                    }
-                  )
-                }}
-              >
-                {info.label}
-                <CheckIcon
-                  className={cn(
-                    'ml-auto h-4 w-4',
-                    info.value === field.value ? 'opacity-100' : 'opacity-0'
-                  )}
-                />
-              </CommandItem>
-            ))}
+            {data.length > 0
+              ? data.map((info) => (
+                  <CommandItem
+                    value={info.label}
+                    key={info.value}
+                    onSelect={() => {
+                      if (form.formState.errors[name]) {
+                        form.clearErrors(name)
+                      }
+                      form.setValue(
+                        name,
+                        isValueString ? info.label : Number(info.value),
+                        {
+                          shouldDirty: true,
+                        }
+                      )
+                    }}
+                  >
+                    {info.label}
+                    <CheckIcon
+                      className={cn(
+                        'ml-auto h-4 w-4',
+                        info.value === field.value ? 'opacity-100' : 'opacity-0'
+                      )}
+                    />
+                  </CommandItem>
+                ))
+              : 'No hay resultados'}
           </CommandGroup>
         </Command>
       </PopoverContent>

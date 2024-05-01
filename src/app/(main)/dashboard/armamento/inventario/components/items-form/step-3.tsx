@@ -32,8 +32,8 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
-import { getAllWarehouses } from '../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
+import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
 export const Step3 = () => {
   const form = useFormContext()
   const { weight } = useGetWeight()

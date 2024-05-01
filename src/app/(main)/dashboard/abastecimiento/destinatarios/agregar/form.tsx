@@ -359,7 +359,7 @@ export default function ReceiversForm({ defaultValues }: Props) {
               }}
               render={({ field }) => (
                 <FormItem className="items-center flex flex-1 justify-between gap-4">
-                  <FormLabel className="mb-3">{`Cargo Profesional:`}</FormLabel>
+                  <FormLabel className="mb-3">{`Dirección:`}</FormLabel>
                   <div className="w-[70%]">
                     <FormControl>
                       <Input type="text" {...field} value={field.value || ''} />

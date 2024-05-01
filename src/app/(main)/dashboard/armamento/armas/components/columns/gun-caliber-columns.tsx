@@ -17,6 +17,7 @@ import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import {
   Accesorio_Arma,
+  Calibre,
   Componente_Arma,
   Modelo_Armamento,
 } from '@prisma/client'
@@ -25,7 +26,7 @@ import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
-export const gunComponentColumns: ColumnDef<Componente_Arma>[] = [
+export const gunCaliberColumns: ColumnDef<Calibre>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
