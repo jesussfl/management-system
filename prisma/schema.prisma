@@ -214,14 +214,17 @@ enum RenglonStates {
 }
 
 model Almacen {
-  id        Int       @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   nombre    String
   ubicacion String
-  renglones Renglon[]
 
-  fecha_creacion       DateTime    @default(now())
-  ultima_actualizacion DateTime    @updatedAt
-  armamento            Armamento[]
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+
+  renglones Renglon[]
+  armamento Armamento[]
+  unidad    Unidad_Militar? @relation(fields: [id_unidad], references: [id])
+  id_unidad Int?
 }
 
 model Recepcion {
@@ -398,16 +401,6 @@ model Profesional_Abastecimiento {
   supervisor  Despacho[] @relation("supervisor")
 }
 
-// model Profesionales_Despacho {
-//   id                   Int                        @id @default(autoincrement())
-//   id_profesional       Int
-//   profesional          Profesional_Abastecimiento @relation(fields: [id_profesional], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   id_despacho          Int
-//   despacho             Despacho                   @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   fecha_creacion       DateTime                   @default(now())
-//   ultima_actualizacion DateTime                   @updatedAt
-// }
-
 model Componente_Militar {
   id                   Int                          @id @default(autoincrement())
   nombre               String                       @unique
@@ -488,6 +481,7 @@ model Unidad_Militar {
   profesionales        Profesional_Abastecimiento[]
 
   armamento Armamento[]
+  almacenes Almacen[]
 }
 
 model Zodi {
@@ -627,6 +621,6 @@ model Armamento {
   unidad    Unidad_Militar @relation(fields: [id_unidad], references: [id])
 
   id_almacen Int
-  almacen    Almacen @relation(fields: [id_almacen], references: [id])
+  almacen    Almacen @relation(fields: [id_almacen], references: [id], onDelete: Cascade)
   pasillo    String?
 }

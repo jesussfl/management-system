@@ -24,6 +24,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteClassification } from '../../lib/actions/classifications'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const columns: ColumnDef<Clasificacion>[] = [
   {
     id: 'seleccionar',
@@ -116,6 +117,7 @@ export const columns: ColumnDef<Clasificacion>[] = [
             title="¿Estás seguro de que quieres eliminar esta clasificación?"
             description="Estas a punto de eliminar esta clasificación y todas sus dependencias"
             actionMethod={() => deleteClassification(classification.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )

@@ -42,7 +42,7 @@ export const createItem = async (data: Prisma.RenglonUncheckedCreateInput) => {
   })
 
   await registerAuditAction(`Se ha creado el renglon ${nombre}`)
-  revalidatePath('/dashboard/abastecimiento/renglones')
+  revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
     success: 'Se ha creado el renglón correctamente',
@@ -131,13 +131,48 @@ export const deleteItem = async (id: number) => {
   })
 
   await registerAuditAction(`Se ha eliminado el renglon ${id}`)
-  revalidatePath('/dashboard/abastecimiento/recepciones')
+  revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
     success: 'Se ha eliminado el renglón correctamente',
     error: false,
   }
 }
+
+export const deleteMultipleItems = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.renglon.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado los siguientes renglones ${ids}`)
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se ha eliminado el renglón correctamente',
+    error: false,
+  }
+}
+
 export const checkItemExistance = async (name: string) => {
   const session = await auth()
   if (!session?.user) {

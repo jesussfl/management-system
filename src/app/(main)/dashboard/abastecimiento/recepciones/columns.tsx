@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
@@ -17,6 +17,15 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import { cn } from '@/utils/utils'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
+import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { RenglonWithAllRelations } from '@/types/types'
+import { deleteReception } from './lib/actions/receptions'
+
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
 }>
@@ -82,22 +91,50 @@ export const columns: ColumnDef<RecepcionType>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          renglones
+          Renglones recibidos
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const string = row.original.renglones
-        .map(
-          (renglon) =>
-            `${renglon.cantidad} - ${renglon.renglon?.nombre} - precio: ${
-              renglon.precio ? renglon.precio : 's/p'
-            } - fabricante: ${renglon.fabricante ? renglon.fabricante : 's/f'}`
-        )
-        .join(', ')
+      const renglones = row.original.renglones
 
-      return <div className="">{string}</div>
+      return (
+        <div className="">
+          {renglones
+            .map(
+              (renglon) =>
+                ` ${renglon.renglon.nombre}/Cantidad: ${renglon.cantidad}`
+            )
+            .join(', ')}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'renglones',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Detalles
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/recepciones/detalle/${row.original.id}`}
+        >
+          Ver detalles
+        </Link>
+      )
     },
   },
   {
@@ -106,28 +143,39 @@ export const columns: ColumnDef<RecepcionType>[] = [
       const data = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir Menú</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(String(data.id))}
+              >
+                Copiar código
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
 
-            <Link href={`/dashboard/abastecimiento/recepciones/${data.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <Link href={`/dashboard/abastecimiento/recepciones/${data.id}`}>
+                <DropdownMenuItem> Editar</DropdownMenuItem>
+              </Link>
+
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem>Eliminar</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DeleteDialog
+            title="¿Estás seguro de que quieres eliminar esta recepción?"
+            description="Estas a punto de eliminar esta recepción y todas sus dependencias."
+            actionMethod={() => deleteReception(data.id)}
+          />
+        </AlertDialog>
       )
     },
   },

@@ -23,6 +23,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteSubsystem } from '../../lib/actions/subsystems'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',
@@ -130,6 +131,7 @@ export const columns: ColumnDef<Subsistema>[] = [
             title="¿Estás seguro de que quieres eliminar este subsistema?"
             description="Estas a punto de eliminar este subsistema y todas sus dependencias"
             actionMethod={() => deleteSubsystem(subsystem.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )

@@ -137,7 +137,41 @@ export const deletePackagingUnit = async (id: number) => {
     success: 'Unidad de empaque eliminada exitosamente',
   }
 }
+export const deleteMultiplePackagingUnits = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.unidadEmpaque.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado las siguientes Unidades de empaque ${ids}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se han eliminado las Unidades de empaque correctamente',
+    error: false,
+  }
+}
 export const getAllPackagingUnits = async () => {
   const sessionResponse = await validateUserSession()
 

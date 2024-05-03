@@ -13,6 +13,8 @@ import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
 import { getReceptionById } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
+import { getReturnById } from '../lib/actions/returns'
+import ReturnsForm from '../components/form/returns-form'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -21,8 +23,7 @@ export const metadata: Metadata = {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
-  const reception = await getReceptionById(Number(params.id))
-  console.log(reception, 'reception')
+  const reception = await getReturnById(Number(params.id))
   return (
     <>
       <PageHeader className="mb-0">
@@ -46,7 +47,8 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        <ReceptionsForm renglonesData={itemsData} defaultValues={reception} />
+        {/* @ts-ignore */}
+        <ReturnsForm renglonesData={itemsData} defaultValues={reception} />
       </PageContent>
     </>
   )

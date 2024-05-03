@@ -133,7 +133,41 @@ export const deleteSubsystem = async (id: number) => {
     error: false,
   }
 }
+export const deleteMultipleSubsystems = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.subsistema.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado los siguientes subsistemas ${ids}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se han eliminado los subsistemas correctamente',
+    error: false,
+  }
+}
 export const getAllSubsystems = async () => {
   const session = await auth()
   if (!session?.user) {

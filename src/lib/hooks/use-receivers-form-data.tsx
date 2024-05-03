@@ -6,16 +6,18 @@ import {
 } from '../../app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import { ComboboxData } from '@/types/types'
 import { useFormContext } from 'react-hook-form'
+import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
 
 export const useReceiversFormData = () => {
   const { watch, setValue } = useFormContext()
   const [categories, setCategories] = useState<ComboboxData[]>([])
   const [components, setComponents] = useState<ComboboxData[]>([])
   const [grades, setGrades] = useState<ComboboxData[]>([])
-
+  const [units, setUnits] = useState<ComboboxData[]>([])
   const [isCategoriesLoading, setCategoriesLoading] = useState(false)
   const [isComponentsLoading, setComponentsLoading] = useState(false)
   const [isGradesLoading, setGradesLoading] = useState(false)
+  const [isUnitsLoading, setUnitsLoading] = useState(false)
   const componentId = watch('id_componente')
   const gradeId = watch('id_grado')
 
@@ -24,6 +26,7 @@ export const useReceiversFormData = () => {
     setComponentsLoading(true)
     setCategoriesLoading(true)
     setGradesLoading(true)
+    setUnitsLoading(true)
 
     getAllComponents().then((data) => {
       const transformedData = data.map((component) => ({
@@ -54,9 +57,17 @@ export const useReceiversFormData = () => {
         setCategories(transformedData)
       })
 
+    getAllUnits().then((data) => {
+      const transformedData = data.map((unit) => ({
+        value: unit.id,
+        label: unit.nombre,
+      }))
+      setUnits(transformedData)
+    })
     setGradesLoading(false)
     setCategoriesLoading(false)
     setComponentsLoading(false)
+    setUnitsLoading(false)
   }, [])
 
   //This effect is used to get the grades and categories based on the selected component
@@ -113,5 +124,6 @@ export const useReceiversFormData = () => {
       isLoading: isComponentsLoading,
     },
     grades: { data: grades, isLoading: isGradesLoading },
+    units: { data: units, isLoading: isUnitsLoading },
   }
 }

@@ -148,6 +148,39 @@ export const deleteCategory = async (id: number) => {
     success: 'Categoria eliminada exitosamente',
   }
 }
+export const deleteMultipleCategories = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.categoria.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado las siguientes categorias ${ids}`)
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se ha eliminado la categoría correctamente',
+    error: false,
+  }
+}
 export const getCategoryById = async (id: number) => {
   const sessionResponse = await validateUserSession()
 

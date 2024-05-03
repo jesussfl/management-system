@@ -26,14 +26,26 @@ import DataTableFilters from './data-table-filters'
 import { DataTablePagination } from './data-table-pagination'
 import DataTableRowsCounter from './data-table-rows-counter'
 
-interface DataTableProps<TData, TValue> {
+interface MultipleDeleteProps {
+  isMultipleDeleteEnabled: true
+  multipleDeleteAction: (ids: number[]) => Promise<{
+    error: boolean | null | string
+    success: boolean | null | string
+  }>
+}
+
+interface SingleDeleteProps {
+  isMultipleDeleteEnabled?: false
+  multipleDeleteAction?: null
+}
+type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   isColumnFilterEnabled?: boolean
   selectedData?: any
   setSelectedData?: (data: any) => void
   onSelectedRowsChange?: (lastSelectedRow: any) => void
-}
+} & (MultipleDeleteProps | SingleDeleteProps)
 
 export function DataTable<TData extends { id: any }, TValue>({
   columns: tableColumns,
@@ -42,6 +54,8 @@ export function DataTable<TData extends { id: any }, TValue>({
   onSelectedRowsChange,
   selectedData,
   setSelectedData,
+  multipleDeleteAction,
+  isMultipleDeleteEnabled,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -97,12 +111,25 @@ export function DataTable<TData extends { id: any }, TValue>({
 
   return (
     <div className="flex flex-col px-2 gap-2">
-      <DataTableFilters
-        table={table}
-        filtering={filtering}
-        setFiltering={setFiltering}
-        isColumnFilterEnabled={isColumnFilterEnabled}
-      />
+      {isMultipleDeleteEnabled ? (
+        <DataTableFilters
+          table={table}
+          filtering={filtering}
+          setFiltering={setFiltering}
+          isColumnFilterEnabled={isColumnFilterEnabled}
+          isMultipleDeleteEnabled={true}
+          selectedIds={selectedRows.map((row) => row.id)}
+          multipleDeleteAction={multipleDeleteAction}
+        />
+      ) : (
+        <DataTableFilters
+          table={table}
+          filtering={filtering}
+          setFiltering={setFiltering}
+          isColumnFilterEnabled={isColumnFilterEnabled}
+          isMultipleDeleteEnabled={false}
+        />
+      )}
       <div className="bg-background rounded-md border">
         <Table>
           <TableHeader>

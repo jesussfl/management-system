@@ -11,10 +11,22 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import { getAllPackagingUnits } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
-import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
-import { getAllCategories } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+import {
+  deleteMultipleItems,
+  getAllItems,
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import {
+  deleteMultiplePackagingUnits,
+  getAllPackagingUnits,
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
+import {
+  deleteMultipleClassifications,
+  getAllClassifications,
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+import {
+  deleteMultipleCategories,
+  getAllCategories,
+} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -37,11 +49,11 @@ import {
 import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
-import { getAllSubsystems } from './lib/actions/subsystems'
-import { getAllSystems } from './lib/actions/systems'
-import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { redirect } from 'next/navigation'
+import {
+  deleteMultipleSubsystems,
+  getAllSubsystems,
+} from './lib/actions/subsystems'
+import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -49,14 +61,6 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  // const isAuthorized = await validateUserPermissions({
-  //   section: SECTION_NAMES.INVENTARIO,
-  // })
-
-  // if (!isAuthorized) {
-  //   redirect('/dashboard')
-  // }
-
   const itemsData = await getAllItems()
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
@@ -114,7 +118,12 @@ export default async function Page() {
           <PageContent>
             <Card>
               <CardContent>
-                <DataTable columns={columns} data={itemsData} />
+                <DataTable
+                  columns={columns}
+                  data={itemsData}
+                  isMultipleDeleteEnabled
+                  multipleDeleteAction={deleteMultipleItems}
+                />
               </CardContent>
             </Card>
           </PageContent>
@@ -139,6 +148,8 @@ export default async function Page() {
                   <DataTable
                     columns={classificationsColumns}
                     data={classificationsData}
+                    isMultipleDeleteEnabled
+                    multipleDeleteAction={deleteMultipleClassifications}
                   />
                 </CardContent>
               </Card>
@@ -156,7 +167,9 @@ export default async function Page() {
                 <CardContent>
                   <DataTable
                     columns={categoriesColumns}
+                    isMultipleDeleteEnabled
                     data={categoriesData}
+                    multipleDeleteAction={deleteMultipleCategories}
                   />
                 </CardContent>
               </Card>
@@ -182,7 +195,9 @@ export default async function Page() {
               <CardContent>
                 <DataTable
                   columns={packagingUnitsColumns}
+                  isMultipleDeleteEnabled
                   data={packagingUnitsData}
+                  multipleDeleteAction={deleteMultiplePackagingUnits}
                 />
               </CardContent>
             </Card>
@@ -203,7 +218,12 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable columns={systemColumns} data={systemsData} />
+                  <DataTable
+                    columns={systemColumns}
+                    isMultipleDeleteEnabled
+                    data={systemsData}
+                    multipleDeleteAction={deleteMultipleSystems}
+                  />
                 </CardContent>
               </Card>
               <Card>
@@ -220,7 +240,12 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable columns={subsystemColumns} data={subsystemsData} />
+                  <DataTable
+                    columns={subsystemColumns}
+                    isMultipleDeleteEnabled
+                    data={subsystemsData}
+                    multipleDeleteAction={deleteMultipleSubsystems}
+                  />
                 </CardContent>
               </Card>
             </div>

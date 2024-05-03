@@ -15,7 +15,11 @@ export const getAllWarehouses = async () => {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const warehouses = await prisma.almacen.findMany()
+  const warehouses = await prisma.almacen.findMany({
+    include: {
+      unidad: true,
+    },
+  })
 
   return warehouses
 }
@@ -68,7 +72,83 @@ export const createWarehouse = async (data: Prisma.AlmacenCreateInput) => {
     error: false,
   }
 }
+export const deleteWarehouse = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ALMACENES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.almacen.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El almacén no existe',
+      success: false,
+    }
+  }
+
+  await prisma.almacen.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction(`Se eliminó un almacén ${exist?.nombre}`)
+  revalidatePath('/dashboard/abastecimiento/almacenes')
+
+  return {
+    success: 'Almacén eliminado exitosamente',
+    error: false,
+  }
+}
+export const deleteMultipleWarehouses = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ALMACENES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.almacen.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado las siguientes almacenes ${ids}`)
+  revalidatePath('/dashboard/abastecimiento/almacenes')
+
+  return {
+    success: 'Se han eliminado los almacenes correctamente',
+    error: false,
+  }
+}
 export const updateWarehouse = async (
   id: number,
   data: Prisma.AlmacenUpdateInput

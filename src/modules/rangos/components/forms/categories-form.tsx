@@ -170,8 +170,8 @@ export default function CategoriesForm({ defaultValues }: Props) {
                 message: 'Debe tener al menos 2 carácteres',
               },
               maxLength: {
-                value: 8,
-                message: 'Debe tener un máximo de 8 carácteres',
+                value: 15,
+                message: 'Debe tener un máximo de 15 carácteres',
               },
             }}
             render={({ field }) => (

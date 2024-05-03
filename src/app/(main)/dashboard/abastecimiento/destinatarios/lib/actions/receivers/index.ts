@@ -114,7 +114,43 @@ export const deleteReceiver = async (cedula: string) => {
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
-    success: 'Receiver deleted successfully',
+    success: 'El destinatario se ha eliminado correctamente',
+    error: false,
+  }
+}
+
+export const deleteMultipleReceivers = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DESTINATARIOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.destinatario.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado los siguientes destinatarios ${ids}`
+  )
+  revalidatePath('/dashboard/abastecimiento/destinatarios')
+
+  return {
+    success: 'Se han eliminado los destinatarios correctamente',
     error: false,
   }
 }

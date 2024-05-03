@@ -25,6 +25,7 @@ import { deleteItem } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
@@ -207,8 +208,9 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
 
           <DeleteDialog
             title="¿Estás seguro de que quieres eliminar este rengón?"
-            description="Estas a punto de eliminar este renglon y todas sus dependencias, introduce la contraseña de administrador para borrarlo permanentemente."
+            description="Estas a punto de eliminar este renglon y todas sus dependencias."
             actionMethod={() => deleteItem(renglon.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )

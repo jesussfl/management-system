@@ -275,3 +275,85 @@ export const getReceptionById = async (id: number): Promise<RecepcionType> => {
 
   return reception
 }
+
+export const deleteReception = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RECEPCION,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.recepcion.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La recepción no existe',
+      success: null,
+    }
+  }
+
+  await prisma.recepcion.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction(
+    `Se eliminó la recepción con motivo: ${exist?.motivo}`
+  )
+  revalidatePath('/dashboard/abastecimiento/recepciones')
+
+  return {
+    error: null,
+    success: 'Recepción eliminada exitosamente',
+  }
+}
+export const deleteMultipleReceptions = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RECEPCION,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.recepcion.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado las siguientes recepciones ${ids}`
+  )
+  revalidatePath('/dashboard/abastecimiento/recepciones')
+
+  return {
+    success: 'Se ha eliminado la recepción correctamente',
+    error: false,
+  }
+}

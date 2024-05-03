@@ -12,7 +12,10 @@ import {
 import { DataTable } from '@/modules/common/components/table/data-table'
 import Link from 'next/link'
 import { columns } from './columns'
-import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
+import {
+  deleteMultipleReceivers,
+  getAllReceivers,
+} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import {
   Tabs,
   TabsContent,
@@ -78,7 +81,12 @@ export default async function Page() {
         </TabsList>
         <TabsContent value="destinatarios">
           <PageContent>
-            <DataTable columns={columns} data={receiversData} />
+            <DataTable
+              columns={columns}
+              data={receiversData}
+              isMultipleDeleteEnabled
+              multipleDeleteAction={deleteMultipleReceivers}
+            />
           </PageContent>
         </TabsContent>
         <TabsContent value="categorias">

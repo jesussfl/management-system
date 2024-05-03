@@ -148,7 +148,41 @@ export const deleteClassification = async (id: number) => {
     error: false,
   }
 }
+export const deleteMultipleClassifications = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.clasificacion.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado las siguientes clasificaciones ${ids}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se ha eliminado la clasificación correctamente',
+    error: false,
+  }
+}
 export const getAllClassifications = async () => {
   const sessionResponse = await validateUserSession()
 

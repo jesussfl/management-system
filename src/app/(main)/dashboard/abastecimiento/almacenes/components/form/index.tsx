@@ -15,11 +15,14 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
-import { Almacen } from '@prisma/client'
+import { Almacen, Unidad_Militar } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { createWarehouse, updateWarehouse } from '../../lib/actions/warehouse'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import { Combobox } from '@/modules/common/components/combobox'
+import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
+import { ComboboxData } from '@/types/types'
 
 interface Props {
   defaultValues?: Almacen
@@ -37,7 +40,19 @@ export default function WarehousesForm({ defaultValues }: Props) {
   })
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
+  const [units, setUnits] = React.useState<ComboboxData[]>([])
 
+  React.useEffect(() => {
+    startTransition(() => {
+      getAllUnits().then((data) => {
+        const transformedData = data.map((unit) => ({
+          value: unit.id,
+          label: unit.nombre,
+        }))
+        setUnits(transformedData)
+      })
+    })
+  }, [])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     startTransition(() => {
       if (!isEditEnabled) {
@@ -110,17 +125,7 @@ export default function WarehousesForm({ defaultValues }: Props) {
               <FormItem className="">
                 <FormLabel>Nombre</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value, {
-                        shouldDirty: true,
-                      })
-                    }}
-                  />
+                  <Input {...field} />
                 </FormControl>
                 <FormDescription>
                   Es necesario que el nombre sea descriptivo
@@ -147,19 +152,29 @@ export default function WarehousesForm({ defaultValues }: Props) {
               <FormItem className="">
                 <FormLabel>Ubicación</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value, {
-                        shouldDirty: true,
-                      })
-                    }}
-                  />
+                  <Input {...field} />
                 </FormControl>
 
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="id_unidad"
+            rules={{
+              required: 'Es necesario seleccionar una unidad',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full ">
+                <FormLabel>¿En qué unidad se encuentra?</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={units}
+                  form={form}
+                  field={field}
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -167,12 +182,6 @@ export default function WarehousesForm({ defaultValues }: Props) {
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          {form.formState.errors.ubicacion && (
-            <p className="text-sm font-medium text-destructive">
-              Corrige los campos en rojo
-            </p>
-          )}
-
           <Button variant="default" type="submit" disabled={isPending}>
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

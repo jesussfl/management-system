@@ -23,6 +23,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deletePackagingUnit } from '../../lib/actions/packaging-units'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',
@@ -146,6 +147,7 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
             title="¿Estás seguro de que quieres eliminar esta unidad de empaque?"
             description="Estas a punto de eliminar esta unidad y todas sus dependencias"
             actionMethod={() => deletePackagingUnit(packagingUnit.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )

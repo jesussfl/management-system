@@ -498,7 +498,7 @@ export default function DispatchesForm({
           </Card>
         )}
         <Button variant="default" type={'submit'}>
-          Guardar despacho
+          Guardar Devolución
         </Button>
       </form>
     </Form>

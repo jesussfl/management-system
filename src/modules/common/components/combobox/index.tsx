@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
+import { ScrollArea } from '../scroll-area/scroll-area'
 
 type ComboboxProps = {
   name: string
@@ -61,39 +62,42 @@ export function Combobox({
       <PopoverContent className="w-[400px] p-0">
         <Command>
           <CommandInput placeholder="Buscar..." className="h-9" />
+          <ScrollArea className="h-56">
+            <CommandEmpty>Sin resultados.</CommandEmpty>
 
-          <CommandEmpty>Sin resultados.</CommandEmpty>
-
-          <CommandGroup>
-            {data.length > 0
-              ? data.map((info) => (
-                  <CommandItem
-                    value={info.label}
-                    key={info.value}
-                    onSelect={() => {
-                      if (form.formState.errors[name]) {
-                        form.clearErrors(name)
-                      }
-                      form.setValue(
-                        name,
-                        isValueString ? info.label : Number(info.value),
-                        {
-                          shouldDirty: true,
+            <CommandGroup>
+              {data.length > 0
+                ? data.map((info) => (
+                    <CommandItem
+                      value={info.label}
+                      key={info.value}
+                      onSelect={() => {
+                        if (form.formState.errors[name]) {
+                          form.clearErrors(name)
                         }
-                      )
-                    }}
-                  >
-                    {info.label}
-                    <CheckIcon
-                      className={cn(
-                        'ml-auto h-4 w-4',
-                        info.value === field.value ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                  </CommandItem>
-                ))
-              : 'No hay resultados'}
-          </CommandGroup>
+                        form.setValue(
+                          name,
+                          isValueString ? info.label : Number(info.value),
+                          {
+                            shouldDirty: true,
+                          }
+                        )
+                      }}
+                    >
+                      {info.label}
+                      <CheckIcon
+                        className={cn(
+                          'ml-auto h-4 w-4',
+                          info.value === field.value
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        )}
+                      />
+                    </CommandItem>
+                  ))
+                : 'No hay resultados'}
+            </CommandGroup>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>

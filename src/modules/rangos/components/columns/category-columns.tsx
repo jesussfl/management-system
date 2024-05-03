@@ -17,9 +17,12 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { MoreHorizontal } from 'lucide-react'
-interface DataTableProps {
-  data: Categoria_Militar[]
-}
+import { deleteCategory } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
+import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 
 export const columns: ColumnDef<Categoria_Militar>[] = [
   {
@@ -78,30 +81,41 @@ export const columns: ColumnDef<Categoria_Militar>[] = [
     cell: ({ row }) => {
       const data = row.original
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir Menú</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(String(data.id))}
+              >
+                Copiar código
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
 
-            <Link
-              href={`/dashboard/abastecimiento/destinatarios/categoria/${data.id}`}
-            >
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <Link
+                href={`/dashboard/abastecimiento/destinatarios/grado/${data.id}`}
+              >
+                <DropdownMenuItem> Editar</DropdownMenuItem>
+              </Link>
+
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem>Eliminar</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DeleteDialog
+            title="¿Estás seguro de que quieres eliminar esta categoría?"
+            description="Estas a punto de eliminar esta categoría y todas sus dependencias."
+            actionMethod={() => deleteCategory(data.id)}
+          />
+        </AlertDialog>
       )
     },
   },

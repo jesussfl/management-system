@@ -21,7 +21,23 @@ type Detalles = Omit<
 > & {
   seriales: string[]
 }
-
+type ReturnType = Prisma.DevolucionGetPayload<{
+  include: {
+    renglones: {
+      include: {
+        renglon: {
+          include: {
+            clasificacion: true
+            categoria: true
+            recepciones: true
+            unidad_empaque: true
+          }
+        }
+        seriales: true
+      }
+    }
+  }
+}>
 export type FormValues = Omit<
   Devolucion,
   'id' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -37,7 +53,7 @@ export const createReturn = async (data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DEVOLUCIONES,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -120,7 +136,7 @@ export const deleteReturn = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DEVOLUCIONES,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -147,6 +163,11 @@ export const deleteReturn = async (id: number) => {
 
   await registerAuditAction(`Devolucion eliminada con motivo: ${exist.motivo}`)
   revalidatePath('/dashboard/abastecimiento/devoluciones')
+
+  return {
+    success: true,
+    error: false,
+  }
 }
 export const getAllReturns = async () => {
   const session = await auth()
@@ -171,7 +192,7 @@ export const getAllReturns = async () => {
   return devolution
 }
 
-export const getReturnById = async (id: number): Promise<FormValues> => {
+export const getReturnById = async (id: number): Promise<ReturnType> => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -220,6 +241,7 @@ export const getReturnById = async (id: number): Promise<FormValues> => {
   return {
     ...devolution,
 
+    //@ts-ignore
     renglones: devolution.renglones.map((renglon) => ({
       ...renglon,
       seriales: renglon.seriales.map((serial) => serial.serial),

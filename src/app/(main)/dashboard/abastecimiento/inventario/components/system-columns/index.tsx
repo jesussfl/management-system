@@ -23,6 +23,7 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import Link from 'next/link'
 import { deleteSystem } from '../../lib/actions/systems'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const columns: ColumnDef<Sistema>[] = [
   {
@@ -114,6 +115,7 @@ export const columns: ColumnDef<Sistema>[] = [
             title="¿Estás seguro de que quieres eliminar este sistema?"
             description="Estas a punto de eliminar este sistema y todas sus dependencias"
             actionMethod={() => deleteSystem(system.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )

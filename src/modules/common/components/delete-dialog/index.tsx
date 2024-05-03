@@ -11,10 +11,12 @@ import {
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useToast } from '../toast/use-toast'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 type props = {
   title: string
   description: string
+  sectionName?: SECTION_NAMES
   actionMethod: () => Promise<{
     error: boolean | string | null
     success: boolean | string | null
@@ -24,6 +26,7 @@ type props = {
 export const DeleteDialog = ({ title, description, actionMethod }: props) => {
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
+
   const handleActionMethod = async () => {
     setIsLoading(true)
     actionMethod().then((res) => {
@@ -40,7 +43,7 @@ export const DeleteDialog = ({ title, description, actionMethod }: props) => {
       if (res?.success) {
         toast({
           title: 'Eliminado',
-          description: 'Se eliminó correctamente',
+          description: 'Eliminación exitosa',
           variant: 'success',
         })
       }

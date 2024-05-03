@@ -17,6 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
+import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteReceiver } from './lib/actions/receivers'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
   {
@@ -227,30 +234,43 @@ export const columns: ColumnDef<DestinatarioType>[] = [
       const receiver = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(receiver.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Abrir Menú</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(String(receiver.id))
+                }
+              >
+                Copiar código
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
 
-            <Link
-              href={`/dashboard/abastecimiento/destinatarios/${receiver.id}`}
-            >
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <Link
+                href={`/dashboard/abastecimiento/destinatarios/${receiver.id}`}
+              >
+                <DropdownMenuItem> Editar</DropdownMenuItem>
+              </Link>
+
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem>Eliminar</DropdownMenuItem>
+              </AlertDialogTrigger>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DeleteDialog
+            title="¿Estás seguro de que quieres eliminar este destinatario?"
+            description="Estas a punto de eliminar este destinatario y todas sus dependencias."
+            actionMethod={() => deleteReceiver(receiver.cedula)}
+          />
+        </AlertDialog>
       )
     },
   },

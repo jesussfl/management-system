@@ -197,6 +197,7 @@ export default async function Page() {
                   <DataTable
                     columns={lowStockItemsColumns}
                     data={lowStockItems}
+                    isMultipleDeleteEnabled={false}
                   />
                 </CardContent>
               </Card>

@@ -23,6 +23,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteCategory } from '../../lib/actions/categories'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const columns: ColumnDef<Categoria>[] = [
   {
     id: 'seleccionar',
@@ -130,6 +131,7 @@ export const columns: ColumnDef<Categoria>[] = [
             title="¿Estás seguro de que quieres eliminar esta categoría?"
             description="Estas a punto de eliminar esta categoría y todas sus dependencias"
             actionMethod={() => deleteCategory(category.id)}
+            sectionName={SECTION_NAMES.INVENTARIO}
           />
         </AlertDialog>
       )
