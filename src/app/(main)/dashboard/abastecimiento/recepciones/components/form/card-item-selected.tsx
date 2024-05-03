@@ -1,6 +1,6 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/utils/utils'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
@@ -52,7 +52,9 @@ export const CardItemSelected = ({
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control, setValue } = useFormContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
   return (
     <Card
       key={item.id}
@@ -280,12 +282,19 @@ export const CardItemSelected = ({
             closeWarning={false}
             className="max-h-[80vh]"
             disabled={!watch(`renglones.${index}.cantidad`)}
+            open={isModalOpen}
+            customToogleModal={toogleModal}
           >
-            <SerialsForm
-              index={index}
-              id={watch(`renglones.${index}.id`)}
-              quantity={watch(`renglones.${index}.cantidad`)}
-            />
+            <>
+              <SerialsForm
+                index={index}
+                id={watch(`renglones.${index}.id`)}
+                quantity={watch(`renglones.${index}.cantidad`)}
+              />
+              <Button variant={'default'} onClick={() => setIsModalOpen(false)}>
+                Listo
+              </Button>
+            </>
           </ModalForm>
         </div>
         <FormDescription className={`${isEmpty ? 'text-red-500' : ''}`}>

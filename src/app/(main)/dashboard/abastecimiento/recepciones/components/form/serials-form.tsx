@@ -25,6 +25,7 @@ export function SerialsForm({
   index: number
   quantity: number
   id?: number
+  closeModal?: () => void
 }) {
   const form = useFormContext()
   const autoSerialsEnabled = form.watch(

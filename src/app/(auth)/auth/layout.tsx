@@ -1,5 +1,5 @@
 import Image from 'next/image'
-
+import Ceserlodai from '@public/ceserlodai.jpg'
 export default function AuthLayout({
   children,
 }: {
@@ -11,7 +11,7 @@ export default function AuthLayout({
         <Image
           fill={true}
           style={{ objectFit: 'cover' }}
-          src="https://images.unsplash.com/photo-1500252185289-40ca85eb23a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={Ceserlodai}
           alt="background"
           className="rounded-lg"
         />

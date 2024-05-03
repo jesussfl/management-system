@@ -113,6 +113,9 @@ export default function ReceptionsForm({
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
   const [selectedRows, setSelectedRows] = useState<any>({})
   const [selectedRowsData, setSelectedRowsData] = useState<RenglonType[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   useEffect(() => {
     if (isEditEnabled) {
@@ -266,11 +269,6 @@ export default function ReceptionsForm({
               control={form.control}
               name="motivo"
               rules={{
-                required: 'Este campo es necesario',
-                minLength: {
-                  value: 10,
-                  message: 'Debe tener al menos 10 carácteres',
-                },
                 maxLength: {
                   value: 200,
                   message: 'Debe tener un máximo de 200 carácteres',
@@ -362,6 +360,8 @@ export default function ReceptionsForm({
               <ModalForm
                 triggerName="Seleccionar renglones"
                 closeWarning={false}
+                open={isModalOpen}
+                customToogleModal={toogleModal}
               >
                 <div className="flex flex-col gap-4 p-8">
                   <CardTitle>Selecciona los renglones recibidos</CardTitle>
@@ -390,6 +390,12 @@ export default function ReceptionsForm({
                     selectedData={selectedRows}
                     setSelectedData={setSelectedRows}
                   />
+                  <Button
+                    variant={'default'}
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Listo
+                  </Button>
                 </div>
               </ModalForm>
             </div>

@@ -36,6 +36,7 @@ type Props = {
   disabled?: boolean
   closeWarning?: boolean
   className?: string
+  customToogleModal?: () => void
 }
 
 export default function ModalForm({
@@ -46,6 +47,7 @@ export default function ModalForm({
   height,
   close,
   open,
+  customToogleModal,
   closeWarning = true,
   className = '',
 }: Props) {
@@ -71,7 +73,7 @@ export default function ModalForm({
   return (
     <Dialog
       open={open !== undefined ? open : isOpen}
-      onOpenChange={toogleModal}
+      onOpenChange={customToogleModal ? customToogleModal : toogleModal}
     >
       <DialogTrigger asChild>
         <Button

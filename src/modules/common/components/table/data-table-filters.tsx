@@ -53,7 +53,7 @@ export default function DataTableFilters({
   const { toast } = useToast()
 
   return (
-    <div className="flex flex-1 items-center py-4">
+    <div className="flex flex-1 justify-between items-center py-4">
       <Input
         placeholder="Filtrar..."
         value={filtering}
@@ -64,103 +64,79 @@ export default function DataTableFilters({
         // }
         className="max-w-sm"
       />
-      {isColumnFilterEnabled && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columnas
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column: any) => column.getCanHide())
-              .map((column: any) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
+      <div className="flex gap-4">
+        {isColumnFilterEnabled && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columnas
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column: any) => column.getCanHide())
+                .map((column: any) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {isMultipleDeleteEnabled === true && selectedIds.length > 0 ? (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="ml-auto">
+                Eliminar {selectedIds.length} elementos
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  ¿Deseas eliminar los elementos seleccionados?
+                </AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    const response = await multipleDeleteAction(selectedIds)
+
+                    if (response.success) {
+                      toast({
+                        description: 'Elementos eliminados correctamente',
+                        title: 'Éxito',
+                        variant: 'success',
+                      })
+                      table.resetRowSelection()
                     }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-      {isMultipleDeleteEnabled === true && selectedIds.length > 0 ? (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Eliminar
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                ¿Deseas eliminar los elementos seleccionados?
-              </AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => {
-                  const response = await multipleDeleteAction(selectedIds)
 
-                  if (response.success) {
-                    toast({
-                      description: 'Elementos eliminados correctamente',
-                      title: 'Éxito',
-                      variant: 'success',
-                    })
-                    table.resetRowSelection()
-                  }
-
-                  if (response.error) {
-                    toast({
-                      description: response.error,
-                      title: 'Error',
-                      variant: 'destructive',
-                    })
-                  }
-                }}
-              >
-                Eliminar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      ) : // <Button
-      //   variant="outline"
-      //   className="ml-auto"
-      //   onClick={async () => {
-      //     const response = await multipleDeleteAction(selectedIds)
-
-      //     if (response.success) {
-      //       toast({
-      //         description: 'Elementos eliminados correctamente',
-      //         title: 'Éxito',
-      //         variant: 'success',
-      //       })
-      //       table.reset()
-      //     }
-
-      //     if (response.error) {
-      //       toast({
-      //         description: response.error,
-      //         title: 'Error',
-      //         variant: 'destructive',
-      //       })
-      //     }
-      //   }}
-      // >
-      //   Eliminar
-      // </Button>
-      null}
+                    if (response.error) {
+                      toast({
+                        description: response.error,
+                        title: 'Error',
+                        variant: 'destructive',
+                      })
+                    }
+                  }}
+                >
+                  Eliminar
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : null}
+      </div>
     </div>
   )
 }

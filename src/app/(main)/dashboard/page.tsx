@@ -46,6 +46,8 @@ import { getAllItems } from './abastecimiento/inventario/lib/actions/items'
 import { getUserPermissions } from '@/lib/auth'
 import { RenglonWithAllRelations } from '@/types/types'
 import { lowStockItemsColumns } from './components/home-columns'
+import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
   title: 'Administrador',
@@ -77,13 +79,31 @@ const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 
 export default async function Page() {
   const session = await auth()
-  const userPermissions = await getUserPermissions()
-
-  console.log(userPermissions)
-
+  const isAbastecimientoAuthorized = await validateSectionsAndPermissions({
+    sections: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.ABASTECIMIENTO],
+  })
   const statistics = await getStatistics()
   const items = await getAllItems()
   const lowStockItems = getLowStockItems(items)
+
+  if (!isAbastecimientoAuthorized) {
+    return (
+      <>
+        <PageHeader>
+          <HeaderLeftSide>
+            <PageHeaderTitle>
+              <PackagePlus size={24} />
+              Bienvenido, {session?.user?.nombre}
+            </PageHeaderTitle>
+            <PageHeaderDescription>
+              {`Correo: ${session?.user?.email} | Rol: ${session?.user?.rol_nombre}`}
+            </PageHeaderDescription>
+          </HeaderLeftSide>
+        </PageHeader>
+      </>
+    )
+  }
+
   return (
     <>
       <PageHeader>
@@ -96,12 +116,6 @@ export default async function Page() {
             {`Correo: ${session?.user?.email} | Rol: ${session?.user?.rol_nombre}`}
           </PageHeaderDescription>
         </HeaderLeftSide>
-        <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
-        </HeaderRightSide>
       </PageHeader>
 
       <PageContent>

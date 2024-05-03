@@ -45,7 +45,10 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorKey: 'imagen',
     header: ({ column }) => <HeaderCell column={column} value="Imagen" />,
     cell: ({ row }) => {
-      console.log(row.original.imagen, 'imagen')
+      const image = row.original.imagen
+
+      if (!image) return 'Sin imágen'
+
       return (
         <Image
           src={row.original.imagen || ''}
