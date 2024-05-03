@@ -26,7 +26,7 @@ import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-
+import Image from 'next/image'
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
   {
@@ -41,7 +41,21 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorKey: 'descripcion',
     header: ({ column }) => <HeaderCell column={column} value="Descripción" />,
   },
-
+  {
+    accessorKey: 'imagen',
+    header: ({ column }) => <HeaderCell column={column} value="Imagen" />,
+    cell: ({ row }) => {
+      console.log(row.original.imagen, 'imagen')
+      return (
+        <Image
+          src={row.original.imagen || ''}
+          alt={row.original.imagen || ''}
+          width={50}
+          height={50}
+        />
+      )
+    },
+  },
   {
     accessorKey: 'stock',
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,

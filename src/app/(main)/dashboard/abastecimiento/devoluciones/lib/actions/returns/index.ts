@@ -169,6 +169,7 @@ export const deleteReturn = async (id: number) => {
     error: false,
   }
 }
+
 export const getAllReturns = async () => {
   const session = await auth()
   if (!session?.user) {
@@ -215,6 +216,8 @@ export const getReturnById = async (id: number): Promise<ReturnType> => {
         include: {
           renglon: {
             include: {
+              clasificacion: true,
+              categoria: true,
               unidad_empaque: true,
               recepciones: true,
               despachos: {

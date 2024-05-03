@@ -255,14 +255,14 @@ export default function DispatchesForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
-            <FormField
-              control={form.control}
-              name="cedula_destinatario"
-              rules={{ required: 'Este campo es obligatorio' }}
-              render={({ field }) => (
-                <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                  <FormLabel>Destinatario:</FormLabel>
-                  <div className="w-[70%]">
+            <div className="flex gap-4">
+              <FormField
+                control={form.control}
+                name="cedula_destinatario"
+                rules={{ required: 'Este campo es obligatorio' }}
+                render={({ field }) => (
+                  <FormItem className="flex-1 ">
+                    <FormLabel>Destinatario:</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -321,8 +321,6 @@ export default function DispatchesForm({
                     </Popover>
 
                     <FormDescription>
-                      Si no encuentras el destinatario que buscas, puedes
-                      crearlo
                       <Link
                         href="/dashboard/abastecimiento/destinatarios/agregar"
                         className={cn(
@@ -335,18 +333,18 @@ export default function DispatchesForm({
                       </Link>
                     </FormDescription>
                     <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cedula_abastecedor"
-              rules={{ required: 'Este campo es obligatorio' }}
-              render={({ field }) => (
-                <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                  <FormLabel>Profesional que entregará el despacho:</FormLabel>
-                  <div className="w-[70%]">
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cedula_abastecedor"
+                rules={{ required: 'Este campo es obligatorio' }}
+                render={({ field }) => (
+                  <FormItem className=" flex-1 ">
+                    <FormLabel>
+                      Profesional que entregará el despacho:
+                    </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -406,7 +404,6 @@ export default function DispatchesForm({
                     </Popover>
 
                     <FormDescription>
-                      Si no encuentras el profesional que buscas, puedes crearlo
                       <Link
                         href="/dashboard/abastecimiento/profesionales/agregar"
                         className={cn(
@@ -419,18 +416,21 @@ export default function DispatchesForm({
                       </Link>
                     </FormDescription>
                     <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cedula_autorizador"
-              rules={{ required: 'Este campo es obligatorio' }}
-              render={({ field }) => (
-                <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                  <FormLabel>Profesional que autorizará el despacho:</FormLabel>
-                  <div className="w-[70%]">
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex gap-4">
+              <FormField
+                control={form.control}
+                name="cedula_autorizador"
+                rules={{ required: 'Este campo es obligatorio' }}
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Profesional que autorizará el despacho:
+                    </FormLabel>
+
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -489,34 +489,20 @@ export default function DispatchesForm({
                       </PopoverContent>
                     </Popover>
 
-                    {/* <FormDescription>
-                      Si no encuentras el profesional que buscas, puedes crearlo
-                      <Link
-                        href="/dashboard/abastecimiento/profesionales/agregar"
-                        className={cn(
-                          buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
-                        )}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Crear Profesional
-                      </Link>
-                    </FormDescription> */}
                     <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="cedula_supervisor"
-              rules={{ required: 'Este campo es obligatorio' }}
-              render={({ field }) => (
-                <FormItem className="flex flex-1 justify-between gap-4 items-center">
-                  <FormLabel>
-                    Profesional que supervisará el despacho:
-                  </FormLabel>
-                  <div className="w-[70%]">
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="cedula_supervisor"
+                rules={{ required: 'Este campo es obligatorio' }}
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Profesional que supervisará el despacho:
+                    </FormLabel>
+
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -575,33 +561,17 @@ export default function DispatchesForm({
                       </PopoverContent>
                     </Popover>
 
-                    {/* <FormDescription>
-                      Si no encuentras el profesional que buscas, puedes crearlo
-                      <Link
-                        href="/dashboard/abastecimiento/profesionales/agregar"
-                        className={cn(
-                          buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
-                        )}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Crear Profesional
-                      </Link>
-                    </FormDescription> */}
                     <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="border-b border-base-300" />
+
             <FormField
               control={form.control}
               name="motivo"
               rules={{
-                required: 'Este campo es necesario',
-                minLength: {
-                  value: 10,
-                  message: 'Debe tener al menos 10 carácteres',
-                },
                 maxLength: {
                   value: 200,
                   message: 'Debe tener un máximo de 200 carácteres',

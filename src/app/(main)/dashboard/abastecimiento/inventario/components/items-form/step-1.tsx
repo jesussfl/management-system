@@ -1,3 +1,4 @@
+'use client'
 import { useFormContext } from 'react-hook-form'
 import {
   FormInstructions,
@@ -61,6 +62,7 @@ export const Step1 = () => {
           </FormItem>
         )}
       />
+
       <FormField
         control={form.control}
         name="descripcion"

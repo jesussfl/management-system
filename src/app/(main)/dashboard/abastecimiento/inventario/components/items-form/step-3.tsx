@@ -34,7 +34,14 @@ import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { getAllWarehouses } from '../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
-export const Step3 = () => {
+import ImageUpload from '@/modules/common/components/file-upload'
+export const Step3 = ({
+  image,
+  setImage,
+}: {
+  image: FormData | null
+  setImage: (image: FormData | null) => void
+}) => {
   const form = useFormContext()
   const { weight } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
@@ -360,6 +367,9 @@ export const Step3 = () => {
           )}
         />
       </div>
+
+      {/* <ImageUpload setFile={setImage} /> */}
+
       {
         <FormField
           control={form.control}

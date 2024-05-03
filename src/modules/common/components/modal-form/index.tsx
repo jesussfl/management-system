@@ -85,7 +85,10 @@ export default function ModalForm({
         </Button>
       </DialogTrigger>
       <DialogContent
-        className={cn(`lg:max-w-screen-lg overflow-hidden p-0`, className)}
+        className={cn(
+          `lg:max-w-screen-lg overflow-x-hidden p-0 max-h-[90vh] overflow-y-auto`,
+          className
+        )}
       >
         {childrenWithProps}
 

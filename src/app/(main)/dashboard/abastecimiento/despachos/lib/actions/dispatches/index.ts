@@ -234,7 +234,7 @@ export const getAllDispatches = async () => {
   return dispatch
 }
 
-export const getDispatchById = async (id: number): Promise<FormValues> => {
+export const getDispatchById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')

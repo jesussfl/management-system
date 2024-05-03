@@ -16,6 +16,7 @@ export function SerialsFormNew({
   index: number
   id: number
 }) {
+  console.log(id, 'INDEX')
   const { setValue, watch } = useFormContext()
   const [isPending, startTransition] = useTransition()
   const [serials, setSerials] = useState<SerialWithRenglon[]>([])

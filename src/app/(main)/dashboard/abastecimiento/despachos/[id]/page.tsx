@@ -45,6 +45,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
+        {/* @ts-ignore */}
         <DispatchesForm renglonesData={itemsData} defaultValues={dispatch} />
       </PageContent>
     </>

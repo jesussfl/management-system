@@ -11,6 +11,10 @@ import {
 } from '@/modules/layout/templates/page'
 
 import BackupButton from '@/modules/maintenance/components/backup'
+import { Upload } from './upload'
+import { DataTable } from '@/modules/common/components/table/data-table'
+import { imageColumns } from './columns'
+import { getAllImages } from '.'
 
 export const metadata: Metadata = {
   title: 'Configuraciones',
@@ -18,6 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
+  const images = await getAllImages()
   return (
     <>
       <PageHeader>
@@ -34,7 +39,9 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <BackupButton />
+        {/* <BackupButton /> */}
+        <Upload />
+        <DataTable columns={imageColumns} data={images} />
       </PageContent>
     </>
   )

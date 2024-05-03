@@ -118,17 +118,17 @@ model Renglon {
   estado               RenglonStates? @default(ACTIVO)
   fecha_creacion       DateTime       @default(now())
   ultima_actualizacion DateTime       @updatedAt
-
-  unidadEmpaqueId Int
-  unidad_empaque  UnidadEmpaque @relation(fields: [unidadEmpaqueId], references: [id])
-  clasificacionId Int
-  clasificacion   Clasificacion @relation(fields: [clasificacionId], references: [id])
-  categoriaId     Int
-  categoria       Categoria     @relation(fields: [categoriaId], references: [id])
-  id_subsistema   Int?
-  subsistema      Subsistema?   @relation(fields: [id_subsistema], references: [id])
-  id_almacen      Int?
-  almacen         Almacen?      @relation(fields: [id_almacen], references: [id])
+  imagen               String?
+  unidadEmpaqueId      Int
+  unidad_empaque       UnidadEmpaque  @relation(fields: [unidadEmpaqueId], references: [id])
+  clasificacionId      Int
+  clasificacion        Clasificacion  @relation(fields: [clasificacionId], references: [id])
+  categoriaId          Int
+  categoria            Categoria      @relation(fields: [categoriaId], references: [id])
+  id_subsistema        Int?
+  subsistema           Subsistema?    @relation(fields: [id_subsistema], references: [id])
+  id_almacen           Int?
+  almacen              Almacen?       @relation(fields: [id_almacen], references: [id])
 
   despachos    Despachos_Renglones[]
   recepciones  Recepciones_Renglones[]
@@ -623,4 +623,10 @@ model Armamento {
   id_almacen Int
   almacen    Almacen @relation(fields: [id_almacen], references: [id], onDelete: Cascade)
   pasillo    String?
+}
+
+model Image {
+  id Int @id @default(autoincrement())
+
+  image String
 }

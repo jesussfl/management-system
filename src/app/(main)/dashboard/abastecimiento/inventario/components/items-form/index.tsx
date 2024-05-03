@@ -41,11 +41,13 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   const [isPending, startTransition] = React.useTransition()
   const [isLoading, setIsLoading] = React.useState(false)
   const [currentStep, setCurrentStep] = React.useState(1)
+  const [image, setImage] = React.useState<FormData | null>(null)
+
   const [ref, setRef] = React.useState<any>(null)
   const onSubmit: SubmitHandler<Renglon> = async (data) => {
     startTransition(() => {
       if (!isEditEnabled) {
-        createItem(data).then((res) => {
+        createItem(data, image).then((res) => {
           if (res?.error) {
             toast({
               title: 'Error',
@@ -159,7 +161,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
           <div className="px-24">
             {currentStep === 1 && <Step1 />}
             {currentStep === 2 && <Step2 />}
-            {currentStep === 3 && <Step3 />}
+            {currentStep === 3 && <Step3 image={image} setImage={setImage} />}
           </div>
 
           <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">

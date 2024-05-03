@@ -34,7 +34,11 @@ import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
 import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
-export const Step3 = () => {
+export const Step3 = ({
+  setImage,
+}: {
+  setImage: (image: FormData | null) => void
+}) => {
   const form = useFormContext()
   const { weight } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])

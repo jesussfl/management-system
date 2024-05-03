@@ -27,7 +27,7 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           <SelectTrigger className="h-8 w-[70px]">
             <SelectValue placeholder={table.getState().pagination.pageSize} />
           </SelectTrigger>
-          <SelectContent side="top">
+          <SelectContent side="bottom">
             {[10, 20, 30, 40, 50].map((pageSize) => (
               <SelectItem key={pageSize} value={`${pageSize}`}>
                 {pageSize}
@@ -47,7 +47,6 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
-          <span className="sr-only">Ir a primera página</span>
           <DoubleArrowLeftIcon className="h-4 w-4" />
         </Button>
         <Button
@@ -56,7 +55,6 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          <span className="sr-only">Anterior</span>
           <ChevronLeftIcon className="h-4 w-4" />
         </Button>
         <Button
@@ -65,7 +63,6 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          <span className="sr-only">Siguiente</span>
           <ChevronRightIcon className="h-4 w-4" />
         </Button>
         <Button
@@ -74,7 +71,6 @@ export const DataTablePagination = ({ table }: { table: any }) => {
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
-          <span className="sr-only">Ir a última página</span>
           <DoubleArrowRightIcon className="h-4 w-4" />
         </Button>
       </div>

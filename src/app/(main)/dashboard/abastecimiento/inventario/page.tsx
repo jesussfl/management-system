@@ -99,6 +99,7 @@ export default async function Page() {
           <Link
             href="/dashboard/abastecimiento/inventario/renglon"
             className={buttonVariants({ variant: 'default' })}
+            scroll={false}
           >
             <Plus className="mr-2 h-4 w-4" />
             Agregar Renglón

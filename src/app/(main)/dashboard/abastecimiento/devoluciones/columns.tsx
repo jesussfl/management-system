@@ -83,7 +83,9 @@ export const columns: ColumnDef<ReturnType>[] = [
     },
   },
   {
-    accessorKey: 'renglones',
+    id: 'renglones',
+    accessorFn: (row) =>
+      row.renglones.map((renglon) => renglon.renglon.nombre).join(', '),
     header: ({ column }) => {
       return (
         <Button
@@ -97,18 +99,9 @@ export const columns: ColumnDef<ReturnType>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => {
-      const renglones = row.original.renglones
-
-      return (
-        <div className="">
-          {renglones.map((renglon) => ` ${renglon.renglon.nombre}`).join(', ')}
-        </div>
-      )
-    },
   },
   {
-    accessorKey: 'renglones',
+    accessorKey: 'detalles',
     header: ({ column }) => {
       return (
         <Button

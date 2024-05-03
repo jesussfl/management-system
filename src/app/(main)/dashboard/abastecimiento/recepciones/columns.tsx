@@ -112,7 +112,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
     },
   },
   {
-    accessorKey: 'renglones',
+    accessorKey: 'detalles',
     header: ({ column }) => {
       return (
         <Button

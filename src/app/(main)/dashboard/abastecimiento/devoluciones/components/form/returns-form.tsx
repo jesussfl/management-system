@@ -50,7 +50,6 @@ import {
   Devolucion,
 } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
-import { SerialsForm } from './serials-form'
 import { createDispatch } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import { CaretSortIcon } from '@radix-ui/react-icons'
@@ -101,7 +100,7 @@ type ComboboxData = {
   value: string
   label: string
 }
-export default function DispatchesForm({
+export default function ReturnsForm({
   renglonesData,
   defaultValues,
   close,
@@ -453,7 +452,13 @@ export default function DispatchesForm({
 
                   <DataTable
                     columns={columns}
-                    data={renglonesData}
+                    data={renglonesData.filter((item) => {
+                      if (item.despachos.length > 0) {
+                        return true
+                      }
+
+                      return false
+                    })}
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
                     selectedData={selectedItems}

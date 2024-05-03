@@ -3,7 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma, Profesional_Abastecimiento } from '@prisma/client'
@@ -22,6 +22,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteDispatch } from './lib/actions/dispatches'
+import { cn } from '@/utils/utils'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: true
@@ -56,7 +57,9 @@ export const columns: ColumnDef<DespachoType>[] = [
   },
 
   {
-    accessorKey: 'destinatario.cedula',
+    id: 'destinatario',
+    accessorFn: (row: DespachoType) =>
+      row.destinatario.nombres + ' ' + row.destinatario.apellidos,
     header: ({ column }) => {
       return (
         <Button
@@ -65,14 +68,21 @@ export const columns: ColumnDef<DespachoType>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Cédula Destinatario
+          Destinatario
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
+    cell: ({ row }) => {
+      const data = row.getValue<string>('destinatario')
+
+      return <div>{data}</div>
+    },
   },
   {
-    accessorKey: 'supervisor',
+    id: 'supervisor',
+    accessorFn: (row: DespachoType) =>
+      row?.supervisor?.nombres + ' ' + row.supervisor?.apellidos,
     header: ({ column }) => {
       return (
         <Button
@@ -87,17 +97,17 @@ export const columns: ColumnDef<DespachoType>[] = [
       )
     },
     cell: ({ row }) => {
-      const data = row.getValue<Profesional_Abastecimiento>('supervisor')
-      const nombres = data?.nombres
-      const apellidos = data?.apellidos
+      const data = row.getValue<string>('supervisor')
 
-      if (!nombres && !apellidos) return <div>No asignado</div>
+      if (!data) return <div>No asignado</div>
 
-      return <div>{data?.nombres + ' ' + data?.apellidos}</div>
+      return <div>{data}</div>
     },
   },
   {
-    accessorKey: 'autorizador',
+    id: 'autorizador',
+    accessorFn: (row: DespachoType) =>
+      row?.autorizador?.nombres + ' ' + row.autorizador?.apellidos,
     header: ({ column }) => {
       return (
         <Button
@@ -112,17 +122,18 @@ export const columns: ColumnDef<DespachoType>[] = [
       )
     },
     cell: ({ row }) => {
-      const data = row.getValue<Profesional_Abastecimiento>('autorizador')
-      const nombres = data?.nombres
-      const apellidos = data?.apellidos
+      const data = row.getValue<string>('autorizador')
 
-      if (!nombres && !apellidos) return <div>No asignado</div>
+      if (!data) return <div>No asignado</div>
 
-      return <div>{data?.nombres + ' ' + data?.apellidos}</div>
+      return <div>{data}</div>
     },
   },
   {
-    accessorKey: 'abastecedor',
+    id: 'abastecedor',
+    accessorFn: (row: DespachoType) => {
+      return row?.abastecedor?.nombres + ' ' + row.abastecedor?.apellidos
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -137,13 +148,11 @@ export const columns: ColumnDef<DespachoType>[] = [
       )
     },
     cell: ({ row }) => {
-      const data = row.getValue<Profesional_Abastecimiento>('abastecedor')
-      const nombres = data?.nombres
-      const apellidos = data?.apellidos
+      const data = row.getValue<string>('abastecedor')
 
-      if (!nombres && !apellidos) return <div>No asignado</div>
+      if (!data) return <div>No asignado</div>
 
-      return <div>{data?.nombres + ' ' + data?.apellidos}</div>
+      return <div>{data}</div>
     },
   },
   {
@@ -168,7 +177,9 @@ export const columns: ColumnDef<DespachoType>[] = [
     },
   },
   {
-    accessorKey: 'renglones',
+    id: 'renglones',
+    accessorFn: (row: DespachoType) =>
+      row.renglones.map((renglon) => renglon.renglon?.nombre).join(', '),
     header: ({ column }) => {
       return (
         <Button
@@ -177,17 +188,43 @@ export const columns: ColumnDef<DespachoType>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          renglones
+          Renglones Despachados
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    // cell: ({ row }) => {
+    //   const string = row.original.renglones
+    //     .map((renglon) => ` ${renglon.renglon?.nombre}`)
+    //     .join(', ')
+
+    //   return <div className="">{string}</div>
+    // },
+  },
+  {
+    accessorKey: 'detalles',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Detalles
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const string = row.original.renglones
-        .map((renglon) => ` ${renglon.renglon?.nombre}`)
-        .join(', ')
-
-      return <div className="">{string}</div>
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/despachos/detalle/${row.original.id}`}
+        >
+          Ver detalles
+        </Link>
+      )
     },
   },
   {

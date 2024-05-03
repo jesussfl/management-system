@@ -1,105 +1,101 @@
 'use client'
-import { Input } from '@/modules/common/components/input/input'
 
 import { useFormContext } from 'react-hook-form'
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/modules/common/components/form'
 
+import { CardTitle } from '@/modules/common/components/card/card'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 import {
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
-import { v4 } from 'uuid'
-import { Switch } from '@/modules/common/components/switch/switch'
-export function SerialsForm({
+  getDispatchedSerialsByItemId,
+  getSerialsByItemId,
+} from '@/lib/actions/serials'
+import { DataTable } from '@/modules/common/components/table/data-table'
+import { SerialWithRenglon } from '@/types/types'
+import { columns } from './serial-columns'
+
+export function SerialsFormNew({
   index: indexForm,
-  quantity,
   id,
 }: {
   index: number
-  quantity: number
-  id?: number
+  id: number
 }) {
-  const form = useFormContext()
-  const autoSerialsEnabled = form.watch(
-    `renglones.${indexForm}.seriales_automaticos`
+  const { setValue, watch } = useFormContext()
+  const [isPending, startTransition] = useTransition()
+  const [serials, setSerials] = useState<SerialWithRenglon[]>([])
+  const [selectedItems, setSelectedItems] = useState<{
+    [key: number]: boolean
+  }>({})
+  const [selectedData, setSelectedData] = useState<SerialWithRenglon[]>([])
+
+  useEffect(() => {
+    const selectedSerials = watch(`renglones.${indexForm}.seriales`)
+
+    startTransition(() => {
+      getDispatchedSerialsByItemId(id).then((serials) => {
+        setSerials(serials)
+
+        if (selectedSerials.length > 0) {
+          const filteredSerials = serials.filter((serial) =>
+            selectedSerials.includes(serial.serial)
+          )
+
+          const selectedItems = filteredSerials.reduce(
+            (acc, serial) => {
+              acc[serial.id] = true
+              return acc
+            },
+            {} as { [key: number]: boolean }
+          )
+
+          setSelectedItems(selectedItems)
+          setSelectedData(filteredSerials)
+        }
+      })
+    })
+  }, [id])
+
+  const handleTableSelect = useCallback(
+    (lastSelectedRow: SerialWithRenglon) => {
+      if (lastSelectedRow) {
+        setSelectedData((prev) => {
+          if (prev.find((serial) => serial.id === lastSelectedRow.id)) {
+            return prev.filter((item) => item.id !== lastSelectedRow.id)
+          } else {
+            return [...prev, lastSelectedRow]
+          }
+        })
+      }
+    },
+    []
   )
 
+  useEffect(() => {
+    setValue(
+      `renglones.${indexForm}.seriales`,
+      selectedData.map((item) => item.serial),
+      {
+        shouldDirty: true,
+      }
+    )
+  }, [selectedData, setValue])
+
+  if (isPending) {
+    return <div>Loading...</div>
+  }
   return (
     <div className="flex flex-col gap-0 p-8 overflow-y-auto">
-      <CardHeader className="flex items-center justify-between gap-4">
-        <CardTitle>Seriales</CardTitle>
-        <CardDescription>Ingresa los seriales de la recepción</CardDescription>
-        <FormField
-          control={form.control}
-          name={`renglones.${indexForm}.seriales_automaticos`}
-          render={({ field }) => {
-            return (
-              <FormItem className="flex flex-row justify-center items-center gap-4">
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={(value) => {
-                      if (!value) {
-                        Array.from({ length: quantity }).map((_, index) => {
-                          form.setValue(
-                            `renglones.${indexForm}.seriales.${index}.serial`,
-                            ''
-                          )
-                        })
-                      }
-                      field.onChange(value)
-                    }}
-                  />
-                </FormControl>
-                <FormLabel>Seriales automaticos</FormLabel>
-              </FormItem>
-            )
-          }}
+      <div className="flex flex-col gap-4 p-8">
+        <CardTitle>Selecciona los seriales</CardTitle>
+
+        <DataTable
+          columns={columns}
+          data={serials}
+          onSelectedRowsChange={handleTableSelect}
+          isColumnFilterEnabled={false}
+          selectedData={selectedItems}
+          setSelectedData={setSelectedItems}
         />
-      </CardHeader>
-      {Array.from({ length: quantity }).map((_, index) => (
-        <FormField
-          key={`renglon-${indexForm}-serial-${index}`}
-          control={form.control}
-          name={`renglones.${indexForm}.seriales.${index}.serial`}
-          rules={{ required: true, validate: (value) => !!value || 'Required' }}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Serial #{index + 1}</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  onChange={(e) => {
-                    if (form.formState.errors[field.name]) {
-                      form.clearErrors(field.name)
-                    }
-                    form.setValue(field.name, e.target.value, {
-                      shouldDirty: true,
-                    })
-                  }}
-                  value={
-                    field.value ||
-                    (autoSerialsEnabled
-                      ? form.setValue(field.name, v4(), {
-                          shouldDirty: true,
-                        })
-                      : '') ||
-                    ''
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      ))}
+      </div>
     </div>
   )
 }

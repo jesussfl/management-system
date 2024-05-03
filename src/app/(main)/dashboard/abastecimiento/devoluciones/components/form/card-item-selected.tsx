@@ -22,7 +22,7 @@ import {
 import ModalForm from '@/modules/common/components/modal-form'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { RenglonWithAllRelations } from '@/types/types'
-import { SerialsFormNew } from '../../../despachos/components/form/serials-form-new'
+import { SerialsFormNew } from './serials-form'
 
 export const SelectedItemCard = ({
   item,
