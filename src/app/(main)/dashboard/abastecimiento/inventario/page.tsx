@@ -46,7 +46,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
+import {
+  Boxes,
+  DownloadIcon,
+  PackageMinus,
+  PackagePlus,
+  Plus,
+} from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 import {
@@ -81,6 +87,13 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
+          <Link
+            href="/dashboard/abastecimiento/inventario/exportar"
+            className={buttonVariants({ variant: 'secondary' })}
+          >
+            <DownloadIcon className="mr-2 h-4 w-4" />
+            Exportar
+          </Link>
           <Link
             href="/dashboard/abastecimiento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}

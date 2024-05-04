@@ -27,6 +27,8 @@ import { RenglonWithAllRelations } from '@/types/types'
 import { cn } from '@/utils/utils'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import Image from 'next/image'
+import dayjs from 'dayjs'
+import { format } from 'date-fns'
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
   {
@@ -184,6 +186,27 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       )
     },
   },
+  // {
+  //   accessorKey: 'fecha_creacion',
+  //   header: ({ column }) => (
+  //     <HeaderCell column={column} value="Fecha de creación" />
+  //   ),
+  //   cell: ({ row }) => {
+  //     return (
+  //       <div>{new Date(row.original?.fecha_creacion).toLocaleString()}</div>
+  //     )
+  //   },
+  // },
+  {
+    accessorKey: 'ultima_actualizacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Fecha de actualización" />
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.ultima_actualizacion), 'dd/MM/yyyy HH:mm'),
+  },
+
   {
     id: 'acciones',
 
