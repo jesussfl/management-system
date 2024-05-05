@@ -263,8 +263,8 @@ model Serial {
   recepcion     Recepciones_Renglones   @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
   estado        String?                 @default("Disponible")
   id_despacho   Int?
-  despacho      Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  devolucion    Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho      Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onUpdate: Cascade)
+  devolucion    Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
   id_devolucion Int?
 
   fecha_creacion       DateTime @default(now())

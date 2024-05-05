@@ -15,6 +15,7 @@ import {
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Usuario } from '@prisma/client'
 import Link from 'next/link'
+import { format } from 'date-fns'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
@@ -71,7 +72,23 @@ export const columns: ColumnDef<Usuario>[] = [
       )
     },
   },
-
+  {
+    accessorKey: 'createdAt',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.createdAt), 'dd/MM/yyyy HH:mm'),
+  },
   {
     id: 'actions',
     cell: ({ row }) => {

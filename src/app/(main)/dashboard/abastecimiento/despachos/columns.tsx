@@ -23,6 +23,7 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteDispatch } from './lib/actions/dispatches'
 import { cn } from '@/utils/utils'
+import { format } from 'date-fns'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: true
@@ -155,27 +156,7 @@ export const columns: ColumnDef<DespachoType>[] = [
       return <div>{data}</div>
     },
   },
-  {
-    accessorKey: 'fecha_despacho',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Fecha despacho
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return row.getValue<string>('fecha_despacho')
-        ? new Date(row.getValue<string>('fecha_despacho')).toLocaleDateString()
-        : ''
-    },
-  },
+
   {
     id: 'renglones',
     accessorFn: (row: DespachoType) =>
@@ -193,13 +174,6 @@ export const columns: ColumnDef<DespachoType>[] = [
         </Button>
       )
     },
-    // cell: ({ row }) => {
-    //   const string = row.original.renglones
-    //     .map((renglon) => ` ${renglon.renglon?.nombre}`)
-    //     .join(', ')
-
-    //   return <div className="">{string}</div>
-    // },
   },
   {
     accessorKey: 'detalles',
@@ -226,6 +200,41 @@ export const columns: ColumnDef<DespachoType>[] = [
         </Link>
       )
     },
+  },
+  {
+    accessorKey: 'fecha_despacho',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de despacho
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_despacho), 'dd/MM/yyyy HH:mm'),
+  },
+
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
   {
     id: 'acciones',
@@ -258,11 +267,9 @@ export const columns: ColumnDef<DespachoType>[] = [
                 <DropdownMenuItem>Exportar</DropdownMenuItem>
               </Link>
 
-              {/* <Link
-                href={`/dashboard/abastecimiento/despachos/${String(data.id)}`}
-              >
+              <Link href={`/dashboard/abastecimiento/despachos/${data.id}`}>
                 <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link> */}
+              </Link>
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem>Eliminar</DropdownMenuItem>
               </AlertDialogTrigger>

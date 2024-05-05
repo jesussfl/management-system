@@ -29,7 +29,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <PageHeader className="mb-0">
         <HeaderLeftSide className="flex-row items-center gap-4">
           <Link
-            href="/dashboard/abastecimiento/recepciones"
+            href="/dashboard/abastecimiento/devoluciones"
             className={buttonVariants({ variant: 'outline' })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -38,10 +38,10 @@ export default async function Page({ params }: { params: { id: string } }) {
           <div>
             <PageHeaderTitle>
               <PackagePlus size={24} />
-              Editar Recepción
+              Editar Devolución
             </PageHeaderTitle>
             <PageHeaderDescription>
-              Las recepciones serán agregadas al inventario
+              Las devoluciones serán agregadas al inventario
             </PageHeaderDescription>
           </div>
         </HeaderLeftSide>

@@ -27,7 +27,6 @@ import { RenglonWithAllRelations } from '@/types/types'
 import { cn } from '@/utils/utils'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import Image from 'next/image'
-import dayjs from 'dayjs'
 import { format } from 'date-fns'
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
@@ -63,25 +62,16 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     accessorKey: 'stock',
+    accessorFn: (row) =>
+      row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+
+        return total + serials
+      }, 0),
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-
-      const dispatchedSerials = row.original.despachos.reduce(
-        (total, item) => total + item.seriales.length,
-        0
-      )
-
-      const returnedSerials = row.original.devoluciones.reduce(
-        (total, item) => total + item.seriales.length,
-        0
-      )
-
-      return <div>{stock - dispatchedSerials + returnedSerials}</div>
-    },
   },
   {
     accessorKey: 'peso_total',
@@ -186,27 +176,24 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: 'fecha_creacion',
-  //   header: ({ column }) => (
-  //     <HeaderCell column={column} value="Fecha de creación" />
-  //   ),
-  //   cell: ({ row }) => {
-  //     return (
-  //       <div>{new Date(row.original?.fecha_creacion).toLocaleString()}</div>
-  //     )
-  //   },
-  // },
+
   {
-    accessorKey: 'ultima_actualizacion',
+    accessorKey: 'fecha_creacion',
     filterFn: 'dateBetweenFilterFn',
     header: ({ column }) => (
-      <HeaderCell column={column} value="Fecha de actualización" />
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
     ),
     cell: ({ row }) =>
-      format(new Date(row.original?.ultima_actualizacion), 'dd/MM/yyyy HH:mm'),
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
-
   {
     id: 'acciones',
 

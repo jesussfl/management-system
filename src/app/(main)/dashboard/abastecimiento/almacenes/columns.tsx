@@ -23,6 +23,7 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteWarehouse } from './lib/actions/warehouse'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { format } from 'date-fns'
 
 export const columns: ColumnDef<Almacen>[] = [
   SELECT_COLUMN,
@@ -78,7 +79,23 @@ export const columns: ColumnDef<Almacen>[] = [
       )
     },
   },
-
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
+  },
   {
     id: 'acciones',
     cell: ({ row }) => {

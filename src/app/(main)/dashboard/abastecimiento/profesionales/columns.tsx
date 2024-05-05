@@ -6,7 +6,7 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-import { DestinatarioType, ProfesionalType } from '@/types/types'
+import { ProfesionalType } from '@/types/types'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import { format } from 'date-fns'
 export const columns: ColumnDef<ProfesionalType>[] = [
   SELECT_COLUMN,
   {
@@ -205,6 +206,24 @@ export const columns: ColumnDef<ProfesionalType>[] = [
         </Button>
       )
     },
+  },
+
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
   {
     id: 'acciones',

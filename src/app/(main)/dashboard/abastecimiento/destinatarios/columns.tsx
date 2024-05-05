@@ -24,6 +24,7 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteReceiver } from './lib/actions/receivers'
+import { format } from 'date-fns'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
   {
@@ -227,6 +228,23 @@ export const columns: ColumnDef<DestinatarioType>[] = [
         </Button>
       )
     },
+  },
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
   {
     id: 'acciones',

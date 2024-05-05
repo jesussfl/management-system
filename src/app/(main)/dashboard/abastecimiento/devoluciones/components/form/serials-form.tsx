@@ -15,9 +15,13 @@ import { columns } from './serial-columns'
 export function SerialsFormNew({
   index: indexForm,
   id,
+  isEditEnabled = false,
+  returnId,
 }: {
   index: number
   id: number
+  isEditEnabled?: boolean
+  returnId?: number
 }) {
   const { setValue, watch } = useFormContext()
   const [isPending, startTransition] = useTransition()
@@ -31,7 +35,7 @@ export function SerialsFormNew({
     const selectedSerials = watch(`renglones.${indexForm}.seriales`)
 
     startTransition(() => {
-      getDispatchedSerialsByItemId(id).then((serials) => {
+      getDispatchedSerialsByItemId(id, isEditEnabled).then((serials) => {
         setSerials(serials)
 
         if (selectedSerials.length > 0) {

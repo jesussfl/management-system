@@ -3,15 +3,10 @@ import { useCallback, useEffect, useState, useTransition } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  useFormContext,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { Box, CheckIcon, Plus, Trash } from 'lucide-react'
+import { CheckIcon, Plus } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -40,17 +35,8 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  Prisma,
-  Despacho,
-  Despachos_Renglones,
-  Serial,
-  Profesional_Abastecimiento,
-  Devoluciones_Renglones,
-  Devolucion,
-} from '@prisma/client'
+import { Prisma, Devoluciones_Renglones, Devolucion } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
-import { createDispatch } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import {
@@ -60,12 +46,10 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-import { Input } from '@/modules/common/components/input/input'
-import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
 import { SelectedItemCard } from './card-item-selected'
-import { createReturn } from '../../lib/actions/returns'
+import { createReturn, updateReturn } from '../../lib/actions/returns'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -221,7 +205,29 @@ export default function ReturnsForm({
     if (itemsWithoutSerials.length > 0) {
       return
     }
-    createReturn(data).then((res) => {
+    if (!isEditEnabled) {
+      createReturn(data).then((res) => {
+        if (res?.error) {
+          toast({
+            title: 'Error',
+            description: res?.error,
+            variant: 'destructive',
+          })
+          return
+        }
+        toast({
+          title: 'Devolución creada',
+          description: 'Las devoluciones se han creado correctamente',
+          variant: 'success',
+        })
+        router.replace('/dashboard/abastecimiento/devoluciones')
+      })
+
+      return
+    }
+
+    // @ts-ignore
+    updateReturn(defaultValues?.id, data).then((res) => {
       if (res?.error) {
         toast({
           title: 'Error',
@@ -231,8 +237,8 @@ export default function ReturnsForm({
         return
       }
       toast({
-        title: 'Devolución creada',
-        description: 'Las devoluciones se han creado correctamente',
+        title: 'Devolución actualizada',
+        description: 'Las devoluciones se han actualizado correctamente',
         variant: 'success',
       })
       router.replace('/dashboard/abastecimiento/devoluciones')
@@ -494,6 +500,9 @@ export default function ReturnsForm({
                       isError={
                         isError ? 'Este renglon no tiene seriales' : false
                       }
+                      isEditEnabled={isEditEnabled}
+                      // @ts-ignore
+                      returnId={defaultValues?.id}
                       setItemsWithoutSerials={setItemsWithoutSerials}
                     />
                   )

@@ -12,11 +12,14 @@ import { columns } from './serial-columns'
 export function SerialsFormNew({
   index: indexForm,
   id,
+  isEditEnabled = false,
+  dispatchId,
 }: {
   index: number
   id: number
+  isEditEnabled?: boolean
+  dispatchId?: number
 }) {
-  console.log(id, 'INDEX')
   const { setValue, watch } = useFormContext()
   const [isPending, startTransition] = useTransition()
   const [serials, setSerials] = useState<SerialWithRenglon[]>([])
@@ -29,7 +32,7 @@ export function SerialsFormNew({
     const selectedSerials = watch(`renglones.${indexForm}.seriales`)
 
     startTransition(() => {
-      getSerialsByItemId(id).then((serials) => {
+      getSerialsByItemId(id, isEditEnabled).then((serials) => {
         setSerials(serials)
 
         if (selectedSerials.length > 0) {

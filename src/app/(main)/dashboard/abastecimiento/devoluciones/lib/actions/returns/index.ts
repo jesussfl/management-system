@@ -128,6 +128,139 @@ export const createReturn = async (data: FormValues) => {
     error: false,
   }
 }
+
+export const updateReturn = async (id: number, data: FormValues) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DEVOLUCIONES,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const { motivo, fecha_devolucion, cedula_destinatario, renglones } = data
+
+  if (!fecha_devolucion || !renglones) {
+    return {
+      error: 'Missing Fields',
+      success: false,
+    }
+  }
+
+  if (renglones.length === 0) {
+    return {
+      error: 'No se han seleccionado renglones',
+      success: false,
+    }
+  }
+
+  const items = data.renglones
+
+  const currentReturn = await prisma.devolucion.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
+    },
+  })
+
+  if (!currentReturn) {
+    return {
+      error: 'Devolucion no encontrada',
+      success: false,
+    }
+  }
+
+  const serialsByReturn = currentReturn.renglones
+    .flatMap((renglon) => renglon.seriales)
+    .map((serial) => ({ id_renglon: serial.id_renglon, serial: serial.serial }))
+
+  const serials: { id_renglon: number; serial: string }[] = []
+  for (const item of items) {
+    const serialsByItem = item.seriales.map((serial) => ({
+      id_renglon: item.id_renglon,
+      serial,
+    }))
+    serials.push(...serialsByItem)
+    continue
+  }
+  renglones.forEach((renglon) => {
+    // @ts-ignore
+    delete renglon.id
+  })
+  //create a const where the serials are not in the current return
+  // const serialsToUpdate = serials.filter(
+  //   (serial) =>
+  //     !serialsByReturn.some(
+  //       (serialByReturn) => serialByReturn.serial === serial.serial
+  //     )
+  // )
+  await prisma.devolucion.update({
+    where: {
+      id,
+    },
+    data: {
+      cedula_destinatario,
+      motivo,
+      fecha_devolucion,
+
+      renglones: {
+        deleteMany: {},
+        create: renglones.map((renglon) => ({
+          id_renglon: renglon.id_renglon,
+
+          seriales: {
+            connect: serials
+              .filter((serial) => serial.id_renglon === renglon.id_renglon)
+              .map((serial) => ({ serial: serial.serial })),
+          },
+        })),
+      },
+    },
+  })
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: serialsByReturn?.map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Disponible',
+    },
+  })
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: serials.map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Devuelto',
+    },
+  })
+
+  await registerAuditAction(`Devolucion actualizada con motivo: ${motivo}`)
+  revalidatePath('/dashboard/abastecimiento/devoluciones')
+
+  return {
+    success: true,
+    error: false,
+  }
+}
+
 export const deleteReturn = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
@@ -149,6 +282,13 @@ export const deleteReturn = async (id: number) => {
     where: {
       id,
     },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
+    },
   })
 
   if (!exist) {
@@ -161,6 +301,19 @@ export const deleteReturn = async (id: number) => {
     },
   })
 
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: exist.renglones
+          .flatMap((renglon) => renglon.seriales)
+          .filter((serial) => serial.estado === 'Devuelto')
+          .map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Disponible',
+    },
+  })
   await registerAuditAction(`Devolucion eliminada con motivo: ${exist.motivo}`)
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 

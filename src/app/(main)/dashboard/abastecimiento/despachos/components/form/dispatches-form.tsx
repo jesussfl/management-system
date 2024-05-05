@@ -48,8 +48,10 @@ import {
   Profesional_Abastecimiento,
 } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
-import { SerialsForm } from './serials-form'
-import { createDispatch } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
+import {
+  createDispatch,
+  updateDispatch,
+} from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import {
@@ -93,7 +95,13 @@ type FormValues = Omit<
 }
 interface Props {
   renglonesData: RenglonWithAllRelations[]
-  defaultValues?: FormValues
+  defaultValues?: Despacho & {
+    destinatario: DestinatarioWithRelations
+    supervisor?: Profesional_Abastecimiento
+    abastecedor?: Profesional_Abastecimiento
+    autorizador?: Profesional_Abastecimiento
+    renglones: Detalles[]
+  }
 }
 type ComboboxData = {
   value: string
@@ -165,6 +173,7 @@ export default function DispatchesForm({
       setSelectedData(renglonesData)
     }
   }, [defaultValues])
+
   const handleTableSelect = useCallback(
     (lastSelectedRow: any) => {
       if (lastSelectedRow) {
@@ -221,7 +230,29 @@ export default function DispatchesForm({
     if (itemsWithoutSerials.length > 0) {
       return
     }
-    createDispatch(data).then((res) => {
+
+    if (!isEditEnabled) {
+      createDispatch(data).then((res) => {
+        if (res?.error) {
+          toast({
+            title: 'Error',
+            description: res?.error,
+            variant: 'destructive',
+          })
+          return
+        }
+        toast({
+          title: 'Despacho creado',
+          description: 'Los despachos se han creado correctamente',
+          variant: 'success',
+        })
+        router.replace('/dashboard/abastecimiento/despachos')
+      })
+
+      return
+    }
+
+    updateDispatch(defaultValues.id, data).then((res) => {
       if (res?.error) {
         toast({
           title: 'Error',
@@ -231,8 +262,8 @@ export default function DispatchesForm({
         return
       }
       toast({
-        title: 'Despacho creado',
-        description: 'Los despachos se han creado correctamente',
+        title: 'Despacho actualizado',
+        description: 'Los despachos se han actualizado correctamente',
         variant: 'success',
       })
       router.replace('/dashboard/abastecimiento/despachos')
@@ -720,7 +751,15 @@ export default function DispatchesForm({
                     0
                   )
 
-                  const totalStock = receptions - dispatchedSerials
+                  const currentDispatch = item.despachos.find((item) => {
+                    // @ts-ignore
+                    return item.id_despacho === defaultValues?.id
+                  })
+                  const totalStock = isEditEnabled
+                    ? receptions -
+                      dispatchedSerials +
+                      (currentDispatch?.seriales.length ?? 0)
+                    : receptions - dispatchedSerials
                   const isEmpty = totalStock === 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
@@ -728,12 +767,15 @@ export default function DispatchesForm({
                       key={item.id}
                       item={item}
                       index={index}
+                      // @ts-ignore
+                      dispatchId={defaultValues?.id}
                       deleteItem={deleteItem}
                       isEmpty={isEmpty ? 'Este renglon no tiene stock' : false}
                       isError={
                         isError ? 'Este renglon no tiene seriales' : false
                       }
                       setItemsWithoutSerials={setItemsWithoutSerials}
+                      isEditEnabled={isEditEnabled}
                     />
                   )
                 })}
@@ -755,13 +797,17 @@ export const SelectedItemCard = ({
   deleteItem,
   isEmpty,
   isError,
+  dispatchId,
   setItemsWithoutSerials,
+  isEditEnabled = false,
 }: {
   item: RenglonWithAllRelations
   isEmpty?: string | boolean
   index: number
   deleteItem: (index: number) => void
   isError?: string | boolean
+  isEditEnabled?: boolean
+  dispatchId?: number
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
@@ -774,8 +820,14 @@ export const SelectedItemCard = ({
     (total, item) => total + item.seriales.length,
     0
   )
-
-  const totalStock = receptions - dispatchedSerials
+  const currentDispatch = item.despachos.find((item) => {
+    // @ts-ignore
+    return item.id_despacho === dispatchId
+  })
+  const totalStock = isEditEnabled
+    ? receptions - dispatchedSerials + (currentDispatch?.seriales.length ?? 0)
+    : receptions - dispatchedSerials
+  // const totalStock = receptions - dispatchedSerials
   const serialsLength = watch(`renglones.${index}.seriales`).length
 
   useEffect(() => {
@@ -867,10 +919,14 @@ export const SelectedItemCard = ({
                       onChange={(event) =>
                         field.onChange(parseInt(event.target.value))
                       }
+                      disabled={isEditEnabled}
                     />
                   </FormControl>
-                  <FormDescription className="w-[12rem]">
-                    Cantidad disponible: {totalStock}
+                  <FormDescription className="">
+                    {isEditEnabled
+                      ? `Cuando se edita un despacho la cantidad debe modificarse
+                    seleccionando los seriales manualmente`
+                      : `Cantidad disponible: ${totalStock}`}
                   </FormDescription>
 
                   <FormMessage />
@@ -895,7 +951,12 @@ export const SelectedItemCard = ({
               className="max-h-[80vh]"
               disabled={isEmpty ? true : false}
             >
-              <SerialsFormNew index={index} id={item.id} />
+              <SerialsFormNew
+                index={index}
+                id={item.id}
+                dispatchId={dispatchId}
+                isEditEnabled={isEditEnabled}
+              />
             </ModalForm>
 
             <FormDescription>

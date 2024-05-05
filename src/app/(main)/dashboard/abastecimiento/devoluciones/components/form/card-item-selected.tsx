@@ -31,12 +31,16 @@ export const SelectedItemCard = ({
   isEmpty,
   isError,
   setItemsWithoutSerials,
+  returnId,
+  isEditEnabled,
 }: {
   item: RenglonWithAllRelations
   isEmpty?: string | boolean
   index: number
   deleteItem: (index: number) => void
   isError?: string | boolean
+  isEditEnabled?: boolean
+  returnId?: number
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
@@ -102,7 +106,12 @@ export const SelectedItemCard = ({
           className="max-h-[80vh]"
           disabled={isEmpty ? true : false}
         >
-          <SerialsFormNew index={index} id={item.id} />
+          <SerialsFormNew
+            index={index}
+            id={item.id}
+            returnId={returnId}
+            isEditEnabled={isEditEnabled}
+          />
         </ModalForm>
 
         <FormDescription>

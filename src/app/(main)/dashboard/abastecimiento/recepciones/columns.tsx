@@ -8,6 +8,8 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 import TableActions from '@/app/(main)/dashboard/abastecimiento/recepciones/components/table-actions'
+// import { toZonedTime } from 'date-fns-tz'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +27,13 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { RenglonWithAllRelations } from '@/types/types'
 import { deleteReception } from './lib/actions/receptions'
+import { format } from 'date-fns'
+import dayjs from 'dayjs'
+import 'dayjs/plugin/utc'
+import 'dayjs/plugin/duration'
+
+dayjs.extend(require('dayjs/plugin/utc'))
+dayjs.extend(require('dayjs/plugin/duration'))
 
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
@@ -61,28 +70,10 @@ export const columns: ColumnDef<RecepcionType>[] = [
     },
   },
   {
-    accessorKey: 'fecha_recepcion',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Fecha recibido
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return row.getValue<string>('fecha_recepcion')
-        ? new Date(row.getValue<string>('fecha_recepcion')).toLocaleDateString()
-        : ''
-    },
-  },
-  {
-    accessorKey: 'renglones',
+    id: 'renglones',
+    accessorFn: (row: RecepcionType) =>
+      row.renglones.map((reception) => reception.renglon?.nombre).join(', '),
+
     header: ({ column }) => {
       return (
         <Button
@@ -96,21 +87,43 @@ export const columns: ColumnDef<RecepcionType>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => {
-      const renglones = row.original.renglones
-
-      return (
-        <div className="">
-          {renglones
-            .map(
-              (renglon) =>
-                ` ${renglon.renglon.nombre}/Cantidad: ${renglon.cantidad}`
-            )
-            .join(', ')}
-        </div>
-      )
-    },
   },
+  {
+    accessorKey: 'fecha_recepcion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de recepción
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_recepcion), 'dd/MM/yyyy HH:mm'),
+  },
+
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
+  },
+
   {
     accessorKey: 'detalles',
     header: ({ column }) => {

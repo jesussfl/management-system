@@ -41,6 +41,17 @@ import dateBetweenFilterFn from './date-between-filter'
 import dayjs from 'dayjs'
 import { Input } from '../input/input'
 import { format } from 'date-fns'
+import { CalendarIcon } from '@radix-ui/react-icons'
+import { DateRange } from 'react-day-picker'
+
+import { cn } from '@/utils/utils'
+import { Button } from '@/modules/common/components/button'
+import { Calendar } from '@/modules/common/components/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/modules/common/components/popover/popover'
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>
@@ -162,9 +173,7 @@ export function DataTable<TData extends { id: any }, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    debugTable: true,
-    debugHeaders: true,
-    debugColumns: false,
+
     state: {
       sorting,
       columnFilters,
@@ -304,13 +313,50 @@ function Filter({
   )
 
   if (firstValue instanceof Date) {
-    const values = columnFilterValue as [Date, Date]
-    const startDate = values?.[0]
-    const endDate = values?.[1]
+    const date = columnFilterValue as DateRange | undefined
+
     return (
       <div>
         <div className="flex space-x-2">
-          <Input
+          <div className={cn('grid gap-2')}>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="date"
+                  variant={'outline'}
+                  className={cn(
+                    'w-[240px] justify-start text-left font-normal',
+                    !date && 'text-muted-foreground'
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date?.from ? (
+                    date.to ? (
+                      <>
+                        {format(date.from, 'dd/MM/y')} -{' '}
+                        {format(date.to, 'dd/MM/y')}
+                      </>
+                    ) : (
+                      format(date.from, 'dd/MM/y')
+                    )
+                  ) : (
+                    <span>Seleccionar fechas</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  initialFocus
+                  mode="range"
+                  defaultMonth={date?.from}
+                  selected={date}
+                  onSelect={column.setFilterValue}
+                  numberOfMonths={2}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+          {/* <Input
             type="datetime-local"
             // debounce={200}
             value={startDate ? dayjs(startDate).format('YYYY-MM-DDTHH:mm') : ''}
@@ -344,7 +390,7 @@ function Filter({
                   new Date(value),
                 ])
             }}
-          />
+          /> */}
         </div>
         <div className="h-1" />
       </div>

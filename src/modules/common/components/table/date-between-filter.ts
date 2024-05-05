@@ -2,15 +2,16 @@ import { FilterFn } from '@tanstack/react-table'
 
 export const dateBetweenFilterFn: FilterFn<any> = (row, columnId, value) => {
   const date = row.getValue(columnId) as Date
-  const [start, end] = value // value => two date input values
+
+  const { from, to } = value // value => two date input values
   //If one filter defined and date is null filter it
-  if ((start || end) && !date) return false
-  if (start && !end) {
-    return date.getTime() >= start.getTime()
-  } else if (!start && end) {
-    return date.getTime() <= end.getTime()
-  } else if (start && end) {
-    return date.getTime() >= start.getTime() && date.getTime() <= end.getTime()
+  if ((from || to) && !date) return false
+  if (from && !to) {
+    return date.getTime() >= from.getTime()
+  } else if (!from && to) {
+    return date.getTime() <= to.getTime()
+  } else if (from && to) {
+    return date.getTime() >= from.getTime() && date.getTime() <= to.getTime()
   } else return true
 }
 

@@ -24,6 +24,7 @@ import {
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { RenglonWithAllRelations } from '@/types/types'
 import { deleteReturn } from './lib/actions/returns'
+import { format } from 'date-fns'
 
 type ReturnType = Prisma.DevolucionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
@@ -59,29 +60,7 @@ export const columns: ColumnDef<ReturnType>[] = [
       )
     },
   },
-  {
-    accessorKey: 'fecha_devolucion',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Fecha devuelto
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return row.getValue<string>('fecha_devolucion')
-        ? new Date(
-            row.getValue<string>('fecha_devolucion')
-          ).toLocaleDateString()
-        : ''
-    },
-  },
+
   {
     id: 'renglones',
     accessorFn: (row) =>
@@ -94,7 +73,7 @@ export const columns: ColumnDef<ReturnType>[] = [
           size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Renglones recibidos
+          Renglones devueltos
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -125,6 +104,41 @@ export const columns: ColumnDef<ReturnType>[] = [
         </Link>
       )
     },
+  },
+  {
+    accessorKey: 'fecha_despacho',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de despacho
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_devolucion), 'dd/MM/yyyy HH:mm'),
+  },
+
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
   {
     id: 'acciones',

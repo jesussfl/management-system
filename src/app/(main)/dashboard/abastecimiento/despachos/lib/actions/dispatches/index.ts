@@ -48,7 +48,7 @@ export const createDispatch = async (data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DESPACHOS,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -174,6 +174,179 @@ export const createDispatch = async (data: FormValues) => {
     error: false,
   }
 }
+
+export const updateDispatch = async (id: number, data: FormValues) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DESPACHOS,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const { motivo, fecha_despacho, cedula_destinatario, renglones } = data
+
+  if (!fecha_despacho || !renglones) {
+    return {
+      error: 'Missing Fields',
+      success: false,
+    }
+  }
+
+  if (renglones.length === 0) {
+    return {
+      error: 'No se han seleccionado renglones',
+      success: false,
+    }
+  }
+  if (
+    renglones.some(
+      (renglon) => renglon.seriales.length === 0 && renglon.manualSelection
+    )
+  ) {
+    const fields = renglones
+      .filter(
+        (renglon) => renglon.seriales.length === 0 && renglon.manualSelection
+      )
+      .map((renglon) => renglon.id_renglon)
+
+    return {
+      error: 'Revisa que todos los renglones esten correctamente',
+      success: false,
+
+      fields: fields,
+    }
+  }
+
+  const items = data.renglones
+  const currentDispatch = await prisma.despacho.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
+    },
+  })
+  const currentDispatchedSerials = currentDispatch?.renglones
+    .flatMap((renglon) => renglon.seriales)
+    .map((serial) => ({
+      id_renglon: serial.id_renglon,
+      serial: serial.serial,
+    }))
+  const serials: { id_renglon: number; serial: string }[] = []
+  for (const item of items) {
+    if (item.manualSelection) {
+      const serialsByItem = item.seriales.map((serial) => ({
+        id_renglon: item.id_renglon,
+        serial,
+      }))
+      serials.push(...serialsByItem)
+      continue
+    }
+    const serialsByItem = await prisma.serial.findMany({
+      where: {
+        id_renglon: item.id_renglon,
+        AND: {
+          estado: 'Disponible',
+        },
+      },
+      select: {
+        id_renglon: true,
+        serial: true,
+      },
+      take: item.cantidad,
+    })
+
+    if (serialsByItem.length < item.cantidad) {
+      return {
+        error: 'No hay suficientes seriales',
+        success: false,
+
+        fields: [item.id_renglon],
+      }
+    }
+
+    serials.push(...serialsByItem)
+  }
+
+  renglones.forEach((renglon) => {
+    // @ts-ignore
+    delete renglon.id
+  })
+
+  await prisma.despacho.update({
+    where: {
+      id,
+    },
+    data: {
+      cedula_destinatario,
+      cedula_abastecedor: data.cedula_abastecedor,
+      cedula_supervisor: data.cedula_supervisor,
+      cedula_autorizador: data.cedula_autorizador,
+      motivo,
+      fecha_despacho,
+
+      renglones: {
+        deleteMany: {},
+        create: renglones.map((renglon) => ({
+          manualSelection: renglon.manualSelection,
+          id_renglon: renglon.id_renglon,
+          cantidad: serials.filter(
+            (serial) => serial.id_renglon === renglon.id_renglon
+          ).length,
+          seriales: {
+            connect: serials
+              .filter((serial) => serial.id_renglon === renglon.id_renglon)
+              .map((serial) => ({ serial: serial.serial })),
+          },
+        })),
+      },
+    },
+  })
+
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: currentDispatchedSerials?.map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Disponible',
+    },
+  })
+
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: serials.map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Despachado',
+    },
+  })
+
+  await registerAuditAction(`Se actualizó un despacho con motivo: ${motivo}`)
+
+  revalidatePath('/dashboard/abastecimiento/despachos')
+
+  return {
+    success: true,
+    error: false,
+  }
+}
 export const deleteDispatch = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
@@ -184,6 +357,13 @@ export const deleteDispatch = async (id: number) => {
   const exist = await prisma.despacho.findUnique({
     where: {
       id,
+    },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
     },
   })
 
@@ -200,6 +380,18 @@ export const deleteDispatch = async (id: number) => {
     },
   })
 
+  await prisma.serial.updateMany({
+    where: {
+      id_renglon: {
+        in: exist.renglones.flatMap((renglon) =>
+          renglon.seriales.map((serial) => serial.id_renglon)
+        ),
+      },
+    },
+    data: {
+      estado: 'Disponible',
+    },
+  })
   await registerAuditAction(`Se eliminó el despacho con id: ${id}`)
   revalidatePath('/dashboard/abastecimiento/despachos')
 
