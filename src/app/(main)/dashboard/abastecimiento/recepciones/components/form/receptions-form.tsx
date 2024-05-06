@@ -298,6 +298,11 @@ export default function ReceptionsForm({
               name={`fecha_recepcion`}
               rules={{
                 required: true,
+                validate: (value) => {
+                  if (value > new Date()) {
+                    return 'La fecha de recepción no debe ser mayor a la fecha actual'
+                  }
+                },
               }}
               render={({ field }) => {
                 return (
@@ -322,7 +327,16 @@ export default function ReceptionsForm({
                               )
                             : ''
                         }
+                        onBlur={() => {
+                          form.trigger('fecha_recepcion')
+                        }}
                         onChange={(e) => {
+                          if (!e.target.value) {
+                            //@ts-ignore
+                            form.setValue('fecha_recepcion', null)
+                            return
+                          }
+
                           form.setValue(
                             'fecha_recepcion',
                             new Date(e.target.value)

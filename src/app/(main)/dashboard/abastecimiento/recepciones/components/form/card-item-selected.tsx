@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/utils/utils'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
-import { Box, Trash } from 'lucide-react'
+import { Box, Brush, Trash } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -51,7 +51,7 @@ export const CardItemSelected = ({
   deleteItem: (index: number) => void
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
-  const { watch, control, setValue } = useFormContext()
+  const { watch, control, setValue, trigger } = useFormContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const toogleModal = () => setIsModalOpen(!isModalOpen)
@@ -138,41 +138,38 @@ export const CardItemSelected = ({
         <FormField
           control={control}
           name={`renglones.${index}.fecha_fabricacion`}
+          rules={{
+            validate: (value) => {
+              if (value > new Date())
+                return 'La fecha de fabricación no debe ser mayor a la fecha actual'
+
+              if (
+                value > watch(`renglones.${index}.fecha_vencimiento`) &&
+                watch(`renglones.${index}.fecha_vencimiento`)
+              )
+                return 'La fecha de fabricación no puede ser mayor a la fecha de vencimiento'
+            },
+          }}
           render={({ field }) => (
             <FormItem className="items-center flex flex-1 justify-between gap-2">
               <FormLabel className="w-[12rem]">Fecha de fabricación:</FormLabel>
               <div className="flex-1 w-full">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'dd/MM/yyyy')
-                        ) : (
-                          <span>Seleccionar fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(field.value || '')}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date('1900-01-01')
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="date"
+                  id="fecha_fabricacion"
+                  {...field}
+                  value={
+                    field.value
+                      ? new Date(field.value).toISOString().split('T')[0]
+                      : ''
+                  }
+                  onChange={(e) => {
+                    field.onChange(new Date(e.target.value))
+                  }}
+                  className="w-full"
+                  max={new Date().toISOString().split('T')[0]}
+                />
+
                 <FormMessage />
               </div>
             </FormItem>
@@ -181,39 +178,31 @@ export const CardItemSelected = ({
         <FormField
           control={control}
           name={`renglones.${index}.fecha_vencimiento`}
+          rules={{
+            validate: (value) => {
+              if (value < watch(`renglones.${index}.fecha_fabricacion`))
+                return 'La fecha de vencimiento no puede ser menor a la fecha de fabricación'
+            },
+          }}
           render={({ field }) => (
             <FormItem className=" items-center flex  justify-between gap-2">
               <FormLabel className="w-[12rem]">Fecha de vencimiento:</FormLabel>
               <div className="flex-1 w-full">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'dd/MM/yyyy')
-                        ) : (
-                          <span>Seleccionar fecha</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={new Date(field.value || '')}
-                      onSelect={field.onChange}
-                      disabled={(date) => date < new Date('1900-01-01')}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="date"
+                  id="fecha_vencimiento"
+                  {...field}
+                  value={
+                    field.value
+                      ? new Date(field.value).toISOString().split('T')[0]
+                      : ''
+                  }
+                  onChange={(e) => {
+                    field.onChange(new Date(e.target.value))
+                  }}
+                  className="w-full"
+                />
+
                 <FormMessage />
               </div>
             </FormItem>

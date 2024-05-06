@@ -18,9 +18,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { RenglonWithAllRelations } from '@/types/types'
-import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
 import {
   Popover,
   PopoverContent,
@@ -50,6 +48,7 @@ import Link from 'next/link'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
 import { SelectedItemCard } from './card-item-selected'
 import { createReturn, updateReturn } from '../../lib/actions/returns'
+import { Input } from '@/modules/common/components/input/input'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -390,6 +389,13 @@ export default function ReturnsForm({
               name={`fecha_devolucion`}
               rules={{
                 required: true,
+                validate: (value) => {
+                  //validate if the date is in the future
+
+                  if (value > new Date()) {
+                    return 'La fecha de devolució́n no debe ser después a la fecha actual'
+                  }
+                },
               }}
               render={({ field }) => (
                 <FormItem className="flex flex-row flex-1 items-center gap-5 ">
@@ -401,37 +407,32 @@ export default function ReturnsForm({
                     </FormDescription>
                   </div>
                   <div className="flex-1 w-full">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'dd/MM/yyyy')
-                            ) : (
-                              <span>Seleccionar fecha</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className=" p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={new Date(field.value)}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
+                    <Input
+                      type="datetime-local"
+                      id="fecha_devolucion"
+                      {...field}
+                      value={
+                        field.value
+                          ? format(new Date(field.value), "yyyy-MM-dd'T'HH:mm")
+                          : ''
+                      }
+                      onBlur={() => {
+                        form.trigger('fecha_devolucion')
+                      }}
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          //@ts-ignore
+                          form.setValue('fecha_devolucion', null)
+                          return
+                        }
+
+                        form.setValue(
+                          'fecha_devolucion',
+                          new Date(e.target.value)
+                        )
+                      }}
+                      className="w-full"
+                    />
                     <FormMessage />
                   </div>
                 </FormItem>

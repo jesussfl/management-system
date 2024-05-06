@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import Link from 'next/link'
+import { format } from 'date-fns'
 export default async function Page({
   params: { id },
 }: {
@@ -43,6 +43,15 @@ export default async function Page({
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground">
+                  Nombre: {renglon.renglon.nombre}
+                </p>
+                <p className="text-sm text-foreground">
+                  Codigo de solicitud:{' '}
+                  {renglon.codigo_solicitud
+                    ? renglon.codigo_solicitud
+                    : 'Sin Código de solicitud'}
+                </p>
+                <p className="text-sm text-foreground">
                   Descripción: {renglon.renglon.descripcion}
                 </p>
                 <p className="text-sm text-foreground">
@@ -52,13 +61,33 @@ export default async function Page({
                   Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}
                 </p>
                 <p className="text-sm text-foreground">
-                  Costo unitario: {renglon.precio}
+                  Precio en Bs: {renglon.precio} Bs
                 </p>
                 <p className="text-sm text-foreground">
                   Clasificación: {renglon.renglon.clasificacion.nombre}
                 </p>
                 <p className="text-sm text-foreground">
                   Categoría: {renglon.renglon.categoria.nombre}
+                </p>
+                <p className="text-sm text-foreground">
+                  Fabricante :{' '}
+                  {renglon.fabricante ? renglon.fabricante : 'Sin fabricante'}
+                </p>
+                <p className="text-sm text-foreground">
+                  Fecha fabricación:{' '}
+                  {renglon.fecha_fabricacion
+                    ? new Date(renglon.fecha_fabricacion)
+                        .toISOString()
+                        .split('T')[0]
+                    : 'Sin fecha de fabricación'}
+                </p>
+                <p className="text-sm text-foreground">
+                  Fecha vencimiento:{' '}
+                  {renglon.fecha_vencimiento
+                    ? new Date(renglon.fecha_vencimiento)
+                        .toISOString()
+                        .split('T')[0]
+                    : 'Sin fecha de vencimiento'}
                 </p>
               </CardContent>
               {/* Puedes agregar más información aquí */}
