@@ -35,9 +35,11 @@ export type ExportData = {
   autorizador: Profesional_AbastecimientoWithRelations
   abastecedor: Profesional_AbastecimientoWithRelations
   supervisor: Profesional_AbastecimientoWithRelations
-
+  unidad: string
   despacho: FormValues
   renglones: Detalles[]
+  codigo: string
+  motivo: string
 }
 
 export const exportDocumentNew = async (data: ExportData) => {

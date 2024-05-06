@@ -15,8 +15,13 @@ export default async function Page({
   params: { id: string }
 }) {
   const dispatchData = await getDispatchById(Number(id))
+  const getCode = () => {
+    //Explanation: If the id only has one digit, add two zeros in front of it but if it has two digits, add one zero in front of it
+
+    return `00${id}`.slice(-3)
+  }
   const exportData = {
-    destinatario_cedula: dispatchData.cedula_destinatario,
+    destinatario_cedula: `${dispatchData.destinatario.tipo_cedula}-${dispatchData.cedula_destinatario}`,
     destinatario_nombres: dispatchData.destinatario.nombres,
     destinatario_apellidos: dispatchData.destinatario.apellidos,
     destinatario_grado: dispatchData?.destinatario?.grado?.nombre || 's/c',
@@ -27,6 +32,9 @@ export default async function Page({
     autorizador: dispatchData.autorizador,
     abastecedor: dispatchData.abastecedor,
     supervisor: dispatchData.supervisor,
+    unidad: dispatchData?.destinatario?.unidad?.nombre || 's/u',
+    codigo: getCode(),
+    motivo: dispatchData.motivo || 's/m',
   } as ExportData
   return (
     <Dialog open={true}>

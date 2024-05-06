@@ -64,7 +64,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
       // max width 100
       return (
         <div className="max-w-[300px] truncate">
-          {row.getValue<string>('motivo')}
+          {row.getValue<string>('motivo') || 'S/M'}
         </div>
       )
     },

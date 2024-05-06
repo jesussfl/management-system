@@ -61,7 +61,7 @@ declare module '@tanstack/table-core' {
     itemRank: RankingInfo
   }
 }
-
+const COLUMNS_TO_EXCLUDE = ['id', 'actions', 'detalles']
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value)
@@ -225,7 +225,8 @@ export function DataTable<TData extends { id: any }, TValue>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                      {header.column.getCanFilter() && header.id !== 'id' ? (
+                      {header.column.getCanFilter() &&
+                      !COLUMNS_TO_EXCLUDE.includes(header.column.id) ? (
                         <div>
                           <Filter column={header.column} table={table} />
                         </div>

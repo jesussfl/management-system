@@ -69,6 +69,7 @@
     "framer-motion": "^11.0.21",
     "lucide-react": "^0.291.0",
     "mime": "^4.0.3",
+    "nanoid": "^5.0.7",
     "next": "14.0.3",
     "next-auth": "^5.0.0-beta.3",
     "next-themes": "^0.2.1",

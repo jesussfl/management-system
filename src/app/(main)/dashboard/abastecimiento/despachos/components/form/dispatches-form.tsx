@@ -182,6 +182,7 @@ export default function DispatchesForm({
           cantidad: 0,
           manualSelection: false,
           seriales: [],
+          observacion: '',
         })
         setSelectedData((prev) => {
           if (prev.find((item) => item.id === lastSelectedRow.id)) {
@@ -881,6 +882,28 @@ export const SelectedItemCard = ({
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name={`renglones.${index}.observacion`}
+          rules={{
+            maxLength: {
+              value: 125,
+              message: 'La observación no puede superar los 125 caracteres',
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col flex-1 gap-2">
+              <FormLabel className="w-[12rem]">{`Observación (opcional):`}</FormLabel>
+
+              <div className="flex-1 w-full">
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </div>
             </FormItem>
           )}
         />

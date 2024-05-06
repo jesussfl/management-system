@@ -55,6 +55,12 @@ export const columns: ColumnDef<DespachoType>[] = [
         </Button>
       )
     },
+
+    cell: ({ row }) => {
+      const data = row.getValue<string>('motivo')
+
+      return <div>{data || 'S/M'}</div>
+    },
   },
 
   {

@@ -10,7 +10,10 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { getAllDispatches } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
+import {
+  deleteMultipleDispatches,
+  getAllDispatches,
+} from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { columns } from './columns'
 import Link from 'next/link'
 import ButtonExport from './components/button-export'
@@ -46,7 +49,12 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <DataTable columns={columns} data={dispatchesData} />
+        <DataTable
+          columns={columns}
+          data={dispatchesData}
+          isMultipleDeleteEnabled
+          multipleDeleteAction={deleteMultipleDispatches}
+        />
       </PageContent>
     </>
   )

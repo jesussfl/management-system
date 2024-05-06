@@ -302,6 +302,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
         deleteMany: {},
         create: renglones.map((renglon) => ({
           manualSelection: renglon.manualSelection,
+          observacion: renglon.observacion,
           id_renglon: renglon.id_renglon,
           cantidad: serials.filter(
             (serial) => serial.id_renglon === renglon.id_renglon
@@ -474,6 +475,7 @@ export const getDispatchById = async (id: number) => {
             include: {
               unidad_empaque: true,
               recepciones: true,
+              clasificacion: true,
               despachos: {
                 include: {
                   seriales: true,
@@ -503,5 +505,39 @@ export const getDispatchById = async (id: number) => {
       ...renglon,
       seriales: renglon.seriales.map((serial) => serial.serial),
     })),
+  }
+}
+
+export const deleteMultipleDispatches = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DESPACHOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.despacho.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado los siguientes despachos ${ids}`)
+  revalidatePath('/dashboard/abastecimiento/despachos')
+
+  return {
+    success: 'Se han eliminado los despachos correctamente',
+    error: false,
   }
 }

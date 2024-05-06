@@ -17,6 +17,7 @@ import {
 } from '@/modules/common/components/card/card'
 import { v4 } from 'uuid'
 import { Switch } from '@/modules/common/components/switch/switch'
+import { nanoid } from 'nanoid'
 export function SerialsForm({
   index: indexForm,
   quantity,
@@ -88,7 +89,7 @@ export function SerialsForm({
                   value={
                     field.value ||
                     (autoSerialsEnabled
-                      ? form.setValue(field.name, v4(), {
+                      ? form.setValue(field.name, nanoid(11), {
                           shouldDirty: true,
                         })
                       : '') ||
