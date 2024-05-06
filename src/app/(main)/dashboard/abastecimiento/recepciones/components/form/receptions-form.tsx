@@ -21,15 +21,8 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-// import { RenglonType } from '@/types/types'
-import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Loader2, Plus } from 'lucide-react'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
+import { Loader2, Plus } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -53,6 +46,7 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
 import Link from 'next/link'
+import { Input } from '@/modules/common/components/input/input'
 
 type SerialType = Omit<
   Serial,
@@ -305,51 +299,43 @@ export default function ReceptionsForm({
               rules={{
                 required: true,
               }}
-              render={({ field }) => (
-                <FormItem className="flex flex-row flex-1 items-center gap-5 ">
-                  <div className="w-[20rem]">
-                    <FormLabel>Fecha de recepción</FormLabel>
-                    <FormDescription>
-                      Selecciona la fecha en la que se reciben los materiales o
-                      renglones{' '}
-                    </FormDescription>
-                  </div>
-                  <div className="flex-1 w-full">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'dd/MM/yyyy')
-                            ) : (
-                              <span>Seleccionar fecha</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className=" p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={new Date(field.value)}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date('1900-01-01')
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
+              render={({ field }) => {
+                return (
+                  <FormItem className="flex flex-row flex-1 items-center gap-5 ">
+                    <div className="w-[20rem]">
+                      <FormLabel>Fecha de recepción</FormLabel>
+                      <FormDescription>
+                        Selecciona la fecha en la que se reciben los materiales
+                        o renglones{' '}
+                      </FormDescription>
+                    </div>
+                    <div className="flex-1 w-full">
+                      <Input
+                        type="datetime-local"
+                        id="fecha_recepcion"
+                        {...field}
+                        value={
+                          field.value
+                            ? format(
+                                new Date(field.value),
+                                "yyyy-MM-dd'T'HH:mm"
+                              )
+                            : ''
+                        }
+                        onChange={(e) => {
+                          form.setValue(
+                            'fecha_recepcion',
+                            new Date(e.target.value)
+                          )
+                        }}
+                        className="w-full"
+                      />
+
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )
+              }}
             />
             <div className="border-b border-base-300" />
 
