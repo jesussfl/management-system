@@ -278,7 +278,7 @@ export default function ReceiversForm({ defaultValues }: Props) {
               rules={{
                 required: 'Este campo es requerido',
               }}
-              render={({ field }) => (
+              render={({ field: { ref, ...field } }) => (
                 <FormItem className="items-center flex flex-1 justify-between gap-2">
                   <FormLabel className="mb-3">{`Numero telefónico:`}</FormLabel>
                   <div className="w-[70%]">
@@ -287,6 +287,20 @@ export default function ReceiversForm({ defaultValues }: Props) {
                         country={'ve'}
                         // placeholder="Ingresa tu numero telefónico"
                         {...field}
+                        masks={{
+                          ve: '....-...-....',
+                        }}
+                        onChange={(value: string, data: any) => {
+                          const phoneNumber = value.split(data.dialCode)[1]
+                          const formattedPhoneNumber = `+${
+                            data.dialCode
+                          }-${phoneNumber.slice(0, 4)}-${phoneNumber.slice(
+                            4,
+                            7
+                          )}-${phoneNumber.slice(7)}`
+                          field.onChange(formattedPhoneNumber)
+                        }}
+                        countryCodeEditable={false}
                       />
                     </FormControl>
                     <FormMessage />
