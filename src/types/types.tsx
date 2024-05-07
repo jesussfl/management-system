@@ -55,6 +55,15 @@ export type ProfesionalType = Prisma.Profesional_AbastecimientoGetPayload<{
     autorizador: true
   }
 }>
+export type PersonalType = Prisma.PersonalGetPayload<{
+  include: {
+    unidad: true
+    categoria: true
+    componente: true
+    grado: true
+    usuario: true
+  }
+}>
 export type GradosWithComponentes = Prisma.Grado_MilitarGetPayload<{
   include: {
     componentes: true

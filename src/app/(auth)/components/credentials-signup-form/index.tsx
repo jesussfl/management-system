@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
+import { Tipos_Cedulas } from '@prisma/client'
 type FormValues = {
   email: string
   password: string
@@ -37,7 +38,7 @@ type FormValues = {
   name: string
   adminPassword: string
   cedula: string
-  tipo_cedula: string
+  tipo_cedula: Tipos_Cedulas
 }
 
 export function CredentialsSignupForm() {

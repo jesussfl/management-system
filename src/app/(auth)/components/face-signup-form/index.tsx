@@ -36,11 +36,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
+import { Tipos_Cedulas } from '@prisma/client'
 type FormValues = {
   email: string
   name: string
   adminPassword: string
-  tipo_cedula: string
+  tipo_cedula: Tipos_Cedulas
   cedula: string
 }
 
@@ -52,7 +53,7 @@ export function FaceSignupForm() {
   const [isPending, startTransition] = useTransition()
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    const { email, name, adminPassword } = values
+    const { email, name, adminPassword, cedula, tipo_cedula } = values
 
     try {
       let response = await faceio
@@ -96,6 +97,8 @@ export function FaceSignupForm() {
           facialID: response.facialId,
           adminPassword,
           name,
+          cedula,
+          tipo_cedula,
         }).then((data) => {
           if (data?.error) {
             form.setError(data.field as any, {

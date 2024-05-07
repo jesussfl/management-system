@@ -7,6 +7,8 @@ import { RegisterSchema } from '@/utils/schemas'
 import { getUserByEmail } from '@/lib/data/get-user-byEmail'
 
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/auth'
+import { Tipos_Cedulas } from '@prisma/client'
 
 export const signup = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -34,6 +36,8 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
 
   await prisma.usuario.create({
     data: {
+      cedula: validatedFields.data.cedula,
+      tipo_cedula: validatedFields.data.tipo_cedula,
       nombre: name,
       email,
       contrasena: hashedPassword,
@@ -59,12 +63,16 @@ type SignupByFacialID = {
   facialID: string
   adminPassword: string
   name: string
+  cedula: string
+  tipo_cedula: Tipos_Cedulas
 }
 export const signupByFacialID = async ({
   email,
   facialID,
   adminPassword,
   name,
+  cedula,
+  tipo_cedula,
 }: SignupByFacialID) => {
   const existingUser = await getUserByEmail(email)
   const eixstingUserByFacialID = await prisma.usuario.findUnique({
@@ -83,6 +91,8 @@ export const signupByFacialID = async ({
   try {
     await prisma.usuario.create({
       data: {
+        cedula,
+        tipo_cedula,
         nombre: name,
         email,
         facialID,
@@ -107,11 +117,10 @@ export const signupByFacialID = async ({
 }
 
 export const getAllUsers = async () => {
-  try {
-    const users = await prisma.usuario.findMany()
-    return users
-  } catch (error) {
-    console.log(error, 'ERROOR')
-    return null
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
   }
+  const users = await prisma.usuario.findMany()
+  return users
 }

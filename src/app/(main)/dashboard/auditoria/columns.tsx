@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { format } from 'date-fns'
 type AuditoriaType = Prisma.AuditoriaGetPayload<{
   include: { usuario: true }
 }>
@@ -47,24 +48,20 @@ export const columns: ColumnDef<AuditoriaType>[] = [
   },
   {
     accessorKey: 'fecha_realizado',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          className="text-xs"
-        >
-          Fecha
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return row.getValue<string>('fecha_realizado')
-        ? new Date(row.getValue<string>('fecha_realizado')).toLocaleDateString()
-        : ''
-    },
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de realización
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_realizado), 'dd/MM/yyyy HH:mm'),
   },
   {
     accessorKey: 'usuario.nombre',

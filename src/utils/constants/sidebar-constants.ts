@@ -64,6 +64,7 @@ export enum SECTION_NAMES {
   AYUDA = 'AYUDA',
   TODAS = 'TODAS',
   ASISTENCIAS = 'ASISTENCIAS',
+  RECURSOS_HUMANOS = 'RECURSOS_HUMANOS',
 }
 
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
@@ -177,15 +178,21 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     ],
   },
   {
-    title: 'Personal',
-    path: '/dashboard/personal',
+    title: 'Recursos Humanos',
+    path: '/dashboard/recursos-humanos',
     icon: Users2,
     submenu: true,
-    requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
+    requiredPermissions: [SECTION_NAMES.RECURSOS_HUMANOS, SECTION_NAMES.TODAS],
     submenuItems: [
       {
+        title: 'Personal',
+        path: '/dashboard/recursos-humanos/personal',
+        icon: Users2,
+        requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
+      },
+      {
         title: 'Asistencias',
-        path: '/dashboard/personal/asistencias',
+        path: '/dashboard/recursos-humanos/asistencias',
         icon: Contact2,
         requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
       },

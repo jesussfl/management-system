@@ -43,21 +43,23 @@ model Session {
 model Usuario {
   id          String         @id @default(cuid())
   nombre      String
-  cedula      String?        @unique
+  cedula      String         @unique
   tipo_cedula Tipos_Cedulas?
 
-  email         String?     @unique
-  contrasena    String?     @map("password")
-  facialID      String?     @unique
+  email         String?      @unique
+  contrasena    String?      @map("password")
+  facialID      String?      @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  rol_nombre    String      @default("Basico")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  rol_nombre    String       @default("Basico")
   accounts      Cuenta[]
   sessions      Session[]
-  rol           Rol         @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  rol           Rol          @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
   auditoria     Auditoria[]
+  personal      Personal?
+  Asistencia    Asistencia[]
 
   @@map("User")
 }
@@ -403,18 +405,19 @@ model Profesional_Abastecimiento {
 }
 
 model Componente_Militar {
-  id                   Int                          @id @default(autoincrement())
-  nombre               String                       @unique
-  descripcion          String
-  estado               String?
+  id           Int            @id @default(autoincrement())
+  nombre       String         @unique
+  descripcion  String
+  estado       String?
   // ultima_edicion   DateTime
   // fecha_eliminado  DateTime
-  destinatario         Destinatario[]
-  personal_militar     personal_militar[]
+  destinatario Destinatario[]
+
   grados               Grados_Componentes[]
   fecha_creacion       DateTime                     @default(now())
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
 }
 
 model Grados_Componentes {
@@ -438,11 +441,11 @@ model Grado_Militar {
   // fecha_eliminado  DateTime
   componentes          Grados_Componentes[]
   categorias           Categorias_Grados[]
-  personal_militar     personal_militar[]
   destinatario         Destinatario[]
   fecha_creacion       DateTime                     @default(now())
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
 }
 
 model Categorias_Grados {
@@ -461,11 +464,11 @@ model Categoria_Militar {
   abreviatura          String
   estado               String?
   destinatario         Destinatario[]
-  personal_militar     personal_militar[]
   grados               Categorias_Grados[]
   fecha_creacion       DateTime                     @default(now())
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
+  personal             Personal[]
 }
 
 model Unidad_Militar {
@@ -476,13 +479,13 @@ model Unidad_Militar {
   id_zodi              Int
   zodi                 Zodi                         @relation(fields: [id_zodi], references: [id])
   destinatarios        Destinatario[]
-  personal             personal_militar[]
   fecha_creacion       DateTime                     @default(now())
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
 
   armamento Armamento[]
   almacenes Almacen[]
+  personal  Personal[]
 }
 
 model Zodi {
@@ -503,26 +506,31 @@ model Redi {
   zodis       Zodi[]
 }
 
-model personal_militar {
-  cedula                String              @id
-  nombres               String
-  apellidos             String
-  estado_civil          String
-  id_armamento          String
-  situacion_profesional String
-  estado                String
-  id_unidad             String
-  id_categoria          String
-  id_grado              String
-  id_componente         String
-  Componente_Militar    Componente_Militar? @relation(fields: [componente_MilitarId], references: [id])
-  componente_MilitarId  Int?
-  Grado_Militar         Grado_Militar?      @relation(fields: [grado_MilitarId], references: [id])
-  grado_MilitarId       Int?
-  Categoria_Militar     Categoria_Militar?  @relation(fields: [categoria_MilitarId], references: [id])
-  categoria_MilitarId   Int?
-  Unidad_Militar        Unidad_Militar?     @relation(fields: [unidad_MilitarId], references: [id])
-  unidad_MilitarId      Int?
+model Personal {
+  id                Int                 @id @default(autoincrement())
+  tipo_cedula       Tipos_Cedulas
+  cedula            String              @unique
+  nombres           String
+  apellidos         String
+  telefono          String
+  cargo_profesional String?
+  direccion         String
+  tipo              Tipos_Destinatarios
+  sexo              Generos
+
+  cedula_usuario String?             @unique
+  usuario        Usuario?            @relation(fields: [cedula_usuario], references: [cedula])
+  id_unidad      Int?
+  unidad         Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
+  id_categoria   Int?
+  categoria      Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
+  id_grado       Int?
+  grado          Grado_Militar?      @relation(fields: [id_grado], references: [id])
+  id_componente  Int?
+  componente     Componente_Militar? @relation(fields: [id_componente], references: [id])
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Auditoria {
@@ -630,4 +638,13 @@ model Image {
   id Int @id @default(autoincrement())
 
   image String
+}
+
+model Asistencia {
+  id Int @id @default(autoincrement())
+
+  id_usuario String
+  usuario    Usuario @relation(fields: [id_usuario], references: [id])
+
+  fecha_realizado DateTime @default(now())
 }
