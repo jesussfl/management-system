@@ -75,6 +75,44 @@ export const columns: ColumnDef<AsistenciaType>[] = [
     },
   },
   {
+    accessorKey: 'hora_entrada',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Hora de Entrada
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      row.original.hora_entrada
+        ? format(new Date(row.original?.hora_entrada), 'dd/MM/yyyy HH:mm')
+        : 'No registró',
+  },
+  {
+    accessorKey: 'hora_salida',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Hora de Salida
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      row.original.hora_salida
+        ? format(new Date(row.original?.hora_salida), 'dd/MM/yyyy HH:mm')
+        : 'No registró',
+  },
+  {
     accessorKey: 'fecha_realizado',
     filterFn: 'dateBetweenFilterFn',
     header: ({ column }) => (
@@ -84,7 +122,7 @@ export const columns: ColumnDef<AsistenciaType>[] = [
         size={'sm'}
         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
       >
-        Asistencia
+        Fecha Creación
         <ArrowUpDown className="ml-2 h-3 w-3" />
       </Button>
     ),

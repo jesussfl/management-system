@@ -643,8 +643,10 @@ model Image {
 model Asistencia {
   id Int @id @default(autoincrement())
 
-  id_usuario String
-  usuario    Usuario @relation(fields: [id_usuario], references: [id])
+  id_usuario   String
+  usuario      Usuario   @relation(fields: [id_usuario], references: [id])
+  hora_entrada DateTime?
+  hora_salida  DateTime?
 
   fecha_realizado DateTime @default(now())
 }

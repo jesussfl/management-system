@@ -302,7 +302,9 @@ function Filter({
   const firstValue = table
     .getPreFilteredRowModel()
     .flatRows[0]?.getValue(column.id)
-
+  const isSomeDateValue = table
+    .getPreFilteredRowModel()
+    .flatRows.some((row) => row.getValue(column.id) instanceof Date)
   const columnFilterValue = column.getFilterValue()
 
   const sortedUniqueValues = useMemo(
@@ -313,7 +315,7 @@ function Filter({
     [column.getFacetedUniqueValues()]
   )
 
-  if (firstValue instanceof Date) {
+  if (isSomeDateValue) {
     const date = columnFilterValue as DateRange | undefined
 
     return (

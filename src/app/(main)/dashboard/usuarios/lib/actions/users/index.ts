@@ -14,15 +14,16 @@ export const getAllUsers = async () => {
 }
 
 export const getUserById = async (id: string) => {
-  const session = await auth()
-  if (!session?.user) {
-    throw new Error('You must be signed in to perform this action')
-  }
+  // const session = await auth()
+  // if (!session?.user) {
+  //   throw new Error('You must be signed in to perform this action')
+  // }
   const user = await prisma.usuario.findUnique({
     where: {
       id,
     },
     include: {
+      personal: true,
       rol: true,
     },
   })

@@ -5,24 +5,13 @@ import { revalidatePath } from 'next/cache'
 
 import { Prisma } from '@prisma/client'
 
-import { validateUserSession } from '@/utils/helpers/validate-user-session'
-import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 
 export const createAttendance = async (
   data: Prisma.AsistenciaUncheckedCreateInput
 ) => {
-  const sessionResponse = await validateUserSession()
-
-  if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
-  }
-
   await prisma.asistencia.create({
-    data: {
-      id_usuario: data.id_usuario,
-    },
+    data,
   })
 
   await registerAuditAction(
@@ -32,6 +21,26 @@ export const createAttendance = async (
 
   return {
     success: 'La asistencia ha sido creado con exito',
+    error: false,
+  }
+}
+export const updateAttendance = async (
+  id: number,
+  data: Prisma.AsistenciaUpdateInput
+) => {
+  await prisma.asistencia.update({
+    where: {
+      id,
+    },
+    data,
+  })
+
+  await registerAuditAction('Se actualizo la asistencia con el id ' + id)
+
+  revalidatePath('/dashboard/recursos-humanos/asistencias')
+
+  return {
+    success: 'La asistencia ha sido actualizada con exito',
     error: false,
   }
 }
@@ -62,6 +71,22 @@ export const getAllAttendances = async () => {
   return auditItems
 }
 
+export const getLastAttendanceByUserId = async (userId: string) => {
+  const attendance = await prisma.asistencia.findFirst({
+    where: {
+      id_usuario: userId,
+    },
+    orderBy: {
+      fecha_realizado: 'desc',
+    },
+  })
+
+  if (!attendance) {
+    return null
+  }
+
+  return attendance
+}
 export const getAttendancesByUserId = async (userId: string) => {
   const session = await auth()
 
