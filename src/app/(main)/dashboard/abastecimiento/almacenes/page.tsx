@@ -24,6 +24,8 @@ import { Boxes, PackagePlus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 import { getAllWarehouses } from './lib/actions/warehouse'
+import getSectionInfo from '@/utils/helpers/get-path-info'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
   title: 'Almacenes',
@@ -31,12 +33,11 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  // const isAuthorized = await validateUserPermissions({
-  //   section: SECTION_NAMES.INVENTARIO,
-  // })
-
   const warehousesData = await getAllWarehouses()
-
+  const path = getSectionInfo({
+    sectionName: SECTION_NAMES.ALMACENES,
+    property: 'path',
+  })
   return (
     <>
       <PageHeader>
@@ -51,7 +52,7 @@ export default async function Page() {
         </HeaderLeftSide>
         <HeaderRightSide>
           <Link
-            href="/dashboard/abastecimiento/almacenes/almacen"
+            href={`${path}/almacen`}
             className={buttonVariants({ variant: 'default' })}
           >
             <PackagePlus className="mr-2 h-4 w-4" />

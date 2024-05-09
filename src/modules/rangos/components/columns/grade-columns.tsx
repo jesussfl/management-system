@@ -23,12 +23,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { deleteGrade } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { deleteGrade } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
   {
     id: 'seleccionar',

@@ -650,3 +650,18 @@ model Asistencia {
 
   fecha_realizado DateTime @default(now())
 }
+
+enum AdminPasswordStates {
+  Inhabilitada
+  Activa
+}
+
+model Admin {
+  id Int @id @default(autoincrement())
+
+  password String
+  state    AdminPasswordStates
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+}

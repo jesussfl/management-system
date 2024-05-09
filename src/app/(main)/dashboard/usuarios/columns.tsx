@@ -110,9 +110,11 @@ export const columns: ColumnDef<Usuario>[] = [
               Copiar código
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-
+            <Link href={`/dashboard/usuarios/cambiar-contrasena/${user.id}`}>
+              <DropdownMenuItem>Cambiar contraseña</DropdownMenuItem>
+            </Link>
             <Link href={`/dashboard/usuarios/${user.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
+              <DropdownMenuItem> Editar Rol</DropdownMenuItem>
             </Link>
             <DropdownMenuItem>Eliminar</DropdownMenuItem>
           </DropdownMenuContent>

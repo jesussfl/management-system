@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const images = await getAllImages()
+  // const images = await getAllImages()
   return (
     <>
       <PageHeader>
@@ -39,9 +39,9 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        {/* <BackupButton /> */}
-        <Upload />
-        <DataTable columns={imageColumns} data={images} />
+        <BackupButton />
+        {/* <Upload /> */}
+        {/* <DataTable columns={imageColumns} data={images} /> */}
       </PageContent>
     </>
   )

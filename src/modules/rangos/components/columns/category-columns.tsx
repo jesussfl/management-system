@@ -17,12 +17,12 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { MoreHorizontal } from 'lucide-react'
-import { deleteCategory } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { deleteCategory } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 
 export const columns: ColumnDef<Categoria_Militar>[] = [
   {

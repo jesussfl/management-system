@@ -19,7 +19,7 @@ import {
   createCategory,
   getAllGrades,
   updateCategory,
-} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import MultipleSelector, {

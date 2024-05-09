@@ -1,4 +1,4 @@
-import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
+import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { redirect } from 'next/navigation'
 export default async function Layout({
@@ -8,7 +8,7 @@ export default async function Layout({
   modal: React.ReactNode
   children: React.ReactNode
 }) {
-  const isAuthorized = await validateSectionsAndPermissions({
+  const isAuthorized = await validateSections({
     sections: [SECTION_NAMES.USUARIOS],
   })
 

@@ -65,7 +65,7 @@ import { SerialsFormNew } from './serials-form-new'
 import { Input } from '@/modules/common/components/input/input'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
-import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
+import { getAllProfessionals } from '@/app/(main)/dashboard/profesionales/lib/actions/professionals'
 
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
@@ -437,7 +437,7 @@ export default function DispatchesForm({
 
                     <FormDescription>
                       <Link
-                        href="/dashboard/abastecimiento/profesionales/agregar"
+                        href="/dashboard/profesionales/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
                           'text-sm h-[30px]'

@@ -17,16 +17,14 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { MoreHorizontal } from 'lucide-react'
-import {
-  deleteComponent,
-  deleteGrade,
-} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteComponent } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 interface DataTableProps {
   data: Componente_Militar[]
 }

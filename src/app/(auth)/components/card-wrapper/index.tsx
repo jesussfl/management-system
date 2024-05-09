@@ -9,6 +9,9 @@ import {
 import { Header } from '@/app/(auth)/components/header'
 import { Social } from '@/app/(auth)/components/social'
 import { BackButton } from '@/app/(auth)/components/back-button'
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
+import { buttonVariants } from '@/modules/common/components/button'
 
 interface CardWrapperProps {
   children: React.ReactNode
@@ -43,6 +46,12 @@ export const CardWrapper = ({
         )}
         <CardFooter>
           <BackButton label={backButtonLabel} href={backButtonHref} />
+          <Link
+            href="/asistencias"
+            className={cn(buttonVariants({ variant: 'link' }))}
+          >
+            Ir al Control de Asistencias
+          </Link>
         </CardFooter>
       </Card>
     </div>

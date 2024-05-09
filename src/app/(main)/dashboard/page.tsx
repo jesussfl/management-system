@@ -46,7 +46,7 @@ import { getAllItems } from './abastecimiento/inventario/lib/actions/items'
 import { getUserPermissions } from '@/lib/auth'
 import { RenglonWithAllRelations } from '@/types/types'
 import { lowStockItemsColumns } from './components/home-columns'
-import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
+import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
@@ -79,7 +79,7 @@ const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 
 export default async function Page() {
   const session = await auth()
-  const isAbastecimientoAuthorized = await validateSectionsAndPermissions({
+  const isAbastecimientoAuthorized = await validateSections({
     sections: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.ABASTECIMIENTO],
   })
   const statistics = await getStatistics()

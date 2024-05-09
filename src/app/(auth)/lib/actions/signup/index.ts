@@ -18,8 +18,12 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
   }
 
   const { email, password, name, adminPassword } = validatedFields.data
-
-  if (adminPassword !== process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+  const adminPasswordDb = await prisma.admin.findFirst({
+    where: {
+      state: 'Activa',
+    },
+  })
+  if (adminPassword !== adminPasswordDb?.password) {
     return {
       error: 'Contraseña de administrador incorrecta',
       field: 'adminPassword',

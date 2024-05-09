@@ -3,7 +3,7 @@ import {
   getAllComponents,
   getCategoriesByGradeId,
   getGradesByComponentId,
-} from '../../app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+} from '../../app/(main)/dashboard/rangos/lib/actions/ranks'
 import { ComboboxData } from '@/types/types'
 import { useFormContext } from 'react-hook-form'
 import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
@@ -39,9 +39,24 @@ export const useReceiversFormData = () => {
 
     componentId &&
       getGradesByComponentId(componentId).then((data) => {
-        const transformedData = data.map((grade) => ({
+        const sortedData = data.sort((a, b) => {
+          // Manejar el caso de que 'orden' sea null en 'a' o 'b'
+          if (a.orden === null && b.orden === null) {
+            return 0 // Si ambos son null, considerarlos iguales
+          }
+          if (a.orden === null) {
+            return 1 // Si 'orden' de 'a' es null, colocar 'a' después de 'b'
+          }
+          if (b.orden === null) {
+            return -1 // Si 'orden' de 'b' es null, colocar 'b' después de 'a'
+          }
+          // Si ambos tienen valores en 'orden', comparar normalmente
+          return a.orden - b.orden
+        })
+
+        const transformedData = sortedData.map((grade) => ({
           value: grade.id,
-          label: grade.nombre,
+          label: `${grade.nombre} - ${grade.orden}`,
         }))
 
         setGrades(transformedData)
@@ -78,9 +93,24 @@ export const useReceiversFormData = () => {
         setGradesLoading(true)
 
         getGradesByComponentId(value.id_componente).then((data) => {
-          const transformedData = data.map((grade) => ({
+          const sortedData = data.sort((a, b) => {
+            // Manejar el caso de que 'orden' sea null en 'a' o 'b'
+            if (a.orden === null && b.orden === null) {
+              return 0 // Si ambos son null, considerarlos iguales
+            }
+            if (a.orden === null) {
+              return 1 // Si 'orden' de 'a' es null, colocar 'a' después de 'b'
+            }
+            if (b.orden === null) {
+              return -1 // Si 'orden' de 'b' es null, colocar 'b' después de 'a'
+            }
+            // Si ambos tienen valores en 'orden', comparar normalmente
+            return a.orden - b.orden
+          })
+
+          const transformedData = sortedData.map((grade) => ({
             value: grade.id,
-            label: grade.nombre,
+            label: `${grade.nombre} - ${grade.orden}`,
           }))
 
           setGrades(transformedData)

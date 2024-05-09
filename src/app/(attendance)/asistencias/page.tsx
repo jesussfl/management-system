@@ -1,13 +1,14 @@
 import {
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { buttonVariants } from '@/modules/common/components/button'
-import Link from 'next/link'
 import { ArrowDown, ArrowUp } from 'lucide-react'
-
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
+import { buttonVariants } from '@/modules/common/components/button'
 export default function Page() {
   return (
     <div className="flex flex-col justify-center items-center h-screen">
@@ -32,6 +33,14 @@ export default function Page() {
             Registrar Hora de Salida
           </Link>
         </CardContent>
+        <CardFooter>
+          <Link
+            href="/dashboard"
+            className={cn(buttonVariants({ variant: 'link' }))}
+          >
+            Ir al Sistema de Gestión
+          </Link>
+        </CardFooter>
       </Card>
     </div>
   )

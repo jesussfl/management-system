@@ -1,8 +1,10 @@
 import { Option } from '@/modules/common/components/multiple-selector'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { Categoria_Militar, Grado_Militar, Prisma, Rol } from '@prisma/client'
 
 export type SideMenuItem = {
   title: string
+  identifier: SECTION_NAMES
   path: string
   icon?: any
   submenu?: boolean

@@ -39,7 +39,7 @@ import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 import { getAllSubsystems } from './lib/actions/subsystems'
 import { getAllSystems } from './lib/actions/systems'
-import { validateSectionsAndPermissions } from '@/lib/data/validate-permissions'
+import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { redirect } from 'next/navigation'
 

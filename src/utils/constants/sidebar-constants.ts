@@ -65,23 +65,27 @@ export enum SECTION_NAMES {
   TODAS = 'TODAS',
   ASISTENCIAS = 'ASISTENCIAS',
   RECURSOS_HUMANOS = 'RECURSOS_HUMANOS',
+  RANGOS = 'RANGOS',
 }
 
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
   {
     title: 'Inicio',
+    identifier: SECTION_NAMES.INICIO,
     path: '/dashboard',
     icon: Home,
   },
   {
     title: 'Abastecimiento',
     path: '/dashboard/abastecimiento',
+    identifier: SECTION_NAMES.ABASTECIMIENTO,
     icon: Package,
     submenu: true,
     requiredPermissions: [SECTION_NAMES.ABASTECIMIENTO, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Inventario',
+        identifier: SECTION_NAMES.INVENTARIO,
         path: '/dashboard/abastecimiento/inventario',
         icon: Boxes,
         requiredPermissions: [
@@ -92,6 +96,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Recepciones',
+        identifier: SECTION_NAMES.RECEPCION,
         path: '/dashboard/abastecimiento/recepciones',
         icon: PackagePlus,
         requiredPermissions: [
@@ -102,6 +107,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Despachos',
+        identifier: SECTION_NAMES.DESPACHOS,
         path: '/dashboard/abastecimiento/despachos',
         icon: PackageMinus,
         requiredPermissions: [
@@ -112,6 +118,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Devoluciones',
+        identifier: SECTION_NAMES.DEVOLUCIONES,
         path: '/dashboard/abastecimiento/devoluciones',
         icon: IterationCcw,
         requiredPermissions: [
@@ -122,6 +129,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Almacenes',
+        identifier: SECTION_NAMES.ALMACENES,
         path: '/dashboard/abastecimiento/almacenes',
         icon: Warehouse,
         requiredPermissions: [
@@ -132,20 +140,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Destinatarios',
+        identifier: SECTION_NAMES.DESTINATARIOS,
         path: '/dashboard/abastecimiento/destinatarios',
         icon: UserSquare2,
         requiredPermissions: [
           SECTION_NAMES.DESTINATARIOS,
-          SECTION_NAMES.TODAS,
-          SECTION_NAMES.ABASTECIMIENTO,
-        ],
-      },
-      {
-        title: 'Profesionales',
-        path: '/dashboard/abastecimiento/profesionales',
-        icon: Contact2,
-        requiredPermissions: [
-          SECTION_NAMES.PROFESIONALES,
           SECTION_NAMES.TODAS,
           SECTION_NAMES.ABASTECIMIENTO,
         ],
@@ -156,11 +155,13 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Armamento',
     path: '/dashboard/armamento',
     icon: Bomb,
+    identifier: SECTION_NAMES.ARMAMENTO,
     requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
     submenu: true,
     submenuItems: [
       {
         title: 'Inventario',
+        identifier: SECTION_NAMES.INVENTARIO,
         path: '/dashboard/armamento/inventario',
         icon: Boxes,
         requiredPermissions: [
@@ -171,6 +172,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Armas',
+        identifier: SECTION_NAMES.ARMAMENTO,
         path: '/dashboard/armamento/armas',
         icon: Bomb,
         requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
@@ -181,17 +183,20 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Recursos Humanos',
     path: '/dashboard/recursos-humanos',
     icon: Users2,
+    identifier: SECTION_NAMES.RECURSOS_HUMANOS,
     submenu: true,
     requiredPermissions: [SECTION_NAMES.RECURSOS_HUMANOS, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Personal',
+        identifier: SECTION_NAMES.PERSONAL,
         path: '/dashboard/recursos-humanos/personal',
         icon: Users2,
         requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
       },
       {
         title: 'Asistencias',
+        identifier: SECTION_NAMES.ASISTENCIAS,
         path: '/dashboard/recursos-humanos/asistencias',
         icon: Contact2,
         requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
@@ -199,13 +204,43 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     ],
   },
   {
+    title: 'Rangos',
+    identifier: SECTION_NAMES.RANGOS,
+    path: '/dashboard/rangos',
+    icon: Contact2,
+    requiredPermissions: [
+      SECTION_NAMES.TODAS,
+      SECTION_NAMES.DESTINATARIOS,
+      SECTION_NAMES.PROFESIONALES,
+      SECTION_NAMES.RANGOS,
+      SECTION_NAMES.ABASTECIMIENTO,
+      SECTION_NAMES.RECURSOS_HUMANOS,
+      SECTION_NAMES.ARMAMENTO,
+    ],
+  },
+  {
+    title: 'Profesionales',
+    identifier: SECTION_NAMES.PROFESIONALES,
+    path: '/dashboard/profesionales',
+    icon: Contact2,
+    requiredPermissions: [
+      SECTION_NAMES.PROFESIONALES,
+      SECTION_NAMES.TODAS,
+      SECTION_NAMES.ABASTECIMIENTO,
+      SECTION_NAMES.RECURSOS_HUMANOS,
+      SECTION_NAMES.ARMAMENTO,
+    ],
+  },
+  {
     title: 'Unidades',
+    identifier: SECTION_NAMES.UNIDADES,
     path: '/dashboard/unidades',
     icon: LocateIcon,
     requiredPermissions: [SECTION_NAMES.UNIDADES, SECTION_NAMES.TODAS],
   },
   {
     title: 'Usuarios',
+    identifier: SECTION_NAMES.USUARIOS,
     path: '/dashboard/usuarios',
     icon: UserCircle,
     requiredPermissions: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
@@ -213,6 +248,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
 
   {
     title: 'Auditoria',
+    identifier: SECTION_NAMES.AUDITORIA,
     path: '/dashboard/auditoria',
     icon: FolderSearch,
     requiredPermissions: [SECTION_NAMES.AUDITORIA, SECTION_NAMES.TODAS],
@@ -220,12 +256,14 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
 
   {
     title: 'Configuraciones',
+    identifier: SECTION_NAMES.CONFIGURACION,
     path: '/dashboard/configuracion',
     icon: Settings,
   },
   {
     title: 'Ayuda',
     path: '/dashboard/ayuda',
+    identifier: SECTION_NAMES.AYUDA,
     icon: HelpCircle,
     requiredPermissions: [SECTION_NAMES.AYUDA, SECTION_NAMES.TODAS],
   },

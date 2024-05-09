@@ -21,6 +21,12 @@ import { Button } from '@/modules/common/components/button'
 
 import { reset } from '@/app/(auth)/lib/actions/reset'
 import { useToast } from '@/modules/common/components/toast/use-toast'
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/modules/common/components/alert'
+import { AlertCircleIcon } from 'lucide-react'
 
 export const ResetForm = () => {
   const { toast } = useToast()
@@ -75,7 +81,18 @@ export const ResetForm = () => {
       backButtonLabel="Volver al inicio de sesión"
       backButtonHref="/auth/login"
     >
-      <Form {...form}>
+      <Alert variant={'destructive'}>
+        <AlertCircleIcon className="h-4 w-4" />
+        <AlertTitle>
+          {' '}
+          Por favor pida a su administrador cambiar la contraseña
+        </AlertTitle>
+        <AlertDescription>
+          Por medidas de mayor seguridad, la contraseña solo puede ser
+          reestablecida por un administrador
+        </AlertDescription>
+      </Alert>
+      {/* <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <FormField
@@ -110,7 +127,7 @@ export const ResetForm = () => {
             Enviar email
           </Button>
         </form>
-      </Form>
+      </Form> */}
     </CardWrapper>
   )
 }

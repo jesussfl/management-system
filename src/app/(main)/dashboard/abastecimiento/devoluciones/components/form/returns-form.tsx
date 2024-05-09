@@ -45,7 +45,7 @@ import {
   CommandItem,
 } from '@/modules/common/components/command/command'
 import Link from 'next/link'
-import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
+import { getAllProfessionals } from '@/app/(main)/dashboard/profesionales/lib/actions/professionals'
 import { SelectedItemCard } from './card-item-selected'
 import { createReturn, updateReturn } from '../../lib/actions/returns'
 import { Input } from '@/modules/common/components/input/input'

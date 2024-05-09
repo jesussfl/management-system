@@ -18,7 +18,7 @@ import { Componente_Militar } from '@prisma/client'
 import {
   createComponent,
   updateComponent,
-} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {

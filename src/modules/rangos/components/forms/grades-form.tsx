@@ -18,7 +18,7 @@ import {
   createGrade,
   getAllComponents,
   updateGrade,
-} from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/ranks'
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { GradosWithComponentesArray } from '@/types/types'

@@ -72,7 +72,7 @@ export const FormMilitar = () => {
                         placeholder="Buscar componente..."
                         className="h-9"
                       />
-                      <ScrollArea className="h-56">
+                      <ScrollArea className="max-h-56">
                         <CommandEmpty>
                           No se encontaron resultados.
                         </CommandEmpty>
@@ -151,7 +151,7 @@ export const FormMilitar = () => {
                         placeholder="Buscar grado..."
                         className="h-9"
                       />
-                      <ScrollArea className="h-56">
+                      <ScrollArea className="max-h-56">
                         <CommandEmpty>
                           No se encontaron resultados.
                         </CommandEmpty>
@@ -228,7 +228,7 @@ export const FormMilitar = () => {
                         placeholder="Buscar categoría..."
                         className="h-9"
                       />
-                      <ScrollArea className="h-56">
+                      <ScrollArea className="max-h-56">
                         <CommandEmpty>
                           No se encontaron resultados.
                         </CommandEmpty>

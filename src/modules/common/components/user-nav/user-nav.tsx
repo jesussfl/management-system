@@ -16,6 +16,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@/modules/common/components/avatar/avatar'
+import Link from 'next/link'
 export default function UserNav() {
   const { data: session } = useSession()
   return (
@@ -47,18 +48,23 @@ export default function UserNav() {
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          {/* <DropdownMenuItem>
             Perfil
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             Configuraciones
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <Link href={`/dashboard/contrasena-administrador`}>
+          <DropdownMenuItem>
+            Cambiar contraseña de Administrador
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuItem onClick={() => signOut()}>
           Cerrar Sesión
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
