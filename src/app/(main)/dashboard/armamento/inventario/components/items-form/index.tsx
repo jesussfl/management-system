@@ -148,28 +148,16 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
     ref?.scrollTo(0, 0)
   }, [currentStep, ref])
   return (
-    <div
-      ref={(ref) => setRef(ref)}
-      style={{
-        scrollbarGutter: 'stable both-edges',
-      }}
-      className="flex-1 overflow-y-auto p-6 mb-10 gap-8"
-    >
+    <div ref={(ref) => setRef(ref)}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="px-24">
+          <div className="px-24 mb-8">
             {currentStep === 1 && <Step1 />}
             {currentStep === 2 && <Step2 />}
             {currentStep === 3 && <Step3 setImage={setImage} />}
           </div>
 
           <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-            {(form.formState.errors.nombre ||
-              form.formState.errors.descripcion) && (
-              <p className="text-sm font-medium text-destructive">
-                Corrige los campos en rojo
-              </p>
-            )}
             <p className="text-xs text-muted-foreground">
               Paso {currentStep} de {'3'}
             </p>

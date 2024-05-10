@@ -234,7 +234,7 @@ export default function PersonnelForm({ defaultValues }: Props) {
                 }}
                 render={({ field }) => (
                   <FormItem className=" flex flex-1 items-center justify-between gap-4">
-                    <FormLabel className="mb-3">{`Cédula`}</FormLabel>
+                    <FormLabel className="mb-3">{`Documento de identidad`}</FormLabel>
 
                     <div className="w-[70%]">
                       <FormControl>
@@ -341,7 +341,17 @@ export default function PersonnelForm({ defaultValues }: Props) {
                     <FormLabel className="mb-3">{`Nombres:`}</FormLabel>
                     <div className="flex-1 w-full">
                       <FormControl>
-                        <Input type="text" {...field} />
+                        <Input
+                          type="text"
+                          {...field}
+                          onInput={(e) =>
+                            (e.currentTarget.value =
+                              e.currentTarget.value.replace(
+                                /[^a-zA-ZñÑáéíóúÁÉÍÓÚüÜ ]/g,
+                                ''
+                              ))
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </div>
@@ -359,7 +369,17 @@ export default function PersonnelForm({ defaultValues }: Props) {
                     <FormLabel className="mb-3">{`Apellidos:`}</FormLabel>
                     <div className="flex-1 w-full">
                       <FormControl>
-                        <Input type="text" {...field} />
+                        <Input
+                          type="text"
+                          {...field}
+                          onInput={(e) =>
+                            (e.currentTarget.value =
+                              e.currentTarget.value.replace(
+                                /[^a-zA-ZñÑáéíóúÁÉÍÓÚüÜ ]/g,
+                                ''
+                              ))
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </div>

@@ -77,26 +77,30 @@ export function CredentialsSignupForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
         <FormField
           control={form.control}
           name="name"
           rules={{
             required: 'Este campo es requerido',
-            minLength: {
-              value: 3,
-              message: 'El nombre de usuario debe tener al menos 3 caracteres',
-            },
-            maxLength: {
-              value: 40,
-              message: 'El nombre de usuario no puede ser tan largo',
-            },
+            minLength: 3,
+            maxLength: 150,
           }}
           render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Nombre y apellido</FormLabel>
+            <FormItem>
+              <FormLabel>Nombre Completo</FormLabel>
               <FormControl>
-                <Input type="text" {...field} disabled={isPending} />
+                <Input
+                  type="text"
+                  {...field}
+                  disabled={isPending}
+                  onInput={(e) =>
+                    (e.currentTarget.value = e.currentTarget.value.replace(
+                      /[^a-zA-ZñÑáéíóúÁÉÍÓÚüÜ ]/g,
+                      ''
+                    ))
+                  }
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -125,16 +129,16 @@ export function CredentialsSignupForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="tipo_cedula"
-          rules={{
-            required: 'Tipo de documento es requerido',
-          }}
-          render={({ field }) => (
-            <FormItem className="flex flex-1 items-center gap-4 justify-between">
-              <FormLabel className="mb-3">Tipo de documento</FormLabel>
-              <div className="w-[70%]">
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="tipo_cedula"
+            rules={{
+              required: 'Tipo de documento es requerido',
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tipo de documento de identidad</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
@@ -155,23 +159,21 @@ export function CredentialsSignupForm() {
                 </Select>
 
                 <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name={`cedula`}
-          rules={{
-            required: 'Este campo es requerido',
-            minLength: 5,
-            maxLength: 30,
-          }}
-          render={({ field }) => (
-            <FormItem className=" flex flex-1 items-center justify-between gap-4">
-              <FormLabel className="mb-3">{`Documento de identidad`}</FormLabel>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name={`cedula`}
+            rules={{
+              required: 'Este campo es requerido',
+              minLength: 5,
+              maxLength: 30,
+            }}
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>{`Documento de identidad`}</FormLabel>
 
-              <div className="w-[70%]">
                 <FormControl>
                   <Input
                     type="text"
@@ -185,10 +187,10 @@ export function CredentialsSignupForm() {
                   />
                 </FormControl>
                 <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="password"

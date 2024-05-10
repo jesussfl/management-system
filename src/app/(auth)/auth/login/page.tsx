@@ -14,7 +14,6 @@ export default function Page() {
       headerLabel="Ingresa tus datos correspondientes para acceder al sistema."
       backButtonLabel="No tengo una cuenta"
       backButtonHref="/auth/signup"
-      showSocial
     >
       <LoginForm />
     </CardWrapper>

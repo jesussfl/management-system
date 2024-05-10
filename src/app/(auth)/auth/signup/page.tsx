@@ -29,7 +29,6 @@ export default function Page({
       headerLabel={cardLabel}
       backButtonLabel="Ya tengo una cuenta"
       backButtonHref="/auth/login"
-      showSocial
     >
       <Tabs
         className="flex flex-col gap-2"

@@ -34,7 +34,7 @@ export const CardWrapper = ({
 }: CardWrapperProps) => {
   return (
     <div className="flex flex-col w-full gap-4 lg:justify-center lg:items-center bg-gray-50">
-      <Card className="flex flex-col h-full lg:w-[500px] shadow-md overflow-y-auto">
+      <Card className="flex flex-col h-full lg:w-[600px] shadow-md overflow-y-auto">
         <CardHeader>
           <Header error={error} label={headerLabel} title={headerTitle} />
         </CardHeader>
@@ -44,7 +44,7 @@ export const CardWrapper = ({
             <Social />
           </CardFooter>
         )}
-        <CardFooter>
+        <CardFooter className="flex justify-between">
           <BackButton label={backButtonLabel} href={backButtonHref} />
           <Link
             href="/asistencias"
