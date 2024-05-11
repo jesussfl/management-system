@@ -28,9 +28,14 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import Link from 'next/link'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  SECTION_NAMES,
+  SIDE_MENU_ITEMS,
+} from '@/utils/constants/sidebar-constants'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { useRouter } from 'next/navigation'
+import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
+
 interface Props {
   defaultValues?: Permiso
 }
@@ -54,6 +59,26 @@ type FormValues = {
   permiso: Permissions
 }
 
+const getAllSectionIdentifiers = () => {
+  const identifiers = SIDE_MENU_ITEMS.map((item) => {
+    if (item.submenuItems) {
+      const subSections = item.submenuItems.map((subItem) => {
+        return { subSection: subItem.identifier, mainSection: item.identifier }
+      })
+
+      return {
+        section: item.identifier,
+        subSections,
+      }
+    }
+
+    return {
+      section: item.identifier,
+      subSections: null,
+    }
+  })
+  return identifiers
+}
 const destructureKey = (key: string) => {
   const [seccion, permiso] = key.split(':')
   return {
@@ -259,12 +284,49 @@ export default function PermissionsForm({ defaultValues }: Props) {
                       <SelectValue placeholder="Selecciona la sección que quieres asignar al permiso" />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    {Object.keys(SECTION_NAMES).map((section) => (
-                      <SelectItem key={section} value={section}>
-                        {section}
-                      </SelectItem>
-                    ))}
+
+                  <SelectContent className="max-h-60">
+                    <ScrollArea className="h-60">
+                      {getAllSectionIdentifiers().map((section) => {
+                        if (section.subSections) {
+                          const subsections = section.subSections.map(
+                            (subSection) => (
+                              <SelectItem
+                                key={subSection.subSection}
+                                value={subSection.subSection}
+                              >
+                                {`${section.section} - ${subSection.subSection}`}
+                              </SelectItem>
+                            )
+                          )
+
+                          const mainSection = (
+                            <SelectItem
+                              key={section.section}
+                              value={section.section}
+                            >
+                              {section.section}
+                            </SelectItem>
+                          )
+
+                          return (
+                            <React.Fragment key={section.section}>
+                              {mainSection}
+                              {subsections}
+                            </React.Fragment>
+                          )
+                        }
+
+                        return (
+                          <SelectItem
+                            key={section.section}
+                            value={section.section}
+                          >
+                            {section.section}
+                          </SelectItem>
+                        )
+                      })}
+                    </ScrollArea>
                   </SelectContent>
                 </Select>
                 <FormDescription>

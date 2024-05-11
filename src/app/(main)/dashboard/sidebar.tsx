@@ -119,13 +119,13 @@ export const DashboardSidebar: FC = function () {
   const userPermissions = permissions?.map(
     (permission) => permission.permiso_key
   )
-
+  console.log(userSections, 'User Sections')
   const filterMenuItems = (items: SideMenuItem[]) => {
     return items.filter((item) => {
       if (item.requiredPermissions) {
         // Verificar si el usuario tiene al menos uno de los permisos requeridos
         return item.requiredPermissions.some(
-          (permission) => userSections?.includes(permission)
+          (section) => userSections?.includes(section)
         )
       } else {
         // Si no hay permisos requeridos, mostrar el elemento
@@ -137,14 +137,18 @@ export const DashboardSidebar: FC = function () {
   // Filtrar los elementos principales del menú lateral
   const filteredMenuItems = filterMenuItems(SIDE_MENU_ITEMS)
 
-  // Filtrar las subsecciones de los elementos principales del menú lateral
-  filteredMenuItems.forEach((item) => {
+  console.log(filteredMenuItems, 'sajfdk')
+  const filteredSubmenuItems = filteredMenuItems.map((item) => {
     if (item.submenu && item.submenuItems) {
-      item.submenuItems = filterMenuItems(item.submenuItems)
+      return {
+        ...item,
+        submenuItems: filterMenuItems(item.submenuItems),
+      }
     }
+    return item
   })
 
-  const menuItems = filteredMenuItems.filter((item) => {
+  const menuItems = filteredSubmenuItems.filter((item) => {
     if (item.submenu && item.submenuItems) {
       if (item.submenuItems.length === 0) return false
     }

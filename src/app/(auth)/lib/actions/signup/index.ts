@@ -48,11 +48,11 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
       rol: {
         connectOrCreate: {
           where: {
-            rol: 'Administrador',
+            rol: 'Básico',
           },
           create: {
-            rol: 'Administrador',
-            descripcion: 'Allows access to all features',
+            rol: 'Básico',
+            descripcion: 'Este rol solo tiene permisos para registrar hora de entrada y sálida',
           },
         },
       },

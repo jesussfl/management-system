@@ -81,7 +81,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     identifier: SECTION_NAMES.ABASTECIMIENTO,
     icon: Package,
     submenu: true,
-    requiredPermissions: [SECTION_NAMES.ABASTECIMIENTO, SECTION_NAMES.TODAS],
+
     submenuItems: [
       {
         title: 'Inventario',
@@ -156,7 +156,6 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     path: '/dashboard/armamento',
     icon: Bomb,
     identifier: SECTION_NAMES.ARMAMENTO,
-    requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
     submenu: true,
     submenuItems: [
       {
@@ -179,30 +178,30 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
     ],
   },
-  {
-    title: 'Recursos Humanos',
-    path: '/dashboard/recursos-humanos',
-    icon: Users2,
-    identifier: SECTION_NAMES.RECURSOS_HUMANOS,
-    submenu: true,
-    requiredPermissions: [SECTION_NAMES.RECURSOS_HUMANOS, SECTION_NAMES.TODAS],
-    submenuItems: [
-      {
-        title: 'Personal',
-        identifier: SECTION_NAMES.PERSONAL,
-        path: '/dashboard/recursos-humanos/personal',
-        icon: Users2,
-        requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
-      },
-      {
-        title: 'Asistencias',
-        identifier: SECTION_NAMES.ASISTENCIAS,
-        path: '/dashboard/recursos-humanos/asistencias',
-        icon: Contact2,
-        requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
-      },
-    ],
-  },
+  // {
+  //   title: 'Recursos Humanos',
+  //   path: '/dashboard/recursos-humanos',
+  //   icon: Users2,
+  //   identifier: SECTION_NAMES.RECURSOS_HUMANOS,
+  //   submenu: true,
+  //   requiredPermissions: [SECTION_NAMES.RECURSOS_HUMANOS, SECTION_NAMES.TODAS],
+  //   submenuItems: [
+  //     {
+  //       title: 'Personal',
+  //       identifier: SECTION_NAMES.PERSONAL,
+  //       path: '/dashboard/recursos-humanos/personal',
+  //       icon: Users2,
+  //       requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
+  //     },
+  //     {
+  //       title: 'Asistencias',
+  //       identifier: SECTION_NAMES.ASISTENCIAS,
+  //       path: '/dashboard/recursos-humanos/asistencias',
+  //       icon: Contact2,
+  //       requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
+  //     },
+  //   ],
+  // },
   {
     title: 'Rangos',
     identifier: SECTION_NAMES.RANGOS,

@@ -15,6 +15,7 @@ import {
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
+  PageTemplate,
 } from '@/modules/layout/templates/page'
 
 import { Metadata } from 'next'
@@ -48,6 +49,7 @@ import { RenglonWithAllRelations } from '@/types/types'
 import { lowStockItemsColumns } from './components/home-columns'
 import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Administrador',
@@ -80,7 +82,14 @@ const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 export default async function Page() {
   const session = await auth()
   const isAbastecimientoAuthorized = await validateSections({
-    sections: [SECTION_NAMES.INVENTARIO, SECTION_NAMES.ABASTECIMIENTO],
+    sections: [
+      SECTION_NAMES.INVENTARIO,
+      SECTION_NAMES.ABASTECIMIENTO,
+      SECTION_NAMES.DESPACHOS,
+      SECTION_NAMES.RECEPCION,
+      SECTION_NAMES.DEVOLUCIONES,
+      SECTION_NAMES.DESTINATARIOS,
+    ],
   })
   const statistics = await getStatistics()
   const items = await getAllItems()
@@ -88,19 +97,24 @@ export default async function Page() {
 
   if (!isAbastecimientoAuthorized) {
     return (
-      <>
-        <PageHeader>
-          <HeaderLeftSide>
-            <PageHeaderTitle>
-              <PackagePlus size={24} />
-              Bienvenido, {session?.user?.nombre}
-            </PageHeaderTitle>
-            <PageHeaderDescription>
-              {`Correo: ${session?.user?.email} | Rol: ${session?.user?.rol_nombre}`}
-            </PageHeaderDescription>
-          </HeaderLeftSide>
-        </PageHeader>
-      </>
+      <PageTemplate className="flex justify-center items-center h-[90vh]">
+        {' '}
+        <div className="flex flex-col text-center w-[600px] gap-4 text-gray-700">
+          <h1 className="text-4xl font-bold leading-[3rem]">
+            Solo tienes permisos para registrar tu hora de entrada y salida.
+          </h1>
+          <p className="text-md text-gray-500 leading-7">
+            Para acceder a otras secciones, solicita a un administrador los
+            permisos correspondientes.
+          </p>
+          <Link
+            href="/asistencias"
+            className={buttonVariants({ variant: 'default' })}
+          >
+            Ir al control de Asistencias
+          </Link>
+        </div>
+      </PageTemplate>
     )
   }
 

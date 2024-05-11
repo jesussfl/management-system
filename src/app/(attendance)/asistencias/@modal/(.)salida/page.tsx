@@ -12,14 +12,14 @@ export default async function Page() {
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-hidden'}
+        className={'overflow-hidden max-w-[300px]'}
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle>Verifica tu salida</DialogTitle>
         </DialogHeader>
+        <CloseButtonDialog />
         <ValidationForm type="salida" />
 
-        <CloseButtonDialog route="/asistencias" />
       </DialogContent>
     </Dialog>
   )

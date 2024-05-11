@@ -17,8 +17,8 @@ interface CardWrapperProps {
   children: React.ReactNode
   headerTitle?: string
   headerLabel: string
-  backButtonLabel: string
-  backButtonHref: string
+  backButtonLabel?: string
+  backButtonHref?: string
   showSocial?: boolean
   error?: boolean
 }
@@ -44,6 +44,9 @@ export const CardWrapper = ({
             <Social />
           </CardFooter>
         )}
+        {
+          backButtonHref && backButtonLabel && (
+            
         <CardFooter className="flex justify-between">
           <BackButton label={backButtonLabel} href={backButtonHref} />
           <Link
@@ -53,6 +56,8 @@ export const CardWrapper = ({
             Ir al Control de Asistencias
           </Link>
         </CardFooter>
+          )
+        }
       </Card>
     </div>
   )
