@@ -29,7 +29,13 @@ export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
         seriales: true
       }
     }
+    clasificacion: true
+    categoria: true
+
+    subsistema: true
+    almacen: true
     unidad_empaque: true
+    seriales: true
   }
 }>
 export type CategoriaType = Prisma.CategoriaGetPayload<{

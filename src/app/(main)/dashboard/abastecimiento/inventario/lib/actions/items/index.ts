@@ -305,8 +305,10 @@ export const getAllItems = async () => {
       },
       clasificacion: true,
       unidad_empaque: true,
+      almacen: true,
       categoria: true,
       subsistema: true,
+      seriales: true,
     },
   })
   return renglones

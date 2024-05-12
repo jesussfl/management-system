@@ -52,6 +52,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
+import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>
@@ -104,6 +105,7 @@ interface SingleDeleteProps {
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onDataChange?: (data: any[]) => void
   isColumnFilterEnabled?: boolean
   selectedData?: any
   setSelectedData?: (data: any) => void
@@ -118,6 +120,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   selectedData,
   setSelectedData,
   multipleDeleteAction,
+  onDataChange,
   isMultipleDeleteEnabled,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -182,7 +185,11 @@ export function DataTable<TData extends { id: any }, TValue>({
       globalFilter: filtering,
     },
   })
-
+  const { rows } = table.getFilteredRowModel()
+  useEffect(() => {
+    if (!onDataChange) return
+    onDataChange(rows)
+  }, [rows])
   return (
     <div className="flex flex-col px-2 gap-2">
       {isMultipleDeleteEnabled ? (

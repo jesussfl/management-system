@@ -28,6 +28,36 @@ import { cn } from '@/utils/utils'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import Image from 'next/image'
 import { format } from 'date-fns'
+
+export type RenglonColumns = {
+  id: number
+  nombre: string
+  descripcion: string
+  imagen?: string | null
+
+  stock_minimo: number
+  stock_maximo?: number
+  stock: number
+  seriales?: string
+
+  numero_parte?: string
+  peso_total: number
+
+  estado: string
+
+  unidad_empaque: string
+  clasificacion: string
+  categoria: string
+  tipo?: string
+
+  almacen: string
+
+  subsistema?: string
+
+  creado: Date
+  editado: Date
+}
+
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
   {
@@ -137,12 +167,15 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorKey: 'tipo',
     header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
   },
-
   {
     accessorKey: 'unidad_empaque.nombre',
     header: ({ column }) => (
       <HeaderCell column={column} value="Unidad de empaque" />
     ),
+  },
+  {
+    accessorKey: 'almacen.nombre',
+    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
   },
   {
     accessorKey: 'subsistema.nombre',

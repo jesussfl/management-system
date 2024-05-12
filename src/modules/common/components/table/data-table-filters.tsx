@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
+import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
 
 interface MultipleDeleteProps {
   isMultipleDeleteEnabled: true
@@ -65,6 +66,8 @@ export default function DataTableFilters({
         className="max-w-sm"
       />
       <div className="flex gap-4">
+        {/* <ExportExcelButton data={table.getFilteredRowModel().rows} /> */}
+
         {isColumnFilterEnabled && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

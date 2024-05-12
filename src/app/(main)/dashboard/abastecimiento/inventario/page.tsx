@@ -60,6 +60,8 @@ import {
   getAllSubsystems,
 } from './lib/actions/subsystems'
 import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
+import { TableWithExport } from './table-with-export'
+import { formatExcelData } from './lib/helpers/format-excel-data'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -87,13 +89,13 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Link
+          {/* <Link
             href="/dashboard/abastecimiento/inventario/exportar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <DownloadIcon className="mr-2 h-4 w-4" />
             Exportar
-          </Link>
+          </Link> */}
           <Link
             href="/dashboard/abastecimiento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}
@@ -132,12 +134,7 @@ export default async function Page() {
           <PageContent>
             <Card>
               <CardContent>
-                <DataTable
-                  columns={columns}
-                  data={itemsData}
-                  isMultipleDeleteEnabled
-                  multipleDeleteAction={deleteMultipleItems}
-                />
+                <TableWithExport itemsData={itemsData} />
               </CardContent>
             </Card>
           </PageContent>

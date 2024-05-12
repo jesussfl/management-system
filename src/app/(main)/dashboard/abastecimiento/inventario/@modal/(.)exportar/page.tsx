@@ -17,7 +17,7 @@ export default async function Page() {
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ExportExcelButton />
+        {/* <ExportExcelButton /> */}
         {/* <ClassificationsForm /> */}
       </DialogContent>
     </Dialog>
