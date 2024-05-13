@@ -1,4 +1,5 @@
 import { getUserById } from '@/app/(main)/dashboard/usuarios/lib/actions/users'
+import { format } from 'date-fns'
 
 export default async function useUserData(userId: string) {
   const user = await getUserById(userId)
@@ -20,12 +21,17 @@ export default async function useUserData(userId: string) {
       info: `${personalData.tipo_cedula}-${personalData.cedula}`,
     },
     {
-      title: 'Próxima Guardia',
-      info: `PROXIMAMENTE...`,
-    },
-    {
-      title: 'Ubicación de la Guardia',
-      info: `PROXIMAMENTE...`,
+      title: 'Próximas Guardias',
+      info: `${user.personal.guardias
+        .filter((guardia) => guardia.fecha > new Date())
+        .map((guardia) => {
+          return (
+            format(new Date(guardia.fecha), 'dd/MM/yyyy') +
+            ' ' +
+            guardia.ubicacion
+          )
+        })
+        .join(', ')}`,
     },
   ]
   return {

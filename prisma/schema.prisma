@@ -529,8 +529,9 @@ model Personal {
   id_componente  Int?
   componente     Componente_Militar? @relation(fields: [id_componente], references: [id])
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  guardias             Guardia[]
 }
 
 model Auditoria {
@@ -661,6 +662,20 @@ model Admin {
 
   password String
   state    AdminPasswordStates
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+}
+
+model Guardia {
+  id Int @id @default(autoincrement())
+
+  estado    String
+  ubicacion String
+  fecha     DateTime
+
+  cedula_usuario String
+  personal       Personal @relation(fields: [cedula_usuario], references: [cedula])
 
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt

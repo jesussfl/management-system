@@ -1,58 +1,28 @@
-import { getUserById } from '@/app/(main)/dashboard/usuarios/lib/actions/users'
 import PageForm from '@/modules/layout/components/page-form'
-import { format } from 'date-fns'
 import { Rocket } from 'lucide-react'
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from '@/modules/common/components/alert'
-import { getLastAttendanceByUserId } from '@/app/(main)/dashboard/recursos-humanos/asistencias/lib/actions'
+import useUserData from '../../lib/hooks/useUserData'
+import useAttendance from '../../lib/hooks/useAttendance'
 export default async function Page({
   params: { userId },
 }: {
   params: { userId: string }
 }) {
-  const user = await getUserById(userId)
-  const lastAttendance = await getLastAttendanceByUserId(userId)
+  const { dataToShow } = await useUserData(userId)
+  const { inTime, outTime } = await useAttendance(userId)
 
-  const inTime = lastAttendance?.hora_entrada
-    ? format(new Date(lastAttendance.hora_entrada), 'dd/MM/yyyy HH:mm')
-    : 'Sin registrar hoy'
-
-  const outTime = lastAttendance?.hora_salida
-    ? format(new Date(lastAttendance.hora_salida), 'dd/MM/yyyy HH:mm')
-    : 'Sin registrar hoy'
-
-  if (!user) return <div>No existe el usuario</div>
-
-  if (!user.personal)
+  if (!dataToShow)
     return (
       <div>El usuario no tiene Información registrada en el sistema aún</div>
     )
-
-  const data = [
-    {
-      title: 'Nombre Completo',
-      info: `${user.personal.nombres} ${user.personal.apellidos}`,
-    },
-    {
-      title: 'Cédula',
-      info: `${user.personal.tipo_cedula}-${user.personal.cedula}`,
-    },
-    {
-      title: 'Próxima Guardia',
-      info: `PROXIMAMENTE...`,
-    },
-    {
-      title: 'Ubicación de la Guardia',
-      info: `PROXIMAMENTE...`,
-    },
-  ]
   return (
     <PageForm title="Consulta de Información" backLink="/asistencias">
       <div>
-        <Alert variant={'success'}>
+        <Alert variant={'success'} className="mb-6">
           <Rocket className="h-4 w-4" />
           <AlertTitle>Hora de Entrada: </AlertTitle>
           <AlertDescription>{inTime}</AlertDescription>
@@ -64,7 +34,7 @@ export default async function Page({
         </Alert>
         <div className="mt-6 border-t border-gray-100">
           <dl className="divide-y divide-gray-100">
-            {data.map(({ title, info }) => (
+            {dataToShow.map(({ title, info }) => (
               <UserDetail key={title} title={title} info={info} />
             ))}
           </dl>

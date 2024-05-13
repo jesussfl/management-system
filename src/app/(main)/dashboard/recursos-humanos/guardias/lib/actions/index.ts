@@ -7,9 +7,15 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
-export const createPersonnel = async (
-  data: Prisma.PersonalUncheckedCreateInput
-) => {
+
+export type GuardiasForm = {
+  guardias: {
+    ubicacion: string
+    fecha: Date
+    estado: string
+  }[]
+}
+export const updateGuard = async (data: GuardiasForm, id: string) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -26,51 +32,50 @@ export const createPersonnel = async (
     return permissionsResponse
   }
 
-  const exists = await prisma.personal.findUnique({
+  await prisma.personal.update({
     where: {
-      cedula: data.cedula,
+      cedula: id,
+    },
+    data: {
+      guardias: {
+        deleteMany: {},
+        createMany: {
+          data: data.guardias.map((guardia) => {
+            return {
+              fecha: guardia.fecha,
+              estado: guardia.estado,
+              ubicacion: guardia.ubicacion,
+            }
+          }),
+        },
+      },
     },
   })
 
-  if (exists) {
-    return {
-      error: 'El personal ya existe',
-      field: 'cedula',
-      success: false,
-    }
-  }
-
-  await prisma.personal.create({
-    data,
-  })
-
-  await registerAuditAction(
-    'Se creó un nuevo personal con la cédula ' + data.cedula
-  )
-  revalidatePath('/dashboard/recursos-humanos/personal')
+  await registerAuditAction('Se asignaron guardias a ' + id)
+  revalidatePath('/dashboard/recursos-humanos/guardias')
 
   return {
-    success: 'El personal ha sido creado con exito',
+    success: 'las guardias han sido creadas con exito',
     error: false,
   }
 }
 
-export const getAllPersonnel = async () => {
+export const getAllGuards = async () => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const personnel = await prisma.personal.findMany({
+  const guards = await prisma.guardia.findMany({
     include: {
-      usuario: true,
-      grado: true,
-      categoria: true,
-      componente: true,
-      unidad: true,
-      guardias: true,
+      personal: true,
+    },
+
+    orderBy: {
+      fecha: 'asc',
     },
   })
-  return personnel
+  return guards
 }
 
 export const deletePersonnel = async (cedula: string) => {
@@ -175,6 +180,32 @@ export const getPersonnelById = async (id: number) => {
       categoria: true,
       componente: true,
       unidad: true,
+      guardias: true,
+    },
+  })
+
+  if (!personnel) {
+    throw new Error('Receiver not found')
+  }
+  return personnel
+}
+
+export const getPersonnelByCedula = async (id: string) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const personnel = await prisma.personal.findUnique({
+    where: {
+      cedula: id,
+    },
+    include: {
+      usuario: true,
+      grado: true,
+      categoria: true,
+      componente: true,
+      unidad: true,
+      guardias: true,
     },
   })
 

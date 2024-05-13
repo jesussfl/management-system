@@ -66,8 +66,6 @@ export default function DataTableFilters({
         className="max-w-sm"
       />
       <div className="flex gap-4">
-        {/* <ExportExcelButton data={table.getFilteredRowModel().rows} /> */}
-
         {isColumnFilterEnabled && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -27,7 +27,11 @@ export const getUserById = async (id: string) => {
       id,
     },
     include: {
-      personal: true,
+      personal: {
+        include: {
+          guardias: true,
+        },
+      },
       rol: true,
     },
   })
