@@ -119,7 +119,6 @@ export const DashboardSidebar: FC = function () {
   const userPermissions = permissions?.map(
     (permission) => permission.permiso_key
   )
-  console.log(userSections, 'User Sections')
   const filterMenuItems = (items: SideMenuItem[]) => {
     return items.filter((item) => {
       if (item.requiredPermissions) {
@@ -137,7 +136,6 @@ export const DashboardSidebar: FC = function () {
   // Filtrar los elementos principales del menú lateral
   const filteredMenuItems = filterMenuItems(SIDE_MENU_ITEMS)
 
-  console.log(filteredMenuItems, 'sajfdk')
   const filteredSubmenuItems = filteredMenuItems.map((item) => {
     if (item.submenu && item.submenuItems) {
       return {

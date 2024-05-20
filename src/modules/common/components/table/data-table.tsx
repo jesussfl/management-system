@@ -235,7 +235,11 @@ export function DataTable<TData extends { id: any }, TValue>({
                       {header.column.getCanFilter() &&
                       !COLUMNS_TO_EXCLUDE.includes(header.column.id) ? (
                         <div>
-                          <Filter column={header.column} table={table} />
+                          <Filter
+                            key={header.id}
+                            column={header.column}
+                            table={table}
+                          />
                         </div>
                       ) : null}
                     </TableHead>

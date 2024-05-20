@@ -91,7 +91,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     },
   },
   {
-    accessorKey: 'stock',
+    id: 'stock',
     accessorFn: (row) =>
       row.recepciones.reduce((total, item) => {
         const serials = item.seriales.filter(
@@ -104,21 +104,19 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
   },
   {
-    accessorKey: 'peso_total',
-    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-      return (
-        <div>
-          {`${stock * Number(row.original.peso)} 
-            ${row.original.unidad_empaque.abreviacion}
-          `}
-        </div>
-      )
+    id: 'peso_total',
+    // accessorKey: 'peso_total',
+    accessorFn: (row) => {
+      const stock = row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+        return total + serials
+      }, 0)
+      return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
     },
+    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
   {
     accessorKey: 'peso',
@@ -168,18 +166,20 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
   },
   {
-    accessorKey: 'unidad_empaque.nombre',
+    id: 'unidad_empaque',
+    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin unidad de empaque',
     header: ({ column }) => (
       <HeaderCell column={column} value="Unidad de empaque" />
     ),
   },
   {
-    accessorKey: 'almacen.nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
+    id: 'subsistema',
+    accessorFn: (row) => row.subsistema?.nombre || 'Sin subsistema',
+    header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
   },
   {
-    accessorKey: 'subsistema.nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
+    accessorKey: 'almacen.nombre',
+    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
   },
   {
     accessorKey: 'numero_parte',
@@ -196,7 +196,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
   },
   {
-    accessorKey: 'seriales',
+    id: 'seriales',
     header: ({ column }) => <HeaderCell column={column} value="Seriales" />,
     cell: ({ row }) => {
       return (

@@ -1,18 +1,11 @@
 'use client'
 
 import { Button } from '@/modules/common/components/button'
-import { Renglon, Serial } from '@prisma/client'
-import { useEffect, useState } from 'react'
-import { getAllItems } from '../../lib/actions/items'
-import downloadExcelFile from '@/utils/helpers/download-excel'
 import generateExcelData from '@/utils/helpers/excel-data-generator'
-import { DownloadIcon, SheetIcon } from 'lucide-react'
-import { RenglonColumns } from '../../columns'
-import { getStock } from '../../lib/helpers/get-stock-async'
-import { RenglonWithAllRelations } from '@/types/types'
+import { DownloadIcon } from 'lucide-react'
 
 function ExportExcelButton({ data }: { data: any }) {
-  const [dataToExport, setDataToExport] = useState<RenglonColumns[]>([])
+  // const [dataToExport, setDataToExport] = useState<RenglonColumns[]>([])
 
   // useEffect(() => {
   //   const formatData = () => {

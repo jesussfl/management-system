@@ -89,13 +89,6 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          {/* <Link
-            href="/dashboard/abastecimiento/inventario/exportar"
-            className={buttonVariants({ variant: 'secondary' })}
-          >
-            <DownloadIcon className="mr-2 h-4 w-4" />
-            Exportar
-          </Link> */}
           <Link
             href="/dashboard/abastecimiento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}
@@ -134,7 +127,10 @@ export default async function Page() {
           <PageContent>
             <Card>
               <CardContent>
-                <TableWithExport itemsData={itemsData} />
+                <TableWithExport
+                  itemsData={itemsData}
+                  // formatFn={formatExcelData}
+                />
               </CardContent>
             </Card>
           </PageContent>
