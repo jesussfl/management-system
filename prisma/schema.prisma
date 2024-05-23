@@ -59,7 +59,7 @@ model Usuario {
   rol           Rol          @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
   auditoria     Auditoria[]
   personal      Personal?
-  Asistencia    Asistencia[]
+  asistencias   Asistencia[]
 
   @@map("User")
 }

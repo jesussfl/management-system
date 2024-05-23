@@ -9,10 +9,8 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns } from './columns'
-import { DataTable } from '@/modules/common/components/table/data-table'
-import { getAllAttendances } from './lib/actions'
-// import ButtonExport from './components/button-export'
+import { getAllAttendances, getAllUsersWithAttendances } from './lib/actions'
+import AttendanceTable from './components/attendance-table'
 
 export const metadata: Metadata = {
   title: 'Asistencias',
@@ -20,6 +18,7 @@ export const metadata: Metadata = {
 }
 export default async function Page() {
   const attendances = await getAllAttendances()
+  const usersWithAttendances = await getAllUsersWithAttendances()
   return (
     <>
       <PageHeader>
@@ -36,7 +35,8 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <DataTable columns={columns} data={attendances} />
+        <AttendanceTable users={usersWithAttendances} />
+        {/* <DataTable columns={columns} data={attendances} /> */}
       </PageContent>
     </>
   )
