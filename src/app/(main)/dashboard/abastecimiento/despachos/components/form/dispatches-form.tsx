@@ -902,6 +902,9 @@ export const SelectedItemCard = ({
                 <FormControl>
                   <Input type="text" {...field} />
                 </FormControl>
+                <FormDescription>
+                  {`La observación no puede superar los 125 caracteres`}
+                </FormDescription>
                 <FormMessage />
               </div>
             </FormItem>

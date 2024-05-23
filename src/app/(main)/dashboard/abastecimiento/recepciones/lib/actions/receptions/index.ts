@@ -25,6 +25,38 @@ type Detalles = Omit<
 }
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
+    destinatario: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    supervisor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    abastecedor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    autorizador: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
     renglones: {
       include: {
         renglon: {
@@ -35,7 +67,11 @@ type RecepcionType = Prisma.RecepcionGetPayload<{
             unidad_empaque: true
           }
         }
-        seriales: true
+        seriales: {
+          select: {
+            serial: true
+          }
+        }
       }
     }
   }
@@ -112,6 +148,7 @@ export const createReception = async (data: FormValues) => {
 
   await prisma.recepcion.create({
     data: {
+      ...data,
       motivo,
       fecha_recepcion,
       renglones: {
@@ -238,6 +275,10 @@ export const getAllReceptions = async () => {
           renglon: true,
         },
       },
+      abastecedor: true,
+      autorizador: true,
+      supervisor: true,
+      destinatario: true,
     },
   })
   return recepciones
@@ -253,6 +294,38 @@ export const getReceptionById = async (id: number): Promise<RecepcionType> => {
       id,
     },
     include: {
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
       renglones: {
         include: {
           renglon: {
@@ -263,7 +336,11 @@ export const getReceptionById = async (id: number): Promise<RecepcionType> => {
               categoria: true,
             },
           },
-          seriales: true,
+          seriales: {
+            select: {
+              serial: true,
+            },
+          },
         },
       },
     },

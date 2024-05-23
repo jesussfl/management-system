@@ -1,10 +1,9 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
-import { useEffect, useState } from 'react'
-import { cn } from '@/utils/utils'
+import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
-import { Box, Brush, Trash } from 'lucide-react'
+import { Box, Trash } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -15,14 +14,6 @@ import {
 } from '@/modules/common/components/form'
 
 // import { RenglonType } from '@/types/types'
-import { Calendar } from '@/modules/common/components/calendar'
-import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
 import {
   Card,
   CardContent,
@@ -224,6 +215,7 @@ export const CardItemSelected = ({
             </FormItem>
           )}
         />
+
         <FormField
           control={control}
           name={`renglones.${index}.precio`}
@@ -243,6 +235,31 @@ export const CardItemSelected = ({
                     }
                   />
                 </FormControl>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name={`renglones.${index}.observacion`}
+          rules={{
+            maxLength: {
+              value: 125,
+              message: 'La observación no puede superar los 125 caracteres',
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col flex-1 gap-2">
+              <FormLabel className="w-[12rem]">{`Observación (opcional):`}</FormLabel>
+
+              <div className="flex-1 w-full">
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormDescription>
+                  {`La observación no puede superar los 125 caracteres`}
+                </FormDescription>
                 <FormMessage />
               </div>
             </FormItem>

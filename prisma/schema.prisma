@@ -230,12 +230,23 @@ model Almacen {
 }
 
 model Recepcion {
-  id                   Int                     @id @default(autoincrement())
-  fecha_recepcion      DateTime
-  motivo               String?
-  renglones            Recepciones_Renglones[]
-  fecha_creacion       DateTime                @default(now())
-  ultima_actualizacion DateTime                @updatedAt
+  id              Int                     @id @default(autoincrement())
+  fecha_recepcion DateTime
+  motivo          String?
+  renglones       Recepciones_Renglones[]
+
+  cedula_destinatario String?
+  cedula_autorizador  String?
+  cedula_abastecedor  String?
+  cedula_supervisor   String?
+
+  destinatario Destinatario?               @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador  Profesional_Abastecimiento? @relation(name: "autorizador_recepcion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor  Profesional_Abastecimiento? @relation(name: "abastecedor_recepcion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor_recepcion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 }
 
 model Recepciones_Renglones {
@@ -250,6 +261,8 @@ model Recepciones_Renglones {
   fabricante           String?
   precio               Float?
   codigo_solicitud     String?
+  observacion          String?   @default("s/o")
+
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
   fecha_fabricacion    DateTime?
@@ -274,12 +287,20 @@ model Serial {
 }
 
 model Devolucion {
-  id                  Int                      @id @default(autoincrement())
-  fecha_devolucion    DateTime
-  motivo              String
-  renglones           Devoluciones_Renglones[]
+  id               Int                      @id @default(autoincrement())
+  fecha_devolucion DateTime
+  motivo           String
+  renglones        Devoluciones_Renglones[]
+
   cedula_destinatario String
-  destinatario        Destinatario             @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  cedula_autorizador  String?
+  cedula_abastecedor  String?
+  cedula_supervisor   String?
+
+  destinatario Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador  Profesional_Abastecimiento? @relation(name: "autorizador_devolucion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor  Profesional_Abastecimiento? @relation(name: "abastecedor_devolucion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor_devolucion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
@@ -374,6 +395,7 @@ model Destinatario {
   fecha_creacion       DateTime     @default(now())
   ultima_actualizacion DateTime     @updatedAt
   Devolucion           Devolucion[]
+  Recepcion            Recepcion[]
 }
 
 model Profesional_Abastecimiento {
@@ -402,6 +424,14 @@ model Profesional_Abastecimiento {
   abastecedor Despacho[] @relation("abastecedor")
   autorizador Despacho[] @relation("autorizador")
   supervisor  Despacho[] @relation("supervisor")
+
+  abastecedor_recepcion Recepcion[] @relation("abastecedor_recepcion")
+  autorizador_recepcion Recepcion[] @relation("autorizador_recepcion")
+  supervisor_recepcion  Recepcion[] @relation("supervisor_recepcion")
+
+  abastecedor_devolucion Devolucion[] @relation("abastecedor_devolucion")
+  autorizador_devolucion Devolucion[] @relation("autorizador_devolucion")
+  supervisor_devolucion  Devolucion[] @relation("supervisor_devolucion")
 }
 
 model Componente_Militar {
