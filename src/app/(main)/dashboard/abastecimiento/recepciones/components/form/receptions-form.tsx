@@ -39,6 +39,7 @@ import {
   Serial,
 } from '@prisma/client'
 import {
+  RecepcionType,
   createReception,
   updateReception,
 } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
@@ -67,16 +68,16 @@ type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
 >
-type RecepcionType = Prisma.RecepcionGetPayload<{
-  include: {
-    renglones: {
-      include: {
-        renglon: { include: { unidad_empaque: true; recepciones: true } }
-        seriales: true
-      }
-    }
-  }
-}>
+// type RecepcionType = Prisma.RecepcionGetPayload<{
+//   include: {
+//     renglones: {
+//       include: {
+//         renglon: { include: { unidad_empaque: true; recepciones: true } }
+//         seriales: true
+//       }
+//     }
+//   }
+// }>
 
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }

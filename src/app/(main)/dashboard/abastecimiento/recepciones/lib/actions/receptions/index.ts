@@ -23,7 +23,7 @@ type Detalles = Omit<
 > & {
   seriales: SerialType[]
 }
-type RecepcionType = Prisma.RecepcionGetPayload<{
+export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {
       include: {
