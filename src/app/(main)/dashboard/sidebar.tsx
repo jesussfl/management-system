@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation'
 import { getUserPermissions } from '@/lib/auth'
 import { Permiso } from '@prisma/client'
 import { SideMenuItem } from '@/types/types'
+import { useSession } from 'next-auth/react'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
   root: {
@@ -90,28 +91,14 @@ const customTheme: CustomFlowbiteTheme['sidebar'] = {
   },
 }
 
-type UserPermissions = {
-  id: number
-  permiso_key: string
-  rol_nombre: string
-  active: boolean | null
-}[]
 export const DashboardSidebar: FC = function () {
   const { isCollapsed } = useSidebarContext()
   const pathname = usePathname()
-  const [permissions, setPermissions] = useState<UserPermissions>([])
+  const { data: session } = useSession()
+  const { user } = session || {}
+  const { rol } = user || {}
+  const permissions = rol?.permisos
 
-  useEffect(() => {
-    const fetchedPermissions = async () => {
-      const permissions = await getUserPermissions()
-      if (!permissions) {
-        return
-      }
-      setPermissions(permissions)
-    }
-
-    fetchedPermissions()
-  }, [])
   const userSections = permissions?.map(
     (permission) => permission.permiso_key.split(':')[0]
   )

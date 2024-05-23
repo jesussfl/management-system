@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import Ceserlodai from '@public/ceserlodai.jpg'
+import Ceserlodai from '@public/imagen_principal.jpg'
 export default function AuthLayout({
   children,
 }: {

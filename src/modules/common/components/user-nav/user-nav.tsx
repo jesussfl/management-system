@@ -17,8 +17,25 @@ import {
   AvatarImage,
 } from '@/modules/common/components/avatar/avatar'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { validateSections } from '@/lib/data/validate-permissions'
 export default function UserNav() {
   const { data: session } = useSession()
+  const [isAuthorized, setIsAuthorized] = useState(false)
+
+  useEffect(() => {
+    const validateKeys = async () => {
+      const isAuthorized = await validateSections({
+        sections: [SECTION_NAMES.TODAS],
+      })
+
+      setIsAuthorized(isAuthorized)
+    }
+
+    validateKeys()
+  }, [])
+  //check if user has a permission with the key "TODAS:FULL"
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -61,9 +78,14 @@ export default function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <Link href={`/dashboard/contrasena-administrador`}>
-          <DropdownMenuItem>
+          {isAuthorized && (
+            <DropdownMenuItem>
+              Cambiar contraseña de Administrador
+            </DropdownMenuItem>
+          )}
+          {/* <DropdownMenuItem>
             Cambiar contraseña de Administrador
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </Link>
         <DropdownMenuItem onClick={() => signOut()}>
           Cerrar Sesión
