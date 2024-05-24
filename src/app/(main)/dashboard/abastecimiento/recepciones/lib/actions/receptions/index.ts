@@ -237,7 +237,14 @@ export const updateReception = async (id: number, data: FormValues) => {
           id: undefined,
           id_recepcion: undefined,
           id_renglon: undefined,
-
+          codigo_solicitud: undefined,
+          pedido: renglon.codigo_solicitud
+            ? {
+                connect: {
+                  id: renglon.codigo_solicitud,
+                },
+              }
+            : undefined,
           renglon: {
             connect: {
               id: renglon.id_renglon,
@@ -439,4 +446,21 @@ export const deleteMultipleReceptions = async (ids: number[]) => {
     success: 'Se ha eliminado la recepción correctamente',
     error: false,
   }
+}
+
+export const getAllOrdersByItemId = async (itemId: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const orders = await prisma.pedido.findMany({
+    where: {
+      renglones: {
+        some: {
+          id_renglon: itemId,
+        },
+      },
+    },
+  })
+  return orders
 }

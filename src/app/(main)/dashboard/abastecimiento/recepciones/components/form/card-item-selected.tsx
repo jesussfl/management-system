@@ -1,9 +1,9 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
-import { Box, Trash } from 'lucide-react'
+import { Box, CheckIcon, Trash } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -23,12 +23,30 @@ import {
 } from '@/modules/common/components/card/card'
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
-import { Prisma } from '@prisma/client'
-// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
-// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
+import { Pedido, Prisma } from '@prisma/client'
+import { getAllOrdersByItemId } from '../../lib/actions/receptions'
+import { ComboboxData } from '@/types/types'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/modules/common/components/popover/popover'
+import { CaretSortIcon } from '@radix-ui/react-icons'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/modules/common/components/command/command'
+import { cn } from '@/utils/utils'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
 }>
+type PedidoType = Prisma.PedidoGetPayload<{
+  include: { renglones: { include: { renglon: true } } }
+}>
+
 export const CardItemSelected = ({
   item,
   index,
@@ -44,8 +62,20 @@ export const CardItemSelected = ({
 }) => {
   const { watch, control, setValue, trigger } = useFormContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
+  const [pedidos, setPedidos] = useState<ComboboxData[]>([])
   const toogleModal = () => setIsModalOpen(!isModalOpen)
+
+  useEffect(() => {
+    getAllOrdersByItemId(item.id).then((data) => {
+      const transformedData = data.map((order: any) => ({
+        value: order.id,
+        label: `Código: ${order.id}`,
+      }))
+
+      setPedidos(transformedData)
+    })
+  }, [item.id])
+
   return (
     <Card
       key={item.id}
@@ -74,15 +104,67 @@ export const CardItemSelected = ({
           control={control}
           name={`renglones.${index}.codigo_solicitud`}
           render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
-              <FormLabel className="w-[12rem]">{`Código de solicitud (opcional):`}</FormLabel>
+            <FormItem className="flex-1 ">
+              <FormLabel>Código de Solicitud:</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        'w-full justify-between',
+                        !field.value && 'text-muted-foreground'
+                      )}
+                    >
+                      {field.value
+                        ? pedidos.find((pedido) => pedido.value === field.value)
+                            ?.label
+                        : 'Seleccionar código'}
+                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="PopoverContent">
+                  <Command>
+                    <CommandInput
+                      placeholder="Buscar código..."
+                      className="h-9"
+                    />
+                    <CommandEmpty>No se encontaron resultados.</CommandEmpty>
+                    <CommandGroup>
+                      {pedidos.map((pedido) => (
+                        <CommandItem
+                          value={pedido.label}
+                          key={pedido.value}
+                          onSelect={() => {
+                            setValue(
+                              `renglones.${index}.codigo_solicitud`,
+                              pedido.value,
+                              {
+                                shouldDirty: true,
+                              }
+                            )
+                          }}
+                        >
+                          {pedido.label}
+                          <CheckIcon
+                            className={cn(
+                              'ml-auto h-4 w-4',
+                              pedido.value === field.value
+                                ? 'opacity-100'
+                                : 'opacity-0'
+                            )}
+                          />
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input type="text" {...field} />
-                </FormControl>
-                <FormMessage />
-              </div>
+              <FormDescription>Este campo es opcional</FormDescription>
+              <FormMessage />
             </FormItem>
           )}
         />

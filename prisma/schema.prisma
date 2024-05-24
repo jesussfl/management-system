@@ -261,8 +261,10 @@ model Recepciones_Renglones {
   seriales             Serial[]
   fabricante           String?
   precio               Float?
-  codigo_solicitud     String?
-  observacion          String?   @default("s/o")
+  codigo_solicitud     Int?
+  pedido               Pedido?   @relation(fields: [codigo_solicitud], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  observacion String? @default("s/o")
 
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
@@ -404,8 +406,9 @@ model Pedido {
   abastecedor Profesional_Abastecimiento @relation(name: "abastecedor_pedido", fields: [id_abastecedor], references: [id], onDelete: Cascade, onUpdate: Cascade)
   supervisor  Profesional_Abastecimiento @relation(name: "supervisor_pedido", fields: [id_supervisor], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime                @default(now())
+  ultima_actualizacion DateTime                @updatedAt
+  recepciones          Recepciones_Renglones[]
 }
 
 model Proveedor {
