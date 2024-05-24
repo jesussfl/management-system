@@ -46,6 +46,7 @@ const DEFAULT_ICON_SIZE = 20
 export enum SECTION_NAMES {
   INICIO = 'INICIO',
   ABASTECIMIENTO = 'ABASTECIMIENTO',
+  PEDIDOS = 'PEDIDOS',
   INVENTARIO = 'INVENTARIO',
   RECEPCION = 'RECEPCION',
   DESPACHOS = 'DESPACHOS',
@@ -90,6 +91,17 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: Boxes,
         requiredPermissions: [
           SECTION_NAMES.INVENTARIO,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
+      },
+      {
+        title: 'Pedidos',
+        identifier: SECTION_NAMES.PEDIDOS,
+        path: '/dashboard/abastecimiento/pedidos',
+        icon: Box,
+        requiredPermissions: [
+          SECTION_NAMES.PEDIDOS,
           SECTION_NAMES.TODAS,
           SECTION_NAMES.ABASTECIMIENTO,
         ],

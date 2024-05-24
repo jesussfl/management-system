@@ -136,6 +136,7 @@ model Renglon {
   recepciones  Recepciones_Renglones[]
   devoluciones Devoluciones_Renglones[]
   seriales     Serial[]
+  pedidos      Pedidos_Renglones[]
 }
 
 enum Medidas {
@@ -337,7 +338,8 @@ model Despacho {
 }
 
 model Despachos_Renglones {
-  id                   Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   id_renglon           Int
   renglon              Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
   id_despacho          Int
@@ -346,6 +348,78 @@ model Despachos_Renglones {
   observacion          String?  @default("s/o")
   manualSelection      Boolean
   cantidad             Int
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+}
+
+model Pedidos_Renglones {
+  id          Int     @id @default(autoincrement())
+  cantidad    Int
+  id_renglon  Int
+  renglon     Renglon @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pedido      Pedido  @relation(fields: [id_pedido], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_pedido   Int
+  observacion String? @default("s/o")
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+}
+
+enum Estados_Pedidos {
+  Cancelado
+  En_proceso
+  Recibido
+  Pendiente
+}
+
+enum Tipos_Proveedores {
+  Empresa
+  Persona
+  Unidad
+}
+
+model Pedido {
+  id              Int      @id @default(autoincrement())
+  fecha_solicitud DateTime
+
+  estado         Estados_Pedidos?
+  tipo_proveedor Tipos_Proveedores
+  motivo         String
+  renglones      Pedidos_Renglones[]
+
+  id_destinatario Int?
+  destinatario    Destinatario? @relation(fields: [id_destinatario], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_proveedor Int?
+  proveedor    Proveedor? @relation(fields: [id_proveedor], references: [id])
+
+  id_unidad Int?
+  unidad    Unidad_Militar? @relation(fields: [id_unidad], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  id_autorizador Int
+  id_abastecedor Int
+  id_supervisor  Int
+
+  autorizador Profesional_Abastecimiento @relation(name: "autorizador_pedido", fields: [id_autorizador], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor Profesional_Abastecimiento @relation(name: "abastecedor_pedido", fields: [id_abastecedor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  supervisor  Profesional_Abastecimiento @relation(name: "supervisor_pedido", fields: [id_supervisor], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
+}
+
+model Proveedor {
+  id          Int     @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  direccion   String
+
+  sitio_web           String?
+  telefono            String
+  telefono_secundario String?
+  email               String?
+  pedidos             Pedido[]
+
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
 }
@@ -396,6 +470,7 @@ model Destinatario {
   ultima_actualizacion DateTime     @updatedAt
   Devolucion           Devolucion[]
   Recepcion            Recepcion[]
+  Pedido               Pedido[]
 }
 
 model Profesional_Abastecimiento {
@@ -432,6 +507,10 @@ model Profesional_Abastecimiento {
   abastecedor_devolucion Devolucion[] @relation("abastecedor_devolucion")
   autorizador_devolucion Devolucion[] @relation("autorizador_devolucion")
   supervisor_devolucion  Devolucion[] @relation("supervisor_devolucion")
+
+  abastecedor_pedido Pedido[] @relation("abastecedor_pedido")
+  autorizador_pedido Pedido[] @relation("autorizador_pedido")
+  supervisor_pedido  Pedido[] @relation("supervisor_pedido")
 }
 
 model Componente_Militar {
@@ -516,6 +595,7 @@ model Unidad_Militar {
   armamento Armamento[]
   almacenes Almacen[]
   personal  Personal[]
+  Pedido    Pedido[]
 }
 
 model Zodi {
