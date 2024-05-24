@@ -217,12 +217,18 @@ export const updateReception = async (id: number, data: FormValues) => {
       fields: fields,
     }
   }
+
   await prisma.recepcion.update({
     where: {
       id,
     },
     data: {
-      ...data,
+      fecha_recepcion: data.fecha_recepcion,
+      motivo: data.motivo,
+      cedula_abastecedor: data.cedula_abastecedor,
+      cedula_autorizador: data.cedula_autorizador,
+      cedula_destinatario: data.cedula_destinatario,
+      cedula_supervisor: data.cedula_supervisor,
       renglones: {
         deleteMany: {},
         create: data.renglones.map((renglon) => ({
