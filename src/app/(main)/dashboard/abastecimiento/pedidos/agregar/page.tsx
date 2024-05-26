@@ -16,7 +16,7 @@ import { getAllUnits } from '../../../unidades/lib/actions/units'
 import { getAllSuppliers } from '../lib/actions/suppliers'
 
 export const metadata: Metadata = {
-  title: 'Agregar un Pedido',
+  title: 'Agregar Pedido',
   description: 'Desde aquí puedes agregar un nuevo pedido',
 }
 

@@ -108,6 +108,7 @@ model Permiso {
 }
 
 //#endregion
+
 model Renglon {
   id                   Int            @id @default(autoincrement())
   nombre               String         @unique
@@ -230,6 +231,7 @@ model Almacen {
   id_unidad Int?
 }
 
+//#region Recepciones
 model Recepcion {
   id              Int                     @id @default(autoincrement())
   fecha_recepcion DateTime
@@ -272,6 +274,7 @@ model Recepciones_Renglones {
   fecha_vencimiento    DateTime?
 }
 
+//#endregion
 model Serial {
   id            Int                     @id @default(autoincrement())
   serial        String                  @unique

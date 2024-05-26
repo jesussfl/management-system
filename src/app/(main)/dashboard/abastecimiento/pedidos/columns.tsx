@@ -65,8 +65,8 @@ export const columns: ColumnDef<PedidoType>[] = [
     },
   },
   {
-    accessorKey: 'estado',
-
+    id: 'estado',
+    accessorFn: (row) => row.estado || 'S/E',
     header: ({ column }) => {
       return (
         <Button
@@ -78,6 +78,23 @@ export const columns: ColumnDef<PedidoType>[] = [
           Estado
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const { estado } = row.original
+      const COLORS = {
+        Recibido: 'bg-green-500',
+        Pendiente: 'bg-yellow-500',
+        En_proceso: 'bg-gray-500',
+        Cancelado: 'bg-red-500',
+      }
+      return (
+        <div className="w-32 flex gap-2 items-center">
+          <div
+            className={` rounded-full w-2 h-2 ${COLORS[estado || 'Pendiente']}`}
+          />{' '}
+          {estado === 'En_proceso' ? 'En Proceso' : estado || 'Pendiente'}
+        </div>
       )
     },
   },
@@ -100,8 +117,7 @@ export const columns: ColumnDef<PedidoType>[] = [
   },
   {
     id: 'destinatario',
-    accessorFn: (row: PedidoType) =>
-      row.destinatario?.nombres + ' ' + row.destinatario?.apellidos,
+    accessorFn: (row: PedidoType) => row.destinatario?.nombres,
     header: ({ column }) => {
       return (
         <Button
@@ -310,11 +326,11 @@ export const columns: ColumnDef<PedidoType>[] = [
           }}
         >
           <Link
-            href={`/dashboard/abastecimiento/pedidos/exportar/${String(
+            href={`/dashboard/abastecimiento/pedidos/${String(
               data.id
-            )}`}
+            )}/editar-estado`}
           >
-            <DropdownMenuItem>Exportar</DropdownMenuItem>
+            <DropdownMenuItem>Editar estado</DropdownMenuItem>
           </Link>
         </ProtectedTableActions>
       )

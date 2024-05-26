@@ -795,6 +795,7 @@ export default function OrdersForm({
               control={control}
               name="motivo"
               rules={{
+                required: 'Este campo es obligatorio',
                 maxLength: {
                   value: 200,
                   message: 'Debe tener un máximo de 200 carácteres',
@@ -805,8 +806,8 @@ export default function OrdersForm({
                   <div className="flex flex-col gap-1">
                     <FormLabel>Motivo</FormLabel>
                     <FormDescription>
-                      Redacta el motivo por el cual se está recibiendo el
-                      material, renglones, etc...
+                      Redacta el motivo por el cual se realiza este pedido. 200
+                      carácteres max.
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -878,7 +879,7 @@ export default function OrdersForm({
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">
               <FormDescription className="w-[20rem]">
-                Selecciona los materiales o renglones que se han recibido
+                Selecciona el material que deseas solicitar
               </FormDescription>
               <ModalForm
                 triggerName="Seleccionar renglones"
@@ -887,24 +888,25 @@ export default function OrdersForm({
                 customToogleModal={toogleModal}
               >
                 <div className="flex flex-col gap-4 p-8">
-                  <CardTitle>Selecciona los renglones recibidos</CardTitle>
-                  <CardDescription>
-                    Encuentra y elige los productos que se han recibido en el
-                    CESERLODAI. Usa la búsqueda para agilizar el proceso.
-                  </CardDescription>
-                  <CardDescription>
-                    Si no encuentras el renglón que buscas, puedes crearlo
+                  <CardTitle>Selecciona el material a solicitar</CardTitle>
+                  <CardDescription className="text-center">
+                    Encuentra y elige los renglones que deseas solicitar en el
+                    CESERLODAI. Si no lo encuentras, puedes crear uno nuevo.
                     <Link
                       href="/dashboard/abastecimiento/inventario/renglon"
                       className={cn(
-                        buttonVariants({ variant: 'secondary' }),
-                        'mx-4'
+                        buttonVariants({ variant: 'link' }),
+                        'h-[3px]'
                       )}
                     >
                       <Plus className="mr-2 h-4 w-4" />
                       Crear Renglón
                     </Link>
                   </CardDescription>
+                  <div className="flex flex-row gap-4 items-center justify-center">
+                    <p className="text-md font-semibold">{`Renglones seleccionados: ${selectedItemsData.length}`}</p>
+                  </div>
+
                   <DataTable
                     columns={columns}
                     data={items}

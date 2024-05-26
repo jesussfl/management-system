@@ -3,10 +3,12 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
+
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { PedidoFormValues } from '../../../components/forms/orders-form'
+import { Estados_Pedidos } from '@prisma/client'
 
 export const getAllOrders = async () => {
   const session = await auth()
@@ -50,6 +52,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   await prisma.pedido.create({
     data: {
       ...data,
+      estado: data.estado || 'Pendiente',
       renglones: {
         create: data.renglones.map((renglon) => ({
           ...renglon,
@@ -116,6 +119,62 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
   })
 
   await registerAuditAction(`Se actualizó el pedido con el id: ${id}`)
+  revalidatePath('/dashboard/abastecimiento/pedidos')
+
+  return {
+    success: 'Recepcion actualizada exitosamente',
+    error: false,
+  }
+}
+
+export const updateOrderStatus = async (
+  id: number,
+  data: {
+    estado: Estados_Pedidos | null | undefined
+  }
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.PEDIDOS,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const order = await prisma.pedido.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!order) {
+    return {
+      error: 'El pedido no existe',
+      success: false,
+    }
+  }
+
+  await prisma.pedido.update({
+    where: {
+      id,
+    },
+    data: {
+      estado: data.estado,
+    },
+  })
+
+  await registerAuditAction(
+    `Se actualizó el estado del pedido con el id: ${id} a: ${data.estado}`
+  )
+
   revalidatePath('/dashboard/abastecimiento/pedidos')
 
   return {

@@ -1,11 +1,10 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Plus, PackagePlus, Package2, PackageCheck } from 'lucide-react'
+import { Plus, PackagePlus } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
   HeaderLeftSide,
-  HeaderRightSide,
   PageContent,
   PageHeader,
   PageHeaderDescription,
