@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getWarehouseById } from '../../../../lib/actions/warehouse'
-import WarehousesForm from '../../../../components/form'
+import { getWarehouseById } from '../../../lib/actions/warehouse'
+import WarehousesForm from '../../../components/form'
 
 export default async function Page({
   params: { id },

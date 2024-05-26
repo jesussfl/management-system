@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import WarehousesForm from '../../../components/form'
+import WarehousesForm from '../../components/form'
 
 export default async function Page() {
   return (

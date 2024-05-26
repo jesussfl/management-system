@@ -32,7 +32,7 @@ import {
 import { cn } from '@/utils/utils'
 import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
 import { getAllGunModels } from '../../lib/actions/model-actions'
-import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
+import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
 interface Props {
   defaultValues?: Armamento
 }

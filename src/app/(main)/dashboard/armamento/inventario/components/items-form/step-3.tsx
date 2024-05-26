@@ -34,7 +34,7 @@ import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
 import ImageUpload from '@/modules/common/components/file-upload'
-import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
+import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
 export const Step3 = ({
   image,
   setImage,

@@ -1,4 +1,4 @@
-import WarehousesForm from '@/app/(main)/dashboard/abastecimiento/almacenes/components/form'
+import WarehousesForm from '@/app/(main)/dashboard/almacenes/components/form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {
