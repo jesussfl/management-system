@@ -2,8 +2,6 @@
 
 import * as React from 'react'
 import { useTransition } from 'react'
-import { cn } from '@/utils/utils'
-import { buttonVariants } from '@/modules/common/components/button'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
@@ -18,14 +16,9 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import Link from 'next/link'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  login,
-  loginByFacialID,
-  validateUser,
-} from '@/app/(auth)/lib/actions/login'
+import { loginByFacialID, validateUser } from '@/app/(auth)/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
@@ -33,14 +26,6 @@ import {
   faceioErrorCode,
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
-import { Usuario } from '@prisma/client'
-import {
-  createAttendance,
-  getAttendancesByUserId,
-  getLastAttendanceByUserId,
-  updateAttendance,
-} from '@/app/(main)/dashboard/recursos-humanos/asistencias/lib/actions'
-import { isSameDay } from 'date-fns'
 import { checkInTime, checkOutTime } from '../../lib/actions'
 
 type FormValues = {
@@ -54,7 +39,7 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
   const form = useForm<FormValues>()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams?.get('callbackUrl')
-  const [isPending, startTransition] = useTransition()
+  const [isLoading, setIsLoading] = React.useState(false)
   const router = useRouter()
 
   const authenticateByFacialID = async () => {
@@ -120,65 +105,71 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
   }
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    startTransition(() => {
-      validateUser(values).then((validation) => {
-        if (validation?.error) {
+    setIsLoading(true)
+    const validationResponse = await validateUser(values)
+
+    if (validationResponse?.error) {
+      toast({
+        title: 'Parece que hubo un error',
+        description: validationResponse.error,
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (validationResponse?.success && validationResponse.user) {
+      if (type === 'entrada') {
+        const response = await checkInTime(validationResponse.user)
+
+        if (response?.error) {
           toast({
             title: 'Parece que hubo un error',
-            description: validation.error,
+            description: response.error,
             variant: 'destructive',
           })
+          router.replace(`/asistencias/consulta/${validationResponse.user.id}`)
 
           return
         }
-        if (validation?.success && validation.user) {
-          if (type === 'entrada') {
-            checkInTime(validation.user).then((data) => {
-              if (data?.error) {
-                router.replace(`/asistencias/consulta/${validation.user.id}`)
 
-                toast({
-                  title: 'Parece que hubo un problema',
-                  description: data.error,
-                  variant: 'destructive',
-                })
-                return
-              }
-              router.replace(`/asistencias/consulta/${validation.user.id}`)
+        if (response?.success) {
+          toast({
+            title: 'Entrada registrada',
+            variant: 'success',
+          })
+          router.replace(`/asistencias/consulta/${validationResponse.user.id}`)
 
-              toast({
-                title: 'Entrada registrada',
-                variant: 'success',
-              })
-            })
-          }
-
-          if (type === 'salida') {
-            checkOutTime(validation.user).then((data) => {
-              if (data?.error) {
-                router.replace(`/asistencias/consulta/${validation.user.id}`)
-
-                toast({
-                  title: 'Parece que hubo un problema',
-                  description: data.error,
-                  variant: 'destructive',
-                })
-
-                return
-              }
-              router.replace(`/asistencias/consulta/${validation.user.id}`)
-
-              toast({
-                title: 'Salida registrada',
-                variant: 'success',
-              })
-            })
-          }
-
-          router.replace(`/asistencias/consulta/${validation.user.id}`)
+          return
         }
-      })
-    })
+      }
+
+      if (type === 'salida') {
+        const response = await checkOutTime(validationResponse.user)
+
+        if (response?.error) {
+          toast({
+            title: 'Parece que hubo un error',
+            description: response.error,
+            variant: 'destructive',
+          })
+          router.replace(`/asistencias/consulta/${validationResponse.user.id}`)
+
+          return
+        }
+
+        if (response?.success) {
+          toast({
+            title: 'Salida registrada',
+            variant: 'success',
+          })
+          router.replace(`/asistencias/consulta/${validationResponse.user.id}`)
+
+          return
+        }
+      }
+    }
+
+    setIsLoading(false)
   }
 
   return (
@@ -196,7 +187,7 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
               <FormItem className="">
                 <FormLabel>Correo electrónico</FormLabel>
                 <FormControl>
-                  <Input type="email" {...field} disabled={isPending} />
+                  <Input type="email" {...field} disabled={isLoading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -213,7 +204,7 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
                   <Input
                     type="password"
                     {...field}
-                    disabled={isPending}
+                    disabled={isLoading}
                     placeholder="**********"
                   />
                 </FormControl>
@@ -222,8 +213,8 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
             )}
           />
 
-          <Button disabled={isPending} type="submit">
-            {isPending && (
+          <Button disabled={isLoading} type="submit">
+            {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Verificar credenciales
@@ -231,13 +222,13 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
 
           <Button
             variant={'secondary'}
-            disabled={isPending}
+            disabled={isLoading}
             onClick={(e) => {
               e.preventDefault()
               authenticateByFacialID()
             }}
           >
-            {isPending && (
+            {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             ID Facial

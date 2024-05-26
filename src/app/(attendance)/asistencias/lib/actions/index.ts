@@ -31,13 +31,14 @@ export const checkInTime = async (user: Usuario) => {
   if (!todayAttendance) {
     console.log('No hay asistencia para hoy')
     await createAttendance({ id_usuario: user.id, hora_entrada: new Date() })
+    revalidatePath('/asistencias/consulta/' + user.id)
 
     return {
       success: 'Asistencia registrada',
       error: false,
     }
   }
-  revalidatePath('/asistencias')
+  revalidatePath('/asistencias/consulta/' + user.id)
 
   return {
     error: 'Ya registraste una asistencia para hoy',
@@ -74,6 +75,7 @@ export const checkOutTime = async (user: Usuario) => {
     await updateAttendance(lastAttendance.id, {
       hora_salida: new Date(),
     })
+    revalidatePath(`/asistencias/consulta/${user.id}`)
 
     return {
       success: 'Hora de salida registrada',
@@ -81,7 +83,7 @@ export const checkOutTime = async (user: Usuario) => {
     }
   }
 
-  revalidatePath('/asistencias')
+  revalidatePath(`/asistencias/consulta/${user.id}`)
   return {
     error:
       'Por favor registra tu hora de entrada antes de registrar tu hora de salida',

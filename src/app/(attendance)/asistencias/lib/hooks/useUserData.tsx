@@ -1,10 +1,32 @@
+'use client'
+import { useEffect, useState } from 'react'
 import { getUserById } from '@/app/(main)/dashboard/usuarios/lib/actions/users'
+import { Prisma } from '@prisma/client'
 import { format } from 'date-fns'
 
-export default async function useUserData(userId: string) {
-  const user = await getUserById(userId)
+type UserData = Prisma.UsuarioGetPayload<{
+  include: {
+    personal: {
+      include: {
+        guardias: true
+      }
+    }
+  }
+}>
 
-  if (!user || !user.personal)
+export default function useUserData(userId: string) {
+  const [user, setUser] = useState<UserData>()
+  const [isLoading, setIsLoading] = useState(false)
+  useEffect(() => {
+    setIsLoading(true)
+    getUserById(userId).then((user) => {
+      setUser(user)
+      setIsLoading(false)
+    })
+  }, [userId])
+  // const user = getUserById(userId)
+
+  if (!user || !user.personal || isLoading)
     return {
       error: 'No existe el usuario',
       dataToShow: null,
@@ -37,5 +59,6 @@ export default async function useUserData(userId: string) {
   return {
     error: null,
     dataToShow,
+    isLoading,
   }
 }

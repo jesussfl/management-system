@@ -4,7 +4,6 @@ import { getLastAttendanceByUserId } from '@/app/(main)/dashboard/recursos-human
 import { getAttendanceTime } from '../helpers/get-attendance-time'
 import { useEffect, useState } from 'react'
 export default function useAttendance(userId: string) {
-  // const lastAttendance = getLastAttendanceByUserId(userId)
   const [lastAttendance, setLastAttendance] = useState<any>({})
   const [isLoading, setIsLoading] = useState(false)
 
