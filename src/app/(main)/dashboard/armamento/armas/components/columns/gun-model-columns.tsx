@@ -127,7 +127,7 @@ export const gunModelColumns: ColumnDef<Modelo_Armamento>[] = [
               <DropdownMenuSeparator />
 
               <Link
-                href={`/dashboard/abastecimiento/inventario/categoria/${category.id}`}
+                href={`/dashboard/armamento/inventario/categoria/${category.id}`}
               >
                 <DropdownMenuItem> Editar</DropdownMenuItem>
               </Link>

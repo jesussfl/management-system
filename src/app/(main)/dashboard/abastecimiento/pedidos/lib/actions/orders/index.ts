@@ -16,6 +16,9 @@ export const getAllOrders = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const pedidos = await prisma.pedido.findMany({
+    where: {
+      servicio: 'Abastecimiento',
+    },
     include: {
       renglones: {
         include: {
@@ -52,6 +55,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   await prisma.pedido.create({
     data: {
       ...data,
+      servicio: 'Abastecimiento',
       estado: data.estado || 'Pendiente',
       renglones: {
         create: data.renglones.map((renglon) => ({

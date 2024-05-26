@@ -19,7 +19,7 @@ import {
 import { useState } from 'react'
 
 //   import DeleteDialog from '../permissions-delete-dialog'
-import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/armamento/inventario/components/classification-form'
 import PackagingUnitsForm from '../packaging-units-form'
 
 type Props = {

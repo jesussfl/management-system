@@ -33,10 +33,13 @@ import { ComboboxData } from '@/types/types'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
+import ImageUpload from '@/modules/common/components/file-upload'
 import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
 export const Step3 = ({
+  image,
   setImage,
 }: {
+  image: FormData | null
   setImage: (image: FormData | null) => void
 }) => {
   const form = useFormContext()
@@ -156,7 +159,7 @@ export const Step3 = ({
               <FormDescription>
                 Si no encuentras el almacén, puedes crearlo
                 <Link
-                  href="/dashboard/abastecimiento/almacenes/almacen"
+                  href="/dashboard/armamento/almacenes/almacen"
                   className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
                 >
                   Crear Almacén
@@ -259,7 +262,7 @@ export const Step3 = ({
                   <FormDescription>
                     Si no encuentras el subsistema, puedes crearlo
                     <Link
-                      href="/dashboard/abastecimiento/inventario/subsistema"
+                      href="/dashboard/armamento/inventario/subsistema"
                       className={cn(
                         buttonVariants({ variant: 'link' }),
                         'h-[1px]'
@@ -364,6 +367,9 @@ export const Step3 = ({
           )}
         />
       </div>
+
+      {/* <ImageUpload setFile={setImage} /> */}
+
       {
         <FormField
           control={form.control}

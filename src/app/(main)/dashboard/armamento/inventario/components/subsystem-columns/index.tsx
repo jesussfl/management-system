@@ -23,6 +23,8 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteSubsystem } from '../../lib/actions/subsystems'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',
@@ -96,42 +98,19 @@ export const columns: ColumnDef<Subsistema>[] = [
       const subsystem = row.original
 
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(String(subsystem.id))
-                }
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <Link
-                href={`/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`}
-              >
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar este subsistema?"
-            description="Estas a punto de eliminar este subsistema y todas sus dependencias"
-            actionMethod={() => deleteSubsystem(subsystem.id)}
-          />
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.INVENTARIO}
+          editConfig={{
+            href: `/dashboard/armamento/inventario/subsistema/${subsystem.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este subsistema?',
+            alertDescription: `Estas a punto de eliminar este subsistema y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteSubsystem(subsystem.id)
+            },
+          }}
+        />
       )
     },
   },

@@ -46,7 +46,7 @@ export const createPackagingUnit = async (
   })
 
   await registerAuditAction(`Se ha creado la Unidad de empaque ${nombre}`)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     success: 'Unidad de empaque creada exitosamente',
@@ -99,7 +99,7 @@ export const updatePackagingUnit = async (
     `Se ha actualizado la Unidad de empaque ${exist?.nombre}`
   )
 
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
@@ -130,14 +130,48 @@ export const deletePackagingUnit = async (id: number) => {
     },
   })
 
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
     success: 'Unidad de empaque eliminada exitosamente',
   }
 }
+export const deleteMultiplePackagingUnits = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.unidadEmpaque.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado las siguientes Unidades de empaque ${ids}`
+  )
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Se han eliminado las Unidades de empaque correctamente',
+    error: false,
+  }
+}
 export const getAllPackagingUnits = async () => {
   const sessionResponse = await validateUserSession()
 

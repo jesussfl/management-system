@@ -19,9 +19,9 @@ import { UnidadEmpaque } from '@prisma/client'
 import {
   createPackagingUnit,
   updatePackagingUnit,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
 import { Combobox } from '@/modules/common/components/combobox'
-import { getAllCategories } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+import { getAllCategories } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/categories'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'

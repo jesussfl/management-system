@@ -29,7 +29,7 @@ export const createSystem = async (data: Prisma.SistemaCreateInput) => {
   })
 
   await registerAuditAction('Se creó un nuevo sistema llamado ' + data.nombre)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
@@ -78,7 +78,7 @@ export const updateSystem = async (
   })
 
   await registerAuditAction('Se actualizó el sistema llamado ' + exist.nombre)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
@@ -116,14 +116,46 @@ export const deleteSystem = async (id: number) => {
   })
 
   await registerAuditAction('Se eliminó el sistema llamado ' + exist?.nombre)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
     success: 'sistema eliminado exitosamente',
   }
 }
+export const deleteMultipleSystems = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.sistema.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado los siguientes sistemas ${ids}`)
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Se han eliminado los sistemas correctamente',
+    error: false,
+  }
+}
 export const getAllSystems = async () => {
   const sessionResponse = await validateUserSession()
 

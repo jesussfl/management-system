@@ -1,5 +1,5 @@
-import { getPackagingUnitById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
-import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
+import { getPackagingUnitById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
+import PackagingUnitsForm from '@/app/(main)/dashboard/armamento/inventario/components/packaging-units-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({
@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Unidad de Empaque"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <PackagingUnitsForm defaultValues={packagingUnit} />
     </PageForm>

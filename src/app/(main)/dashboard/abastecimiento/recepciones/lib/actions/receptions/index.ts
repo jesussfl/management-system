@@ -151,6 +151,7 @@ export const createReception = async (data: FormValues) => {
     data: {
       ...data,
       motivo,
+      servicio: 'Abastecimiento',
       fecha_recepcion,
       renglones: {
         create: renglones.map((renglon) => ({
@@ -283,6 +284,9 @@ export const getAllReceptions = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const recepciones = await prisma.recepcion.findMany({
+    where: {
+      servicio: 'Abastecimiento',
+    },
     include: {
       renglones: {
         include: {
@@ -456,6 +460,7 @@ export const getAllOrdersByItemId = async (itemId: number) => {
   }
   const orders = await prisma.pedido.findMany({
     where: {
+      servicio: 'Abastecimiento',
       renglones: {
         some: {
           id_renglon: itemId,

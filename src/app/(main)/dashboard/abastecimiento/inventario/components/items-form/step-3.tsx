@@ -32,7 +32,7 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
-import { getAllWarehouses } from '../../../almacenes/lib/actions/warehouse'
+import { getAllWarehouses } from '../../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
 import ImageUpload from '@/modules/common/components/file-upload'
 export const Step3 = ({

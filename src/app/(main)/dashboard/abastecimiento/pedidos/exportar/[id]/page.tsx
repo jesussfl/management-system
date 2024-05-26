@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import WarehousesForm from '../../../almacenes/components/form'
+import WarehousesForm from '../../../../almacenes/components/form'
 import ButtonExport from '../../components/button-export'
 import { getOrderById } from '../../lib/actions/orders'
 // import { getReceptionById } from '../../lib/actions/orders'

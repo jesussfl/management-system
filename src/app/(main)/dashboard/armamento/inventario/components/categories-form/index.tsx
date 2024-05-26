@@ -19,8 +19,8 @@ import { Categoria } from '@prisma/client'
 import {
   createCategory,
   updateCategory,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
-import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/categories'
+import { getAllClassifications } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'

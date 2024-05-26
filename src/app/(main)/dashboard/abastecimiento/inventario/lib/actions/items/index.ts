@@ -45,7 +45,10 @@ export const createItem = async (
   }
   if (!image) {
     await prisma.renglon.create({
-      data,
+      data: {
+        ...data,
+        servicio: 'Abastecimiento',
+      },
     })
 
     await registerAuditAction(`Se ha creado el renglon ${nombre}`)
@@ -98,6 +101,7 @@ export const createItem = async (
       data: {
         ...data,
         imagen: fileUrl, // Agregamos la ruta de la imagen a la base de datos
+        servicio: 'Abastecimiento',
       },
     })
 
@@ -275,6 +279,9 @@ export const getAllItems = async () => {
   }
 
   const renglones = await prisma.renglon.findMany({
+    where: {
+      servicio: 'Abastecimiento',
+    },
     include: {
       recepciones: {
         include: {

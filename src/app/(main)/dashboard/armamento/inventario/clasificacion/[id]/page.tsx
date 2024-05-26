@@ -1,5 +1,5 @@
-import { getClassificationById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
-import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
+import { getClassificationById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
+import ClassificationsForm from '@/app/(main)/dashboard/armamento/inventario/components/classification-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({
@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Clasificación"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <ClassificationsForm defaultValues={classificationData} />
     </PageForm>

@@ -131,6 +131,7 @@ export const createDispatch = async (data: FormValues) => {
 
   await prisma.despacho.create({
     data: {
+      servicio: 'Abastecimiento',
       cedula_destinatario,
       cedula_abastecedor: data.cedula_abastecedor,
       cedula_supervisor: data.cedula_supervisor,
@@ -408,6 +409,9 @@ export const getAllDispatches = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const dispatch = await prisma.despacho.findMany({
+    where: {
+      servicio: 'Abastecimiento',
+    },
     include: {
       renglones: {
         include: {

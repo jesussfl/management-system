@@ -145,17 +145,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
           SECTION_NAMES.ABASTECIMIENTO,
         ],
       },
-      {
-        title: 'Almacenes',
-        identifier: SECTION_NAMES.ALMACENES,
-        path: '/dashboard/abastecimiento/almacenes',
-        icon: Warehouse,
-        requiredPermissions: [
-          SECTION_NAMES.ALMACENES,
-          SECTION_NAMES.TODAS,
-          SECTION_NAMES.ABASTECIMIENTO,
-        ],
-      },
+
       {
         title: 'Destinatarios',
         identifier: SECTION_NAMES.DESTINATARIOS,
@@ -194,8 +184,53 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         icon: Bomb,
         requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
       },
+      {
+        title: 'Pedidos',
+        identifier: SECTION_NAMES.PEDIDOS,
+        path: '/dashboard/armamento/pedidos',
+        icon: PackagePlus,
+        requiredPermissions: [
+          SECTION_NAMES.PEDIDOS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ARMAMENTO,
+        ],
+      },
+      {
+        title: 'Recepciones',
+        identifier: SECTION_NAMES.RECEPCION,
+        path: '/dashboard/armamento/recepciones',
+        icon: PackageCheck,
+        requiredPermissions: [
+          SECTION_NAMES.RECEPCION,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ARMAMENTO,
+        ],
+      },
+      {
+        title: 'Despachos',
+        identifier: SECTION_NAMES.DESPACHOS,
+        path: '/dashboard/armamento/despachos',
+        icon: PackageMinus,
+        requiredPermissions: [
+          SECTION_NAMES.DESPACHOS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ARMAMENTO,
+        ],
+      },
+      {
+        title: 'Devoluciones',
+        identifier: SECTION_NAMES.DEVOLUCIONES,
+        path: '/dashboard/armamento/devoluciones',
+        icon: IterationCcw,
+        requiredPermissions: [
+          SECTION_NAMES.DEVOLUCIONES,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ARMAMENTO,
+        ],
+      },
     ],
   },
+
   {
     title: 'Recursos Humanos',
     path: '/dashboard/recursos-humanos',
@@ -226,6 +261,13 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
       },
     ],
+  },
+  {
+    title: 'Almacenes',
+    identifier: SECTION_NAMES.ALMACENES,
+    path: '/dashboard/almacenes',
+    icon: Warehouse,
+    requiredPermissions: [SECTION_NAMES.ALMACENES, SECTION_NAMES.TODAS],
   },
   {
     title: 'Rangos',

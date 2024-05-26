@@ -73,7 +73,7 @@ export default async function Page() {
         </HeaderLeftSide>
         <HeaderRightSide>
           <Link
-            href="/dashboard/abastecimiento/recepciones/agregar"
+            href="/dashboard/armamento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackagePlus className="mr-2 h-4 w-4" />
@@ -81,7 +81,7 @@ export default async function Page() {
           </Link>
 
           <Link
-            href="/dashboard/abastecimiento/despachos/agregar"
+            href="/dashboard/armamento/despachos/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackageMinus className="mr-2 h-4 w-4" />

@@ -93,7 +93,7 @@ export const createReturn = async (data: FormValues) => {
       cedula_destinatario,
       motivo,
       fecha_devolucion,
-
+      servicio: 'Abastecimiento',
       renglones: {
         create: renglones.map((renglon) => ({
           ...renglon,
@@ -329,6 +329,9 @@ export const getAllReturns = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const devolution = await prisma.devolucion.findMany({
+    where: {
+      servicio: 'Abastecimiento',
+    },
     include: {
       renglones: {
         include: {

@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Subsistema"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <SubsystemForm defaultValues={subsystemData} />
     </PageForm>

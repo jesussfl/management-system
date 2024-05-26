@@ -1,30 +1,50 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteItem } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import Image from 'next/image'
+import { format } from 'date-fns'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+
+export type RenglonColumns = {
+  id: number
+  nombre: string
+  descripcion: string
+  imagen?: string | null
+
+  stock_minimo: number
+  stock_maximo?: number
+  stock: number
+  seriales?: string
+
+  numero_parte?: string
+  peso_total: number
+
+  estado: string
+
+  unidad_empaque: string
+  clasificacion: string
+  categoria: string
+  tipo?: string
+
+  almacen: string
+
+  subsistema?: string
+
+  creado: Date
+  editado: Date
+}
 
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
@@ -40,45 +60,51 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorKey: 'descripcion',
     header: ({ column }) => <HeaderCell column={column} value="Descripción" />,
   },
-
   {
-    accessorKey: 'stock',
-    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
+    accessorKey: 'imagen',
+    header: ({ column }) => <HeaderCell column={column} value="Imagen" />,
     cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
+      const image = row.original.imagen
 
-      const dispatchedSerials = row.original.despachos.reduce(
-        (total, item) => total + item.seriales.length,
-        0
-      )
+      if (!image) return 'Sin imágen'
 
-      const returnedSerials = row.original.devoluciones.reduce(
-        (total, item) => total + item.seriales.length,
-        0
+      return (
+        <Image
+          src={row.original.imagen || ''}
+          alt={row.original.imagen || ''}
+          width={50}
+          height={50}
+        />
       )
-
-      return <div>{stock - dispatchedSerials + returnedSerials}</div>
     },
   },
   {
-    accessorKey: 'peso_total',
-    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-      return (
-        <div>
-          {`${stock * Number(row.original.peso)} 
-            ${row.original.unidad_empaque.abreviacion}
-          `}
-        </div>
-      )
+    id: 'stock',
+    accessorFn: (row) =>
+      row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+
+        return total + serials
+      }, 0),
+    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
+  },
+  {
+    id: 'peso_total',
+    // accessorKey: 'peso_total',
+    accessorFn: (row) => {
+      const stock = row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+        return total + serials
+      }, 0)
+      return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
     },
+    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
   {
     accessorKey: 'peso',
@@ -127,16 +153,21 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorKey: 'tipo',
     header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
   },
-
   {
-    accessorKey: 'unidad_empaque.nombre',
+    id: 'unidad_empaque',
+    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin unidad de empaque',
     header: ({ column }) => (
       <HeaderCell column={column} value="Unidad de empaque" />
     ),
   },
   {
-    accessorKey: 'subsistema.nombre',
+    id: 'subsistema',
+    accessorFn: (row) => row.subsistema?.nombre || 'Sin subsistema',
     header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
+  },
+  {
+    accessorKey: 'almacen.nombre',
+    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
   },
   {
     accessorKey: 'numero_parte',
@@ -153,18 +184,36 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
   },
   {
-    accessorKey: 'seriales',
+    id: 'seriales',
     header: ({ column }) => <HeaderCell column={column} value="Seriales" />,
     cell: ({ row }) => {
       return (
         <Link
           className={cn(buttonVariants({ variant: 'outline' }))}
-          href={`/dashboard/abastecimiento/inventario/serial/${row.original.id}`}
+          href={`/dashboard/armamento/inventario/serial/${row.original.id}`}
         >
           Ver seriales
         </Link>
       )
     },
+  },
+
+  {
+    accessorKey: 'fecha_creacion',
+    filterFn: 'dateBetweenFilterFn',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="text-xs"
+        size={'sm'}
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        Fecha de creación
+        <ArrowUpDown className="ml-2 h-3 w-3" />
+      </Button>
+    ),
+    cell: ({ row }) =>
+      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
   {
     id: 'acciones',
@@ -174,43 +223,19 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       const renglon = (({ recepciones, ...rest }) => rest)(data)
 
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(String(renglon.id))
-                }
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <Link
-                href={`/dashboard/abastecimiento/inventario/renglon/${renglon.id}`}
-              >
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar este rengón?"
-            description="Estas a punto de eliminar este renglon y todas sus dependencias, introduce la contraseña de administrador para borrarlo permanentemente."
-            actionMethod={() => deleteItem(renglon.id)}
-          />
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.INVENTARIO}
+          editConfig={{
+            href: `/dashboard/armamento/inventario/renglon/${renglon.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este renglon?',
+            alertDescription: `Estas a punto de eliminar este renglon y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteItem(renglon.id)
+            },
+          }}
+        />
       )
     },
   },

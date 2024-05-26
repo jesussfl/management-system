@@ -15,7 +15,7 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { Armamento } from '@prisma/client'
-import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+import { getAllClassifications } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
@@ -31,8 +31,8 @@ import {
 } from '@/modules/common/components/popover/popover'
 import { cn } from '@/utils/utils'
 import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
-import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
 import { getAllGunModels } from '../../lib/actions/model-actions'
+import { getAllWarehouses } from '@/app/(main)/dashboard/abastecimiento/almacenes/lib/actions/warehouse'
 interface Props {
   defaultValues?: Armamento
 }

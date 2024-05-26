@@ -1,4 +1,4 @@
-import { getPackagingUnitById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
+import { getPackagingUnitById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import PackagingUnitsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-form'
+import PackagingUnitsForm from '@/app/(main)/dashboard/armamento/inventario/components/packaging-units-form'
 
 export default async function Page({
   params: { id },

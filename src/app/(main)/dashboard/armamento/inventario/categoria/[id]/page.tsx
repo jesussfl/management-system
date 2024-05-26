@@ -1,5 +1,5 @@
-import { getCategoryById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
-import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
+import { getCategoryById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/categories'
+import CategoriesForm from '@/app/(main)/dashboard/armamento/inventario/components/categories-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({
@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Categoría"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <CategoriesForm defaultValues={categoryData} />
     </PageForm>

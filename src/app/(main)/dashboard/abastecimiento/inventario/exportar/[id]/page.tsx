@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import WarehousesForm from '../../../almacenes/components/form'
+import WarehousesForm from '../../../../almacenes/components/form'
 
 export default async function Page() {
   return (

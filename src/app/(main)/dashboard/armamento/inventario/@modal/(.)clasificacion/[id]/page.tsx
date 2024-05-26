@@ -1,4 +1,4 @@
-import { getClassificationById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+import { getClassificationById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/armamento/inventario/components/classification-form'
 
 export default async function Page({
   params: { id },

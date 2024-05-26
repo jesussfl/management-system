@@ -47,7 +47,7 @@ export const createCategory = async (
 
   await registerAuditAction(`Se creó una nueva categoría llamada ${nombre}`)
 
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     success: 'Categoria creada exitosamente',
@@ -96,7 +96,7 @@ export const updateCategory = async (
   })
 
   await registerAuditAction(`Se actualizo la categoria ${exist?.nombre}`)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: null,
@@ -141,11 +141,44 @@ export const deleteCategory = async (id: number) => {
   })
 
   await registerAuditAction(`Se elimino la categoria ${exist?.nombre}`)
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: null,
     success: 'Categoria eliminada exitosamente',
+  }
+}
+export const deleteMultipleCategories = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.categoria.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(`Se han eliminado las siguientes categorias ${ids}`)
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Se ha eliminado la categoría correctamente',
+    error: false,
   }
 }
 export const getCategoryById = async (id: number) => {

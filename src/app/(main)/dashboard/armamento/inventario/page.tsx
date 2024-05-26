@@ -11,10 +11,22 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import { getAllPackagingUnits } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
-import { getAllClassifications } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
-import { getAllCategories } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+import {
+  deleteMultipleItems,
+  getAllItems,
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
+import {
+  deleteMultiplePackagingUnits,
+  getAllPackagingUnits,
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
+import {
+  deleteMultipleClassifications,
+  getAllClassifications,
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
+import {
+  deleteMultipleCategories,
+  getAllCategories,
+} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/categories'
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -23,25 +35,33 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-columns'
-import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-columns'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-columns'
-import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/subsystem-columns'
-import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/system-columns'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/armamento/inventario/components/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/classification-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/packaging-units-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/system-columns'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
+import {
+  Boxes,
+  DownloadIcon,
+  PackageMinus,
+  PackagePlus,
+  Plus,
+} from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
-import { getAllSubsystems } from './lib/actions/subsystems'
-import { getAllSystems } from './lib/actions/systems'
-import { validateSections } from '@/lib/data/validate-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { redirect } from 'next/navigation'
+import {
+  deleteMultipleSubsystems,
+  getAllSubsystems,
+} from './lib/actions/subsystems'
+import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
+import { TableWithExport } from './table-with-export'
+import { formatExcelData } from './lib/helpers/format-excel-data'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -70,7 +90,7 @@ export default async function Page() {
         </HeaderLeftSide>
         <HeaderRightSide>
           <Link
-            href="/dashboard/abastecimiento/recepciones/agregar"
+            href="/dashboard/armamento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackagePlus className="mr-2 h-4 w-4" />
@@ -78,15 +98,16 @@ export default async function Page() {
           </Link>
 
           <Link
-            href="/dashboard/abastecimiento/despachos/agregar"
+            href="/dashboard/armamento/despachos/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackageMinus className="mr-2 h-4 w-4" />
             Agregar Despacho
           </Link>
           <Link
-            href="/dashboard/abastecimiento/inventario/renglon"
+            href="/dashboard/armamento/inventario/renglon"
             className={buttonVariants({ variant: 'default' })}
+            scroll={false}
           >
             <Plus className="mr-2 h-4 w-4" />
             Agregar Renglón
@@ -106,7 +127,10 @@ export default async function Page() {
           <PageContent>
             <Card>
               <CardContent>
-                <DataTable columns={columns} data={itemsData} />
+                <TableWithExport
+                  itemsData={itemsData}
+                  // formatFn={formatExcelData}
+                />
               </CardContent>
             </Card>
           </PageContent>
@@ -120,7 +144,7 @@ export default async function Page() {
                     Lista de Clasificaciones
                   </CardTitle>
                   <Link
-                    href="/dashboard/abastecimiento/inventario/clasificacion"
+                    href="/dashboard/armamento/inventario/clasificacion"
                     className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
@@ -131,6 +155,8 @@ export default async function Page() {
                   <DataTable
                     columns={classificationsColumns}
                     data={classificationsData}
+                    isMultipleDeleteEnabled
+                    multipleDeleteAction={deleteMultipleClassifications}
                   />
                 </CardContent>
               </Card>
@@ -138,7 +164,7 @@ export default async function Page() {
                 <CardHeader className="flex flex-row justify-between">
                   <CardTitle className="text-xl">Lista de Categorías</CardTitle>
                   <Link
-                    href="/dashboard/abastecimiento/inventario/categoria"
+                    href="/dashboard/armamento/inventario/categoria"
                     className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
@@ -148,7 +174,9 @@ export default async function Page() {
                 <CardContent>
                   <DataTable
                     columns={categoriesColumns}
+                    isMultipleDeleteEnabled
                     data={categoriesData}
+                    multipleDeleteAction={deleteMultipleCategories}
                   />
                 </CardContent>
               </Card>
@@ -164,7 +192,7 @@ export default async function Page() {
                 </CardTitle>
 
                 <Link
-                  href="/dashboard/abastecimiento/inventario/unidad-empaque"
+                  href="/dashboard/armamento/inventario/unidad-empaque"
                   className={buttonVariants({ variant: 'secondary' })}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -174,7 +202,9 @@ export default async function Page() {
               <CardContent>
                 <DataTable
                   columns={packagingUnitsColumns}
+                  isMultipleDeleteEnabled
                   data={packagingUnitsData}
+                  multipleDeleteAction={deleteMultiplePackagingUnits}
                 />
               </CardContent>
             </Card>
@@ -187,7 +217,7 @@ export default async function Page() {
                 <CardHeader className="flex flex-row justify-between">
                   <CardTitle className="text-xl">Lista de Sistemas</CardTitle>
                   <Link
-                    href="/dashboard/abastecimiento/inventario/sistema"
+                    href="/dashboard/armamento/inventario/sistema"
                     className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
@@ -195,7 +225,12 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable columns={systemColumns} data={systemsData} />
+                  <DataTable
+                    columns={systemColumns}
+                    isMultipleDeleteEnabled
+                    data={systemsData}
+                    multipleDeleteAction={deleteMultipleSystems}
+                  />
                 </CardContent>
               </Card>
               <Card>
@@ -204,7 +239,7 @@ export default async function Page() {
                     Lista de Subsistemas
                   </CardTitle>
                   <Link
-                    href="/dashboard/abastecimiento/inventario/subsistema"
+                    href="/dashboard/armamento/inventario/subsistema"
                     className={buttonVariants({ variant: 'secondary' })}
                   >
                     <Plus className="mr-2 h-4 w-4" />
@@ -212,7 +247,12 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable columns={subsystemColumns} data={subsystemsData} />
+                  <DataTable
+                    columns={subsystemColumns}
+                    isMultipleDeleteEnabled
+                    data={subsystemsData}
+                    multipleDeleteAction={deleteMultipleSubsystems}
+                  />
                 </CardContent>
               </Card>
             </div>

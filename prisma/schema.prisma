@@ -109,10 +109,18 @@ model Permiso {
 
 //#endregion
 
+enum Servicios {
+  Armamento
+  Abastecimiento
+}
+
 model Renglon {
-  id                   Int            @id @default(autoincrement())
-  nombre               String         @unique
-  descripcion          String
+  id          Int    @id @default(autoincrement())
+  nombre      String @unique
+  descripcion String
+
+  servicio Servicios?
+
   tipo                 String?
   stock_minimo         Int            @default(1)
   stock_maximo         Int?
@@ -218,12 +226,12 @@ enum RenglonStates {
 }
 
 model Almacen {
-  id        Int    @id @default(autoincrement())
-  nombre    String
-  ubicacion String
-
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  id                   Int        @id @default(autoincrement())
+  nombre               String
+  ubicacion            String
+  servicio             Servicios?
+  fecha_creacion       DateTime   @default(now())
+  ultima_actualizacion DateTime   @updatedAt
 
   renglones Renglon[]
   armamento Armamento[]
@@ -233,11 +241,11 @@ model Almacen {
 
 //#region Recepciones
 model Recepcion {
-  id              Int                     @id @default(autoincrement())
-  fecha_recepcion DateTime
-  motivo          String?
-  renglones       Recepciones_Renglones[]
-
+  id                  Int                     @id @default(autoincrement())
+  fecha_recepcion     DateTime
+  motivo              String?
+  renglones           Recepciones_Renglones[]
+  servicio            Servicios?
   cedula_destinatario String?
   cedula_autorizador  String?
   cedula_abastecedor  String?
@@ -302,11 +310,11 @@ model Devolucion {
   cedula_autorizador  String?
   cedula_abastecedor  String?
   cedula_supervisor   String?
-
-  destinatario Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  autorizador  Profesional_Abastecimiento? @relation(name: "autorizador_devolucion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  abastecedor  Profesional_Abastecimiento? @relation(name: "abastecedor_devolucion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor_devolucion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  servicio            Servicios?
+  destinatario        Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador         Profesional_Abastecimiento? @relation(name: "autorizador_devolucion", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor         Profesional_Abastecimiento? @relation(name: "abastecedor_devolucion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor          Profesional_Abastecimiento? @relation(name: "supervisor_devolucion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
@@ -324,7 +332,7 @@ model Devoluciones_Renglones {
 }
 
 model Despacho {
-  id                  Int                   @id @default(autoincrement())
+  id                  Int                         @id @default(autoincrement())
   fecha_despacho      DateTime
   motivo              String?
   renglones           Despachos_Renglones[]
@@ -332,11 +340,11 @@ model Despacho {
   cedula_autorizador  String?
   cedula_abastecedor  String?
   cedula_supervisor   String?
-
-  destinatario Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  autorizador  Profesional_Abastecimiento? @relation(name: "autorizador", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  abastecedor  Profesional_Abastecimiento? @relation(name: "abastecedor", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
-  supervisor   Profesional_Abastecimiento? @relation(name: "supervisor", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  servicio            Servicios?
+  destinatario        Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador         Profesional_Abastecimiento? @relation(name: "autorizador", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor         Profesional_Abastecimiento? @relation(name: "abastecedor", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor          Profesional_Abastecimiento? @relation(name: "supervisor", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
   fecha_creacion       DateTime @default(now())
   ultima_actualizacion DateTime @updatedAt
@@ -387,13 +395,13 @@ model Pedido {
   id              Int      @id @default(autoincrement())
   fecha_solicitud DateTime
 
-  estado         Estados_Pedidos?
-  tipo_proveedor Tipos_Proveedores
-  motivo         String
-  renglones      Pedidos_Renglones[]
-
+  estado          Estados_Pedidos?
+  tipo_proveedor  Tipos_Proveedores
+  motivo          String
+  renglones       Pedidos_Renglones[]
+  servicio        Servicios?
   id_destinatario Int?
-  destinatario    Destinatario? @relation(fields: [id_destinatario], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  destinatario    Destinatario?       @relation(fields: [id_destinatario], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   id_proveedor Int?
   proveedor    Proveedor? @relation(fields: [id_proveedor], references: [id])

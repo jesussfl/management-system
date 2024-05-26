@@ -5,16 +5,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
+import ItemsForm from '@/app/(main)/dashboard/armamento/inventario/components/items-form'
 
 export default async function Page() {
   return (
     <Dialog open={true}>
-      <DialogContent
-        customClose
-        className={'lg:max-w-screen-lg overflow-hidden p-0 h-[90vh]'}
-      >
-        <DialogHeader className="p-5 mb-8 border-b border-border">
+      <DialogContent customClose className={'lg:max-w-screen-lg p-0'}>
+        <DialogHeader className="px-5 py-4 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
             Crear Renglón
           </DialogTitle>

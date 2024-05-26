@@ -53,7 +53,7 @@ export const Step2 = () => {
             <FormDescription>
               Si no encuentras la clasificación que buscas, puedes crearla
               <Link
-                href="/dashboard/abastecimiento/inventario/clasificacion"
+                href="/dashboard/armamento/inventario/clasificacion"
                 className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
               >
                 Crear clasificación
@@ -88,7 +88,7 @@ export const Step2 = () => {
                 <FormDescription>
                   Si no encuentras la categoría que buscas, puedes crearla
                   <Link
-                    href="/dashboard/abastecimiento/inventario/categoria"
+                    href="/dashboard/armamento/inventario/categoria"
                     className={cn(
                       buttonVariants({ variant: 'link' }),
                       'h-[1px]'
@@ -127,7 +127,7 @@ export const Step2 = () => {
                   Si no encuentras la unidad de empaque que buscas, puedes
                   crearla
                   <Link
-                    href="/dashboard/abastecimiento/inventario/unidad-empaque"
+                    href="/dashboard/armamento/inventario/unidad-empaque"
                     className={cn(
                       buttonVariants({ variant: 'link' }),
                       'h-[1px]'

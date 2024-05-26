@@ -44,7 +44,7 @@ export const createClassification = async (
 
   await registerAuditAction(`Se creó una clasificación llamada ${nombre}`)
 
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     error: false,
@@ -95,7 +95,7 @@ export const updateClassification = async (
   await registerAuditAction(
     `Se actualizo una clasificación llamada ${exist?.nombre}`
   )
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
   return {
     success: 'Clasificación actualizado exitosamente',
     error: false,
@@ -141,14 +141,48 @@ export const deleteClassification = async (id: number) => {
   await registerAuditAction(
     `Se eliminó una clasificación llamada ${exist?.nombre}`
   )
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     success: 'Clasificación eliminada exitosamente',
     error: false,
   }
 }
+export const deleteMultipleClassifications = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.clasificacion.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado las siguientes clasificaciones ${ids}`
+  )
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Se ha eliminado la clasificación correctamente',
+    error: false,
+  }
+}
 export const getAllClassifications = async () => {
   const sessionResponse = await validateUserSession()
 

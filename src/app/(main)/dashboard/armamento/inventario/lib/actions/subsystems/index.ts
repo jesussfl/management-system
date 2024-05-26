@@ -33,7 +33,7 @@ export const createSubsystem = async (
   await registerAuditAction(
     'Se creó un nuevo subsistema llamado ' + data.nombre
   )
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
   return {
     success: 'Subsistema creado exitosamente',
     error: false,
@@ -82,7 +82,7 @@ export const updateSubsystem = async (
   await registerAuditAction(
     'Se actualizó el subsistema llamado ' + exist?.nombre
   )
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
   return {
     success: 'Subsistema actualizado exitosamente',
     error: false,
@@ -126,14 +126,48 @@ export const deleteSubsystem = async (id: number) => {
 
   await registerAuditAction('Se eliminó el subsistema llamado ' + exist?.nombre)
 
-  revalidatePath('/dashboard/abastecimiento/inventario')
+  revalidatePath('/dashboard/armamento/inventario')
 
   return {
     success: 'Subsistema eliminado exitosamente',
     error: false,
   }
 }
+export const deleteMultipleSubsystems = async (ids: number[]) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.subsistema.deleteMany({
+    where: {
+      id: {
+        in: ids,
+      },
+    },
+  })
+
+  await registerAuditAction(
+    `Se han eliminado los siguientes subsistemas ${ids}`
+  )
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Se han eliminado los subsistemas correctamente',
+    error: false,
+  }
+}
 export const getAllSubsystems = async () => {
   const session = await auth()
   if (!session?.user) {

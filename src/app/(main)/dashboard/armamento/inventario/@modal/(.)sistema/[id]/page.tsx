@@ -1,4 +1,4 @@
-import { getItemById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getItemById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
+import ItemsForm from '@/app/(main)/dashboard/armamento/inventario/components/items-form'
 import SystemForm from '../../../components/system-form'
 import { getSystemById } from '../../../lib/actions/systems'
 
