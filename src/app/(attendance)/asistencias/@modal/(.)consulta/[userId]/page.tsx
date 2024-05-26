@@ -1,3 +1,4 @@
+'use client'
 import {
   Alert,
   AlertDescription,
@@ -14,15 +15,15 @@ import { Rocket } from 'lucide-react'
 import useAttendance from '../../../lib/hooks/useAttendance'
 import useUserData from '../../../lib/hooks/useUserData'
 
-export default async function Page({
+export default function Page({
   params: { userId },
 }: {
   params: { userId: string }
 }) {
-  const { dataToShow } = await useUserData(userId)
-  const { inTime, outTime } = await useAttendance(userId)
+  // const { dataToShow } = await useUserData(userId)
+  const { inTime, outTime, isLoading } = useAttendance(userId)
 
-  if (!dataToShow)
+  if (isLoading)
     return (
       <div>El usuario no tiene Información registrada en el sistema aún</div>
     )
@@ -37,7 +38,7 @@ export default async function Page({
           <DialogTitle>Consulta de Información</DialogTitle>
         </DialogHeader>
 
-        <div>
+        <div className="flex flex-col gap-4 p-5">
           <Alert variant={'success'}>
             <Rocket className="h-4 w-4" />
             <AlertTitle>Hora de Entrada: </AlertTitle>
@@ -50,9 +51,9 @@ export default async function Page({
           </Alert>
           <div className="mt-6 border-t border-gray-100">
             <dl className="divide-y divide-gray-100">
-              {dataToShow.map(({ title, info }) => (
+              {/* {dataToShow.map(({ title, info }) => (
                 <UserDetail key={title} title={title} info={info} />
-              ))}
+              ))} */}
             </dl>
           </div>
         </div>

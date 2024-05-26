@@ -1,8 +1,22 @@
+'use client'
 import { getLastAttendanceByUserId } from '@/app/(main)/dashboard/recursos-humanos/asistencias/lib/actions'
 
 import { getAttendanceTime } from '../helpers/get-attendance-time'
-export default async function useAttendance(userId: string) {
-  const lastAttendance = await getLastAttendanceByUserId(userId)
+import { useEffect, useState } from 'react'
+export default function useAttendance(userId: string) {
+  // const lastAttendance = getLastAttendanceByUserId(userId)
+  const [lastAttendance, setLastAttendance] = useState<any>({})
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchLastAttendance = async () => {
+      setIsLoading(true)
+      const lastAttendance = await getLastAttendanceByUserId(userId)
+      setLastAttendance(lastAttendance)
+      setIsLoading(false)
+    }
+    fetchLastAttendance()
+  }, [userId])
 
   const inTime = lastAttendance?.hora_entrada
     ? getAttendanceTime(lastAttendance?.hora_entrada)
@@ -15,5 +29,6 @@ export default async function useAttendance(userId: string) {
   return {
     inTime,
     outTime,
+    isLoading,
   }
 }

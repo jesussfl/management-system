@@ -41,88 +41,13 @@ import {
   updateAttendance,
 } from '@/app/(main)/dashboard/recursos-humanos/asistencias/lib/actions'
 import { isSameDay } from 'date-fns'
+import { checkInTime, checkOutTime } from '../../lib/actions'
 
 type FormValues = {
   email: string
   password: string
 }
-const checkInTime = async (user: Usuario) => {
-  console.log('checkAttendance')
 
-  if (!user || !user.id) {
-    return {
-      error: 'No se pudo encontrar el usuario',
-      success: false,
-    }
-  }
-
-  // Obtener las asistencias del usuario para el día de hoy
-  const today = new Date()
-  const lastAttendance = await getLastAttendanceByUserId(user.id)
-  console.log('lastAttendance', lastAttendance)
-  const todayAttendance = lastAttendance?.hora_entrada
-    ? isSameDay(new Date(lastAttendance.hora_entrada), today)
-    : false
-
-  // Si no hay asistencia para hoy, crear un nuevo registro
-  if (!todayAttendance) {
-    console.log('No hay asistencia para hoy')
-    await createAttendance({ id_usuario: user.id, hora_entrada: new Date() })
-
-    return {
-      success: 'Asistencia registrada',
-      error: false,
-    }
-  }
-
-  return {
-    error: 'Ya registraste una asistencia para hoy',
-    success: false,
-  }
-}
-const checkOutTime = async (user: Usuario) => {
-  if (!user || !user.id) {
-    return {
-      error: 'No se pudo encontrar el usuario',
-      success: false,
-    }
-  }
-
-  // Obtener las asistencias del usuario para el día de hoy
-  const today = new Date()
-
-  const lastAttendance = await getLastAttendanceByUserId(user.id)
-
-  const todayAttendance = lastAttendance?.hora_entrada
-    ? isSameDay(new Date(lastAttendance.hora_entrada), today)
-    : false
-
-  const alreadyCheckedOut = lastAttendance?.hora_salida
-
-  if (alreadyCheckedOut) {
-    return {
-      error: 'Ya registraste tu hora de salida',
-      success: false,
-    }
-  }
-  // Si hay asistencia de entrada para hoy, actualizar la hora de salida
-  if (todayAttendance && lastAttendance) {
-    await updateAttendance(lastAttendance.id, {
-      hora_salida: new Date(),
-    })
-
-    return {
-      success: 'Hora de salida registrada',
-      error: false,
-    }
-  }
-
-  return {
-    error:
-      'Por favor registra tu hora de entrada antes de registrar tu hora de salida',
-    success: false,
-  }
-}
 function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
   const { toast } = useToast()
   const { faceio } = useFaceio()
@@ -210,27 +135,29 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
           if (type === 'entrada') {
             checkInTime(validation.user).then((data) => {
               if (data?.error) {
+                router.replace(`/asistencias/consulta/${validation.user.id}`)
+
                 toast({
                   title: 'Parece que hubo un problema',
                   description: data.error,
                   variant: 'destructive',
                 })
-
                 return
               }
+              router.replace(`/asistencias/consulta/${validation.user.id}`)
 
-              if (data?.success) {
-                toast({
-                  title: 'Hora de entrada registrada',
-                  variant: 'success',
-                })
-              }
+              toast({
+                title: 'Entrada registrada',
+                variant: 'success',
+              })
             })
           }
 
           if (type === 'salida') {
             checkOutTime(validation.user).then((data) => {
               if (data?.error) {
+                router.replace(`/asistencias/consulta/${validation.user.id}`)
+
                 toast({
                   title: 'Parece que hubo un problema',
                   description: data.error,
@@ -239,15 +166,15 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
 
                 return
               }
+              router.replace(`/asistencias/consulta/${validation.user.id}`)
 
-              if (data?.success) {
-                toast({
-                  title: 'Hora de salida registrada',
-                  variant: 'success',
-                })
-              }
+              toast({
+                title: 'Salida registrada',
+                variant: 'success',
+              })
             })
           }
+
           router.replace(`/asistencias/consulta/${validation.user.id}`)
         }
       })

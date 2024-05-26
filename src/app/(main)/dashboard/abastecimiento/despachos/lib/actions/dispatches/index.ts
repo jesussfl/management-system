@@ -13,6 +13,7 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import getGuideCode from '@/utils/helpers/get-guide-code'
 
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
@@ -505,6 +506,97 @@ export const getDispatchById = async (id: number) => {
       ...renglon,
       seriales: renglon.seriales.map((serial) => serial.serial),
     })),
+  }
+}
+
+export const getDispatchForExportGuide = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const dispatchData = await prisma.despacho.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      renglones: {
+        include: {
+          renglon: {
+            include: {
+              unidad_empaque: true,
+              recepciones: true,
+              clasificacion: true,
+              despachos: {
+                include: {
+                  seriales: true,
+                },
+              },
+            },
+          },
+          seriales: {
+            select: {
+              serial: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!dispatchData) {
+    throw new Error('Despacho no existe')
+  }
+
+  return {
+    destinatario_cedula: `${dispatchData.destinatario.tipo_cedula}-${dispatchData.cedula_destinatario}`,
+    destinatario_nombres: dispatchData.destinatario.nombres,
+    destinatario_apellidos: dispatchData.destinatario.apellidos,
+    destinatario_grado: dispatchData?.destinatario?.grado?.nombre || 's/c',
+    destinatario_cargo: dispatchData.destinatario.cargo_profesional || 's/c',
+    destinatario_telefono: dispatchData.destinatario.telefono,
+    despacho: dispatchData,
+    renglones: dispatchData.renglones.map((renglon) => ({
+      ...renglon,
+      seriales: renglon.seriales.map((serial) => serial.serial),
+    })),
+    autorizador: dispatchData.autorizador,
+    abastecedor: dispatchData.abastecedor,
+    supervisor: dispatchData.supervisor,
+    unidad: dispatchData?.destinatario?.unidad?.nombre || 's/u',
+    codigo: getGuideCode(dispatchData.id),
+    motivo: dispatchData.motivo || 's/m',
   }
 }
 

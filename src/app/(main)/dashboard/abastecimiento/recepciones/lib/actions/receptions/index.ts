@@ -12,6 +12,7 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
+import getGuideCode from '@/utils/helpers/get-guide-code'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -463,4 +464,92 @@ export const getAllOrdersByItemId = async (itemId: number) => {
     },
   })
   return orders
+}
+
+export const getReceptionForExportGuide = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const receptionData = await prisma.recepcion.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      renglones: {
+        include: {
+          renglon: {
+            include: {
+              recepciones: true,
+              unidad_empaque: true,
+              clasificacion: true,
+              categoria: true,
+            },
+          },
+          seriales: {
+            select: {
+              serial: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!receptionData) {
+    throw new Error('Despacho no existe')
+  }
+
+  return {
+    destinatario_cedula: `${receptionData.destinatario?.tipo_cedula}-${receptionData.cedula_destinatario}`,
+    destinatario_nombres: receptionData.destinatario?.nombres || 'Sin nombres',
+    destinatario_apellidos:
+      receptionData.destinatario?.apellidos || 'Sin apellidos',
+    destinatario_grado: receptionData?.destinatario?.grado?.nombre || 's/g',
+    destinatario_cargo: receptionData.destinatario?.cargo_profesional || 's/c',
+    destinatario_telefono: receptionData.destinatario?.telefono || 's/t',
+    recepcion: receptionData,
+    renglones: receptionData.renglones.map((renglon) => ({
+      ...renglon,
+      seriales: renglon.seriales.map((serial) => serial.serial),
+    })),
+    autorizador: receptionData.autorizador,
+    abastecedor: receptionData.abastecedor,
+    supervisor: receptionData.supervisor,
+    unidad: receptionData?.destinatario?.unidad?.nombre || 's/u',
+    codigo: getGuideCode(receptionData.id),
+    motivo: receptionData.motivo || 's/m',
+  }
 }

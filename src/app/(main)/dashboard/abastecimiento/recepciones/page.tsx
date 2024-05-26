@@ -1,7 +1,6 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Button } from '@/modules/common/components/button'
-import { Plus, FileDown, PackagePlus } from 'lucide-react'
+import { Plus, PackagePlus, PackageCheck } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
@@ -32,7 +31,7 @@ export default async function Page() {
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackagePlus size={24} />
+            <PackageCheck size={24} />
             Recepciones
           </PageHeaderTitle>
           <PageHeaderDescription>

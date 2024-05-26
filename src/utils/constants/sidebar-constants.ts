@@ -18,6 +18,8 @@ import {
   UserCircle,
   LocateIcon,
   IterationCcw,
+  PackageCheck,
+  DatabaseBackup,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -45,21 +47,25 @@ const DEFAULT_ICON_SIZE = 20
 
 export enum SECTION_NAMES {
   INICIO = 'INICIO',
+
   ABASTECIMIENTO = 'ABASTECIMIENTO',
-  PEDIDOS = 'PEDIDOS',
   INVENTARIO = 'INVENTARIO',
+  PEDIDOS = 'PEDIDOS',
   RECEPCION = 'RECEPCION',
   DESPACHOS = 'DESPACHOS',
   DEVOLUCIONES = 'DEVOLUCIONES',
+  DESTINATARIOS = 'DESTINATARIOS',
+
   PROFESIONALES = 'PROFESIONALES',
   ALMACENES = 'ALMACENES',
-  DESTINATARIOS = 'DESTINATARIOS',
+
   ARMAMENTO = 'ARMAMENTO',
+
   PERSONAL = 'PERSONAL',
   USUARIOS = 'USUARIOS',
-  ESTADISTICAS = 'ESTADISTICAS',
+
   AUDITORIA = 'AUDITORIA',
-  REPORTES = 'REPORTES',
+
   CONFIGURACION = 'CONFIGURACION',
   UNIDADES = 'UNIDADES',
   AYUDA = 'AYUDA',
@@ -99,7 +105,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         title: 'Pedidos',
         identifier: SECTION_NAMES.PEDIDOS,
         path: '/dashboard/abastecimiento/pedidos',
-        icon: Box,
+        icon: PackagePlus,
         requiredPermissions: [
           SECTION_NAMES.PEDIDOS,
           SECTION_NAMES.TODAS,
@@ -110,7 +116,7 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
         title: 'Recepciones',
         identifier: SECTION_NAMES.RECEPCION,
         path: '/dashboard/abastecimiento/recepciones',
-        icon: PackagePlus,
+        icon: PackageCheck,
         requiredPermissions: [
           SECTION_NAMES.RECEPCION,
           SECTION_NAMES.TODAS,
@@ -273,10 +279,10 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
   },
 
   {
-    title: 'Configuraciones',
+    title: 'Respaldo',
     identifier: SECTION_NAMES.CONFIGURACION,
     path: '/dashboard/configuracion',
-    icon: Settings,
+    icon: DatabaseBackup,
   },
   {
     title: 'Ayuda',
