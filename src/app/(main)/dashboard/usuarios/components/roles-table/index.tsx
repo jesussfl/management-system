@@ -18,6 +18,9 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteRol } from '../../lib/actions/roles'
 type Rol = Prisma.RolGetPayload<{
   include: {
     permisos: true
@@ -85,28 +88,19 @@ export const columns: ColumnDef<Rol>[] = [
     cell: ({ row }) => {
       const rol = row.original
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(rol.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/usuarios/rol/${rol.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.USUARIOS}
+          editConfig={{
+            href: `/dashboard/usuarios/rol/${rol.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este rol?',
+            alertDescription: `Estas a punto de eliminar este rol y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteRol(rol.id)
+            },
+          }}
+        />
       )
     },
   },

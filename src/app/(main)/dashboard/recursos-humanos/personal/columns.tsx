@@ -18,6 +18,9 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deletePersonnel } from '../guardias/lib/actions'
 export const columns: ColumnDef<PersonalType>[] = [
   SELECT_COLUMN,
   {
@@ -262,30 +265,19 @@ export const columns: ColumnDef<PersonalType>[] = [
       const personnel = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard.writeText(String(personnel.id))
-              }
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/recursos-humanos/personal/${personnel.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.RECURSOS_HUMANOS}
+          editConfig={{
+            href: `/dashboard/recursos-humanos/personal/${personnel.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este componente?',
+            alertDescription: `Estas a punto de eliminar este componente y todas sus dependencias.`,
+            onConfirm: () => {
+              return deletePersonnel(personnel.cedula)
+            },
+          }}
+        />
       )
     },
   },

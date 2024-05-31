@@ -318,7 +318,7 @@ export const deleteReturn = async (id: number) => {
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
   return {
-    success: true,
+    success: 'Devolucion eliminada correctamente',
     error: false,
   }
 }

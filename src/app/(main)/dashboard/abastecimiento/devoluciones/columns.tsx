@@ -25,6 +25,8 @@ import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { RenglonWithAllRelations } from '@/types/types'
 import { deleteReturn } from './lib/actions/returns'
 import { format } from 'date-fns'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 type ReturnType = Prisma.DevolucionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
@@ -146,39 +148,19 @@ export const columns: ColumnDef<ReturnType>[] = [
       const data = row.original
 
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(data.id))}
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <Link href={`/dashboard/abastecimiento/devoluciones/${data.id}`}>
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar esta devolución?"
-            description="Estas a punto de eliminar esta devolución y todas sus dependencias."
-            actionMethod={() => deleteReturn(data.id)}
-          />
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.DEVOLUCIONES}
+          editConfig={{
+            href: `/dashboard/abastecimiento/devoluciones/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar esta devolución?',
+            alertDescription: `Estas a punto de eliminar esta devolución y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteReturn(data.id)
+            },
+          }}
+        />
       )
     },
   },

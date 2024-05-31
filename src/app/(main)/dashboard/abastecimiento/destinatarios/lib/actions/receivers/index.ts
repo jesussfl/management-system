@@ -72,7 +72,7 @@ export const getAllReceivers = async () => {
   return receivers
 }
 
-export const deleteReceiver = async (cedula: string) => {
+export const deleteReceiver = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -80,7 +80,7 @@ export const deleteReceiver = async (cedula: string) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DESTINATARIOS,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -91,7 +91,7 @@ export const deleteReceiver = async (cedula: string) => {
 
   const exists = await prisma.destinatario.findUnique({
     where: {
-      cedula,
+      id,
     },
   })
 
@@ -104,12 +104,12 @@ export const deleteReceiver = async (cedula: string) => {
 
   await prisma.destinatario.delete({
     where: {
-      cedula,
+      id,
     },
   })
 
   await registerAuditAction(
-    `Se eliminó el destinatario con la cedula: ${cedula}`
+    `Se eliminó el destinatario con documento de identidad: ${exists.cedula}`
   )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 

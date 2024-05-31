@@ -55,7 +55,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -109,7 +109,7 @@ export const deleteUnit = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -142,6 +142,7 @@ export const deleteUnit = async (id: number) => {
 
   return {
     success: true,
+    error: false,
   }
 }
 

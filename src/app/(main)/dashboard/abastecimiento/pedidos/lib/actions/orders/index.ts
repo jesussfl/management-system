@@ -277,7 +277,7 @@ export const deleteOrder = async (id: number) => {
 
   return {
     error: null,
-    success: 'Recepción eliminada exitosamente',
+    success: 'Pedido eliminado exitosamente',
   }
 }
 // export const deleteMultipleReceptions = async (ids: number[]) => {

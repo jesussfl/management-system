@@ -16,17 +16,10 @@ import {
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { MoreHorizontal } from 'lucide-react'
-import ModalForm from '@/modules/common/components/modal-form'
-import {
-  GradosWithComponentesAndIncludeComponente,
-  ZodiType,
-} from '@/types/types'
-import {
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
 import { Redi } from '@prisma/client'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteRedi } from '../../lib/actions/redis'
 
 export const columns: ColumnDef<Redi>[] = [
   {
@@ -114,28 +107,19 @@ export const columns: ColumnDef<Redi>[] = [
       const data = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/unidades/redi/${data.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.UNIDADES}
+          editConfig={{
+            href: `/dashboard/unidades/redi/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar esta redi?',
+            alertDescription: `Estas a punto de eliminar esta redi y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteRedi(data.id)
+            },
+          }}
+        />
       )
     },
   },

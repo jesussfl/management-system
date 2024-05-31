@@ -1,21 +1,17 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Usuario } from '@prisma/client'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { updateUserState } from './lib/actions/users'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
@@ -37,6 +33,38 @@ export const columns: ColumnDef<Usuario>[] = [
           Nombre
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
+      )
+    },
+  },
+  {
+    accessorKey: 'estado',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Estado
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const { estado } = row.original
+      const COLORS = {
+        Activo: 'bg-green-500',
+
+        Bloqueado: 'bg-red-500',
+      }
+      return (
+        <div className="w-32 flex gap-2 items-center">
+          <div
+            className={` rounded-full w-2 h-2 ${COLORS[estado || 'Activo']}`}
+          />{' '}
+          {estado}
+        </div>
       )
     },
   },
@@ -93,32 +121,34 @@ export const columns: ColumnDef<Usuario>[] = [
     id: 'actions',
     cell: ({ row }) => {
       const user = row.original
-
+      const estado = user.estado
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(user.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <Link href={`/dashboard/usuarios/cambiar-contrasena/${user.id}`}>
-              <DropdownMenuItem>Cambiar contraseña</DropdownMenuItem>
-            </Link>
-            <Link href={`/dashboard/usuarios/${user.id}`}>
-              <DropdownMenuItem> Editar Rol</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.USUARIOS}
+          editConfig={{
+            actionName: 'Editar Rol',
+            href: `/dashboard/usuarios/${user.id}`,
+          }}
+          deleteConfig={{
+            actionName: `${estado === 'Activo' ? 'Bloquear' : 'Desbloquear'}`,
+            alertTitle: `¿Estás seguro de ${
+              estado === 'Activo' ? 'bloquear' : 'desbloquear'
+            } a este usuario?`,
+            alertDescription: `Estas a punto de ${
+              estado === 'Bloqueado' ? 'bloquear' : 'desbloquear'
+            } este usuario.`,
+            onConfirm: () => {
+              return updateUserState(
+                user.id,
+                `${estado === 'Activo' ? 'Bloqueado' : 'Activo'}`
+              )
+            },
+          }}
+        >
+          <Link href={`/dashboard/usuarios/cambiar-contrasena/${user.id}`}>
+            <DropdownMenuItem>Cambiar contraseña</DropdownMenuItem>
+          </Link>
+        </ProtectedTableActions>
       )
     },
   },

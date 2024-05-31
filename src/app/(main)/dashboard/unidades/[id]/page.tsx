@@ -1,6 +1,6 @@
-import { getUnitById } from '../../lib/actions/units'
-import UnitsForm from '../../components/forms/unit-form'
 import PageForm from '@/modules/layout/components/page-form'
+import { getUnitById } from '../lib/actions/units'
+import UnitsForm from '../components/forms/unit-form'
 
 export default async function Page({
   params: { id },

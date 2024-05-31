@@ -81,7 +81,7 @@ export const getAllProfessionals = async () => {
   return professionals
 }
 
-export const deleteProfessional = async (cedula: string) => {
+export const deleteProfessional = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -100,7 +100,7 @@ export const deleteProfessional = async (cedula: string) => {
 
   const exists = await prisma.profesional_Abastecimiento.findUnique({
     where: {
-      cedula,
+      id,
     },
   })
 
@@ -112,13 +112,15 @@ export const deleteProfessional = async (cedula: string) => {
     }
   }
 
-  await prisma.destinatario.delete({
+  await prisma.profesional_Abastecimiento.delete({
     where: {
-      cedula,
+      id,
     },
   })
 
-  await registerAuditAction('Se elimino el profesional con la cedula ' + cedula)
+  await registerAuditAction(
+    'Se elimino el profesional con la cedula ' + exists.cedula
+  )
   revalidatePath('/dashboard/profesionales')
 
   return {

@@ -399,7 +399,7 @@ export const deleteDispatch = async (id: number) => {
   revalidatePath('/dashboard/abastecimiento/despachos')
 
   return {
-    success: true,
+    success: 'Despacho eliminado exitosamente',
     error: false,
   }
 }

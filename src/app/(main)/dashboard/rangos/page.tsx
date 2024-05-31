@@ -24,9 +24,9 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 
-import { columns as categoryColumns } from '@/modules/rangos/components/columns/category-columns'
-import { columns as gradeColumns } from '@/modules/rangos/components/columns/grade-columns'
-import { columns as componentColumns } from '@/modules/rangos/components/columns/component-columns'
+import { columns as categoryColumns } from '@/app/(main)/dashboard/rangos/components/columns/category-columns'
+import { columns as gradeColumns } from '@/app/(main)/dashboard/rangos/components/columns/grade-columns'
+import { columns as componentColumns } from '@/app/(main)/dashboard/rangos/components/columns/component-columns'
 import {
   getAllCategories,
   getAllComponents,

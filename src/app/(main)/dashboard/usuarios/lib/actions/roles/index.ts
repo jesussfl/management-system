@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
 import { CreateRolesWithPermissions } from '@/types/types'
+import { error } from 'console'
 
 type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
 
@@ -100,6 +101,11 @@ export const deleteRol = async (id: number) => {
   })
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
+
+  return {
+    success: 'Rol eliminado exitosamente',
+    error: false,
+  }
 }
 
 export const getAllRoles = async () => {

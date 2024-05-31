@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { validateUserPermissionsArray } from '@/utils/helpers/validate-user-permissions'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
-import { Prisma, Usuario } from '@prisma/client'
+import { Prisma, Usuario, Usuarios_Estados } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import bcrypt from 'bcryptjs'
 
@@ -132,6 +132,48 @@ export const updateUserPassword = async (
 
   return {
     success: 'User updated successfully',
+    error: false,
+  }
+}
+
+export const updateUserState = async (id: string, estado: Usuarios_Estados) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissionsArray({
+    sections: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const user = await prisma.usuario.update({
+    where: {
+      id,
+    },
+    data: {
+      estado,
+    },
+  })
+
+  if (!user) {
+    return {
+      success: false,
+      error: 'Usuario no encontrado',
+    }
+  }
+
+  revalidatePath('/dashboard/usuarios')
+  return {
+    success: `El usuario se ha ${
+      estado === 'Activo' ? 'desbloqueado' : 'bloqueado'
+    } correctamente`,
     error: false,
   }
 }

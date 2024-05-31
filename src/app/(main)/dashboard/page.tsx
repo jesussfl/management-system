@@ -1,17 +1,7 @@
-import { Button, buttonVariants } from '@/modules/common/components/button'
-import {
-  Plus,
-  FileDown,
-  PackagePlus,
-  User2,
-  Package,
-  ArrowRight,
-  UserCircle,
-  PackageMinus,
-} from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import { PackagePlus, ArrowRight, UserCircle, PackageMinus } from 'lucide-react'
 import {
   HeaderLeftSide,
-  HeaderRightSide,
   PageHeader,
   PageHeaderDescription,
   PageHeaderTitle,
@@ -31,7 +21,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
@@ -40,16 +29,13 @@ import { Boxes } from 'lucide-react'
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { Overview } from '@/modules/common/components/overview/overview'
-import { RecentSales } from '@/modules/common/components/recent-users/recent-users'
 import { getStatistics } from './lib/actions/statistics'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { getAllItems } from './abastecimiento/inventario/lib/actions/items'
-import { getUserPermissions } from '@/lib/auth'
 import { RenglonWithAllRelations } from '@/types/types'
 import { lowStockItemsColumns } from './components/home-columns'
 import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: 'Administrador',

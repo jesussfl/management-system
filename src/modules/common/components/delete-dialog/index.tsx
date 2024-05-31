@@ -42,8 +42,7 @@ export const DeleteDialog = ({ title, description, actionMethod }: props) => {
 
       if (res?.success) {
         toast({
-          title: 'Eliminado',
-          description: 'Eliminación exitosa',
+          title: `${res.success}`,
           variant: 'success',
         })
       }

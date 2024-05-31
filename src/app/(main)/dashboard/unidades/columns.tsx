@@ -8,15 +8,10 @@ import { SELECT_COLUMN } from '@/utils/constants/columns'
 
 import { DestinatarioType, UnidadesType } from '@/types/types'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteUnit } from './lib/actions/units'
 
 export const columns: ColumnDef<UnidadesType>[] = [
   SELECT_COLUMN,
@@ -79,28 +74,19 @@ export const columns: ColumnDef<UnidadesType>[] = [
       const unit = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(unit.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/unidades/agregar/${unit.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.UNIDADES}
+          editConfig={{
+            href: `/dashboard/unidades/${unit.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar esta unidad?',
+            alertDescription: `Estas a punto de eliminar este unidad y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteUnit(unit.id)
+            },
+          }}
+        />
       )
     },
   },

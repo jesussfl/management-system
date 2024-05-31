@@ -24,6 +24,8 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deletePermiso } from '../../lib/actions/permissions'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 interface DataTableProps {
   data: Permiso[]
 }
@@ -100,41 +102,19 @@ export const columns: ColumnDef<Permiso>[] = [
     cell: ({ row }) => {
       const permission = row.original
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(String(permission.id))
-                }
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <Link href={`/dashboard/usuarios/permiso/${permission.id}`}>
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar este permiso?"
-            description="Estas a punto de eliminar este permiso y todas sus dependencias."
-            actionMethod={() => deletePermiso(permission.id)}
-          />
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.UNIDADES}
+          editConfig={{
+            href: `/dashboard/usuarios/permiso/${permission.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este permiso?',
+            alertDescription: `Estas a punto de eliminar este permiso y todas sus dependencias.`,
+            onConfirm: () => {
+              return deletePermiso(permission.id)
+            },
+          }}
+        />
       )
     },
   },

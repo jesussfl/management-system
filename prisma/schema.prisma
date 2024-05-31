@@ -40,26 +40,32 @@ model Session {
   user         Usuario  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+enum Usuarios_Estados {
+  Activo
+  Bloqueado
+}
+
 model Usuario {
   id          String         @id @default(cuid())
   nombre      String
   cedula      String         @unique
   tipo_cedula Tipos_Cedulas?
 
-  email         String?      @unique
-  contrasena    String?      @map("password")
-  facialID      String?      @unique
+  email         String?           @unique
+  contrasena    String?           @map("password")
+  facialID      String?           @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  rol_nombre    String       @default("Basico")
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  rol_nombre    String            @default("Basico")
   accounts      Cuenta[]
   sessions      Session[]
-  rol           Rol          @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  rol           Rol               @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
   auditoria     Auditoria[]
   personal      Personal?
   asistencias   Asistencia[]
+  estado        Usuarios_Estados?
 
   @@map("User")
 }

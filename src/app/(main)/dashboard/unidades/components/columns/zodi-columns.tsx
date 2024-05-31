@@ -26,6 +26,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteZodi } from '../../lib/actions/zodis'
 
 export const columns: ColumnDef<ZodiType>[] = [
   {
@@ -113,28 +116,19 @@ export const columns: ColumnDef<ZodiType>[] = [
       const data = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/unidades/zodi/${data.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.UNIDADES}
+          editConfig={{
+            href: `/dashboard/unidades/zodi/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar esta zodi?',
+            alertDescription: `Estas a punto de eliminar esta zodi y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteZodi(data.id)
+            },
+          }}
+        />
       )
     },
   },

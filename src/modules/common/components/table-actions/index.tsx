@@ -29,8 +29,10 @@ interface TableActionProps {
   sectionName: SECTION_NAMES
   editConfig: {
     href: string
+    actionName?: string
   }
   deleteConfig: {
+    actionName?: string
     alertTitle: string
     alertDescription: string
     onConfirm: () => Promise<{
@@ -83,7 +85,9 @@ function ProtectedTableActions({
           <DropdownMenuSeparator />
           {editAuthorization.success && (
             <Link href={editConfig.href}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
+              <DropdownMenuItem>
+                {editConfig.actionName || 'Editar'}
+              </DropdownMenuItem>
             </Link>
           )}
 
@@ -91,7 +95,9 @@ function ProtectedTableActions({
 
           {deleteAuthorization.success && (
             <AlertDialogTrigger asChild>
-              <DropdownMenuItem>Eliminar</DropdownMenuItem>
+              <DropdownMenuItem>
+                {deleteConfig.actionName || 'Eliminar'}
+              </DropdownMenuItem>
             </AlertDialogTrigger>
           )}
         </DropdownMenuContent>

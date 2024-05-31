@@ -24,6 +24,8 @@ import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteDispatch } from './lib/actions/dispatches'
 import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: true
@@ -249,45 +251,19 @@ export const columns: ColumnDef<DespachoType>[] = [
       const data = row.original
 
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(String(data.id))}
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <Link
-                href={`/dashboard/abastecimiento/despachos/exportar/${String(
-                  data.id
-                )}`}
-              >
-                <DropdownMenuItem>Exportar</DropdownMenuItem>
-              </Link>
-
-              <Link href={`/dashboard/abastecimiento/despachos/${data.id}`}>
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar este despacho?"
-            description="Estas a punto de eliminar este despacho y todas sus dependencias."
-            actionMethod={() => deleteDispatch(data.id)}
-          />
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.DESPACHOS}
+          editConfig={{
+            href: `/dashboard/abastecimiento/despachos/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este despacho?',
+            alertDescription: `Estas a punto de eliminar este despacho y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteDispatch(data.id)
+            },
+          }}
+        />
       )
     },
   },

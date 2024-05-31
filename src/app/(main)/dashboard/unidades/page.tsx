@@ -52,10 +52,6 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
           <Link
             href="/dashboard/unidades/agregar"
             className={buttonVariants({ variant: 'default' })}

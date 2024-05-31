@@ -40,10 +40,6 @@ export default async function Page() {
   const rolesData = await getAllRoles()
   const permissionsData = await getAllPermissions()
 
-  // const isAuthorized = await validateUserPermissions({
-  //   section: SECTION_NAMES.USUARIOS,
-  // })
-
   return (
     <>
       <PageHeader>
@@ -56,12 +52,6 @@ export default async function Page() {
             Administra los usuarios registrados y sus roles
           </PageHeaderDescription>
         </HeaderLeftSide>
-        <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
-        </HeaderRightSide>
       </PageHeader>
       <Tabs defaultValue="users">
         <TabsList className="mx-5">
