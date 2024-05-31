@@ -17,7 +17,7 @@ export const useHandleTableSelect = (
     | undefined,
   items: RenglonType[]
 ) => {
-  const { append, remove } = useFieldArray<PedidoFormValues>({
+  const { fields, append, remove } = useFieldArray<PedidoFormValues>({
     control,
     name: `renglones`,
   })
@@ -46,27 +46,36 @@ export const useHandleTableSelect = (
   }, [isEditEnabled, renglones, items])
 
   const handleTableSelect = useCallback(
-    (lastSelectedRow: any) => {
-      if (lastSelectedRow) {
-        append({
-          id_renglon: lastSelectedRow.id,
-          cantidad: 0,
-          observacion: null,
-        })
-        setSelectedRowsData((prev) => {
-          if (prev.find((item) => item.id === lastSelectedRow.id)) {
-            const index = prev.findIndex(
-              (item) => item.id === lastSelectedRow.id
-            )
-            remove(index)
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
+    (selections: any[]) => {
+      if (!selections) return
+
+      // Obtener los IDs de los elementos seleccionados
+      const selectionIds = selections.map((item) => item.id)
+
+      // Iterar sobre los elementos actuales y eliminar los que no están en selections
+      fields.forEach((field, index) => {
+        if (selectionIds.length === 0) return
+
+        if (!selectionIds.includes(field.id_renglon)) {
+          remove(index)
+        }
+      })
+
+      // Agregar los nuevos elementos de selections que no están en fields
+      selections.forEach((item) => {
+        const exists = fields.some((field) => field.id_renglon === item.id)
+        if (!exists) {
+          append({
+            id_renglon: item.id,
+            cantidad: 0,
+            observacion: null,
+          })
+        }
+      })
+
+      setSelectedRowsData(selections)
     },
-    [append, remove]
+    [append, remove, fields]
   )
 
   const deleteItem = (index: number) => {

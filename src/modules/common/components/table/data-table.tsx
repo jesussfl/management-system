@@ -128,7 +128,6 @@ export function DataTable<TData extends { id: any }, TValue>({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [selectedRows, setSelectedRows] = useState<any[]>([])
-  const [lastSelectedRow, setLastSelectedRow] = useState<any>('')
   const [filtering, setFiltering] = useState('')
 
   //Memoization
@@ -151,7 +150,7 @@ export function DataTable<TData extends { id: any }, TValue>({
 
   useEffect(() => {
     if (!onSelectedRowsChange) return
-    onSelectedRowsChange(lastSelectedRow)
+    onSelectedRowsChange(selectedRows)
   }, [selectedRows])
 
   const table = useReactTable({
@@ -254,9 +253,6 @@ export function DataTable<TData extends { id: any }, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => {
-                    setLastSelectedRow(row.original)
-                  }}
                   className="border-b-0"
                 >
                   {row.getVisibleCells().map((cell, index) => (

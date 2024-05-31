@@ -88,7 +88,26 @@ export const getAllProfessionals = async () => {
   })
   return professionals
 }
-
+export const getAllProfessionalsToCombobox = async (): Promise<
+  { value: string; label: string }[]
+> => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const professionals = await prisma.profesional_Abastecimiento.findMany({
+    include: {
+      grado: true,
+      categoria: true,
+      componente: true,
+      unidad: true,
+    },
+  })
+  return professionals.map((professional) => ({
+    value: professional.cedula,
+    label: `${professional.tipo_cedula}-${professional.cedula} ${professional.nombres}-${professional.apellidos}`,
+  }))
+}
 export const deleteProfessional = async (id: number) => {
   const sessionResponse = await validateUserSession()
 

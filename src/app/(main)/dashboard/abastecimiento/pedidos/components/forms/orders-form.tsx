@@ -1,14 +1,9 @@
 'use client'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  useFormState,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
 import {
@@ -36,15 +31,8 @@ import {
   Estados_Pedidos,
   Pedidos_Renglones,
   Prisma,
-  Recepcion,
-  Recepciones_Renglones,
-  Serial,
   Tipos_Proveedores,
 } from '@prisma/client'
-import {
-  createReception,
-  updateReception,
-} from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
@@ -90,11 +78,6 @@ type PedidoType = Prisma.PedidoGetPayload<{
     }
   }
 }>
-
-type RenglonesRelation = Omit<
-  Pedidos_Renglones,
-  'id_pedido' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
->
 
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }

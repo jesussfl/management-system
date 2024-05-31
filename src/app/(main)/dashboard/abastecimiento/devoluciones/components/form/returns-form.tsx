@@ -73,20 +73,23 @@ type FormValues = Omit<
 
   renglones: Detalles[]
 }
-interface Props {
-  renglonesData: RenglonWithAllRelations[]
-  defaultValues?: FormValues
-  close?: () => void
-}
-
 type ComboboxData = {
   value: string
   label: string
 }
+interface Props {
+  renglonesData: RenglonWithAllRelations[]
+  defaultValues?: FormValues
+  receivers: ComboboxData[]
+  professionals?: ComboboxData[]
+  close?: () => void
+}
+
 export default function ReturnsForm({
   renglonesData,
   defaultValues,
-  close,
+  receivers,
+  professionals,
 }: Props) {
   const { toast } = useToast()
   const router = useRouter()
@@ -100,39 +103,14 @@ export default function ReturnsForm({
     control: form.control,
     name: `renglones`,
   })
-  const [isPending, startTransition] = useTransition()
 
   const [selectedItems, setSelectedItems] = useState<{
     [key: number]: boolean
   }>({})
-  const [receivers, setReceivers] = useState<ComboboxData[]>([])
-  const [professionals, setProfessionals] = useState<ComboboxData[]>([])
   const [selectedData, setSelectedData] = useState<RenglonWithAllRelations[]>(
     []
   )
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-
-  useEffect(() => {
-    startTransition(() => {
-      getAllReceivers().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setReceivers(transformedData)
-      })
-
-      getAllProfessionals().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setProfessionals(transformedData)
-      })
-    })
-  }, [])
 
   useEffect(() => {
     if (defaultValues) {
@@ -151,26 +129,36 @@ export default function ReturnsForm({
     }
   }, [defaultValues])
   const handleTableSelect = useCallback(
-    (lastSelectedRow: any) => {
-      if (lastSelectedRow) {
-        append({
-          id_renglon: lastSelectedRow.id,
-          seriales: [],
-        })
-        setSelectedData((prev) => {
-          if (prev.find((item) => item.id === lastSelectedRow.id)) {
-            const index = prev.findIndex(
-              (item) => item.id === lastSelectedRow.id
-            )
-            remove(index)
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
+    (selections: any[]) => {
+      if (!selections) return
+
+      // Obtener los IDs de los elementos seleccionados
+      const selectionIds = selections.map((item) => item.id)
+
+      // Iterar sobre los elementos actuales y eliminar los que no están en selections
+      fields.forEach((field, index) => {
+        if (selectionIds.length === 0) return
+
+        if (!selectionIds.includes(field.id_renglon)) {
+          remove(index)
+        }
+      })
+
+      // Agregar los nuevos elementos de selections que no están en fields
+      selections.forEach((item) => {
+        const exists = fields.some((field) => field.id_renglon === item.id)
+        if (!exists) {
+          append({
+            id_renglon: item.id,
+
+            seriales: [],
+          })
+        }
+      })
+
+      setSelectedItems(selections)
     },
-    [append, remove]
+    [append, remove, fields]
   )
 
   const deleteItem = (index: number) => {

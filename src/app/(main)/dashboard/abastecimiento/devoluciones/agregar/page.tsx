@@ -11,15 +11,16 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import ReturnsForm from '../components/form/returns-form'
+import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 
 export const metadata: Metadata = {
-  title: 'Recepciones',
-  description: 'Desde aquí puedes administrar la entrada del inventario',
+  title: 'Devoluciones',
+  description: 'Desde aquí puedes administrar las devoluciones del inventario',
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
-
+  const receivers = await getAllReceiversToCombobox()
   return (
     <>
       <PageHeader className="mb-0">
@@ -38,7 +39,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className="pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        <ReturnsForm renglonesData={itemsData} />
+        <ReturnsForm renglonesData={itemsData} receivers={receivers} />
       </PageContent>
     </>
   )

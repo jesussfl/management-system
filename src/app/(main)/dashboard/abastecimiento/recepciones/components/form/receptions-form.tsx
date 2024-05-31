@@ -61,23 +61,11 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
-import { getAllProfessionals } from '@/app/(main)/dashboard/rangos/lib/actions/professionals'
 
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
 >
-// type RecepcionType = Prisma.RecepcionGetPayload<{
-//   include: {
-//     renglones: {
-//       include: {
-//         renglon: { include: { unidad_empaque: true; recepciones: true } }
-//         seriales: true
-//       }
-//     }
-//   }
-// }>
 
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
@@ -95,17 +83,21 @@ export type FormValues = Omit<
 > & {
   renglones: Detalles[]
 }
-interface Props {
-  renglonesData: RenglonType[]
-  defaultValues?: RecepcionType
-}
 type ComboboxData = {
   value: string
   label: string
 }
+interface Props {
+  renglonesData: RenglonType[]
+  defaultValues?: RecepcionType
+  professionals: ComboboxData[]
+  receivers: ComboboxData[]
+}
 export default function ReceptionsForm({
   renglonesData,
   defaultValues,
+  professionals,
+  receivers,
 }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
@@ -117,7 +109,7 @@ export default function ReceptionsForm({
   })
   const { isDirty } = useFormState({ control: form.control })
 
-  const { append, remove } = useFieldArray<FormValues>({
+  const { fields, append, remove } = useFieldArray<FormValues>({
     control: form.control,
     name: `renglones`,
   })
@@ -127,36 +119,13 @@ export default function ReceptionsForm({
   const [selectedRows, setSelectedRows] = useState<any>({})
   const [selectedRowsData, setSelectedRowsData] = useState<RenglonType[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [receivers, setReceivers] = useState<ComboboxData[]>([])
-  const [professionals, setProfessionals] = useState<ComboboxData[]>([])
 
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   useEffect(() => {
-    startTransition(() => {
-      getAllReceivers().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setReceivers(transformedData)
-      })
-
-      getAllProfessionals().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setProfessionals(transformedData)
-      })
-    })
-  }, [])
-  useEffect(() => {
-    if (isEditEnabled) {
+    if (defaultValues) {
       const items = defaultValues.renglones
-      const itemsData = items.map((item) => item.renglon) //TODO: revisar el tipado
+      const itemsData = items.map((item) => item.renglon)
       const selectedItems = items.reduce(
         (acc, item) => {
           acc[item.id_renglon] = true
@@ -168,37 +137,46 @@ export default function ReceptionsForm({
       setSelectedRows(selectedItems)
       setSelectedRowsData(itemsData)
     }
-  }, [isEditEnabled, defaultValues])
+  }, [defaultValues])
 
   const handleTableSelect = useCallback(
-    (lastSelectedRow: any) => {
-      if (lastSelectedRow) {
-        append({
-          id_renglon: lastSelectedRow.id,
-          cantidad: 0,
-          fabricante: null,
-          precio: 0,
-          codigo_solicitud: null,
-          fecha_fabricacion: null,
-          fecha_vencimiento: null,
-          seriales: [],
-          seriales_automaticos: false,
-          observacion: null,
-        })
-        setSelectedRowsData((prev) => {
-          if (prev.find((item) => item.id === lastSelectedRow.id)) {
-            const index = prev.findIndex(
-              (item) => item.id === lastSelectedRow.id
-            )
-            remove(index)
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
+    (selections: any[]) => {
+      if (!selections) return
+
+      // Obtener los IDs de los elementos seleccionados
+      const selectionIds = selections.map((item) => item.id)
+
+      // Iterar sobre los elementos actuales y eliminar los que no están en selections
+      fields.forEach((field, index) => {
+        if (selectionIds.length === 0) return
+
+        if (!selectionIds.includes(field.id_renglon)) {
+          remove(index)
+        }
+      })
+
+      // Agregar los nuevos elementos de selections que no están en fields
+      selections.forEach((item) => {
+        const exists = fields.some((field) => field.id_renglon === item.id)
+        if (!exists) {
+          append({
+            id_renglon: item.id,
+            cantidad: 0,
+            fabricante: null,
+            precio: 0,
+            codigo_solicitud: null,
+            fecha_fabricacion: null,
+            fecha_vencimiento: null,
+            seriales: [],
+            seriales_automaticos: false,
+            observacion: null,
+          })
+        }
+      })
+
+      setSelectedRowsData(selections)
     },
-    [append, remove]
+    [append, remove, fields]
   )
 
   const deleteItem = (index: number) => {
@@ -214,6 +192,7 @@ export default function ReceptionsForm({
     })
     remove(index)
   }
+
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (data.renglones.length === 0) {
       toast({
@@ -759,7 +738,7 @@ export default function ReceptionsForm({
           </CardContent>
         </Card>
 
-        {selectedRowsData.length > 0 && (
+        {fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">

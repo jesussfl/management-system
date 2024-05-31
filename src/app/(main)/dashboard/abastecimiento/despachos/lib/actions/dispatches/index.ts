@@ -502,7 +502,6 @@ export const getDispatchById = async (id: number) => {
     throw new Error('Despacho no existe')
   }
 
-  // @ts-ignore
   return {
     ...dispatch,
 

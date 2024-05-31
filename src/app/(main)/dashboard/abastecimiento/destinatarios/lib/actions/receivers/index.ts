@@ -71,6 +71,27 @@ export const getAllReceivers = async () => {
   })
   return receivers
 }
+export const getAllReceiversToCombobox = async (): Promise<
+  { value: string; label: string }[]
+> => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const receivers = await prisma.destinatario.findMany({
+    include: {
+      despachos: true,
+      grado: true,
+      categoria: true,
+      componente: true,
+      unidad: true,
+    },
+  })
+  return receivers.map((receiver) => ({
+    value: receiver.cedula,
+    label: `${receiver.tipo_cedula}-${receiver.cedula} ${receiver.nombres}-${receiver.apellidos}`,
+  }))
+}
 export const checkIfReceiverExists = async (cedula: string) => {
   const exists = await prisma.destinatario.findUnique({
     where: {

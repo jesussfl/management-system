@@ -11,8 +11,9 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { Prisma } from '@prisma/client'
 import { getDispatchById } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
+import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
+import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -22,6 +23,8 @@ export const metadata: Metadata = {
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const dispatch = await getDispatchById(Number(params.id))
+  const receivers = await getAllReceiversToCombobox()
+  const professionals = await getAllProfessionalsToCombobox()
   return (
     <>
       <PageHeader className="mb-0">
@@ -45,8 +48,13 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        {/* @ts-ignore */}
-        <DispatchesForm renglonesData={itemsData} defaultValues={dispatch} />
+        <DispatchesForm
+          renglonesData={itemsData}
+          // @ts-ignore
+          defaultValues={dispatch}
+          receivers={receivers}
+          professionals={professionals}
+        />
       </PageContent>
     </>
   )

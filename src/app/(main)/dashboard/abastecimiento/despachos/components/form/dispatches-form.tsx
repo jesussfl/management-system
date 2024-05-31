@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
@@ -23,9 +23,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { RenglonWithAllRelations } from '@/types/types'
-import { Calendar } from '@/modules/common/components/calendar'
 import { format } from 'date-fns'
-import { Calendar as CalendarIcon } from 'lucide-react'
 import {
   Popover,
   PopoverContent,
@@ -44,7 +42,6 @@ import {
   Prisma,
   Despacho,
   Despachos_Renglones,
-  Serial,
   Profesional_Abastecimiento,
 } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
@@ -52,7 +49,6 @@ import {
   createDispatch,
   updateDispatch,
 } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
-import { getAllReceivers } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import {
   Command,
@@ -65,7 +61,6 @@ import { SerialsFormNew } from './serials-form-new'
 import { Input } from '@/modules/common/components/input/input'
 import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
-import { getAllProfessionals } from '@/app/(main)/dashboard/profesionales/lib/actions/professionals'
 
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
@@ -83,6 +78,10 @@ type Detalles = Omit<
   seriales: string[]
 }
 
+type ComboboxData = {
+  value: string
+  label: string
+}
 type FormValues = Omit<
   Despacho,
   'id' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -102,14 +101,14 @@ interface Props {
     autorizador?: Profesional_Abastecimiento
     renglones: Detalles[]
   }
-}
-type ComboboxData = {
-  value: string
-  label: string
+  professionals: ComboboxData[]
+  receivers: ComboboxData[]
 }
 export default function DispatchesForm({
   renglonesData,
   defaultValues,
+  professionals,
+  receivers,
 }: Props) {
   const { toast } = useToast()
   const router = useRouter()
@@ -123,39 +122,14 @@ export default function DispatchesForm({
     control: form.control,
     name: `renglones`,
   })
-  const [isPending, startTransition] = useTransition()
 
-  const [selectedItems, setSelectedItems] = useState<{
+  const [selectedRowIdentifiers, setSelectedRowIdentifiers] = useState<{
     [key: number]: boolean
   }>({})
-  const [receivers, setReceivers] = useState<ComboboxData[]>([])
-  const [professionals, setProfessionals] = useState<ComboboxData[]>([])
-  const [selectedData, setSelectedData] = useState<RenglonWithAllRelations[]>(
+  const [selectedItems, setSelectedItems] = useState<RenglonWithAllRelations[]>(
     []
   )
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-
-  useEffect(() => {
-    startTransition(() => {
-      getAllReceivers().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setReceivers(transformedData)
-      })
-
-      getAllProfessionals().then((data) => {
-        const transformedData = data.map((receiver) => ({
-          value: receiver.cedula,
-          label: receiver.cedula + '-' + receiver.nombres,
-        }))
-
-        setProfessionals(transformedData)
-      })
-    })
-  }, [])
 
   useEffect(() => {
     if (defaultValues) {
@@ -169,46 +143,55 @@ export default function DispatchesForm({
         },
         {} as { [key: number]: boolean }
       )
-      setSelectedItems(selections)
-      setSelectedData(renglonesData)
+      setSelectedRowIdentifiers(selections)
+      setSelectedItems(renglonesData)
     }
   }, [defaultValues])
 
   const handleTableSelect = useCallback(
-    (lastSelectedRow: any) => {
-      if (lastSelectedRow) {
-        append({
-          id_renglon: lastSelectedRow.id,
-          cantidad: 0,
-          manualSelection: false,
-          seriales: [],
-          observacion: '',
-        })
-        setSelectedData((prev) => {
-          if (prev.find((item) => item.id === lastSelectedRow.id)) {
-            const index = prev.findIndex(
-              (item) => item.id === lastSelectedRow.id
-            )
-            remove(index)
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
+    (selections: any[]) => {
+      if (!selections) return
+
+      // Obtener los IDs de los elementos seleccionados
+      const selectionIds = selections.map((item) => item.id)
+
+      // Iterar sobre los elementos actuales y eliminar los que no están en selections
+      fields.forEach((field, index) => {
+        if (selectionIds.length === 0) return
+
+        if (!selectionIds.includes(field.id_renglon)) {
+          remove(index)
+        }
+      })
+
+      // Agregar los nuevos elementos de selections que no están en fields
+      selections.forEach((item) => {
+        const exists = fields.some((field) => field.id_renglon === item.id)
+        if (!exists) {
+          append({
+            id_renglon: item.id,
+            cantidad: 0,
+            manualSelection: false,
+            seriales: [],
+            observacion: '',
+          })
+        }
+      })
+
+      setSelectedItems(selections)
     },
-    [append, remove]
+    [append, remove, fields]
   )
 
   const deleteItem = (index: number) => {
-    setSelectedData((prev) => {
+    setSelectedItems((prev) => {
       return prev.filter((item) => {
-        const nuevoObjeto = { ...selectedItems }
-        if (item.id === selectedData[index].id) {
+        const nuevoObjeto = { ...selectedRowIdentifiers }
+        if (item.id === selectedItems[index].id) {
           delete nuevoObjeto[item.id]
-          setSelectedItems(nuevoObjeto)
+          setSelectedRowIdentifiers(nuevoObjeto)
         }
-        return item.id !== selectedData[index].id
+        return item.id !== selectedItems[index].id
       })
     })
     remove(index)
@@ -719,8 +702,8 @@ export default function DispatchesForm({
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
-                    selectedData={selectedItems}
-                    setSelectedData={setSelectedItems}
+                    selectedData={selectedRowIdentifiers}
+                    setSelectedData={setSelectedRowIdentifiers}
                   />
                 </div>
               </ModalForm>
@@ -728,7 +711,7 @@ export default function DispatchesForm({
           </CardContent>
         </Card>
 
-        {selectedData.length > 0 && (
+        {selectedItems.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -741,7 +724,7 @@ export default function DispatchesForm({
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid xl:grid-cols-2 gap-4">
-                {selectedData.map((item, index) => {
+                {selectedItems.map((item, index) => {
                   const receptions = item.recepciones.reduce(
                     (total, item) => total + item.cantidad,
                     0

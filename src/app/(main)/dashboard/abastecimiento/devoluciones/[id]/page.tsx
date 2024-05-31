@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/abastecimiento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -11,19 +10,19 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
-import { getReceptionById } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 import { getReturnById } from '../lib/actions/returns'
 import ReturnsForm from '../components/form/returns-form'
+import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 
 export const metadata: Metadata = {
-  title: 'Recepciones',
-  description: 'Desde aquí puedes administrar las entradas del inventario',
+  title: 'Devoluciones',
+  description: 'Desde aquí puedes administrar las devoluciones del inventario',
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
-  const reception = await getReturnById(Number(params.id))
+  const devolution = await getReturnById(Number(params.id))
+  const receiver = await getAllReceiversToCombobox()
   return (
     <>
       <PageHeader className="mb-0">
@@ -47,8 +46,12 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        {/* @ts-ignore */}
-        <ReturnsForm renglonesData={itemsData} defaultValues={reception} />
+        <ReturnsForm
+          renglonesData={itemsData}
+          // @ts-ignore
+          defaultValues={devolution}
+          receivers={receiver}
+        />
       </PageContent>
     </>
   )

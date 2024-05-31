@@ -18,6 +18,11 @@ import 'dayjs/plugin/utc'
 import 'dayjs/plugin/duration'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  HoverCard,
+  HoverCardTrigger,
+} from '@/modules/common/components/hover-card'
+import { HoverCardContent } from '@radix-ui/react-hover-card'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))
@@ -243,6 +248,30 @@ export const columns: ColumnDef<PedidoType>[] = [
         </Button>
       )
     },
+    cell: ({ row }) => {
+      const renglones = row.original.renglones
+      return (
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">Ver renglones pedidos</Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <div className="space-y-1">
+              {renglones.map((renglon) => (
+                <div key={renglon.id}>
+                  <div className="text-sm font-semibold">
+                    {renglon.renglon?.nombre}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Cantidad: {renglon.cantidad}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
   },
   {
     accessorKey: 'fecha_solicitud',
@@ -280,32 +309,32 @@ export const columns: ColumnDef<PedidoType>[] = [
       format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
 
-  {
-    accessorKey: 'detalles',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="text-xs"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Detalles
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      return (
-        <Link
-          className={cn(buttonVariants({ variant: 'outline' }))}
-          href={`/dashboard/abastecimiento/pedidos/detalle/${row.original.id}`}
-        >
-          Ver detalles
-        </Link>
-      )
-    },
-  },
+  // {
+  //   accessorKey: 'detalles',
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant="ghost"
+  //         className="text-xs"
+  //         size={'sm'}
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //       >
+  //         Detalles
+  //         <ArrowUpDown className="ml-2 h-3 w-3" />
+  //       </Button>
+  //     )
+  //   },
+  //   cell: ({ row }) => {
+  //     return (
+  //       <Link
+  //         className={cn(buttonVariants({ variant: 'outline' }))}
+  //         href={`/dashboard/abastecimiento/pedidos/detalle/${row.original.id}`}
+  //       >
+  //         Ver detalles
+  //       </Link>
+  //     )
+  //   },
+  // },
   {
     id: 'acciones',
     cell: ({ row }) => {
