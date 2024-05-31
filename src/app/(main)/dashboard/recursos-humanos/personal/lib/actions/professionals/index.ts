@@ -55,6 +55,15 @@ export const createPersonnel = async (
   }
 }
 
+export const checkIfPersonnelExists = async (cedula: string) => {
+  const exists = await prisma.personal.findUnique({
+    where: {
+      cedula,
+    },
+  })
+
+  return exists
+}
 export const getAllPersonnel = async () => {
   const session = await auth()
   if (!session?.user) {

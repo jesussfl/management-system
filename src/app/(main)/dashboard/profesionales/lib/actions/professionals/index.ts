@@ -61,7 +61,15 @@ export const createProfessional = async (
     error: false,
   }
 }
+export const checkIfProfessionalExists = async (cedula: string) => {
+  const exists = await prisma.profesional_Abastecimiento.findUnique({
+    where: {
+      cedula,
+    },
+  })
 
+  return exists
+}
 export const getAllProfessionals = async () => {
   const session = await auth()
   if (!session?.user) {

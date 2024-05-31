@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
@@ -34,9 +34,12 @@ import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Profesional_Abastecimiento } from '@prisma/client'
 import {
+  checkIfProfessionalExists,
   createProfessional,
   updateProfessional,
 } from '../lib/actions/professionals'
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
 
 type FormValues = Profesional_Abastecimiento
 interface Props {
@@ -56,6 +59,7 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
     ...rest
   } = useForm<FormValues>({
     defaultValues,
+    mode: 'all',
   })
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
@@ -135,11 +139,13 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
                 control={control}
                 name="tipo_cedula"
                 rules={{
-                  required: 'Tipo de cédula es requerido',
+                  required: 'Este campo es requerido',
                 }}
                 render={({ field }) => (
                   <FormItem className="flex flex-1 items-center gap-4 justify-between">
-                    <FormLabel className="mb-3">Tipo de cédula</FormLabel>
+                    <FormLabel className="mb-3">
+                      Tipo de documento de identidad
+                    </FormLabel>
                     <div className="w-[70%]">
                       <Select
                         onValueChange={field.onChange}
@@ -157,7 +163,6 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
                           <SelectItem value="P">P</SelectItem>
                           <SelectItem value="G">G</SelectItem>
                           <SelectItem value="R">R</SelectItem>
-                          <SelectItem value="P">P</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -169,10 +174,29 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
               <FormField
                 control={control}
                 name={`cedula`}
+                disabled={!watch('tipo_cedula')}
                 rules={{
                   required: 'Este campo es requerido',
-                  minLength: 5,
-                  maxLength: 30,
+                  validate: (value) => {
+                    const documentType = watch('tipo_cedula')
+                    if (
+                      documentType === 'V' ||
+                      documentType === 'E' ||
+                      documentType === 'J'
+                    ) {
+                      return (
+                        /^\d{7,10}$/.test(value) ||
+                        'Debe ser un número de 7 a 10 dígitos'
+                      )
+                    }
+                    if (documentType === 'P') {
+                      return (
+                        /^[a-zA-Z0-9]{5,15}$/.test(value) ||
+                        'Debe tener entre 5 y 15 caracteres alfanuméricos'
+                      )
+                    }
+                    return true
+                  },
                 }}
                 render={({ field }) => (
                   <FormItem className=" flex flex-1 items-center justify-between gap-4">
@@ -187,6 +211,28 @@ export default function ProfessionalsForm({ defaultValues }: Props) {
                               e.currentTarget.value.replace(/[^0-9]/g, '')
                           }}
                           {...field}
+                          onBlur={async () => {
+                            const exists = await checkIfProfessionalExists(
+                              field.value
+                            )
+
+                            if (exists) {
+                              toast({
+                                title: 'El Profesional ya existe',
+                                action: (
+                                  <Link
+                                    className={cn(
+                                      buttonVariants({ variant: 'secondary' })
+                                    )}
+                                    href={`/dashboard/profesionales/${exists.id}`}
+                                  >
+                                    Ver datos del profesional
+                                  </Link>
+                                ),
+                                variant: 'destructive',
+                              })
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

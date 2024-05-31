@@ -71,7 +71,15 @@ export const getAllReceivers = async () => {
   })
   return receivers
 }
+export const checkIfReceiverExists = async (cedula: string) => {
+  const exists = await prisma.destinatario.findUnique({
+    where: {
+      cedula,
+    },
+  })
 
+  return exists
+}
 export const deleteReceiver = async (id: number) => {
   const sessionResponse = await validateUserSession()
 

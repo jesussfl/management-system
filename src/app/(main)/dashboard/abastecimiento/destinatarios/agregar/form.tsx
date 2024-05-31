@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import {
+  checkIfReceiverExists,
   createReceiver,
   updateReceiver,
 } from '@/app/(main)/dashboard/abastecimiento/destinatarios/lib/actions/receivers'
@@ -39,6 +40,8 @@ import { FormMilitar } from './form-militar'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Destinatario } from '@prisma/client'
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
 
 type FormValues = Destinatario
 interface Props {
@@ -172,11 +175,13 @@ export default function ReceiversForm({ defaultValues }: Props) {
                 control={control}
                 name="tipo_cedula"
                 rules={{
-                  required: 'Tipo de cédula es requerido',
+                  required: 'Este campo es requerido',
                 }}
                 render={({ field }) => (
                   <FormItem className="flex flex-1 items-center gap-4 justify-between">
-                    <FormLabel className="mb-3">Tipo de cédula</FormLabel>
+                    <FormLabel className="mb-3">
+                      Tipo de documento de identidad
+                    </FormLabel>
                     <div className="w-[70%]">
                       <Select
                         onValueChange={field.onChange}
@@ -205,14 +210,33 @@ export default function ReceiversForm({ defaultValues }: Props) {
               <FormField
                 control={control}
                 name={`cedula`}
+                disabled={!watch('tipo_cedula')}
                 rules={{
                   required: 'Este campo es requerido',
-                  minLength: 5,
-                  maxLength: 30,
+                  validate: (value) => {
+                    const documentType = watch('tipo_cedula')
+                    if (
+                      documentType === 'V' ||
+                      documentType === 'E' ||
+                      documentType === 'J'
+                    ) {
+                      return (
+                        /^\d{7,10}$/.test(value) ||
+                        'Debe ser un número de 7 a 10 dígitos'
+                      )
+                    }
+                    if (documentType === 'P') {
+                      return (
+                        /^[a-zA-Z0-9]{5,15}$/.test(value) ||
+                        'Debe tener entre 5 y 15 caracteres alfanuméricos'
+                      )
+                    }
+                    return true
+                  },
                 }}
                 render={({ field }) => (
                   <FormItem className=" flex flex-1 items-center justify-between gap-4">
-                    <FormLabel className="mb-3">{`Documento de Identidad`}</FormLabel>
+                    <FormLabel className="mb-3">{`Documento de identidad`}</FormLabel>
 
                     <div className="w-[70%]">
                       <FormControl>
@@ -223,6 +247,28 @@ export default function ReceiversForm({ defaultValues }: Props) {
                               e.currentTarget.value.replace(/[^0-9]/g, '')
                           }}
                           {...field}
+                          onBlur={async () => {
+                            const exists = await checkIfReceiverExists(
+                              field.value
+                            )
+
+                            if (exists) {
+                              toast({
+                                title: 'El destinatario ya existe',
+                                action: (
+                                  <Link
+                                    className={cn(
+                                      buttonVariants({ variant: 'secondary' })
+                                    )}
+                                    href={`/dashboard/abastecimiento/destinatarios/${exists.id}`}
+                                  >
+                                    Ver datos del destinatario
+                                  </Link>
+                                ),
+                                variant: 'destructive',
+                              })
+                            }
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
