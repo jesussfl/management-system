@@ -1,4 +1,9 @@
+import { Metadata } from 'next'
 import AttendanceInfoContainer from './attendance-info-container'
+export const metadata: Metadata = {
+  title: 'Consulta de Información',
+  description: 'Información de asistencias',
+}
 export default async function Page({
   params: { userId },
 }: {

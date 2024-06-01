@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   description: 'Desde aquí puedes administrar las salidas del inventario',
 }
 
-const getLowStockItems = (items: RenglonWithAllRelations[]) => {
+export const getLowStockItems = (items: RenglonWithAllRelations[]) => {
   const lowStockItems = items.filter((item) => {
     const stock = item.recepciones.reduce(
       (total, item) => total + item.cantidad,

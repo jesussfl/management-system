@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
 
 import {
@@ -27,6 +27,8 @@ import {
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
 import { checkInTime, checkOutTime } from '../../lib/actions'
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
 
 type FormValues = {
   email: string
@@ -212,7 +214,17 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
               </FormItem>
             )}
           />
-
+          <div className="flex justify-end">
+            <Link
+              href="/auth/reset"
+              className={cn(
+                buttonVariants({ variant: 'ghost' }),
+                'text-green-600'
+              )}
+            >
+              Olvidé mi contraseña
+            </Link>
+          </div>
           <Button disabled={isLoading} type="submit">
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

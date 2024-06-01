@@ -52,7 +52,8 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
           },
           create: {
             rol: 'Básico',
-            descripcion: 'Este rol solo tiene permisos para registrar hora de entrada y sálida',
+            descripcion:
+              'Este rol solo tiene permisos para registrar hora de entrada y sálida',
           },
         },
       },
@@ -103,11 +104,12 @@ export const signupByFacialID = async ({
         rol: {
           connectOrCreate: {
             where: {
-              rol: 'Administrador',
+              rol: 'Básico',
             },
             create: {
-              rol: 'Administrador',
-              descripcion: 'Allows access to all features',
+              rol: 'Básico',
+              descripcion:
+                'Este rol solo tiene permisos para registrar hora de entrada y sálida',
             },
           },
         },
@@ -127,4 +129,17 @@ export const getAllUsers = async () => {
   }
   const users = await prisma.usuario.findMany()
   return users
+}
+
+export const checkIfUserExists = async (cedula: string) => {
+  if (!cedula) {
+    return null
+  }
+
+  const user = await prisma.usuario.findUnique({
+    where: {
+      cedula,
+    },
+  })
+  return user
 }

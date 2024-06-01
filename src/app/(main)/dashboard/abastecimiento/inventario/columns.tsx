@@ -104,7 +104,9 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       }, 0)
       return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
     },
-    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Peso/Unidades Totales" />
+    ),
   },
   {
     accessorKey: 'peso',

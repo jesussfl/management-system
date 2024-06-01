@@ -49,6 +49,7 @@ import {
 import {
   Boxes,
   DownloadIcon,
+  Info,
   PackageMinus,
   PackagePlus,
   Plus,
@@ -62,6 +63,9 @@ import {
 import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
 import { TableWithExport } from './table-with-export'
 import { formatExcelData } from './lib/helpers/format-excel-data'
+import { getLowStockItems } from '../../page'
+import { Badge } from '@/modules/common/components/badge'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -75,7 +79,7 @@ export default async function Page() {
   const packagingUnitsData = await getAllPackagingUnits()
   const systemsData = await getAllSystems()
   const subsystemsData = await getAllSubsystems()
-
+  const lowStockItems = getLowStockItems(itemsData)
   return (
     <>
       <PageHeader>
@@ -122,6 +126,9 @@ export default async function Page() {
           </TabsTrigger>
           <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
           <TabsTrigger value="systems">Sistemas y Subsistemas</TabsTrigger>
+          <TabsTrigger value="lowStock">
+            <Badge variant="destructive">Hay Renglones con Stock Bajo</Badge>
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="items">
           <PageContent>
@@ -256,6 +263,24 @@ export default async function Page() {
                 </CardContent>
               </Card>
             </div>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="lowStock">
+          <PageContent>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm font-normal flex  items-center">
+                  <Info className="mr-2 h-4 w-4" />
+                  Estos renglones están por debajo del stock mínimo
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TableWithExport
+                  itemsData={lowStockItems}
+                  // formatFn={formatExcelData}
+                />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
       </Tabs>

@@ -19,7 +19,11 @@ import {
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
-import { signupByFacialID, getAllUsers } from '@/app/(auth)/lib/actions/signup'
+import {
+  signupByFacialID,
+  getAllUsers,
+  checkIfUserExists,
+} from '@/app/(auth)/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 
 import { useFaceio } from '@/lib/hooks/use-faceio'
@@ -254,13 +258,32 @@ export function FaceSignupForm() {
           <FormField
             control={form.control}
             name={`cedula`}
+            disabled={!form.watch('tipo_cedula')}
             rules={{
               required: 'Este campo es requerido',
-              minLength: 5,
-              maxLength: 30,
+              validate: (value) => {
+                const documentType = form.watch('tipo_cedula')
+                if (
+                  documentType === 'V' ||
+                  documentType === 'E' ||
+                  documentType === 'J'
+                ) {
+                  return (
+                    /^\d{7,10}$/.test(value) ||
+                    'Debe ser un número de 7 a 10 dígitos'
+                  )
+                }
+                if (documentType === 'P') {
+                  return (
+                    /^[a-zA-Z0-9]{5,15}$/.test(value) ||
+                    'Debe tener entre 5 y 15 caracteres alfanuméricos'
+                  )
+                }
+                return true
+              },
             }}
             render={({ field }) => (
-              <FormItem className="flex-1">
+              <FormItem>
                 <FormLabel>{`Documento de identidad`}</FormLabel>
 
                 <FormControl>
@@ -273,6 +296,17 @@ export function FaceSignupForm() {
                       )
                     }}
                     {...field}
+                    onBlur={async () => {
+                      const exists = await checkIfUserExists(field.value)
+
+                      if (exists) {
+                        toast({
+                          title: 'El usuario ya está registrado',
+
+                          variant: 'destructive',
+                        })
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />

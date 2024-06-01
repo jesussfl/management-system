@@ -51,14 +51,16 @@ export const errorMessages: ErrorMessage = {
   [faceioErrorCode.PAD_ATTACK]: 'Ataque con almohadilla',
   [faceioErrorCode.FACE_MISMATCH]:
     'El segundo rostro no coincide con el primero',
-  [faceioErrorCode.NETWORK_IO]: 'Error de red',
+  [faceioErrorCode.NETWORK_IO]: 'Error de conexión a internet',
   [faceioErrorCode.WRONG_PIN_CODE]: 'Código de seguridad incorrecto',
   [faceioErrorCode.PROCESSING_ERR]: 'Error de procesamiento',
-  [faceioErrorCode.UNAUTHORIZED]: 'No autorizado',
+  [faceioErrorCode.UNAUTHORIZED]:
+    'El sistema no tiene permisos para usar esta funcionalidad',
   [faceioErrorCode.TERMS_NOT_ACCEPTED]: 'Debe aceptar los términos',
   [faceioErrorCode.UI_NOT_READY]: 'Interfaz de usuario no lista',
   [faceioErrorCode.SESSION_EXPIRED]: 'Sesión expirada',
-  [faceioErrorCode.TIMEOUT]: 'Timeout',
+  [faceioErrorCode.TIMEOUT]:
+    'Parece que hay problemas con el servidor, intente de nuevo.',
   [faceioErrorCode.TOO_MANY_REQUESTS]: 'Demasiadas solicitudes',
   [faceioErrorCode.EMPTY_ORIGIN]: 'Origen vacío',
   [faceioErrorCode.FORBIDDDEN_ORIGIN]: 'Origen prohibido',
