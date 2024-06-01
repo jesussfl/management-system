@@ -43,7 +43,7 @@ export const DashboardNavbar: FC<Record<string, never>> = function () {
               <button
                 aria-controls="sidebar"
                 aria-expanded
-                className="mr-2 cursor-pointer rounded p-2 text-gray-200 hover:bg-dark-secondary hover:text-gray-900 focus:ring-2 focus:bg-dark ring-dark"
+                className="mr-2 cursor-pointer rounded p-2 text-gray-200 "
                 onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
               >
                 {isSidebarCollapsed || !isSmallScreen() ? (

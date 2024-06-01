@@ -116,3 +116,20 @@ export const getAllUsersWithAttendances = async () => {
   })
   return users
 }
+
+export const getUserWithAttendances = async (userId: string) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const user = await prisma.usuario.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      asistencias: true,
+      personal: true,
+    },
+  })
+  return user
+}

@@ -73,6 +73,7 @@ export enum SECTION_NAMES {
   ASISTENCIAS = 'ASISTENCIAS',
   RECURSOS_HUMANOS = 'RECURSOS_HUMANOS',
   RANGOS = 'RANGOS',
+  RESPALDO = 'RESPALDO',
 }
 
 export const SIDE_MENU_ITEMS: SideMenuItem[] = [
@@ -322,9 +323,10 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
 
   {
     title: 'Respaldo',
-    identifier: SECTION_NAMES.CONFIGURACION,
+    identifier: SECTION_NAMES.RESPALDO,
     path: '/dashboard/configuracion',
     icon: DatabaseBackup,
+    requiredPermissions: [SECTION_NAMES.RESPALDO, SECTION_NAMES.TODAS],
   },
   {
     title: 'Ayuda',

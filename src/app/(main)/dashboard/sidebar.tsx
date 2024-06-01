@@ -12,6 +12,7 @@ import { getUserPermissions } from '@/lib/auth'
 import { Permiso } from '@prisma/client'
 import { SideMenuItem } from '@/types/types'
 import { useSession } from 'next-auth/react'
+import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
   root: {
@@ -152,60 +153,62 @@ export const DashboardSidebar: FC = function () {
         isCollapsed && 'hidden w-16'
       )}
     >
-      <Sidebar.Items>
-        <Sidebar.ItemGroup title="Main">
-          {menuItems.map((item, idx) => {
-            if (item.submenu) {
-              return (
-                <Sidebar.Collapse
-                  className={`${
-                    pathname.split('/').slice(0, -1).join('/') === item.path
-                      ? 'text-white bg-dark-secondary'
-                      : ''
-                  }`}
-                  key={idx}
-                  label={item.title}
-                  icon={item.icon}
-                >
-                  {item.submenuItems?.map((subItem, subIdx) => {
-                    return (
-                      <Sidebar.Item
-                        // use button variants for as
-                        as={Link}
-                        key={subIdx}
-                        href={subItem.path}
-                        icon={subItem.icon}
-                        active={subItem.path === pathname}
-                      >
-                        <p
-                          className={
-                            subItem.path === pathname ? 'text-white' : ''
-                          }
+      <ScrollArea className="h-full">
+        <Sidebar.Items>
+          <Sidebar.ItemGroup title="Main">
+            {menuItems.map((item, idx) => {
+              if (item.submenu) {
+                return (
+                  <Sidebar.Collapse
+                    className={`${
+                      pathname.split('/').slice(0, -1).join('/') === item.path
+                        ? 'text-white bg-dark-secondary'
+                        : ''
+                    }`}
+                    key={idx}
+                    label={item.title}
+                    icon={item.icon}
+                  >
+                    {item.submenuItems?.map((subItem, subIdx) => {
+                      return (
+                        <Sidebar.Item
+                          // use button variants for as
+                          as={Link}
+                          key={subIdx}
+                          href={subItem.path}
+                          icon={subItem.icon}
+                          active={subItem.path === pathname}
                         >
-                          {subItem.title}
-                        </p>
-                      </Sidebar.Item>
-                    )
-                  })}
-                </Sidebar.Collapse>
+                          <p
+                            className={
+                              subItem.path === pathname ? 'text-white' : ''
+                            }
+                          >
+                            {subItem.title}
+                          </p>
+                        </Sidebar.Item>
+                      )
+                    })}
+                  </Sidebar.Collapse>
+                )
+              }
+              return (
+                <Sidebar.Item
+                  as={Link}
+                  key={idx}
+                  href={item.path}
+                  icon={item.icon}
+                  active={item.path === pathname}
+                >
+                  <p className={item.path === pathname ? 'text-white' : ''}>
+                    {item.title}
+                  </p>
+                </Sidebar.Item>
               )
-            }
-            return (
-              <Sidebar.Item
-                as={Link}
-                key={idx}
-                href={item.path}
-                icon={item.icon}
-                active={item.path === pathname}
-              >
-                <p className={item.path === pathname ? 'text-white' : ''}>
-                  {item.title}
-                </p>
-              </Sidebar.Item>
-            )
-          })}
-        </Sidebar.ItemGroup>
-      </Sidebar.Items>
+            })}
+          </Sidebar.ItemGroup>
+        </Sidebar.Items>
+      </ScrollArea>
     </Sidebar>
   )
 }

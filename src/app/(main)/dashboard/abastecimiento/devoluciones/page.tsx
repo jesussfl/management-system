@@ -12,7 +12,6 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllReceptions } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
@@ -38,10 +37,6 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Button variant="outline" size={'sm'}>
-            <FileDown className="mr-2 h-4 w-4" />
-            Exportar
-          </Button>
           <Link
             href="/dashboard/abastecimiento/devoluciones/agregar"
             className={buttonVariants({ variant: 'default' })}

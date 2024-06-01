@@ -1,4 +1,3 @@
-import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
 
 import { Metadata } from 'next'
@@ -11,10 +10,7 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import {
-  deleteMultipleItems,
-  getAllItems,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import {
   deleteMultiplePackagingUnits,
   getAllPackagingUnits,
@@ -47,8 +43,9 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import {
+  ArrowRight,
+  Box,
   Boxes,
-  DownloadIcon,
   Info,
   PackageMinus,
   PackagePlus,
@@ -62,10 +59,10 @@ import {
 } from './lib/actions/subsystems'
 import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
 import { TableWithExport } from './table-with-export'
-import { formatExcelData } from './lib/helpers/format-excel-data'
 import { getLowStockItems } from '../../page'
 import { Badge } from '@/modules/common/components/badge'
-import { InfoCircledIcon } from '@radix-ui/react-icons'
+import { getStatistics } from '../../lib/actions/statistics'
+import StatisticCard from '@/modules/common/components/statistic-card'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -80,6 +77,7 @@ export default async function Page() {
   const systemsData = await getAllSystems()
   const subsystemsData = await getAllSubsystems()
   const lowStockItems = getLowStockItems(itemsData)
+  const statistics = await getStatistics()
   return (
     <>
       <PageHeader>
@@ -133,6 +131,23 @@ export default async function Page() {
         <TabsContent value="items">
           <PageContent>
             <Card>
+              <CardHeader className="flex-row gap-8 ">
+                <StatisticCard
+                  title="Renglones Totales"
+                  number={itemsData.length}
+                  Icon={<Box size={24} />}
+                />
+                <StatisticCard
+                  title="Recepciones"
+                  number={statistics?.receptions}
+                  Icon={<PackagePlus size={24} />}
+                />
+                <StatisticCard
+                  title="Despachos Creados"
+                  number={statistics?.dispatches}
+                  Icon={<PackageMinus size={24} />}
+                />
+              </CardHeader>
               <CardContent>
                 <TableWithExport
                   itemsData={itemsData}
@@ -265,24 +280,26 @@ export default async function Page() {
             </div>
           </PageContent>
         </TabsContent>
-        <TabsContent value="lowStock">
-          <PageContent>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-normal flex  items-center">
-                  <Info className="mr-2 h-4 w-4" />
-                  Estos renglones están por debajo del stock mínimo
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <TableWithExport
-                  itemsData={lowStockItems}
-                  // formatFn={formatExcelData}
-                />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
+        {lowStockItems.length > 0 && (
+          <TabsContent value="lowStock">
+            <PageContent>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm font-normal flex  items-center">
+                    <Info className="mr-2 h-4 w-4" />
+                    Estos renglones están por debajo del stock mínimo
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <TableWithExport
+                    itemsData={lowStockItems}
+                    // formatFn={formatExcelData}
+                  />
+                </CardContent>
+              </Card>
+            </PageContent>
+          </TabsContent>
+        )}
       </Tabs>
     </>
   )

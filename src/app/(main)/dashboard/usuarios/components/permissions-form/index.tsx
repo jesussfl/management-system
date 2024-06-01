@@ -27,12 +27,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import Link from 'next/link'
 import {
   SECTION_NAMES,
   SIDE_MENU_ITEMS,
 } from '@/utils/constants/sidebar-constants'
-import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { useRouter } from 'next/navigation'
 import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
 
@@ -42,7 +40,7 @@ interface Props {
 
 enum Permissions {
   CREAR = 'Crear',
-  LEER = 'Leer',
+  // LEER = 'Leer',
   ACTUALIZAR = 'Actualizar',
   ELIMINAR = 'Eliminar',
   FULL = 'Full',

@@ -36,6 +36,16 @@ import { RenglonWithAllRelations } from '@/types/types'
 import { lowStockItemsColumns } from './components/home-columns'
 import { validateSections } from '@/lib/data/validate-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { getAllAuditItemsByUser } from './auditoria/lib/actions'
+import { columns } from './auditoria/columns'
+import AttendanceTable from './recursos-humanos/asistencias/components/attendance-table'
+import {
+  getAttendancesByUserId,
+  getUserWithAttendances,
+} from './recursos-humanos/asistencias/lib/actions'
+import AttendanceTableByUser from './recursos-humanos/asistencias/components/attendance-table-by-user'
+import AttendanceInfoContainer from '@/app/(attendance)/asistencias/consulta/[userId]/attendance-info-container'
+import AttendanceInfoContainerV2 from '@/app/(attendance)/asistencias/consulta/[userId]/attendance-info-container-v2'
 
 export const metadata: Metadata = {
   title: 'Administrador',
@@ -67,21 +77,24 @@ export const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 
 export default async function Page() {
   const session = await auth()
-  const isAbastecimientoAuthorized = await validateSections({
-    sections: [
-      SECTION_NAMES.INVENTARIO,
-      SECTION_NAMES.ABASTECIMIENTO,
-      SECTION_NAMES.DESPACHOS,
-      SECTION_NAMES.RECEPCION,
-      SECTION_NAMES.DEVOLUCIONES,
-      SECTION_NAMES.DESTINATARIOS,
-    ],
-  })
-  const statistics = await getStatistics()
-  const items = await getAllItems()
-  const lowStockItems = getLowStockItems(items)
+  const isBasic = session?.user.rol_nombre === 'Básico'
+  // const isAbastecimientoAuthorized = await validateSections({
+  //   sections: [
+  //     SECTION_NAMES.INVENTARIO,
+  //     SECTION_NAMES.ABASTECIMIENTO,
+  //     SECTION_NAMES.DESPACHOS,
+  //     SECTION_NAMES.RECEPCION,
+  //     SECTION_NAMES.DEVOLUCIONES,
+  //     SECTION_NAMES.DESTINATARIOS,
+  //   ],
+  // })
+  const myRecentActivities =
+    session?.user && (await getAllAuditItemsByUser(session?.user?.id))
 
-  if (!isAbastecimientoAuthorized) {
+  const attendances =
+    session?.user && (await getUserWithAttendances(session?.user?.id))
+
+  if (isBasic) {
     return (
       <PageTemplate className="flex justify-center items-center h-[90vh]">
         {' '}
@@ -124,93 +137,39 @@ export default async function Page() {
             <TabsTrigger value="overview">Resumen</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="flex flex-row items-center space-x-2">
-                    <Boxes className="text-muted-foreground" />
-                    <CardTitle className="text-sm font-medium">
-                      Renglones Totales
-                    </CardTitle>
-                  </div>
-                  <Link
-                    href="/dashboard/abastecimiento/inventario"
-                    className={buttonVariants({ variant: 'outline' })}
-                  >
-                    Ir a Inventario
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{statistics?.items}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="flex flex-row items-center space-x-2">
-                    <UserCircle className="text-muted-foreground" />
-                    <CardTitle className="text-sm font-medium">
-                      Usuarios Registrados
-                    </CardTitle>
-                  </div>
-                  <Link
-                    href="/dashboard/usuarios"
-                    className={buttonVariants({ variant: 'outline' })}
-                  >
-                    Ir a usuarios
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {statistics?.users.length}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="flex flex-row items-center space-x-2">
-                    <PackageMinus className="text-muted-foreground" />
-                    <CardTitle className="text-sm font-medium">
-                      Despachos Realizados
-                    </CardTitle>
-                  </div>
-                  <Link
-                    href="/dashboard/abastecimiento/despachos"
-                    className={buttonVariants({ variant: 'outline' })}
-                  >
-                    Ir a despachos
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {statistics?.dispatches}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle className="text-xl">
+                  Calendario de Asistencias
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* @ts-ignore */}
+                <AttendanceTableByUser user={attendances} />
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 ">
               <Card>
                 <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">
-                    Estadística de Despachos
-                  </CardTitle>
+                  <CardTitle className="text-xl">Información Actual</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Overview />
+                  {/* @ts-ignore */}
+                  <AttendanceInfoContainerV2 userId={session?.user?.id} />
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row justify-between">
                   <CardTitle className="text-xl">
-                    Renglones en alerta de stock
+                    Tu actividad reciente
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <DataTable
-                    columns={lowStockItemsColumns}
-                    data={lowStockItems}
+                    columns={columns}
+                    // @ts-ignore
+                    data={myRecentActivities}
                     isMultipleDeleteEnabled={false}
                   />
                 </CardContent>

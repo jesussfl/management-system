@@ -16,6 +16,13 @@ import {
 } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { columns } from './columns'
 import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
+import { Overview } from '@/modules/common/components/overview/overview'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -47,12 +54,21 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <DataTable
-          columns={columns}
-          data={dispatchesData}
-          isMultipleDeleteEnabled
-          multipleDeleteAction={deleteMultipleDispatches}
-        />
+        <Card>
+          <CardHeader>
+            {/* <CardTitle>Lista de Despachos</CardTitle> */}
+          </CardHeader>
+          <CardContent>
+            <Overview />
+
+            <DataTable
+              columns={columns}
+              data={dispatchesData}
+              isMultipleDeleteEnabled
+              multipleDeleteAction={deleteMultipleDispatches}
+            />
+          </CardContent>
+        </Card>
       </PageContent>
     </>
   )

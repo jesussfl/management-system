@@ -65,7 +65,7 @@ export function Overview({}: {}) {
   return (
     <Card className="col-span-4">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Resumen</CardTitle>
+        <CardTitle className="text-sm font-medium">Resumen</CardTitle>
         <div className={cn('grid gap-2')}>
           <Popover>
             <PopoverTrigger asChild>
@@ -106,7 +106,7 @@ export function Overview({}: {}) {
         </div>
       </CardHeader>
       <CardContent className="pl-2">
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={150}>
           <BarChart data={filteredData} barSize={20}>
             <XAxis
               dataKey="name"
