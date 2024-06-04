@@ -5,7 +5,6 @@ import { revalidatePath } from 'next/cache'
 import {
   Despacho,
   Despachos_Renglones,
-  Destinatario,
   Prisma,
   Profesional_Abastecimiento,
 } from '@prisma/client'
@@ -295,7 +294,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
     data: {
       cedula_destinatario,
       cedula_abastecedor: data.cedula_abastecedor,
-      cedula_supervisor: data.cedula_supervisor,
+      cedula_supervisor: data?.cedula_supervisor || null,
       cedula_autorizador: data.cedula_autorizador,
       motivo,
       fecha_despacho,

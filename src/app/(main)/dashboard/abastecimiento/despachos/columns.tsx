@@ -1,31 +1,19 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma, Profesional_Abastecimiento } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { Prisma } from '@prisma/client'
 import Link from 'next/link'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { deleteDispatch } from './lib/actions/dispatches'
 import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: true
@@ -90,8 +78,13 @@ export const columns: ColumnDef<DespachoType>[] = [
   },
   {
     id: 'supervisor',
-    accessorFn: (row: DespachoType) =>
-      row?.supervisor?.nombres + ' ' + row.supervisor?.apellidos,
+    accessorFn: (row: DespachoType) => {
+      const name = row.supervisor?.nombres + ' ' + row.supervisor?.apellidos
+
+      if (!row.supervisor) return 'No asignado'
+
+      return name
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -263,7 +256,15 @@ export const columns: ColumnDef<DespachoType>[] = [
               return deleteDispatch(data.id)
             },
           }}
-        />
+        >
+          <Link
+            href={`/dashboard/abastecimiento/despachos/exportar/${String(
+              data.id
+            )}`}
+          >
+            <DropdownMenuItem>Exportar</DropdownMenuItem>
+          </Link>
+        </ProtectedTableActions>
       )
     },
   },

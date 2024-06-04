@@ -9,7 +9,7 @@ import {
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, PackagePlus } from 'lucide-react'
+import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getDispatchById } from '@/app/(main)/dashboard/abastecimiento/despachos/lib/actions/dispatches'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </Link>
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <PackageMinus size={24} />
               Editar despacho
             </PageHeaderTitle>
             <PageHeaderDescription>

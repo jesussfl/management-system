@@ -91,6 +91,9 @@ export const createReturn = async (data: FormValues) => {
   await prisma.devolucion.create({
     data: {
       cedula_destinatario,
+      cedula_abastecedor: data.cedula_abastecedor,
+      cedula_autorizador: data.cedula_autorizador,
+      cedula_supervisor: data.cedula_supervisor,
       motivo,
       fecha_devolucion,
       servicio: 'Abastecimiento',

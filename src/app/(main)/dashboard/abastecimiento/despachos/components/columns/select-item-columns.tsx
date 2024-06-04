@@ -1,14 +1,13 @@
 'use client'
-import { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { RenglonWithAllRelations } from '@/types/types'
 
-export const columns: ColumnDef<RenglonWithAllRelations>[] = [
+export const selectItemColumns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',

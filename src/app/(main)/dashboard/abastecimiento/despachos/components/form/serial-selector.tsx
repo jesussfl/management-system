@@ -3,13 +3,13 @@
 import { useFormContext } from 'react-hook-form'
 
 import { CardTitle } from '@/modules/common/components/card/card'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { getSerialsByItemId } from '@/lib/actions/serials'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { SerialWithRenglon } from '@/types/types'
-import { columns } from './serial-columns'
+import { selectSerialColumns } from '../columns/select-serial-columns'
 
-export function SerialsFormNew({
+export function SerialSelector({
   index: indexForm,
   id,
   isEditEnabled = false,
@@ -55,21 +55,6 @@ export function SerialsFormNew({
     })
   }, [id])
 
-  const handleTableSelect = useCallback(
-    (lastSelectedRow: SerialWithRenglon) => {
-      if (lastSelectedRow) {
-        setSelectedData((prev) => {
-          if (prev.find((serial) => serial.id === lastSelectedRow.id)) {
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
-    },
-    []
-  )
-
   useEffect(() => {
     setValue(
       `renglones.${indexForm}.seriales`,
@@ -89,9 +74,9 @@ export function SerialsFormNew({
         <CardTitle>Selecciona los seriales</CardTitle>
 
         <DataTable
-          columns={columns}
+          columns={selectSerialColumns}
           data={serials}
-          onSelectedRowsChange={handleTableSelect}
+          onSelectedRowsChange={setSelectedData}
           isColumnFilterEnabled={false}
           selectedData={selectedItems}
           setSelectedData={setSelectedItems}

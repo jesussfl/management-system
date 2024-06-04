@@ -87,8 +87,13 @@ export const columns: ColumnDef<RecepcionType>[] = [
   },
   {
     id: 'supervisor',
-    accessorFn: (row: RecepcionType) =>
-      row?.supervisor?.nombres + ' ' + row.supervisor?.apellidos,
+    accessorFn: (row: RecepcionType) => {
+      const name = row.supervisor?.nombres + ' ' + row.supervisor?.apellidos
+
+      if (!row.supervisor) return 'No asignado'
+
+      return name
+    },
     header: ({ column }) => {
       return (
         <Button

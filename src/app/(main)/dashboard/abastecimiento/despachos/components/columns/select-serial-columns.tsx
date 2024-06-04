@@ -7,7 +7,7 @@ import { Button } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { SerialWithRenglon } from '@/types/types'
 
-export const columns: ColumnDef<SerialWithRenglon>[] = [
+export const selectSerialColumns: ColumnDef<SerialWithRenglon>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',

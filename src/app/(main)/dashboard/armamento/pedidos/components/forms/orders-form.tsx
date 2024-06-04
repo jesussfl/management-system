@@ -112,7 +112,7 @@ export type PedidoForm = {
   id_proveedor?: number
 
   id_destinatario?: number
-  id_supervisor: number
+  id_supervisor?: number
   id_abastecedor: number
   id_autorizador: number
   renglones: {

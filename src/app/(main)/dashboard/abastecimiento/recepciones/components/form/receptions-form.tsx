@@ -523,11 +523,10 @@ export default function ReceptionsForm({
               <FormField
                 control={form.control}
                 name="cedula_supervisor"
-                rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
                   <FormItem className="flex-1">
                     <FormLabel>
-                      Profesional que supervisa la recepción:
+                      Profesional que supervisa la recepción (opcional):
                     </FormLabel>
 
                     <Popover>

@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import { PackagePlus } from 'lucide-react'
+import { PackageMinus, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
@@ -30,7 +30,7 @@ export default async function Page() {
 
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <PackageMinus size={24} />
               Crea un despacho
             </PageHeaderTitle>
             <PageHeaderDescription>

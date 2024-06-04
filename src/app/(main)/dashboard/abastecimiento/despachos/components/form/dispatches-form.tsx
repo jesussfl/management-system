@@ -1,17 +1,12 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
 
-import { columns } from './columns'
+import { selectItemColumns } from '../columns/select-item-columns'
 import { cn } from '@/utils/utils'
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  useFormContext,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { Box, CheckIcon, Plus, Trash } from 'lucide-react'
+import { CheckIcon, Plus, X } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -57,10 +52,9 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-import { SerialsFormNew } from './serials-form-new'
 import { Input } from '@/modules/common/components/input/input'
-import { Switch } from '@/modules/common/components/switch/switch'
 import Link from 'next/link'
+import { CardItemDispatch } from './card-item-dispatch'
 
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
@@ -435,7 +429,7 @@ export default function DispatchesForm({
                 )}
               />
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-1 gap-4">
               <FormField
                 control={form.control}
                 name="cedula_autorizador"
@@ -508,78 +502,91 @@ export default function DispatchesForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="cedula_supervisor"
-                rules={{ required: 'Este campo es obligatorio' }}
-                render={({ field }) => (
-                  <FormItem className="flex-1">
-                    <FormLabel>
-                      Profesional que supervisará el despacho:
-                    </FormLabel>
+              <div className="flex items-center flex-row gap-3">
+                <FormField
+                  control={form.control}
+                  name="cedula_supervisor"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>
+                        Profesional que supervisará el despacho (opcional):
+                      </FormLabel>
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? professionals.find(
-                                  (professional) =>
-                                    professional.value === field.value
-                                )?.label
-                              : 'Seleccionar profesional'}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent">
-                        <Command>
-                          <CommandInput
-                            placeholder="Buscar profesional..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>
-                            No se encontaron resultados.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {professionals.map((professional) => (
-                              <CommandItem
-                                value={professional.label}
-                                key={professional.value}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'cedula_supervisor',
-                                    professional.value
-                                  )
-                                }}
-                              >
-                                {professional.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    professional.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                'w-full justify-between',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              {field.value
+                                ? professionals.find(
+                                    (professional) =>
+                                      professional.value === field.value
+                                  )?.label
+                                : 'Seleccionar profesional'}
+                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="PopoverContent">
+                          <Command>
+                            <CommandInput
+                              placeholder="Buscar profesional..."
+                              className="flex-1 h-9"
+                            />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                            <CommandEmpty>
+                              No se encontaron resultados.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {professionals.map((professional) => (
+                                <CommandItem
+                                  value={professional.label}
+                                  key={professional.value}
+                                  onSelect={() => {
+                                    form.setValue(
+                                      'cedula_supervisor',
+                                      professional.value
+                                    )
+                                  }}
+                                >
+                                  {professional.label}
+                                  <CheckIcon
+                                    className={cn(
+                                      'ml-auto h-4 w-4',
+                                      professional.value === field.value
+                                        ? 'opacity-100'
+                                        : 'opacity-0'
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button
+                  className="px-2"
+                  variant="destructive"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    form.setValue('cedula_supervisor', '')
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <div className="border-b border-base-300" />
 
@@ -698,7 +705,7 @@ export default function DispatchesForm({
                     </Link>
                   </CardDescription>
                   <DataTable
-                    columns={columns}
+                    columns={selectItemColumns}
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
@@ -746,7 +753,7 @@ export default function DispatchesForm({
                   const isEmpty = totalStock === 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
-                    <SelectedItemCard
+                    <CardItemDispatch
                       key={item.id}
                       item={item}
                       index={index}
@@ -771,213 +778,5 @@ export default function DispatchesForm({
         </Button>
       </form>
     </Form>
-  )
-}
-
-export const SelectedItemCard = ({
-  item,
-  index,
-  deleteItem,
-  isEmpty,
-  isError,
-  dispatchId,
-  setItemsWithoutSerials,
-  isEditEnabled = false,
-}: {
-  item: RenglonWithAllRelations
-  isEmpty?: string | boolean
-  index: number
-  deleteItem: (index: number) => void
-  isError?: string | boolean
-  isEditEnabled?: boolean
-  dispatchId?: number
-  setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
-}) => {
-  const { watch, control } = useFormContext()
-  const receptions = item.recepciones.reduce(
-    (total, item) => total + item.cantidad,
-    0
-  )
-
-  const dispatchedSerials = item.despachos.reduce(
-    (total, item) => total + item.seriales.length,
-    0
-  )
-  const currentDispatch = item.despachos.find((item) => {
-    // @ts-ignore
-    return item.id_despacho === dispatchId
-  })
-  const totalStock = isEditEnabled
-    ? receptions - dispatchedSerials + (currentDispatch?.seriales.length ?? 0)
-    : receptions - dispatchedSerials
-  // const totalStock = receptions - dispatchedSerials
-  const serialsLength = watch(`renglones.${index}.seriales`).length
-
-  useEffect(() => {
-    if (serialsLength > 0) {
-      setItemsWithoutSerials((prev) => {
-        return prev.filter((id) => id !== item.id)
-      })
-    }
-  }, [serialsLength, setItemsWithoutSerials, item.id])
-
-  return (
-    <Card
-      key={item.id}
-      className={`flex flex-col gap-4 ${
-        isEmpty || isError ? 'border-red-400' : ''
-      }`}
-    >
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex flex-row gap-4 items-center">
-          <Box className="h-6 w-6 " />
-          <div>
-            <CardTitle className="text-md font-medium text-foreground">
-              {item.nombre}
-            </CardTitle>
-            <CardDescription>
-              {`${item.descripcion} - ${item.unidad_empaque.nombre} - Peso: ${item.peso} (${item.unidad_empaque.abreviacion}) `}
-            </CardDescription>
-          </div>
-        </div>
-
-        <Trash
-          onClick={() => deleteItem(index)}
-          className="h-5 w-5 text-red-800 cursor-pointer"
-        />
-      </CardHeader>
-      <CardContent className="flex flex-col flex-1 justify-start gap-4">
-        <FormField
-          control={control}
-          name={`renglones.${index}.manualSelection`}
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-              <div className="space-y-0.5">
-                <FormLabel>Seleccionar seriales manualmente</FormLabel>
-                <FormDescription>
-                  Esta opcion te permitira seleccionar los seriales especificos
-                  que deseas despachar
-                </FormDescription>
-              </div>
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name={`renglones.${index}.observacion`}
-          rules={{
-            maxLength: {
-              value: 125,
-              message: 'La observación no puede superar los 125 caracteres',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="flex flex-col flex-1 gap-2">
-              <FormLabel className="w-[12rem]">{`Observación (opcional):`}</FormLabel>
-
-              <div className="flex-1 w-full">
-                <FormControl>
-                  <Input type="text" {...field} />
-                </FormControl>
-                <FormDescription>
-                  {`La observación no puede superar los 125 caracteres`}
-                </FormDescription>
-                <FormMessage />
-              </div>
-            </FormItem>
-          )}
-        />
-        {!watch(`renglones.${index}.manualSelection`) ? (
-          <FormField
-            control={control}
-            name={`renglones.${index}.cantidad`}
-            rules={{
-              required: 'La cantidad es requerida',
-
-              max: {
-                value: totalStock,
-                message: 'La cantidad no puede ser mayor al stock disponible',
-              },
-
-              validate: (value) => {
-                if (
-                  !watch(`renglones.${index}.manualSelection`) &&
-                  value === 0
-                ) {
-                  return 'La cantidad debe ser mayor a 0'
-                }
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="items-center flex flex-1 justify-between gap-2">
-                <FormLabel className="w-[12rem]">
-                  Cantidad a despachar
-                </FormLabel>
-                <div className="flex-1 w-full">
-                  <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(event) =>
-                        field.onChange(parseInt(event.target.value))
-                      }
-                      disabled={isEditEnabled}
-                    />
-                  </FormControl>
-                  <FormDescription className="">
-                    {isEditEnabled
-                      ? `Cuando se edita un despacho la cantidad debe modificarse
-                    seleccionando los seriales manualmente`
-                      : `Cantidad disponible: ${totalStock}`}
-                  </FormDescription>
-
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
-        ) : (
-          <>
-            <ModalForm
-              triggerName={`${
-                watch(`renglones.${index}.seriales`).length > 0
-                  ? 'Ver seriales'
-                  : 'Seleccionar seriales'
-              }  `}
-              triggerVariant={`${
-                watch(`renglones.${index}.seriales`).length > 0
-                  ? 'outline'
-                  : 'default'
-              }`}
-              closeWarning={false}
-              className="max-h-[80vh]"
-              disabled={isEmpty ? true : false}
-            >
-              <SerialsFormNew
-                index={index}
-                id={item.id}
-                dispatchId={dispatchId}
-                isEditEnabled={isEditEnabled}
-              />
-            </ModalForm>
-
-            <FormDescription>
-              Seriales seleccionados:{' '}
-              {watch(`renglones.${index}.seriales`).length}
-            </FormDescription>
-          </>
-        )}
-
-        <FormDescription className={`${isEmpty ? 'text-red-500' : ''}`}>
-          {isEmpty}
-        </FormDescription>
-      </CardContent>
-    </Card>
   )
 }
