@@ -44,6 +44,7 @@ export default function ModalForm({
   triggerName,
   triggerVariant,
   disabled,
+
   height,
   close,
   open,

@@ -66,7 +66,8 @@ export const errorMessages: ErrorMessage = {
   [faceioErrorCode.FORBIDDDEN_ORIGIN]: 'Origen prohibido',
   [faceioErrorCode.FORBIDDDEN_COUNTRY]: 'Pais prohibido',
   [faceioErrorCode.UNIQUE_PIN_REQUIRED]: 'Código de seguridad único requerido',
-  [faceioErrorCode.SESSION_IN_PROGRESS]: 'Sesión en curso',
+  [faceioErrorCode.SESSION_IN_PROGRESS]:
+    'Refresca la página para cargar un nuevo rostro',
   [faceioErrorCode.FACE_DUPLICATION]: 'Cara duplicada',
   [faceioErrorCode.MINORS_NOT_ALLOWED]: 'Menores no permitidos',
 }

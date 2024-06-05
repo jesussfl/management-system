@@ -18,8 +18,7 @@ export default function AttendanceInfoContainerV2({
     outTime,
     isLoading: isAttendancesLoading,
   } = useAttendance(userId)
-
-  if (!dataToShow || isDataLoading || isAttendancesLoading)
+  if (isDataLoading || isAttendancesLoading)
     return (
       <div className="flex justify-center items-center fixed inset-0 bg-black/60">
         <Loader2 className="animate-spin" size={88} color="white" />
@@ -39,7 +38,7 @@ export default function AttendanceInfoContainerV2({
       </Alert>
       <div className="mt-6 border-t border-gray-100">
         <dl className="divide-y divide-gray-100">
-          {dataToShow.map(({ title, info }) => (
+          {dataToShow?.map(({ title, info }) => (
             <UserDetail key={title} title={title} info={info} />
           ))}
         </dl>

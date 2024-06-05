@@ -18,7 +18,11 @@ import {
 
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { loginByFacialID, validateUser } from '@/app/(auth)/lib/actions/login'
+import {
+  loginByFacialID,
+  validateFacialId,
+  validateUser,
+} from '@/app/(auth)/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
@@ -35,7 +39,13 @@ type FormValues = {
   password: string
 }
 
-function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
+function ValidationForm({
+  type,
+  close,
+}: {
+  type: 'entrada' | 'salida'
+  close?: () => void
+}) {
   const { toast } = useToast()
   const { faceio } = useFaceio()
   const form = useForm<FormValues>()
@@ -46,6 +56,8 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
 
   const authenticateByFacialID = async () => {
     try {
+      close && close()
+
       const response = await faceio
         ?.authenticate({
           locale: 'es',
@@ -82,25 +94,78 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
             ),
           })
         })
-      console.log(response)
-      loginByFacialID({ facialID: response.facialId }, callbackUrl).then(
-        (res) => {
-          if (res?.error) {
+
+      const validationResponse = await validateFacialId(response.facialId)
+      if (validationResponse?.error) {
+        toast({
+          title: 'Parece que hubo un error',
+          description: validationResponse.error,
+          variant: 'destructive',
+        })
+        return
+      }
+
+      if (validationResponse?.success && validationResponse.user) {
+        if (type === 'entrada') {
+          const response = await checkInTime(validationResponse.user)
+
+          if (response?.error) {
             toast({
               title: 'Parece que hubo un error',
-              description: res.error,
+              description: response.error,
               variant: 'destructive',
             })
+            router.replace(
+              `/asistencias/consulta/${validationResponse.user.id}`
+            )
+
+            return
           }
 
-          if (res?.success) {
+          if (response?.success) {
             toast({
-              title: res.success,
+              title: 'Entrada registrada',
               variant: 'success',
             })
+            router.replace(
+              `/asistencias/consulta/${validationResponse.user.id}`
+            )
+
+            return
           }
         }
-      )
+
+        if (type === 'salida') {
+          const response = await checkOutTime(validationResponse.user)
+
+          if (response?.error) {
+            toast({
+              title: 'Parece que hubo un error',
+              description: response.error,
+              variant: 'destructive',
+            })
+            router.replace(
+              `/asistencias/consulta/${validationResponse.user.id}`
+            )
+
+            return
+          }
+
+          if (response?.success) {
+            toast({
+              title: 'Salida registrada',
+              variant: 'success',
+            })
+
+            router.replace(
+              `/asistencias/consulta/${validationResponse.user.id}`
+            )
+            return
+          }
+        }
+      }
+
+      setIsLoading(false)
     } catch (error) {
       console.error(error)
     }
@@ -176,7 +241,7 @@ function ValidationForm({ type }: { type: 'entrada' | 'salida' }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} id="validation-form">
         <div className="flex flex-col gap-2">
           <FormField
             control={form.control}

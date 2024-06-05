@@ -30,6 +30,7 @@ export default function useUserData(userId: string) {
     return {
       error: 'No existe el usuario',
       dataToShow: null,
+      isLoading,
     }
 
   const personalData = user.personal

@@ -1,20 +1,10 @@
-import { ArrowDown, ArrowUp } from 'lucide-react'
-import { Button } from '@/modules/common/components/button'
 import { CardWrapper } from '@/app/(auth)/components/card-wrapper'
 import Ceserlodai from '@public/ceserlodai.jpg'
 
 import Image from 'next/image'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
 import ValidationForm from './components/verification-form'
 import { Metadata } from 'next'
+import ModalForm from '@/modules/common/components/modal-form'
 
 export const metadata: Metadata = {
   title: 'Asistencias',
@@ -38,44 +28,22 @@ export default function Page() {
           headerLabel="Ingresa tu hora de entrada o salida"
         >
           <div className="flex justify-between gap-4">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="default">
-                  <ArrowUp className="mr-2 h-4 w-4" />
-                  Registrar Hora de Entrada
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Registra tu hora de entrada
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-                <ValidationForm type="entrada" />
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <ArrowDown className="mr-2 h-4 w-4" />
-                  Registrar Hora de Salida
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Registra tu hora de entrada
-                  </AlertDialogTitle>
-                </AlertDialogHeader>
-                <ValidationForm type="salida" />
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <ModalForm
+              triggerName="Registrar Hora de Entrada"
+              triggerVariant="default"
+              closeWarning={false}
+              className="w-[400px] p-8"
+            >
+              <ValidationForm type="entrada" />
+            </ModalForm>
+            <ModalForm
+              triggerName="Registrar Hora de Salida"
+              triggerVariant="destructive"
+              closeWarning={false}
+              className="w-[400px] p-8"
+            >
+              <ValidationForm type="salida" />
+            </ModalForm>
           </div>
         </CardWrapper>
       </div>

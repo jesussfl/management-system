@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/modules/common/components/button'
-import { PackagePlus, ArrowRight, UserCircle, PackageMinus } from 'lucide-react'
+import { PackagePlus } from 'lucide-react'
 import {
   HeaderLeftSide,
   PageHeader,
@@ -24,27 +24,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Boxes } from 'lucide-react'
 
 import Link from 'next/link'
 import { auth } from '@/auth'
-import { Overview } from '@/modules/common/components/overview/overview'
-import { getStatistics } from './lib/actions/statistics'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { getAllItems } from './abastecimiento/inventario/lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
-import { lowStockItemsColumns } from './components/home-columns'
-import { validateSections } from '@/lib/data/validate-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { getAllAuditItemsByUser } from './auditoria/lib/actions'
 import { columns } from './auditoria/columns'
-import AttendanceTable from './recursos-humanos/asistencias/components/attendance-table'
-import {
-  getAttendancesByUserId,
-  getUserWithAttendances,
-} from './recursos-humanos/asistencias/lib/actions'
+import { getUserWithAttendances } from './recursos-humanos/asistencias/lib/actions'
 import AttendanceTableByUser from './recursos-humanos/asistencias/components/attendance-table-by-user'
-import AttendanceInfoContainer from '@/app/(attendance)/asistencias/consulta/[userId]/attendance-info-container'
 import AttendanceInfoContainerV2 from '@/app/(attendance)/asistencias/consulta/[userId]/attendance-info-container-v2'
 
 export const metadata: Metadata = {
@@ -78,23 +66,8 @@ export const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 export default async function Page() {
   const session = await auth()
   const isBasic = session?.user.rol_nombre === 'Básico'
-  // const isAbastecimientoAuthorized = await validateSections({
-  //   sections: [
-  //     SECTION_NAMES.INVENTARIO,
-  //     SECTION_NAMES.ABASTECIMIENTO,
-  //     SECTION_NAMES.DESPACHOS,
-  //     SECTION_NAMES.RECEPCION,
-  //     SECTION_NAMES.DEVOLUCIONES,
-  //     SECTION_NAMES.DESTINATARIOS,
-  //   ],
-  // })
-  const myRecentActivities =
-    session?.user && (await getAllAuditItemsByUser(session?.user?.id))
 
-  const attendances =
-    session?.user && (await getUserWithAttendances(session?.user?.id))
-
-  if (isBasic) {
+  if (isBasic || !session?.user) {
     return (
       <PageTemplate className="flex justify-center items-center h-[90vh]">
         {' '}
@@ -116,6 +89,9 @@ export default async function Page() {
       </PageTemplate>
     )
   }
+  const myRecentActivities = await getAllAuditItemsByUser(session.user.id)
+
+  const attendances = await getUserWithAttendances(session.user.id)
 
   return (
     <>
@@ -123,10 +99,10 @@ export default async function Page() {
         <HeaderLeftSide>
           <PageHeaderTitle>
             <PackagePlus size={24} />
-            Bienvenido, {session?.user?.nombre}
+            Bienvenido, {session.user.nombre}
           </PageHeaderTitle>
           <PageHeaderDescription>
-            {`Correo: ${session?.user?.email} | Rol: ${session?.user?.rol_nombre}`}
+            {`Correo: ${session.user.email} | Rol: ${session.user.rol_nombre}`}
           </PageHeaderDescription>
         </HeaderLeftSide>
       </PageHeader>
