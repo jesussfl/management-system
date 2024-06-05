@@ -45,6 +45,7 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
       nombre: name,
       email,
       contrasena: hashedPassword,
+      estado: 'Activo',
       rol: {
         connectOrCreate: {
           where: {

@@ -110,6 +110,13 @@ function LoginForm() {
       login(values, callbackUrl)
         .then((data) => {
           if (data?.error) {
+            if (data.field === null) {
+              toast({
+                title: data.error,
+                variant: 'destructive',
+              })
+              return
+            }
             form.setError(data.field as any, {
               type: 'custom',
               message: data.error,

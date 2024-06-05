@@ -42,6 +42,10 @@ export async function login(
     }
   }
 
+  if (existingUser.estado === 'Bloqueado') {
+    return { error: 'Este usuario está bloqueado', field: null }
+  }
+
   const passwordMatch = await bcrypt.compare(password, existingUser.contrasena)
   if (!passwordMatch) {
     return { error: 'Contraseña incorrecta', field: 'password' }
