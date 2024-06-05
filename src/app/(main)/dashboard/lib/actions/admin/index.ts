@@ -51,7 +51,7 @@ export const admin = async () => {
 export const backup = async () => {
   try {
     const fileName = 'database-backup-' + new Date().valueOf() + '.tar'
-    const backupFilePath = path.resolve('./public/backups', fileName)
+    const backupFilePath = path.resolve('/tmp', fileName)
 
     const execAsync = promisify(exec)
 
