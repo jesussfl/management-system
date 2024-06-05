@@ -4,40 +4,6 @@ import fetch from 'node-fetch'
 import { NextRequest, NextResponse } from 'next/server'
 import { getDocBlob } from '../helpers/get-doc-blob'
 
-// type Profesional_AbastecimientoWithRelations =
-//   Prisma.Profesional_AbastecimientoGetPayload<{
-//     include: {
-//       grado: true
-//       categoria: true
-//       componente: true
-//       unidad: true
-//     }
-//   }>
-
-// type Detalles = Omit<
-//   Despachos_Renglones,
-//   'id_despacho' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-// > & {
-//   seriales: string[]
-// }
-
-// export type ExportData = {
-//   destinatario_nombres: string
-//   destinatario_apellidos: string
-//   destinatario_cedula: string
-//   destinatario_cargo: string
-//   destinatario_grado: string
-//   destinatario_telefono: string
-//   autorizador: Profesional_AbastecimientoWithRelations
-//   abastecedor: Profesional_AbastecimientoWithRelations
-//   supervisor: Profesional_AbastecimientoWithRelations
-//   unidad: string
-//   despacho: any
-//   renglones: Detalles[]
-//   codigo: string
-//   motivo: string
-// }
-
 export type ExportRequest = {
   data: any
   url: string
