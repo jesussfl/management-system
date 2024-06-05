@@ -13,7 +13,9 @@ export async function POST() {
 
     // Ejecutar el comando pg_dump
     await execAsync(
-      `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST} -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} -F t > ${backupFilePath}`
+      `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST} -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
+        backupFilePath +
+        ' -F t'
     )
 
     // Leer el archivo de backup
