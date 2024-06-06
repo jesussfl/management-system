@@ -264,7 +264,7 @@ export default function DispatchesForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
-            <div className="flex gap-4">
+            <div className="flex flex-1 gap-4">
               <FormField
                 control={form.control}
                 name="cedula_destinatario"
@@ -502,91 +502,90 @@ export default function DispatchesForm({
                   </FormItem>
                 )}
               />
-              <div className="flex items-center flex-row gap-3">
-                <FormField
-                  control={form.control}
-                  name="cedula_supervisor"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>
-                        Profesional que supervisará el despacho (opcional):
-                      </FormLabel>
+              <FormField
+                control={form.control}
+                name="cedula_supervisor"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>
+                      Profesional que supervisará el despacho (opcional):
+                    </FormLabel>
 
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                'w-full justify-between',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {field.value
-                                ? professionals.find(
-                                    (professional) =>
-                                      professional.value === field.value
-                                  )?.label
-                                : 'Seleccionar profesional'}
-                              <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="PopoverContent">
-                          <Command>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={cn(
+                              'w-full justify-between',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value
+                              ? professionals.find(
+                                  (professional) =>
+                                    professional.value === field.value
+                                )?.label
+                              : 'Seleccionar profesional'}
+                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="PopoverContent">
+                        <Command>
+                          <div className="flex items-center gap-2">
                             <CommandInput
                               placeholder="Buscar profesional..."
                               className="flex-1 h-9"
                             />
+                            <Button
+                              className="px-2"
+                              variant="destructive"
+                              size="sm"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                form.setValue('cedula_supervisor', '')
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <CommandEmpty>
+                            No se encontaron resultados.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {professionals.map((professional) => (
+                              <CommandItem
+                                value={professional.label}
+                                key={professional.value}
+                                onSelect={() => {
+                                  form.setValue(
+                                    'cedula_supervisor',
+                                    professional.value
+                                  )
+                                }}
+                              >
+                                {professional.label}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto h-4 w-4',
+                                    professional.value === field.value
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
 
-                            <CommandEmpty>
-                              No se encontaron resultados.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {professionals.map((professional) => (
-                                <CommandItem
-                                  value={professional.label}
-                                  key={professional.value}
-                                  onSelect={() => {
-                                    form.setValue(
-                                      'cedula_supervisor',
-                                      professional.value
-                                    )
-                                  }}
-                                >
-                                  {professional.label}
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      professional.value === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0'
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  className="px-2"
-                  variant="destructive"
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    form.setValue('cedula_supervisor', '')
-                  }}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="border-b border-base-300" />
 
@@ -730,7 +729,7 @@ export default function DispatchesForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid xl:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
                 {selectedItems.map((item, index) => {
                   const receptions = item.recepciones.reduce(
                     (total, item) => total + item.cantidad,
@@ -740,7 +739,10 @@ export default function DispatchesForm({
                     (total, item) => total + item.seriales.length,
                     0
                   )
-
+                  const returnedSerials = item.devoluciones.reduce(
+                    (total, item) => total + item.seriales.length,
+                    0
+                  )
                   const currentDispatch = item.despachos.find((item) => {
                     // @ts-ignore
                     return item.id_despacho === defaultValues?.id
@@ -748,8 +750,9 @@ export default function DispatchesForm({
                   const totalStock = isEditEnabled
                     ? receptions -
                       dispatchedSerials +
-                      (currentDispatch?.seriales.length ?? 0)
-                    : receptions - dispatchedSerials
+                      (currentDispatch?.seriales.length ?? 0) +
+                      returnedSerials
+                    : receptions - dispatchedSerials + returnedSerials
                   const isEmpty = totalStock === 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
@@ -758,6 +761,7 @@ export default function DispatchesForm({
                       item={item}
                       index={index}
                       // @ts-ignore
+                      totalStock={totalStock}
                       dispatchId={defaultValues?.id}
                       deleteItem={deleteItem}
                       isEmpty={isEmpty ? 'Este renglon no tiene stock' : false}

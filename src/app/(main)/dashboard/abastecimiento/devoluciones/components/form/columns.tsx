@@ -1,7 +1,6 @@
 'use client'
-import { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
@@ -17,17 +16,6 @@ export const columns: ColumnDef<RenglonType>[] = [
     header: 'ID',
   },
 
-  {
-    accessorKey: 'stock',
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-
-      return <div>{stock}</div>
-    },
-  },
   {
     accessorKey: 'nombre',
     header: ({ column }) => {

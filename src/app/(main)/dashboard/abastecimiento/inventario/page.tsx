@@ -43,7 +43,6 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import {
-  ArrowRight,
   Box,
   Boxes,
   Info,
@@ -142,12 +141,7 @@ export default async function Page() {
                   number={itemsData.length}
                   Icon={<Box size={24} />}
                 />
-                <StatisticCard
-                  className="flex-1 h-[116px]"
-                  title="Pedidos Totales"
-                  number={statistics?.pedidos}
-                  Icon={<PackagePlus size={24} />}
-                />
+
                 <StatisticCard
                   className="flex-1 h-[116px]"
                   title="Recepciones Creadas"
@@ -159,12 +153,6 @@ export default async function Page() {
                   title="Despachos Creados"
                   number={statistics?.dispatches}
                   Icon={<PackageMinus size={24} />}
-                />
-                <StatisticCard
-                  className="flex-1 h-[116px]"
-                  title="Renglones Devueltos"
-                  number={statistics?.devolutions}
-                  Icon={<IterationCcw size={24} />}
                 />
               </CardHeader>
               <CardContent>

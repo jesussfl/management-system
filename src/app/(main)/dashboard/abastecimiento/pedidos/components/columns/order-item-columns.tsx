@@ -1,16 +1,20 @@
 'use client'
-import { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
+  include: {
+    unidad_empaque: true
+    recepciones: {
+      include: { seriales: true }
+    }
+  }
 }>
-export const columns: ColumnDef<RenglonType>[] = [
+export const orderItemColumns: ColumnDef<RenglonType>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',
@@ -18,14 +22,28 @@ export const columns: ColumnDef<RenglonType>[] = [
   },
 
   {
-    accessorKey: 'stock',
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
+    id: 'stock',
+    accessorFn: (row) =>
+      row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
 
-      return <div>{stock}</div>
+        return total + serials
+      }, 0),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
     },
   },
   {
@@ -87,7 +105,7 @@ export const columns: ColumnDef<RenglonType>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Categoria
+          Clasificación
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )

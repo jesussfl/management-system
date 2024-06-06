@@ -66,16 +66,7 @@ export default function UserNav() {
           </div>
         </DropdownMenuLabel>
         {/* <DropdownMenuSeparator /> */}
-        <DropdownMenuGroup>
-          {/* <DropdownMenuItem>
-            Perfil
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Configuraciones
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem> */}
-        </DropdownMenuGroup>
+        <DropdownMenuGroup></DropdownMenuGroup>
         <DropdownMenuSeparator />
         <Link href={`/dashboard/contrasena-administrador`}>
           {isAuthorized && (
@@ -83,9 +74,6 @@ export default function UserNav() {
               Cambiar contraseña de Administrador
             </DropdownMenuItem>
           )}
-          {/* <DropdownMenuItem>
-            Cambiar contraseña de Administrador
-          </DropdownMenuItem> */}
         </Link>
         <DropdownMenuItem onClick={() => signOut()}>
           Cerrar Sesión

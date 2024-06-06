@@ -6,22 +6,9 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-import { DestinatarioType } from '@/types/types'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { ArrowUpDown } from 'lucide-react'
+import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { format } from 'date-fns'
 import { Proveedor } from '@prisma/client'

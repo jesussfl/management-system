@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SideMenuItem } from '@/types/types'
 import { useSession } from 'next-auth/react'
-import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
   root: {
@@ -20,7 +19,7 @@ const customTheme: CustomFlowbiteTheme['sidebar'] = {
       off: 'w-64',
     },
     inner:
-      'h-full overflow-y-auto rounded bg-dark py-4 px-3 dark:bg-gray-800 hideScrollbar',
+      'h-full overflow-y-auto overflow-x-visible rounded bg-dark py-4 dark:bg-gray-800 hideScrollbar px-3 pb-20',
   },
   collapse: {
     button:
@@ -153,80 +152,80 @@ export const DashboardSidebar: FC = function () {
         isCollapsed && 'hidden w-16'
       )}
     >
-      <ScrollArea className="h-full">
-        <Sidebar.Items>
-          <Sidebar.ItemGroup>
-            {menuItems.map((item, idx) => {
-              if (item.submenu) {
-                return (
-                  <Sidebar.Collapse
-                    className={`${
-                      isActivePath(item.path)
-                        ? 'text-white bg-dark-secondary'
-                        : ''
-                    }`}
-                    key={idx}
-                    label={item.title}
-                    icon={item.icon}
-                    open={isActivePath(item.path)}
-                  >
-                    {item.submenuItems?.map((subItem, subIdx) => {
-                      return (
-                        <Sidebar.Item
-                          // use button variants for as
-                          as={Link}
-                          key={subIdx}
-                          href={subItem.path}
-                          icon={subItem.icon}
-                          active={isActivePath(subItem.path)}
+      {/* <ScrollArea className="h-full px-3 overflow-x-visible"> */}
+      <Sidebar.Items>
+        <Sidebar.ItemGroup>
+          {menuItems.map((item, idx) => {
+            if (item.submenu) {
+              return (
+                <Sidebar.Collapse
+                  className={`${
+                    isActivePath(item.path)
+                      ? 'text-white bg-dark-secondary'
+                      : ''
+                  }`}
+                  key={idx}
+                  label={item.title}
+                  icon={item.icon}
+                  open={isActivePath(item.path)}
+                >
+                  {item.submenuItems?.map((subItem, subIdx) => {
+                    return (
+                      <Sidebar.Item
+                        // use button variants for as
+                        as={Link}
+                        key={subIdx}
+                        href={subItem.path}
+                        icon={subItem.icon}
+                        active={isActivePath(subItem.path)}
+                      >
+                        <p
+                          className={
+                            isActivePath(subItem.path) ? 'text-white' : ''
+                          }
                         >
-                          <p
-                            className={
-                              isActivePath(subItem.path) ? 'text-white' : ''
-                            }
-                          >
-                            {subItem.title}
-                          </p>
-                        </Sidebar.Item>
-                      )
-                    })}
-                  </Sidebar.Collapse>
-                )
-              }
+                          {subItem.title}
+                        </p>
+                      </Sidebar.Item>
+                    )
+                  })}
+                </Sidebar.Collapse>
+              )
+            }
 
-              if (item.path === '/dashboard') {
-                return (
-                  <Sidebar.Item
-                    as={Link}
-                    key={idx}
-                    href={item.path}
-                    icon={item.icon}
-                    active={pathname === item.path}
-                  >
-                    <p className={pathname === item.path ? 'text-white' : ''}>
-                      {item.title}
-                    </p>
-                  </Sidebar.Item>
-                )
-              }
-
+            if (item.path === '/dashboard') {
               return (
                 <Sidebar.Item
                   as={Link}
                   key={idx}
                   href={item.path}
                   icon={item.icon}
-                  active={isActivePath(item.path)}
+                  active={pathname === item.path}
                 >
-                  <p className={isActivePath(item.path) ? 'text-white' : ''}>
+                  <p className={pathname === item.path ? 'text-white' : ''}>
                     {item.title}
                   </p>
                 </Sidebar.Item>
               )
-            })}
-          </Sidebar.ItemGroup>
-        </Sidebar.Items>
-      </ScrollArea>
+            }
+
+            return (
+              <Sidebar.Item
+                as={Link}
+                key={idx}
+                href={item.path}
+                icon={item.icon}
+                active={isActivePath(item.path)}
+              >
+                <p className={isActivePath(item.path) ? 'text-white' : ''}>
+                  {item.title}
+                </p>
+              </Sidebar.Item>
+            )
+          })}
+        </Sidebar.ItemGroup>
+      </Sidebar.Items>
+      {/* </ScrollArea> */}
     </Sidebar>
   )
 }

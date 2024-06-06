@@ -22,7 +22,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { format } from 'date-fns'
-import { CheckIcon, Loader2, Plus } from 'lucide-react'
+import { CheckIcon, Loader2, Plus, X } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -552,10 +552,23 @@ export default function ReceptionsForm({
                       </PopoverTrigger>
                       <PopoverContent className="PopoverContent">
                         <Command>
-                          <CommandInput
-                            placeholder="Buscar profesional..."
-                            className="h-9"
-                          />
+                          <div className="flex items-center gap-2">
+                            <CommandInput
+                              placeholder="Buscar profesional..."
+                              className="flex-1 h-9"
+                            />
+                            <Button
+                              className="px-2"
+                              variant="destructive"
+                              size="sm"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                form.setValue('cedula_supervisor', '')
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <CommandEmpty>
                             No se encontaron resultados.
                           </CommandEmpty>
@@ -567,8 +580,7 @@ export default function ReceptionsForm({
                                 onSelect={() => {
                                   form.setValue(
                                     'cedula_supervisor',
-                                    professional.value,
-                                    { shouldDirty: true }
+                                    professional.value
                                   )
                                 }}
                               >

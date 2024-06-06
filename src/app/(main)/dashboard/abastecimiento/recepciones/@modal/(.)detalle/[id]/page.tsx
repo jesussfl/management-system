@@ -13,7 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { format } from 'date-fns'
+
 export default async function Page({
   params: { id },
 }: {
@@ -25,10 +25,10 @@ export default async function Page({
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-y-auto max-h-[90vh]'}
+        className="overflow-y-auto max-h-[90vh] w-[80vw] md:w-[60vw] lg:w-[60vw]"
       >
-        <DialogHeader className="p-5 mb-8 border-b border-border">
-          <DialogTitle className="text-sm font-semibold text-foreground">
+        <DialogHeader className="py-3 mb-8">
+          <DialogTitle className="font-semibold text-foreground">
             Detalles de la Recepción
           </DialogTitle>
         </DialogHeader>

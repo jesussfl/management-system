@@ -1,16 +1,8 @@
 'use client'
-import { Input } from '@/modules/common/components/input/input'
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Box, Trash } from 'lucide-react'
-import {
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/modules/common/components/form'
+import { FormDescription } from '@/modules/common/components/form'
 
 import {
   Card,
@@ -20,7 +12,6 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import ModalForm from '@/modules/common/components/modal-form'
-import { Switch } from '@/modules/common/components/switch/switch'
 import { RenglonWithAllRelations } from '@/types/types'
 import { SerialsFormNew } from './serials-form'
 
@@ -44,17 +35,7 @@ export const SelectedItemCard = ({
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
-  const receptions = item.recepciones.reduce(
-    (total, item) => total + item.cantidad,
-    0
-  )
 
-  const dispatchedSerials = item.despachos.reduce(
-    (total, item) => total + item.seriales.length,
-    0
-  )
-
-  const totalStock = receptions - dispatchedSerials
   const serialsLength = watch(`renglones.${index}.seriales`).length
 
   useEffect(() => {

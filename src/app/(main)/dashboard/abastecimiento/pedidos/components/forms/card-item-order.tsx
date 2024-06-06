@@ -1,6 +1,5 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
-import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Box, Trash } from 'lucide-react'
 import {
@@ -12,7 +11,6 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-// import { RenglonType } from '@/types/types'
 import {
   Card,
   CardContent,
@@ -21,12 +19,11 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { Prisma } from '@prisma/client'
-// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
-// import { DateTimePicker } from '@/modules/common/components/date-time-picker'
+
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
 }>
-export const CardItemSelected = ({
+export const CardItemOrder = ({
   item,
   index,
   deleteItem,
@@ -37,10 +34,8 @@ export const CardItemSelected = ({
   index: number
   deleteItem: (index: number) => void
 }) => {
-  const { watch, control, setValue, trigger } = useFormContext()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { control } = useFormContext()
 
-  const toogleModal = () => setIsModalOpen(!isModalOpen)
   return (
     <Card
       key={item.id}
@@ -54,7 +49,9 @@ export const CardItemSelected = ({
               {item.nombre}
             </CardTitle>
             <CardDescription>
-              {`${item.descripcion} - Peso: ${item.peso} (${item.unidad_empaque.abreviacion}) `}
+              {`${item.descripcion} - Peso: ${
+                item.peso ? item.peso : 'Sin definir'
+              } ${item.peso ? item.unidad_empaque.abreviacion : ''} `}
             </CardDescription>
           </div>
         </div>

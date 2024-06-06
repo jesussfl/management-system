@@ -31,6 +31,7 @@ export const CardItemDispatch = ({
   dispatchId,
   setItemsWithoutSerials,
   isEditEnabled = false,
+  totalStock,
 }: {
   item: RenglonWithAllRelations
   isEmpty?: string | boolean
@@ -39,26 +40,11 @@ export const CardItemDispatch = ({
   isError?: string | boolean
   isEditEnabled?: boolean
   dispatchId?: number
+  totalStock: number
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
-  const receptions = item.recepciones.reduce(
-    (total, item) => total + item.cantidad,
-    0
-  )
 
-  const dispatchedSerials = item.despachos.reduce(
-    (total, item) => total + item.seriales.length,
-    0
-  )
-  const currentDispatch = item.despachos.find((item) => {
-    // @ts-ignore
-    return item.id_despacho === dispatchId
-  })
-  const totalStock = isEditEnabled
-    ? receptions - dispatchedSerials + (currentDispatch?.seriales.length ?? 0)
-    : receptions - dispatchedSerials
-  // const totalStock = receptions - dispatchedSerials
   const serialsLength = watch(`renglones.${index}.seriales`).length
 
   useEffect(() => {

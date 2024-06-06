@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState, useTransition } from 'react'
 
-import { columns } from './columns'
+import { orderItemColumns } from '../columns/order-item-columns'
 import { cn } from '@/utils/utils'
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
@@ -17,7 +17,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { format } from 'date-fns'
-import { CheckIcon, Loader2, Plus } from 'lucide-react'
+import { CheckIcon, Loader2, Plus, X } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -35,7 +35,7 @@ import {
 } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
-import { CardItemSelected } from './card-item-selected'
+import { CardItemOrder } from './card-item-order'
 import Link from 'next/link'
 import { Input } from '@/modules/common/components/input/input'
 import {
@@ -62,25 +62,13 @@ import {
 } from '@/modules/common/components/select/select'
 import { useHandleTableSelect } from '../../lib/hooks/use-handle-table-select'
 
-type PedidoType = Prisma.PedidoGetPayload<{
+type RenglonType = Prisma.RenglonGetPayload<{
   include: {
-    unidad: true
-    proveedor: true
-    destinatario: true
-    supervisor: true
-    abastecedor: true
-    autorizador: true
-
-    renglones: {
-      include: {
-        renglon: { include: { unidad_empaque: true; recepciones: true } }
-      }
+    unidad_empaque: true
+    recepciones: {
+      include: { seriales: true }
     }
   }
-}>
-
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
 }>
 export type PedidoForm = {
   fecha_solicitud: Date
@@ -700,10 +688,11 @@ export default function OrdersForm({
               <FormField
                 control={control}
                 name="id_supervisor"
-                rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Profesional que supervisará:</FormLabel>
+                    <FormLabel>
+                      Profesional que supervisa la recepción (opcional):
+                    </FormLabel>
 
                     <Popover>
                       <PopoverTrigger asChild>
@@ -728,10 +717,23 @@ export default function OrdersForm({
                       </PopoverTrigger>
                       <PopoverContent className="PopoverContent">
                         <Command>
-                          <CommandInput
-                            placeholder="Buscar profesional..."
-                            className="h-9"
-                          />
+                          <div className="flex items-center gap-2">
+                            <CommandInput
+                              placeholder="Buscar profesional..."
+                              className="flex-1 h-9"
+                            />
+                            <Button
+                              className="px-2"
+                              variant="destructive"
+                              size="sm"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setValue('id_supervisor', undefined)
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <CommandEmpty>
                             No se encontaron resultados.
                           </CommandEmpty>
@@ -741,11 +743,7 @@ export default function OrdersForm({
                                 value={professional.label}
                                 key={professional.value}
                                 onSelect={() => {
-                                  setValue(
-                                    'id_supervisor',
-                                    professional.value,
-                                    { shouldDirty: true }
-                                  )
+                                  setValue('id_supervisor', professional.value)
                                 }}
                               >
                                 {professional.label}
@@ -887,7 +885,7 @@ export default function OrdersForm({
                   </div>
 
                   <DataTable
-                    columns={columns}
+                    columns={orderItemColumns}
                     data={items}
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
@@ -918,10 +916,10 @@ export default function OrdersForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid xl:grid-cols-2 gap-4">
+              <div className="grid lg:grid-cols-2 gap-4">
                 {selectedItemsData.map((item, index) => {
                   return (
-                    <CardItemSelected
+                    <CardItemOrder
                       key={item.id}
                       item={item}
                       index={index}

@@ -12,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import Link from 'next/link'
 import { getDispatchById } from '../../../lib/actions/dispatches'
 export default async function Page({
   params: { id },
@@ -25,7 +24,9 @@ export default async function Page({
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-y-auto max-h-[90vh]'}
+        className={
+          'w-[80vw] md:w-[60vw] lg:w-[60vw] overflow-y-auto max-h-[90vh]'
+        }
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">

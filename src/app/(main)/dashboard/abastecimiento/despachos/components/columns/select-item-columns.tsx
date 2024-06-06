@@ -15,21 +15,17 @@ export const selectItemColumns: ColumnDef<RenglonWithAllRelations>[] = [
   },
 
   {
-    accessorKey: 'stock',
+    id: 'stock',
+    accessorFn: (row) =>
+      row.recepciones.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+
+        return total + serials
+      }, 0),
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
-      )
-
-      const dispatchedSerials = row.original.despachos.reduce(
-        (total, item) => total + item.seriales.length,
-        0
-      )
-
-      return <div>{stock - dispatchedSerials}</div>
-    },
   },
   {
     accessorKey: 'nombre',
