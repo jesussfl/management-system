@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const dispatch = await getDispatchById(Number(params.id))
-  const receivers = await getAllReceiversToCombobox()
+  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
   return (
     <>

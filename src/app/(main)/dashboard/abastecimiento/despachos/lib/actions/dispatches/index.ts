@@ -48,7 +48,7 @@ export const createDispatch = async (data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESPACHOS,
+    sectionName: SECTION_NAMES.DESPACHOS_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -184,7 +184,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESPACHOS,
+    sectionName: SECTION_NAMES.DESPACHOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -610,7 +610,7 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESPACHOS,
+    sectionName: SECTION_NAMES.DESPACHOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

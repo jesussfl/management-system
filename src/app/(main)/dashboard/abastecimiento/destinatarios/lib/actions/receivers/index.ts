@@ -18,7 +18,7 @@ export const createReceiver = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -41,7 +41,10 @@ export const createReceiver = async (
   }
 
   await prisma.destinatario.create({
-    data,
+    data: {
+      ...data,
+      servicio: 'Armamento',
+    },
   })
 
   await registerAuditAction(
@@ -61,6 +64,9 @@ export const getAllReceivers = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const receivers = await prisma.destinatario.findMany({
+    where: {
+      servicio: 'Armamento',
+    },
     include: {
       despachos: true,
       grado: true,
@@ -71,14 +77,17 @@ export const getAllReceivers = async () => {
   })
   return receivers
 }
-export const getAllReceiversToCombobox = async (): Promise<
-  { value: string; label: string }[]
-> => {
+export const getAllReceiversToCombobox = async (
+  servicio: 'Abastecimiento' | 'Armamento'
+): Promise<{ value: string; label: string }[]> => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const receivers = await prisma.destinatario.findMany({
+    where: {
+      servicio,
+    },
     include: {
       despachos: true,
       grado: true,
@@ -109,7 +118,7 @@ export const deleteReceiver = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -156,7 +165,7 @@ export const deleteMultipleReceivers = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -195,7 +204,7 @@ export const updateReceiver = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

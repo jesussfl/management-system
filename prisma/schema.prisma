@@ -474,15 +474,15 @@ model Destinatario {
   direccion         String
   tipo              Tipos_Destinatarios
   sexo              Generos
-
-  id_unidad     Int?
-  unidad        Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
-  id_categoria  Int?
-  categoria     Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
-  id_grado      Int?
-  grado         Grado_Militar?      @relation(fields: [id_grado], references: [id])
-  id_componente Int?
-  componente    Componente_Militar? @relation(fields: [id_componente], references: [id])
+  servicio          String?
+  id_unidad         Int?
+  unidad            Unidad_Militar?     @relation(fields: [id_unidad], references: [id])
+  id_categoria      Int?
+  categoria         Categoria_Militar?  @relation(fields: [id_categoria], references: [id])
+  id_grado          Int?
+  grado             Grado_Militar?      @relation(fields: [id_grado], references: [id])
+  id_componente     Int?
+  componente        Componente_Militar? @relation(fields: [id_componente], references: [id])
 
   despachos Despacho[]
 

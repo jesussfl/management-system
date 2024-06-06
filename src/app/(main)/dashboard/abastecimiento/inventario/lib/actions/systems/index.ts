@@ -15,7 +15,7 @@ export const createSystem = async (data: Prisma.SistemaCreateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -48,7 +48,7 @@ export const updateSystem = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -94,7 +94,7 @@ export const deleteSystem = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -131,7 +131,7 @@ export const deleteMultipleSystems = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

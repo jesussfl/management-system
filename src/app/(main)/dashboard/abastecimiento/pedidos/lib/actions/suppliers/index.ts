@@ -25,7 +25,7 @@ export const createSupplier = async (data: Prisma.ProveedorCreateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -61,7 +61,7 @@ export const updateSupplier = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -105,7 +105,7 @@ export const deleteSupplier = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

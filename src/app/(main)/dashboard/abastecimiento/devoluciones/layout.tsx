@@ -9,7 +9,10 @@ export default async function Layout({
   modal: React.ReactNode
 }) {
   const isAuthorized = await validateSections({
-    sections: [SECTION_NAMES.DEVOLUCIONES, SECTION_NAMES.ABASTECIMIENTO],
+    sections: [
+      SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO,
+      SECTION_NAMES.ABASTECIMIENTO,
+    ],
   })
 
   if (!isAuthorized) {

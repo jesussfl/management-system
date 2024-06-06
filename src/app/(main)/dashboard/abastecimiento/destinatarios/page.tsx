@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const receiversData = await getAllReceivers()
   const path = getSectionInfo({
-    sectionName: SECTION_NAMES.DESTINATARIOS,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
     property: 'path',
   })
   return (

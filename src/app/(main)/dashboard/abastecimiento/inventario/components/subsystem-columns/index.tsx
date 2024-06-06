@@ -99,7 +99,7 @@ export const columns: ColumnDef<Subsistema>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO}
+          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
             href: `/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`,
           }}

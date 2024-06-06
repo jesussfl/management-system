@@ -17,7 +17,7 @@ export const createCategory = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -66,7 +66,7 @@ export const updateCategory = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -112,7 +112,7 @@ export const deleteCategory = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -156,7 +156,7 @@ export const deleteMultipleCategories = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

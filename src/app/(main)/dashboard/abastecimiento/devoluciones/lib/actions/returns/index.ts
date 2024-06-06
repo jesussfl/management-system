@@ -53,7 +53,7 @@ export const createReturn = async (data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DEVOLUCIONES,
+    sectionName: SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -140,7 +140,7 @@ export const updateReturn = async (id: number, data: FormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DEVOLUCIONES,
+    sectionName: SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -272,7 +272,7 @@ export const deleteReturn = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DEVOLUCIONES,
+    sectionName: SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

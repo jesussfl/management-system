@@ -146,7 +146,7 @@ export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

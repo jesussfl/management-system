@@ -159,7 +159,7 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.PEDIDOS}
+          sectionName={SECTION_NAMES.PEDIDOS_ABASTECIMIENTO}
           editConfig={{
             href: `/dashboard/abastecimiento/pedidos/proveedor/${supplier.id}`,
           }}

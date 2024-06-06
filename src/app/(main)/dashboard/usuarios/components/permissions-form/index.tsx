@@ -285,7 +285,12 @@ export default function PermissionsForm({ defaultValues }: Props) {
 
                   <SelectContent className="max-h-60">
                     <ScrollArea className="h-60">
-                      {getAllSectionIdentifiers().map((section) => {
+                      {Object.keys(SECTION_NAMES).map((section) => (
+                        <SelectItem key={section} value={section}>
+                          {section}
+                        </SelectItem>
+                      ))}
+                      {/* {getAllSectionIdentifiers().map((section) => {
                         if (section.subSections) {
                           const subsections = section.subSections.map(
                             (subSection) => (
@@ -293,7 +298,7 @@ export default function PermissionsForm({ defaultValues }: Props) {
                                 key={subSection.subSection}
                                 value={subSection.subSection}
                               >
-                                {`${section.section} - ${subSection.subSection}`}
+                                {`${subSection.subSection}`}
                               </SelectItem>
                             )
                           )
@@ -323,7 +328,7 @@ export default function PermissionsForm({ defaultValues }: Props) {
                             {section.section}
                           </SelectItem>
                         )
-                      })}
+                      })} */}
                     </ScrollArea>
                   </SelectContent>
                 </Select>

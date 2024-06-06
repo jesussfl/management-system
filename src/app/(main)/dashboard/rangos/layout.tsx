@@ -11,7 +11,7 @@ export default async function Layout({
   const isAuthorized = await validateSections({
     sections: [
       SECTION_NAMES.RANGOS,
-      SECTION_NAMES.DESTINATARIOS,
+      SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
       SECTION_NAMES.PROFESIONALES,
       SECTION_NAMES.ABASTECIMIENTO,
       SECTION_NAMES.RECURSOS_HUMANOS,

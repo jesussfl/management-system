@@ -231,7 +231,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO}
+          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
             href: `/dashboard/abastecimiento/inventario/renglon/${renglon.id}`,
           }}

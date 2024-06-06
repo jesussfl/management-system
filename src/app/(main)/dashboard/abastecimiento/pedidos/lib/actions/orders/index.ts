@@ -43,7 +43,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -85,7 +85,7 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -144,7 +144,7 @@ export const updateOrderStatus = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -242,7 +242,7 @@ export const deleteOrder = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

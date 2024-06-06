@@ -33,7 +33,7 @@ function generateExcelData(data: any) {
   // const worksheet = utils.json_to_sheet(data)
   const workbook = utils.book_new()
   utils.book_append_sheet(workbook, worksheet, 'Sheet1')
-  const excelData = writeFile(workbook, 'products.xlsx', {
+  const excelData = writeFile(workbook, 'Reporte_Filtrado.xlsx', {
     compression: true,
   })
   return excelData

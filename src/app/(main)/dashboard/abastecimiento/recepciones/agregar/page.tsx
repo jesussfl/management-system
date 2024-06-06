@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const itemsData = await getAllItems()
-  const receivers = await getAllReceiversToCombobox()
+  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
   return (
     <>
