@@ -148,7 +148,7 @@ const FormMessage = React.forwardRef<
   const body = error ? String(error?.message) : children
 
   if (!body) {
-    return <p className="text-[0.8rem] font-medium text-transparent">test</p>
+    return <p className="text-[0.8rem] font-medium text-transparent"></p>
   }
 
   return (

@@ -102,6 +102,7 @@ export const signupByFacialID = async ({
         nombre: name,
         email,
         facialID,
+        estado: 'Activo',
         rol: {
           connectOrCreate: {
             where: {

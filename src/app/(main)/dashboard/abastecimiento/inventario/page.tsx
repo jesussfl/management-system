@@ -47,6 +47,8 @@ import {
   Box,
   Boxes,
   Info,
+  IterationCcw,
+  PackageCheck,
   PackageMinus,
   PackagePlus,
   Plus,
@@ -77,7 +79,7 @@ export default async function Page() {
   const systemsData = await getAllSystems()
   const subsystemsData = await getAllSubsystems()
   const lowStockItems = getLowStockItems(itemsData)
-  const statistics = await getStatistics()
+  const statistics = await getStatistics('Abastecimiento')
   return (
     <>
       <PageHeader>
@@ -133,21 +135,36 @@ export default async function Page() {
         <TabsContent value="items">
           <PageContent>
             <Card>
-              <CardHeader className="flex-row gap-8 ">
+              <CardHeader className="flex flex-row items-center gap-8 ">
                 <StatisticCard
+                  className="flex-1 h-[116px]"
                   title="Renglones Totales"
                   number={itemsData.length}
                   Icon={<Box size={24} />}
                 />
                 <StatisticCard
-                  title="Recepciones"
-                  number={statistics?.receptions}
+                  className="flex-1 h-[116px]"
+                  title="Pedidos Totales"
+                  number={statistics?.pedidos}
                   Icon={<PackagePlus size={24} />}
                 />
                 <StatisticCard
+                  className="flex-1 h-[116px]"
+                  title="Recepciones Creadas"
+                  number={statistics?.receptions}
+                  Icon={<PackageCheck size={24} />}
+                />
+                <StatisticCard
+                  className="flex-1 h-[116px]"
                   title="Despachos Creados"
                   number={statistics?.dispatches}
                   Icon={<PackageMinus size={24} />}
+                />
+                <StatisticCard
+                  className="flex-1 h-[116px]"
+                  title="Renglones Devueltos"
+                  number={statistics?.devolutions}
+                  Icon={<IterationCcw size={24} />}
                 />
               </CardHeader>
               <CardContent>

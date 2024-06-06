@@ -155,7 +155,7 @@ export const DashboardSidebar: FC = function () {
     >
       <ScrollArea className="h-full">
         <Sidebar.Items>
-          <Sidebar.ItemGroup title="Main">
+          <Sidebar.ItemGroup>
             {menuItems.map((item, idx) => {
               if (item.submenu) {
                 return (
@@ -168,6 +168,7 @@ export const DashboardSidebar: FC = function () {
                     key={idx}
                     label={item.title}
                     icon={item.icon}
+                    open={isActivePath(item.path)}
                   >
                     {item.submenuItems?.map((subItem, subIdx) => {
                       return (

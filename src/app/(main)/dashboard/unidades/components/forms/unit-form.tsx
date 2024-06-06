@@ -2,10 +2,11 @@
 import * as React from 'react'
 
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +16,7 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { ComboboxData, UnidadesType } from '@/types/types'
 import { getAllZodis } from '../../lib/actions/zodis'
 import {
@@ -35,6 +36,7 @@ import {
 import { CheckIcon } from 'lucide-react'
 import { createUnit, updateUnit } from '../../lib/actions/units'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
+import Link from 'next/link'
 type FormValues = Omit<UnidadesType, 'id'>
 
 export default function UnitsForm({
@@ -301,6 +303,18 @@ export default function UnitsForm({
                   </Popover>
                 </FormControl>
                 <FormMessage />
+                <FormDescription>
+                  <Link
+                    href="/dashboard/unidades/zodi"
+                    className={cn(
+                      buttonVariants({ variant: 'link' }),
+                      'text-sm h-[30px]'
+                    )}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Crear Zodi
+                  </Link>
+                </FormDescription>
               </FormItem>
             )}
           />

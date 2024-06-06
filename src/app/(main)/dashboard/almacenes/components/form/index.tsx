@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
@@ -17,12 +17,14 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { Almacen, Unidad_Militar } from '@prisma/client'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { createWarehouse, updateWarehouse } from '../../lib/actions/warehouse'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Combobox } from '@/modules/common/components/combobox'
 import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
 import { ComboboxData } from '@/types/types'
+import Link from 'next/link'
+import { cn } from '@/utils/utils'
 
 interface Props {
   defaultValues?: Almacen
@@ -176,6 +178,18 @@ export default function WarehousesForm({ defaultValues }: Props) {
                   field={field}
                 />
                 <FormMessage />
+                <FormDescription>
+                  <Link
+                    href="/dashboard/unidades/agregar"
+                    className={cn(
+                      buttonVariants({ variant: 'link' }),
+                      'text-sm h-[30px]'
+                    )}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Crear Unidad
+                  </Link>
+                </FormDescription>
               </FormItem>
             )}
           />

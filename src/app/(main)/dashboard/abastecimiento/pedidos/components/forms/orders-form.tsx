@@ -117,10 +117,6 @@ interface Props {
   defaultValues?: PedidoFormValues
   orderId?: number
 }
-// type ComboboxData = {
-//   value: string
-//   label: string
-// }
 
 export default function OrdersForm({
   items,
@@ -268,7 +264,7 @@ export default function OrdersForm({
         <Card>
           <CardHeader>
             <CardTitle className="text-xl">
-              Complete la información solicitada el pedido de suministros
+              Complete la información solicitada para el pedido de suministros
             </CardTitle>
             <CardDescription>Llene los campos solicitados.</CardDescription>
           </CardHeader>

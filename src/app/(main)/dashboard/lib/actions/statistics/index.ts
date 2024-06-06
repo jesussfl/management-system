@@ -2,13 +2,19 @@
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 
-export const getStatistics = async () => {
+export const getStatistics = async (
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
 
-  const items = await prisma.renglon.count()
+  const items = await prisma.renglon.count({
+    where: {
+      servicio: 'Abastecimiento',
+    },
+  })
   const users = await prisma.usuario.findMany({
     where: {
       createdAt: {
@@ -23,9 +29,27 @@ export const getStatistics = async () => {
       createdAt: true,
     },
   })
-  const dispatches = await prisma.despacho.count()
-  const receptions = await prisma.recepcion.count()
-  return { items, users, dispatches, receptions }
+  const dispatches = await prisma.despacho.count({
+    where: {
+      servicio,
+    },
+  })
+  const receptions = await prisma.recepcion.count({
+    where: {
+      servicio,
+    },
+  })
+  const devolutions = await prisma.devolucion.count({
+    where: {
+      servicio,
+    },
+  })
+  const pedidos = await prisma.pedido.count({
+    where: {
+      servicio,
+    },
+  })
+  return { items, users, dispatches, receptions, devolutions, pedidos }
 }
 
 type DispatchesParams = {

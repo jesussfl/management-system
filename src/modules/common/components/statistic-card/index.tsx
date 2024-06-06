@@ -12,15 +12,17 @@ interface StatisticCardProps {
   number: number
   title: string
   Icon: React.ReactNode
+  className?: string
 }
 
 const StatisticCard: React.FC<StatisticCardProps> = ({
   number,
   title,
   Icon,
+  className,
 }) => {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader className="flex flex-row h-full items-center justify-between space-y-0">
         <div>
           <CardTitle className="text-sm font-medium">{title}</CardTitle>

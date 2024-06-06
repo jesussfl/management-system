@@ -2,10 +2,11 @@
 import * as React from 'react'
 
 import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +16,7 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { ComboboxData, ZodiType } from '@/types/types'
 import { createZodi, updateZodi } from '../../lib/actions/zodis'
 import {
@@ -35,6 +36,7 @@ import {
 import { CheckIcon } from 'lucide-react'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { getAllRedis } from '../../lib/actions/redis'
+import Link from 'next/link'
 type FormValues = Omit<ZodiType, 'id'>
 
 export default function ZodisForm({
@@ -301,6 +303,18 @@ export default function ZodisForm({
                   </Popover>
                 </FormControl>
                 <FormMessage />
+                <FormDescription>
+                  <Link
+                    href="/dashboard/unidades/redi"
+                    className={cn(
+                      buttonVariants({ variant: 'link' }),
+                      'text-sm h-[30px]'
+                    )}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Crear Redi
+                  </Link>
+                </FormDescription>
               </FormItem>
             )}
           />
