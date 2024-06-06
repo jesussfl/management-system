@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { getReturnById } from '../lib/actions/returns'
 import ReturnsForm from '../components/form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
+import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -23,6 +24,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const devolution = await getReturnById(Number(params.id))
   const receiver = await getAllReceiversToCombobox()
+  const professionals = await getAllProfessionalsToCombobox()
   return (
     <>
       <PageHeader className="mb-0">
@@ -51,6 +53,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           // @ts-ignore
           defaultValues={devolution}
           receivers={receiver}
+          professionals={professionals}
         />
       </PageContent>
     </>

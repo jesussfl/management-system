@@ -238,28 +238,39 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     icon: Users2,
     identifier: SECTION_NAMES.RECURSOS_HUMANOS,
     submenu: true,
-    requiredPermissions: [SECTION_NAMES.RECURSOS_HUMANOS, SECTION_NAMES.TODAS],
     submenuItems: [
       {
         title: 'Personal',
         identifier: SECTION_NAMES.PERSONAL,
         path: '/dashboard/recursos-humanos/personal',
         icon: Users2,
-        requiredPermissions: [SECTION_NAMES.PERSONAL, SECTION_NAMES.TODAS],
+        requiredPermissions: [
+          SECTION_NAMES.PERSONAL,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.RECURSOS_HUMANOS,
+        ],
       },
       {
         title: 'Asistencias',
         identifier: SECTION_NAMES.ASISTENCIAS,
         path: '/dashboard/recursos-humanos/asistencias',
         icon: Contact2,
-        requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
+        requiredPermissions: [
+          SECTION_NAMES.ASISTENCIAS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.RECURSOS_HUMANOS,
+        ],
       },
       {
         title: 'Guardias',
         identifier: SECTION_NAMES.ASISTENCIAS,
         path: '/dashboard/recursos-humanos/guardias',
         icon: Contact2,
-        requiredPermissions: [SECTION_NAMES.ASISTENCIAS, SECTION_NAMES.TODAS],
+        requiredPermissions: [
+          SECTION_NAMES.ASISTENCIAS,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.RECURSOS_HUMANOS,
+        ],
       },
     ],
   },
@@ -303,7 +314,13 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     identifier: SECTION_NAMES.UNIDADES,
     path: '/dashboard/unidades',
     icon: LocateIcon,
-    requiredPermissions: [SECTION_NAMES.UNIDADES, SECTION_NAMES.TODAS],
+    requiredPermissions: [
+      SECTION_NAMES.UNIDADES,
+      SECTION_NAMES.TODAS,
+      SECTION_NAMES.ABASTECIMIENTO,
+      SECTION_NAMES.RECURSOS_HUMANOS,
+      SECTION_NAMES.ARMAMENTO,
+    ],
   },
   {
     title: 'Usuarios',
@@ -333,6 +350,5 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     path: '/dashboard/ayuda',
     identifier: SECTION_NAMES.AYUDA,
     icon: HelpCircle,
-    requiredPermissions: [SECTION_NAMES.AYUDA, SECTION_NAMES.TODAS],
   },
 ]

@@ -12,6 +12,7 @@ import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import ReturnsForm from '../components/form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
+import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const receivers = await getAllReceiversToCombobox()
+  const professionals = await getAllProfessionalsToCombobox()
   return (
     <>
       <PageHeader className="mb-0">
@@ -39,7 +41,11 @@ export default async function Page({ params }: { params: { id: string } }) {
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className="pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        <ReturnsForm renglonesData={itemsData} receivers={receivers} />
+        <ReturnsForm
+          renglonesData={itemsData}
+          receivers={receivers}
+          professionals={professionals}
+        />
       </PageContent>
     </>
   )

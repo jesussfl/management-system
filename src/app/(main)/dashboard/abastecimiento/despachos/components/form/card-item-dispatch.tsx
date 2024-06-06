@@ -84,7 +84,9 @@ export const CardItemDispatch = ({
               {item.nombre}
             </CardTitle>
             <CardDescription>
-              {`${item.descripcion} - ${item.unidad_empaque.nombre} - Peso: ${item.peso} (${item.unidad_empaque.abreviacion}) `}
+              {`${item.descripcion} - ${item.unidad_empaque.nombre} - Peso: ${
+                item.peso || 'Sin definir'
+              } ${item.peso ? item.unidad_empaque.abreviacion : ''} `}
             </CardDescription>
           </div>
         </div>

@@ -58,21 +58,6 @@ export function SerialsFormNew({
     })
   }, [id])
 
-  const handleTableSelect = useCallback(
-    (lastSelectedRow: SerialWithRenglon) => {
-      if (lastSelectedRow) {
-        setSelectedData((prev) => {
-          if (prev.find((serial) => serial.id === lastSelectedRow.id)) {
-            return prev.filter((item) => item.id !== lastSelectedRow.id)
-          } else {
-            return [...prev, lastSelectedRow]
-          }
-        })
-      }
-    },
-    []
-  )
-
   useEffect(() => {
     setValue(
       `renglones.${indexForm}.seriales`,
@@ -94,7 +79,7 @@ export function SerialsFormNew({
         <DataTable
           columns={columns}
           data={serials}
-          onSelectedRowsChange={handleTableSelect}
+          onSelectedRowsChange={setSelectedData}
           isColumnFilterEnabled={false}
           selectedData={selectedItems}
           setSelectedData={setSelectedItems}

@@ -62,7 +62,7 @@ export const createReturn = async (data: FormValues) => {
     return permissionsResponse
   }
   const { motivo, fecha_devolucion, cedula_destinatario, renglones } = data
-
+  console.log(cedula_destinatario, 'cedula_destinatario')
   if (!fecha_devolucion || !renglones) {
     return {
       error: 'Missing Fields',

@@ -95,6 +95,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     id: 'peso_total',
     // accessorKey: 'peso_total',
     accessorFn: (row) => {
+      if (!row.peso) return 'Sin definir'
       const stock = row.recepciones.reduce((total, item) => {
         const serials = item.seriales.filter(
           (serial) =>
@@ -109,16 +110,20 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     ),
   },
   {
-    accessorKey: 'peso',
+    id: 'peso',
+    accessorFn: (row) => {
+      if (!row.peso) return 'Sin definir'
+      return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
+    },
     header: ({ column }) => (
       <HeaderCell column={column} value="Peso Por Unidad" />
     ),
 
-    cell: ({ row }) => {
-      return (
-        <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
-      )
-    },
+    // cell: ({ row }) => {
+    //   return (
+    //     <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
+    //   )
+    // },
   },
   {
     accessorKey: 'estado',

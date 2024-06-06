@@ -68,7 +68,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
 
   if (!nombre) {
     return {
-      error: 'Name is required',
+      error: 'El nombre es requerido',
       field: 'nombre',
       success: false,
     }
@@ -82,7 +82,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
 
   if (exists) {
     return {
-      error: 'Name already exists',
+      error: 'El nombre de esta unidad ya existe',
       field: 'nombre',
       success: false,
     }
@@ -118,7 +118,7 @@ export const deleteUnit = async (id: number) => {
     return permissionsResponse
   }
 
-  const exist = await prisma.zodi.findUnique({
+  const exist = await prisma.unidad_Militar.findUnique({
     where: {
       id,
     },
@@ -126,7 +126,7 @@ export const deleteUnit = async (id: number) => {
 
   if (!exist) {
     return {
-      error: 'Unit not found',
+      error: 'La unidad no existe',
       success: false,
     }
   }
@@ -141,7 +141,7 @@ export const deleteUnit = async (id: number) => {
   revalidatePath('/dashboard/unidades')
 
   return {
-    success: true,
+    success: 'La unidad fue eliminada',
     error: false,
   }
 }
@@ -174,7 +174,7 @@ export const updateUnit = async (
 
   if (!exists) {
     return {
-      error: 'Unit not found',
+      error: 'La unidad no existe',
       success: false,
     }
   }
@@ -190,7 +190,7 @@ export const updateUnit = async (
   revalidatePath('/dashboard/unidades')
 
   return {
-    success: true,
+    success: 'La unidad fue actualizada',
     error: false,
   }
 }

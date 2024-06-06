@@ -159,7 +159,7 @@ export const Step3 = ({
               <FormDescription>
                 Si no encuentras el almacén, puedes crearlo
                 <Link
-                  href="/dashboard/abastecimiento/almacenes/almacen"
+                  href="/dashboard/almacenes/almacen"
                   className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
                 >
                   Crear Almacén
@@ -379,15 +379,17 @@ export const Step3 = ({
           }}
           render={({ field }) => (
             <FormItem className="w-full">
-              <FormLabel>Peso</FormLabel>
+              <FormLabel>Peso por unidad (Opcional):</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   placeholder="Ingresa el peso del renglón"
                   {...field}
-                  onChange={field.onChange}
-                  value={weight || field.value || 0}
-                  disabled={weight > 0 ? true : false}
+                  onChange={(value) => {
+                    field.onChange(parseFloat(value.target.value))
+                  }}
+                  value={field.value}
+                  // disabled={weight > 0 ? true : false}
                 />
               </FormControl>
               <FormMessage />
