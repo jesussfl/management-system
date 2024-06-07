@@ -31,6 +31,9 @@ export const getAccessoryById = async (id: number) => {
     },
   })
 
+  if (!accessory) {
+    throw new Error('Accesorio no encontrado')
+  }
   return accessory
 }
 
@@ -44,7 +47,7 @@ export const createAccessory = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.ARMAMENTO,
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -65,5 +68,77 @@ export const createAccessory = async (
   return {
     error: false,
     success: 'Arma creada exitosamente',
+  }
+}
+
+export const updateGunAccessory = async (
+  data: Prisma.Accesorio_ArmaUpdateInput,
+  id: number
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunAccessory = await prisma.accesorio_Arma.update({
+    where: {
+      id,
+    },
+    data,
+  })
+
+  await registerAuditAction(
+    'Se actualizó el accesorio de arma: ' + gunAccessory.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Accesorio de arma actualizada exitosamente',
+  }
+}
+
+export const deleteGunAccessory = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunAccessory = await prisma.accesorio_Arma.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction(
+    'Se eliminó el accesorio de arma: ' + gunAccessory.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Accesorio de arma eliminada exitosamente',
   }
 }

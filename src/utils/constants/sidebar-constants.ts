@@ -57,6 +57,7 @@ export enum SECTION_NAMES {
   DESTINATARIOS_ABASTECIMIENTO = 'DESTINATARIOS_ABASTECIMIENTO',
 
   ARMAMENTO = 'ARMAMENTO',
+  ARMAS_ARMAMENTO = 'ARMAS_ARMAMENTO',
   INVENTARIO_ARMAMENTO = 'INVENTARIO_ARMAMENTO',
   PEDIDOS_ARMAMENTO = 'PEDIDOS_ARMAMENTO',
   RECEPCIONES_ARMAMENTO = 'RECEPCIONES_ARMAMENTO',
@@ -186,10 +187,13 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Armas',
-        identifier: SECTION_NAMES.ARMAMENTO,
+        identifier: SECTION_NAMES.ARMAS_ARMAMENTO,
         path: '/dashboard/armamento/armas',
         icon: Bomb,
-        requiredPermissions: [SECTION_NAMES.ARMAMENTO, SECTION_NAMES.TODAS],
+        requiredPermissions: [
+          SECTION_NAMES.ARMAS_ARMAMENTO,
+          SECTION_NAMES.TODAS,
+        ],
       },
       {
         title: 'Pedidos',

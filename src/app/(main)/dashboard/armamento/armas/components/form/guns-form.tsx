@@ -14,38 +14,45 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
-import { Armamento } from '@prisma/client'
-import { getAllClassifications } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
+import {
+  Armamento,
+  Colores_Armamento,
+  Condiciones_Armamento,
+  Estados_Armamento,
+} from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { ComboboxData } from '@/types/types'
-import { createGun } from '../../lib/actions/guns'
-import { Calendar } from '@/modules/common/components/calendar'
-import { format } from 'date-fns'
-import { Calendar as CalendarIcon, Loader2 } from 'lucide-react'
+import { createGun, updateGun } from '../../lib/actions/guns'
+import { Loader2 } from 'lucide-react'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
-import { cn } from '@/utils/utils'
-import { getAllUnits } from '@/app/(main)/dashboard/unidades/lib/actions/units'
-import { getAllGunModels } from '../../lib/actions/model-actions'
-import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
+
 interface Props {
   defaultValues?: Armamento
+  warehouses: ComboboxData[]
+  units: ComboboxData[]
+  models: ComboboxData[]
 }
 
 type FormValues = Armamento
 
-export default function GunsForm({ defaultValues }: Props) {
+export default function GunsForm({
+  defaultValues,
+  warehouses,
+  units,
+  models,
+}: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
-  const [models, setModels] = React.useState<ComboboxData[]>([])
-  const [units, setUnits] = React.useState<ComboboxData[]>([])
-  const [warehouses, setWarehouses] = React.useState<ComboboxData[]>([])
+
   const form = useForm<FormValues>({
     defaultValues,
   })
@@ -53,36 +60,6 @@ export default function GunsForm({ defaultValues }: Props) {
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
 
-  React.useEffect(() => {
-    startTransition(() => {
-      getAllGunModels().then((data) => {
-        const transformedData = data.map((model) => ({
-          value: model.id,
-          label: model.nombre,
-        }))
-
-        setModels(transformedData)
-      })
-
-      getAllUnits().then((data) => {
-        const transformedData = data.map((unit) => ({
-          value: unit.id,
-          label: unit.nombre,
-        }))
-
-        setUnits(transformedData)
-      })
-
-      getAllWarehouses().then((data) => {
-        const transformedData = data.map((warehouse) => ({
-          value: warehouse.id,
-          label: warehouse.nombre,
-        }))
-
-        setWarehouses(transformedData)
-      })
-    })
-  }, [])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     startTransition(() => {
       if (!isEditEnabled) {
@@ -99,8 +76,8 @@ export default function GunsForm({ defaultValues }: Props) {
 
           if (data?.success) {
             toast({
-              title: 'Categoria creada',
-              description: 'La categoria se ha creado correctamente',
+              title: 'Armamento agregado',
+              description: 'El armamento se ha agregado correctamente',
               variant: 'success',
             })
 
@@ -118,19 +95,17 @@ export default function GunsForm({ defaultValues }: Props) {
 
         return
       }
-
       const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
-
-      // updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //   if (data?.success) {
-      //     toast({
-      //       title: 'Categoria actualizada',
-      //       description: 'La categoria se ha actualizado correctamente',
-      //       variant: 'success',
-      //     })
-      //   }
-      //   router.back()
-      // })
+      updateGun(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Armamento actualizado',
+            description: 'El armamento se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 
@@ -143,306 +118,272 @@ export default function GunsForm({ defaultValues }: Props) {
         className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <div className="px-24">
-          <FormField
-            control={form.control}
-            name="id_modelo"
-            rules={{
-              required: 'Es necesario seleccionar un modelo',
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
-                <FormLabel>¿A qué modelo de arma pertenece?</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={models}
-                  form={form}
-                  field={field}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="serial_armazon"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Serial del armazón</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="serial_canon"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Serial del Cañon</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="color"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Color</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lugar_fabricacion"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Lugar de Fabricación</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="condicion"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Condición</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="pasillo"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Pasillo</FormLabel>
-                <FormControl>
-                  <Input {...field} value={field.value || ''} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="estado"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Estado</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="numero_causa"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Numero de Causa</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={`fecha_fabricacion`}
-            rules={{
-              required: true,
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-row flex-1 items-center gap-5 ">
-                <div className="w-[20rem]">
-                  <FormLabel>Fecha de fabricación</FormLabel>
-                </div>
-                <div className="flex-1 w-full">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={'outline'}
-                          className={cn(
-                            'w-full pl-3 text-left font-normal',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, 'dd/MM/yyyy')
-                          ) : (
-                            <span>Seleccionar fecha</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className=" p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={new Date(field.value)}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date('1900-01-01')
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">
+              Complete la información solicitada para el registro del armamento
+            </CardTitle>
+            <CardDescription>
+              Llene los campos solicitados para el correcto registro
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-4 w-full">
+            <FormField
+              control={form.control}
+              name="id_modelo"
+              rules={{
+                required: 'Es necesario seleccionar un modelo',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full gap-2 justify-center">
+                  <FormLabel>Modelo de Arma: </FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={models}
+                    form={form}
+                    field={field}
+                  />
                   <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="id_unidad"
-            rules={{
-              required: 'Es necesario seleccionar un modelo',
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
-                <FormLabel>¿En qué unidad se encuentra?</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={units}
-                  form={form}
-                  field={field}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="id_almacen"
-            rules={{
-              required: 'Es necesario seleccionar un modelo',
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
-                <FormLabel>¿En qué almacen se encuentra?</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={warehouses}
-                  form={form}
-                  field={field}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="condicion"
+              rules={{
+                required: 'Este campo es necesario',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full gap-1 mt-1.5">
+                  <FormLabel>Condición:</FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={Object.keys(Condiciones_Armamento).map((key) => ({
+                      value: key,
+                      label: key,
+                    }))}
+                    form={form}
+                    field={field}
+                    isValueString
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="id_unidad"
+              rules={{
+                required: 'Es necesario seleccionar una unidad',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full ">
+                  <FormLabel>Unidad: </FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={units}
+                    form={form}
+                    field={field}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="id_almacen"
+              rules={{
+                required: 'Es necesario seleccionar un almacen',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full ">
+                  <FormLabel>Almacén: </FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={warehouses}
+                    form={form}
+                    field={field}
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="serial_armazon"
+              rules={{
+                required: 'Este campo es necesario',
+                minLength: {
+                  value: 3,
+                  message: 'Debe tener al menos 3 caracteres',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Serial del armazón</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="serial_canon"
+              rules={{
+                required: 'Este campo es necesario',
+                minLength: {
+                  value: 3,
+                  message: 'Debe tener al menos 3 caracteres',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Serial del Cañon</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="color"
+              rules={{
+                required: 'Este campo es necesario',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full gap-1 mt-1.5">
+                  <FormLabel>Color:</FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={Object.keys(Colores_Armamento).map((key) => ({
+                      value: key,
+                      label: key,
+                    }))}
+                    form={form}
+                    field={field}
+                    isValueString
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="lugar_fabricacion"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Lugar de Fabricación (Opcional):</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="pasillo"
+              rules={{
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Pasillo (Opcional):</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="estado"
+              rules={{
+                required: 'Este campo es necesario',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full gap-1 mt-1.5">
+                  <FormLabel>Estado del Armamento:</FormLabel>
+                  <Combobox
+                    name={field.name}
+                    data={Object.keys(Estados_Armamento).map((key) => ({
+                      value: key,
+                      label: key,
+                    }))}
+                    form={form}
+                    field={field}
+                    isValueString
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="numero_causa"
+              rules={{
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Numero de Causa (Opcional):</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={`fecha_fabricacion`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Fecha de fabricación (Opcional):</FormLabel>
+
+                  <Input
+                    type="date"
+                    id="fecha_fabricacion"
+                    {...field}
+                    value={
+                      field.value
+                        ? new Date(field.value).toISOString().split('T')[0]
+                        : ''
+                    }
+                    onChange={(e) => {
+                      field.onChange(new Date(e.target.value))
+                    }}
+                    className="w-full flex justify-between"
+                    max={new Date().toISOString().split('T')[0]}
+                  />
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
           <Button variant="default" type="submit" disabled={isPending}>

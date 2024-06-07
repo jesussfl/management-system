@@ -18,7 +18,8 @@ import { Input } from '@/modules/common/components/input/input'
 import { Tipo_Armamento } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createGunType } from '../../lib/actions/type'
+import { createGunType, updateGunType } from '../../lib/actions/type'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Tipo_Armamento
 }
@@ -73,18 +74,18 @@ export default function GunTypesForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunType(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Tipo de arma actualizada',
+            description: 'El tipo de arma se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

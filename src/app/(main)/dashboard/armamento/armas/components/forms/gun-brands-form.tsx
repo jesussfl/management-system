@@ -18,7 +18,8 @@ import { Input } from '@/modules/common/components/input/input'
 import { Marca_Armamento } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createGunBrand } from '../../lib/actions/brand'
+import { createGunBrand, updateGunBrand } from '../../lib/actions/brand'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Marca_Armamento
 }
@@ -73,18 +74,18 @@ export default function GunBrandsForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunBrand(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Marca de arma actualizada',
+            description: 'La marca de arma se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

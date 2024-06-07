@@ -15,15 +15,14 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Input } from '@/modules/common/components/input/input'
-import { Accesorio_Arma, Parte_Arma } from '@prisma/client'
-import { getAllClassifications } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
+import { Parte_Arma } from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createAccessory } from '../../lib/actions/accesories'
 import { ComboboxData } from '@/types/types'
 import { getAllGunModels } from '../../lib/actions/model-actions'
-import { createGunPart } from '../../lib/actions/parts'
+import { createGunPart, updateGunPart } from '../../lib/actions/parts'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Parte_Arma
 }
@@ -92,18 +91,18 @@ export default function GunPartsForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunPart(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Accesorio actualizado',
+            description: 'El accesorio se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

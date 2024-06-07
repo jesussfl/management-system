@@ -19,9 +19,13 @@ import { Accesorio_Arma } from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
-import { createAccessory } from '../../lib/actions/accesories'
+import {
+  createAccessory,
+  updateGunAccessory,
+} from '../../lib/actions/accesories'
 import { ComboboxData } from '@/types/types'
 import { getAllGunModels } from '../../lib/actions/model-actions'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Accesorio_Arma
 }
@@ -90,18 +94,18 @@ export default function GunAccessoriesForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunAccessory(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Accesorio actualizado',
+            description: 'El accesorio se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

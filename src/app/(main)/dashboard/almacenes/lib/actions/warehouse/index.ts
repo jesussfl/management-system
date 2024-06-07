@@ -8,6 +8,25 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
+export const getAllWarehousesToCombobox = async () => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const warehouses = await prisma.almacen.findMany({
+    select: {
+      id: true,
+      nombre: true,
+    },
+  })
+
+  return warehouses.map((warehouse) => ({
+    value: warehouse.id,
+    label: warehouse.nombre,
+  }))
+}
 export const getAllWarehouses = async () => {
   const session = await auth()
 
@@ -52,7 +71,7 @@ export const createWarehouse = async (data: Prisma.AlmacenCreateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.ALMACENES,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -66,7 +85,7 @@ export const createWarehouse = async (data: Prisma.AlmacenCreateInput) => {
   })
 
   await registerAuditAction('Se creó un nuevo almacen llamado ' + data.nombre)
-  revalidatePath('/dashboard/abastecimiento/almacenes')
+  revalidatePath('/dashboard/almacenes')
   return {
     success: 'Almacen creado exitosamente',
     error: false,
@@ -109,7 +128,7 @@ export const deleteWarehouse = async (id: number) => {
   })
 
   await registerAuditAction(`Se eliminó un almacén ${exist?.nombre}`)
-  revalidatePath('/dashboard/abastecimiento/almacenes')
+  revalidatePath('/dashboard/almacenes')
 
   return {
     success: 'Almacén eliminado exitosamente',
@@ -142,7 +161,7 @@ export const deleteMultipleWarehouses = async (ids: number[]) => {
   })
 
   await registerAuditAction(`Se han eliminado las siguientes almacenes ${ids}`)
-  revalidatePath('/dashboard/abastecimiento/almacenes')
+  revalidatePath('/dashboard/almacenes')
 
   return {
     success: 'Se han eliminado los almacenes correctamente',
@@ -160,7 +179,7 @@ export const updateWarehouse = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.ALMACENES,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -191,7 +210,7 @@ export const updateWarehouse = async (
 
   await registerAuditAction('Se actualizó el almacen llamado ' + exist.nombre)
 
-  revalidatePath('/dashboard/abastecimiento/almacenes')
+  revalidatePath('/dashboard/almacenes')
   return {
     error: false,
     success: 'Almacen actualizado exitosamente',

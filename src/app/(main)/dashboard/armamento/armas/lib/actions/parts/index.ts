@@ -31,6 +31,10 @@ export const getGunPartById = async (id: number) => {
     },
   })
 
+  if (!gunPart) {
+    throw new Error('Parte no encontrado')
+  }
+
   return gunPart
 }
 
@@ -44,7 +48,7 @@ export const createGunPart = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.ARMAMENTO,
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -63,5 +67,73 @@ export const createGunPart = async (
   return {
     error: false,
     success: 'Parte creada exitosamente',
+  }
+}
+
+export const updateGunPart = async (
+  data: Prisma.Parte_ArmaUpdateInput,
+  id: number
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunPart = await prisma.parte_Arma.update({
+    where: {
+      id,
+    },
+    data,
+  })
+
+  await registerAuditAction('Se actualizó la parte de arma: ' + gunPart.nombre)
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Parte de arma actualizada exitosamente',
+  }
+}
+
+export const deleteGunPart = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunPart = await prisma.parte_Arma.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction('Se eliminó la parte de arma: ' + gunPart.nombre)
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Parte de arma eliminada exitosamente',
   }
 }

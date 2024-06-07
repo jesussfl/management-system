@@ -21,7 +21,7 @@ import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { ComboboxData } from '@/types/types'
 import { getAllGunTypes } from '../../lib/actions/type'
-import { createGunModel } from '../../lib/actions/model-actions'
+import { createGunModel, updateGunModel } from '../../lib/actions/model-actions'
 import { getAllGunBrands } from '../../lib/actions/brand'
 import {
   Command,
@@ -40,6 +40,7 @@ import { cn } from '@/utils/utils'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import Link from 'next/link'
 import { getAllGunCalibers } from '../../lib/actions/calibre'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Modelo_Armamento
 }
@@ -127,18 +128,18 @@ export default function GunModelsForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunModel(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Modelo de arma actualizado',
+            description: 'El modelo de arma se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

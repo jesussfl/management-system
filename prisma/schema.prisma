@@ -741,6 +741,43 @@ model Modelo_Armamento {
   Armamento   Armamento[]
 }
 
+enum Condiciones_Armamento {
+  Operativo
+  Inoperativo
+  Inutilizado
+}
+
+enum Colores_Armamento {
+  Amarillo
+  Anaranjado
+  Azul
+  Blanco
+  Camuflado
+  Gris
+  Marron
+  Multicolor
+  Negro
+  Rojo
+  Rosado
+  Verde
+  Cromado
+  Pixelado
+  Niquelado
+  Plateado
+  Olivo
+}
+
+enum Estados_Armamento {
+  Asignado
+  Robado
+  Hurtado
+  Extraviado
+  Perdido
+  Decomisado
+  Cadena_Abastecimiento
+  Reparacion
+}
+
 model Armamento {
   descripcion String?
 
@@ -750,12 +787,12 @@ model Armamento {
 
   serial_armazon    String
   serial_canon      String
-  color             String
-  fecha_fabricacion DateTime
-  lugar_fabricacion String
-  condicion         String
-  estado            String
-  numero_causa      String
+  color             Colores_Armamento
+  fecha_fabricacion DateTime?
+  lugar_fabricacion String?
+  condicion         Condiciones_Armamento
+  estado            Estados_Armamento
+  numero_causa      String?
 
   id_unidad Int
   unidad    Unidad_Militar @relation(fields: [id_unidad], references: [id])

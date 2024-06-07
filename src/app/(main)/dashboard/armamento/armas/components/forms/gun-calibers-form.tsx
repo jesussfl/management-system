@@ -19,7 +19,8 @@ import { Calibre } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import { createGunModel } from '../../lib/actions/model-actions'
-import { createGunCaliber } from '../../lib/actions/calibre'
+import { createGunCaliber, updateGunCaliber } from '../../lib/actions/calibre'
+import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 interface Props {
   defaultValues?: Calibre
 }
@@ -74,18 +75,18 @@ export default function GunCalibersForm({ defaultValues }: Props) {
         return
       }
 
-      //   const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
 
-      //   updateCategory(defaultValues.id, dirtyValues).then((data) => {
-      //     if (data?.success) {
-      //       toast({
-      //         title: 'Accesorio actualizado',
-      //         description: 'El accesorio se ha actualizado correctamente',
-      //         variant: 'success',
-      //       })
-      //     }
-      //     router.back()
-      //   })
+      updateGunCaliber(dirtyValues, defaultValues.id).then((data) => {
+        if (data?.success) {
+          toast({
+            title: 'Calibre actualizado',
+            description: 'El calibre se ha actualizado correctamente',
+            variant: 'success',
+          })
+        }
+        router.back()
+      })
     })
   }
 

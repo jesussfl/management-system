@@ -53,6 +53,9 @@ export const getGunById = async (id: number) => {
     },
   })
 
+  if (!gun) {
+    throw new Error('Gun not found')
+  }
   return gun
 }
 
@@ -64,7 +67,7 @@ export const createGun = async (data: Prisma.ArmamentoUncheckedCreateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.ARMAMENTO,
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -83,5 +86,73 @@ export const createGun = async (data: Prisma.ArmamentoUncheckedCreateInput) => {
   return {
     error: false,
     success: 'Arma creada exitosamente',
+  }
+}
+
+export const updateGun = async (
+  data: Prisma.ArmamentoUpdateInput,
+  gunId: number
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.armamento.update({
+    where: {
+      id: gunId,
+    },
+    data,
+  })
+
+  await registerAuditAction('Se actualizo una nueva arma de tipo ' + gunId)
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Arma creada exitosamente',
+  }
+}
+
+export const deleteGun = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.armamento.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction('Se elimino una arma de tipo ' + id)
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Arma eliminada exitosamente',
   }
 }

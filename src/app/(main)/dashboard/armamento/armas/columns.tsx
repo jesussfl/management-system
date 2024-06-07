@@ -17,6 +17,9 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteGun } from './lib/actions/guns'
 type ArmamentoType = Prisma.ArmamentoGetPayload<{
   include: {
     modelo: { include: { tipo: true; partes: true } }
@@ -282,28 +285,19 @@ export const columns: ColumnDef<ArmamentoType>[] = [
       const data = row.original
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <Link href={`/dashboard/armamento/armas/${data.id}`}>
-              <DropdownMenuItem> Editar</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.ARMAS_ARMAMENTO}
+          editConfig={{
+            href: `/dashboard/armamento/armas/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar este armamento?',
+            alertDescription: `Estas a punto de eliminar este armamento y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteGun(data.id)
+            },
+          }}
+        />
       )
     },
   },

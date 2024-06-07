@@ -9,10 +9,9 @@ export default async function Layout({
   children: React.ReactNode
 }) {
   const isAuthorized = await validateSections({
-    sections: [SECTION_NAMES.ARMAMENTO],
+    sections: [SECTION_NAMES.ARMAS_ARMAMENTO],
   })
 
-  console.log('isAuthorized', isAuthorized)
   if (!isAuthorized) {
     redirect('/dashboard')
   }

@@ -8,6 +8,28 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { registerAuditAction } from '@/lib/actions/audit'
+
+export const getAllUnitsToCombobox = async () => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const units = await prisma.unidad_Militar.findMany({
+    select: {
+      id: true,
+      nombre: true,
+    },
+  })
+
+  return units.map((unit) => {
+    return {
+      value: unit.id,
+      label: unit.nombre,
+    }
+  })
+}
 export const getAllUnits = async () => {
   const session = await auth()
 

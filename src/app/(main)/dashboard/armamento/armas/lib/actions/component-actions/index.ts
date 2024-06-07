@@ -44,7 +44,7 @@ export const createGunComponent = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.ARMAMENTO,
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

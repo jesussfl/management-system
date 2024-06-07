@@ -15,12 +15,15 @@ import Link from 'next/link'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Accesorio_Arma, Parte_Arma } from '@prisma/client'
+import { Parte_Arma } from '@prisma/client'
 import { MoreHorizontal } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { deleteGunPart } from '../../lib/actions/parts'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const gunPartColumns: ColumnDef<Parte_Arma>[] = [
   {
     id: 'seleccionar',
@@ -63,45 +66,22 @@ export const gunPartColumns: ColumnDef<Parte_Arma>[] = [
     id: 'acciones',
 
     cell: ({ row }) => {
-      const category = row.original
+      const data = row.original
 
       return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigator.clipboard.writeText(String(category.id))
-                }
-              >
-                Copiar código
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <Link
-                href={`/dashboard/armamento/inventario/categoria/${category.id}`}
-              >
-                <DropdownMenuItem> Editar</DropdownMenuItem>
-              </Link>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem>Eliminar</DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* <DeleteDialog
-            title="¿Estás seguro de que quieres eliminar esta categoría?"
-            description="Estas a punto de eliminar esta categoría y todas sus dependencias"
-            actionMethod={() => deleteCategory(category.id)}
-          /> */}
-        </AlertDialog>
+        <ProtectedTableActions
+          sectionName={SECTION_NAMES.ARMAS_ARMAMENTO}
+          editConfig={{
+            href: `/dashboard/armamento/armas/parte/${data.id}`,
+          }}
+          deleteConfig={{
+            alertTitle: '¿Estás seguro de eliminar esta parte de arma?',
+            alertDescription: `Estas a punto de eliminar esta parte de arma y todas sus dependencias.`,
+            onConfirm: () => {
+              return deleteGunPart(data.id)
+            },
+          }}
+        />
       )
     },
   },

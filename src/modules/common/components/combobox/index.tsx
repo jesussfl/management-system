@@ -59,10 +59,10 @@ export function Combobox({
         </FormControl>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[400px] p-0">
+      <PopoverContent className="PopoverContent">
         <Command>
           <CommandInput placeholder="Buscar..." className="h-9" />
-          <ScrollArea className="max-h-56">
+          <ScrollArea className="h-56">
             <CommandEmpty>Sin resultados.</CommandEmpty>
 
             <CommandGroup>

@@ -27,7 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
+import { Bomb, Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 
@@ -45,6 +45,7 @@ import { gunCaliberColumns } from './components/columns/gun-caliber-columns'
 import { gunPartColumns } from './components/columns/gun-part-columns'
 import { gunAccessoryColumns } from './components/columns/gun-accessory-columns'
 import { getAllGunCalibers } from './lib/actions/calibre'
+import StatisticCard from '@/modules/common/components/statistic-card'
 
 export const metadata: Metadata = {
   title: 'Armas',
@@ -64,7 +65,7 @@ export default async function Page() {
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <Boxes size={24} />
+            <Bomb size={24} />
             Armas
           </PageHeaderTitle>
           <PageHeaderDescription>
@@ -72,21 +73,6 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
-          <Link
-            href="/dashboard/armamento/recepciones/agregar"
-            className={buttonVariants({ variant: 'secondary' })}
-          >
-            <PackagePlus className="mr-2 h-4 w-4" />
-            Agregar Recepción
-          </Link>
-
-          <Link
-            href="/dashboard/armamento/despachos/agregar"
-            className={buttonVariants({ variant: 'secondary' })}
-          >
-            <PackageMinus className="mr-2 h-4 w-4" />
-            Agregar Despacho
-          </Link>
           <Link
             href="/dashboard/armamento/armas/agregar"
             className={buttonVariants({ variant: 'default' })}
@@ -106,6 +92,14 @@ export default async function Page() {
         <TabsContent value="guns">
           <PageContent>
             <Card>
+              <CardHeader className="flex flex-row items-center gap-8 ">
+                <StatisticCard
+                  className="flex-1 h-[116px]"
+                  title="Armas Totales"
+                  number={guns.length}
+                  Icon={<Bomb size={24} />}
+                />
+              </CardHeader>
               <CardContent>
                 <DataTable columns={columns} data={guns} />
               </CardContent>
