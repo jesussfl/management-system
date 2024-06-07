@@ -6,17 +6,8 @@ import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
-import { PersonalType, ProfesionalType } from '@/types/types'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
+import { PersonalType } from '@/types/types'
+import { ArrowUpDown } from 'lucide-react'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
@@ -266,13 +257,13 @@ export const columns: ColumnDef<PersonalType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.RECURSOS_HUMANOS}
+          sectionName={SECTION_NAMES.PERSONAL}
           editConfig={{
             href: `/dashboard/recursos-humanos/personal/${personnel.id}`,
           }}
           deleteConfig={{
-            alertTitle: '¿Estás seguro de eliminar este componente?',
-            alertDescription: `Estas a punto de eliminar este componente y todas sus dependencias.`,
+            alertTitle: '¿Estás seguro de eliminar este personal?',
+            alertDescription: `Estas a punto de eliminar este personal y todas sus dependencias.`,
             onConfirm: () => {
               return deletePersonnel(personnel.cedula)
             },

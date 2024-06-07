@@ -22,7 +22,7 @@ import {
 } from '@/modules/common/components/card/card'
 
 import { columns, guardColumns } from './columns'
-import { getAllPersonnel } from '../personal/lib/actions/professionals'
+import { getAllPersonnel } from '../personal/lib/actions/personnel'
 import { getAllGuards } from './lib/actions'
 import { TableWithExport } from './table-with-export'
 

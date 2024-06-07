@@ -13,7 +13,7 @@ import { DataTable } from '@/modules/common/components/table/data-table'
 import Link from 'next/link'
 import { columns } from './columns'
 
-import { getAllPersonnel } from './lib/actions/professionals'
+import { getAllPersonnel } from './lib/actions/personnel'
 
 export const metadata: Metadata = {
   title: 'Personal',

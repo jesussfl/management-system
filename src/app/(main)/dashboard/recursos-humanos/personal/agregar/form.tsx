@@ -37,7 +37,7 @@ import {
   checkIfPersonnelExists,
   createPersonnel,
   updatePersonnel,
-} from '../lib/actions/professionals'
+} from '../lib/actions/personnel'
 
 import {
   Popover,
@@ -78,6 +78,7 @@ export default function PersonnelForm({ defaultValues }: Props) {
     ...rest
   } = useForm<FormValues>({
     defaultValues,
+    mode: 'all',
   })
   const router = useRouter()
   const [isPending, startTransition] = React.useTransition()
@@ -277,15 +278,15 @@ export default function PersonnelForm({ defaultValues }: Props) {
 
                             if (exists) {
                               toast({
-                                title: 'El Personal ya existe',
+                                title: 'El Profesional ya existe',
                                 action: (
                                   <Link
                                     className={cn(
                                       buttonVariants({ variant: 'secondary' })
                                     )}
-                                    href={`/dashboard/recursos-humanos/personal/${exists.id}`}
+                                    href={`/dashboard/profesionales/${exists.id}`}
                                   >
-                                    Ver datos del personal
+                                    Ver datos del profesional
                                   </Link>
                                 ),
                                 variant: 'destructive',

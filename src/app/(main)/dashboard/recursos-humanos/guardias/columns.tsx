@@ -32,7 +32,12 @@ export const columns: ColumnDef<GuardiasType>[] = [
     header: 'ID',
   },
   {
-    accessorKey: 'cedula',
+    id: 'Nombre_Completo',
+    accessorFn: (row) => {
+      const cedulaCompleta = `${row.tipo_cedula}-${row.cedula}`
+      const nombresApellidos = `${row.nombres} ${row.apellidos}`
+      return `${cedulaCompleta} - ${nombresApellidos}`
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -41,7 +46,41 @@ export const columns: ColumnDef<GuardiasType>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Cédula
+          Cédula y Nombre
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'telefono',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Teléfono
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'cargo_profesional',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Cargo profesional
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -50,9 +89,19 @@ export const columns: ColumnDef<GuardiasType>[] = [
   {
     id: 'guardias',
     accessorFn: (row) => {
-      const fechas = row.guardias
+      const today = new Date()
+      const futurasGuardias = row.guardias.filter(
+        (guardia) => new Date(guardia.fecha) >= today
+      ) // Filtrar las fechas futuras
+
+      if (futurasGuardias.length === 0) {
+        return 'No hay guardias próximas'
+      }
+
+      const fechas = futurasGuardias
         .map((guardia) => format(new Date(guardia.fecha), 'dd/MM/yyyy'))
         .join(', ')
+
       return fechas
     },
     header: ({ column }) => {
@@ -63,7 +112,7 @@ export const columns: ColumnDef<GuardiasType>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Fechas
+          Fechas de guardias
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -95,7 +144,6 @@ export const columns: ColumnDef<GuardiasType>[] = [
             <Link href={`/dashboard/recursos-humanos/guardias/${guard.cedula}`}>
               <DropdownMenuItem>Asignar Guardias</DropdownMenuItem>
             </Link>
-            <DropdownMenuItem>Eliminar</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -116,7 +164,12 @@ export const guardColumns: ColumnDef<Guardias>[] = [
     header: 'ID',
   },
   {
-    accessorKey: 'cedula_usuario',
+    id: 'Nombre_Completo',
+    accessorFn: (row) => {
+      const cedulaCompleta = `${row.personal.tipo_cedula}-${row.personal.cedula}`
+      const nombresApellidos = `${row.personal.nombres} ${row.personal.apellidos}`
+      return `${cedulaCompleta} - ${nombresApellidos}`
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -125,7 +178,7 @@ export const guardColumns: ColumnDef<Guardias>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Cédula
+          Cédula y Nombre
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )

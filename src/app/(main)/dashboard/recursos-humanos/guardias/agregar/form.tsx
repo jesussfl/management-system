@@ -31,7 +31,7 @@ import { useRouter } from 'next/navigation'
 
 import { Shield, Trash } from 'lucide-react'
 import { GuardiasForm, updateGuard } from '../lib/actions'
-import { getAllPersonnel } from '../../personal/lib/actions/professionals'
+import { getAllPersonnel } from '../../personal/lib/actions/personnel'
 import { format } from 'date-fns'
 import {
   Select,
@@ -40,6 +40,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
+import { Switch } from '@/modules/common/components/switch/switch'
+import { Label } from '@/modules/common/components/label/label'
 type FormValues = GuardiasForm
 interface Props {
   defaultValues?: GuardiasForm
@@ -68,6 +70,7 @@ export default function GuardsForm({ defaultValues, cedula }: Props) {
     control: control,
     name: `guardias`,
   })
+  const [showCompletedGuards, setShowCompletedGuards] = React.useState(false)
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     startTransition(() => {
@@ -126,22 +129,37 @@ export default function GuardsForm({ defaultValues, cedula }: Props) {
               Complete la información solicitada para agregar guardias
             </CardTitle>
             <CardDescription>Llene los campos solicitados</CardDescription>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="completed-guards"
+                checked={showCompletedGuards}
+                onCheckedChange={setShowCompletedGuards}
+              />
+              <Label htmlFor="completed-guards">Mostrar Guardias Pasadas</Label>
+            </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
             <Button
               variant="default"
-              onClick={() =>
+              onClick={(e) => {
+                e.preventDefault()
                 append({
                   ubicacion: '',
                   fecha: new Date(),
                   estado: '',
                 })
-              }
+              }}
             >
-              Añadir fecha
+              Agregar Guardia
             </Button>
-            <div className="grid xl:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {fields.map((field, index) => {
+                const guardDate = new Date(field.fecha)
+                const yesterday = new Date()
+                yesterday.setDate(yesterday.getDate() - 1) // Obtiene la fecha de ayer
+                const isPastGuard = guardDate < yesterday // Verifica si la fecha de la guardia es anterior a ayer
+                if (!showCompletedGuards && isPastGuard) return null // Oculta las guardias pasadas si showCompletedGuards es false y la guardia es pasada
+
                 return (
                   <Card
                     key={field.id}

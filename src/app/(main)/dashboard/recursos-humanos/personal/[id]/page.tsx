@@ -10,7 +10,7 @@ import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import PersonnelForm from '../agregar/form'
-import { getPersonnelById } from '../lib/actions/professionals'
+import { getPersonnelById } from '../lib/actions/personnel'
 
 export const metadata: Metadata = {
   title: 'Editar Personal',

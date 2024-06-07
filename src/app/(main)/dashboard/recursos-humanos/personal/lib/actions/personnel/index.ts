@@ -17,7 +17,7 @@ export const createPersonnel = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.RECURSOS_HUMANOS,
+    sectionName: SECTION_NAMES.PERSONAL,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -90,7 +90,7 @@ export const deletePersonnel = async (cedula: string) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.RECURSOS_HUMANOS,
+    sectionName: SECTION_NAMES.PERSONAL,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
