@@ -368,7 +368,7 @@ export const Step3 = ({
         />
       </div>
 
-      {/* <ImageUpload setFile={setImage} /> */}
+      <ImageUpload setFile={setImage} />
 
       {
         <FormField
