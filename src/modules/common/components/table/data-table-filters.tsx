@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
+import { Search } from 'lucide-react'
 
 interface MultipleDeleteProps {
   isMultipleDeleteEnabled: true
@@ -56,15 +57,17 @@ export default function DataTableFilters({
   return (
     <div className="flex flex-1 justify-between items-center py-4">
       <Input
-        placeholder="Filtrar..."
+        placeholder="Buscar..."
         value={filtering}
         onChange={(event) => setFiltering(event.target.value)}
+        startIcon={Search}
+        className="w-[450px]"
         // value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
         // onChange={(event) =>
         //   table.getColumn('nombre')?.setFilterValue(event.target.value)
         // }
-        className="max-w-sm"
       />
+
       <div className="flex gap-4">
         {isColumnFilterEnabled && (
           <DropdownMenu>

@@ -53,6 +53,7 @@ import {
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
 import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
+import { FilterIcon } from 'lucide-react'
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>
@@ -225,22 +226,38 @@ export function DataTable<TData extends { id: any }, TValue>({
                           : ''
                       }
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      {header.column.getCanFilter() &&
-                      !COLUMNS_TO_EXCLUDE.includes(header.column.id) ? (
-                        <div>
-                          <Filter
-                            key={header.id}
-                            column={header.column}
-                            table={table}
-                          />
-                        </div>
-                      ) : null}
+                      <div className="flex">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        {header.column.getCanFilter() &&
+                        !COLUMNS_TO_EXCLUDE.includes(header.column.id) ? (
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant={
+                                  header.column.getFilterValue()
+                                    ? 'default'
+                                    : 'ghost'
+                                }
+                                size="sm"
+                              >
+                                <FilterIcon className="h-3 w-3" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <Filter
+                                key={header.id}
+                                column={header.column}
+                                table={table}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        ) : null}
+                      </div>
                     </TableHead>
                   )
                 })}
@@ -261,7 +278,7 @@ export function DataTable<TData extends { id: any }, TValue>({
                       className={
                         index === row.getVisibleCells().length - 1
                           ? 'sticky right-0 top-0 bg-background'
-                          : ''
+                          : 'text-center'
                       }
                     >
                       {flexRender(
@@ -326,47 +343,46 @@ function Filter({
     const date = columnFilterValue as DateRange | undefined
 
     return (
-      <div>
-        <div className="flex space-x-2">
-          <div className={cn('grid gap-2')}>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id="date"
-                  variant={'outline'}
-                  className={cn(
-                    'w-[240px] justify-start text-left font-normal',
-                    !date && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date?.from ? (
-                    date.to ? (
-                      <>
-                        {format(date.from, 'dd/MM/y')} -{' '}
-                        {format(date.to, 'dd/MM/y')}
-                      </>
-                    ) : (
-                      format(date.from, 'dd/MM/y')
-                    )
+      <div className="flex flex-1 space-x-2">
+        <div className={cn('grid gap-2')}>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="date"
+                variant={'outline'}
+                className={cn(
+                  'w-[240px] justify-start text-left font-normal',
+                  !date && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date?.from ? (
+                  date.to ? (
+                    <>
+                      {format(date.from, 'dd/MM/y')} -{' '}
+                      {format(date.to, 'dd/MM/y')}
+                    </>
                   ) : (
-                    <span>Seleccionar fechas</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  initialFocus
-                  mode="range"
-                  defaultMonth={date?.from}
-                  selected={date}
-                  onSelect={column.setFilterValue}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          {/* <Input
+                    format(date.from, 'dd/MM/y')
+                  )
+                ) : (
+                  <span>Seleccionar fechas</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={date?.from}
+                selected={date}
+                onSelect={column.setFilterValue}
+                numberOfMonths={2}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+        {/* <Input
             type="datetime-local"
             // debounce={200}
             value={startDate ? dayjs(startDate).format('YYYY-MM-DDTHH:mm') : ''}
@@ -401,14 +417,13 @@ function Filter({
                 ])
             }}
           /> */}
-        </div>
-        <div className="h-1" />
       </div>
     )
   }
 
   return typeof firstValue === 'number' ? (
-    <div>
+    <div className="flex flex-col gap-2">
+      <p className="text-sm text-muted-foreground"> Filtrar por rango </p>
       <div className="flex space-x-2">
         <DebouncedInput
           type="number"
@@ -419,8 +434,9 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [value, old?.[1]])
           }
           placeholder={`Min.`}
-          className="w-24 border rounded text-xs"
+          className="flex-1 border rounded text-xs"
         />
+
         <DebouncedInput
           type="number"
           min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
@@ -430,10 +446,9 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [old?.[0], value])
           }
           placeholder={`Max.`}
-          className="w-24 border rounded text-xs"
+          className="flex-1 border rounded text-xs"
         />
       </div>
-      <div className="h-1" />
     </div>
   ) : (
     <>
@@ -447,10 +462,9 @@ function Filter({
         value={(columnFilterValue ?? '') as string}
         onChange={(value) => column.setFilterValue(value)}
         placeholder={`Buscar...`}
-        className="w-36 border rounded text-xs"
+        className="flex-1 border rounded text-xs"
         list={column.id + 'list'}
       />
-      <div className="h-1" />
     </>
   )
 }
