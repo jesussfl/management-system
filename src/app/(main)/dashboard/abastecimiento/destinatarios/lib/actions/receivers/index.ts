@@ -43,7 +43,7 @@ export const createReceiver = async (
   await prisma.destinatario.create({
     data: {
       ...data,
-      servicio: 'Armamento',
+      servicio: 'Abastecimiento',
     },
   })
 
