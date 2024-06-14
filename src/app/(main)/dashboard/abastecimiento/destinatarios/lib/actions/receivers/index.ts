@@ -65,7 +65,7 @@ export const getAllReceivers = async () => {
   }
   const receivers = await prisma.destinatario.findMany({
     where: {
-      servicio: 'Armamento',
+      servicio: 'Abastecimiento',
     },
     include: {
       despachos: true,
