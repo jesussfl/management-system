@@ -278,7 +278,7 @@ export function DataTable<TData extends { id: any }, TValue>({
                       className={
                         index === row.getVisibleCells().length - 1
                           ? 'sticky right-0 top-0 bg-background'
-                          : 'text-center'
+                          : ''
                       }
                     >
                       {flexRender(
