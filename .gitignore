@@ -38,3 +38,7 @@ next-env.d.ts
 .env.local
 .env.production
 .env.development
+
+
+# Contentlayer
+.contentlayer
