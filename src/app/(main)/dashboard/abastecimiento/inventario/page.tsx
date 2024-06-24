@@ -60,10 +60,11 @@ import {
 } from './lib/actions/subsystems'
 import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
 import { TableWithExport } from './table-with-export'
-import { getLowStockItems } from '../../page'
+
 import { Badge } from '@/modules/common/components/badge'
 import { getStatistics } from '../../lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
+import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
 
 export const metadata: Metadata = {
   title: 'Inventario',

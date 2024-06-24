@@ -28,7 +28,6 @@ import {
 import Link from 'next/link'
 import { auth } from '@/auth'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { RenglonWithAllRelations } from '@/types/types'
 import { getAllAuditItemsByUser } from './auditoria/lib/actions'
 import { columns } from './auditoria/columns'
 import { getUserWithAttendances } from './recursos-humanos/asistencias/lib/actions'
@@ -38,29 +37,6 @@ import AttendanceInfoContainerV2 from '@/app/(attendance)/asistencias/consulta/[
 export const metadata: Metadata = {
   title: 'Administrador',
   description: 'Desde aquí puedes administrar las salidas del inventario',
-}
-
-export const getLowStockItems = (items: RenglonWithAllRelations[]) => {
-  const lowStockItems = items.filter((item) => {
-    const stock = item.recepciones.reduce(
-      (total, item) => total + item.cantidad,
-      0
-    )
-    const dispatchedSerials = item.despachos.reduce(
-      (total, item) => total + item.seriales.length,
-      0
-    )
-    const returnedSerials = item.devoluciones.reduce(
-      (total, item) => total + item.seriales.length,
-      0
-    )
-
-    const totalStock = stock - dispatchedSerials + returnedSerials
-
-    return totalStock <= item.stock_minimo
-  })
-
-  return lowStockItems as RenglonWithAllRelations[]
 }
 
 export default async function Page() {
