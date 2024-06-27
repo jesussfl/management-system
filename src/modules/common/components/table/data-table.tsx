@@ -382,41 +382,6 @@ function Filter({
             </PopoverContent>
           </Popover>
         </div>
-        {/* <Input
-            type="datetime-local"
-            // debounce={200}
-            value={startDate ? dayjs(startDate).format('YYYY-MM-DDTHH:mm') : ''}
-            onChange={(e) => {
-              const value = e.target.value
-              if (
-                isValidDate(value) &&
-                value !== '' &&
-                value !== 'Invalid Date'
-              ) {
-                column.setFilterValue((old: [Date, Date]) => [
-                  new Date(value),
-                  old?.[1],
-                ])
-              }
-            }}
-          />
-          <Input
-            type="datetime-local"
-            // debounce={200}
-            value={endDate ? dayjs(startDate).format('YYYY-MM-DDTHH:mm') : ''}
-            onChange={(e) => {
-              const value = e.target.value
-              if (
-                isValidDate(value) &&
-                value !== '' &&
-                value !== 'Invalid Date'
-              )
-                column.setFilterValue((old: [Date, Date]) => [
-                  old?.[0],
-                  new Date(value),
-                ])
-            }}
-          /> */}
       </div>
     )
   }

@@ -29,7 +29,7 @@ import {
 import 'react-phone-input-2/lib/style.css'
 import { useRouter } from 'next/navigation'
 
-import { Shield, Trash } from 'lucide-react'
+import { Shield, Trash, TrashIcon } from 'lucide-react'
 import { GuardiasForm, updateGuard } from '../lib/actions'
 import { getAllPersonnel } from '../../personal/lib/actions/personnel'
 import { format } from 'date-fns'
@@ -42,6 +42,10 @@ import {
 } from '@/modules/common/components/select/select'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { Label } from '@/modules/common/components/label/label'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 type FormValues = GuardiasForm
 interface Props {
   defaultValues?: GuardiasForm
@@ -194,36 +198,32 @@ export default function GuardsForm({ defaultValues, cedula }: Props) {
                             <FormDescription>
                               Selecciona la fecha en la que será la guardia.
                             </FormDescription>
-                            <Input
-                              type="datetime-local"
-                              id="fecha_despacho"
-                              {...field}
-                              value={
-                                field.value
-                                  ? format(
-                                      new Date(field.value),
-                                      "yyyy-MM-dd'T'HH:mm"
-                                    )
-                                  : ''
-                              }
-                              onBlur={() => {
-                                trigger(`guardias.${index}.fecha`)
-                              }}
-                              onChange={(e) => {
-                                if (!e.target.value) {
-                                  //@ts-ignore
-                                  setValue(`guardias.${index}.fecha`, null)
-                                  return
-                                }
-
-                                setValue(
-                                  `guardias.${index}.fecha`,
-                                  new Date(e.target.value)
-                                )
-                              }}
-                              className="w-full"
-                            />
-                            <FormMessage />
+                            <div>
+                              <div className="flex gap-2">
+                                <DatePicker
+                                  placeholderText="Seleccionar fecha"
+                                  onChange={(date) => field.onChange(date)}
+                                  selected={field.value}
+                                  locale={es}
+                                  peekNextMonth
+                                  showMonthDropdown
+                                  showYearDropdown
+                                  showTimeSelect
+                                  dateFormat="d MMMM, yyyy h:mm aa"
+                                  dropdownMode="select"
+                                />
+                                <Button
+                                  variant={'secondary'}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    field.onChange(null)
+                                  }}
+                                >
+                                  <TrashIcon className="h-5 w-5" />
+                                </Button>
+                              </div>
+                              <FormMessage />
+                            </div>
                           </FormItem>
                         )}
                       />
