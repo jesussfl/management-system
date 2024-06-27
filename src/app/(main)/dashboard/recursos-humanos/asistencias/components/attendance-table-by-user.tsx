@@ -1,6 +1,6 @@
 // components/AttendanceTable.tsx
 'use client'
-// components/AttendanceTable.tsx
+
 import { useState } from 'react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns'
 import { es } from 'date-fns/locale'
@@ -20,8 +20,6 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import { Prisma } from '@prisma/client'
-import { Input } from '@/modules/common/components/input/input'
-import { Search } from 'lucide-react'
 
 type UserWithAttendances = Prisma.UsuarioGetPayload<{
   include: {
@@ -161,8 +159,6 @@ const AttendanceTableByUser: React.FC<AttendanceTableProps> = ({ user }) => {
               )
             })}
           </TableRow>
-          {/* {filteredUsers.map((user) => (
-          ))} */}
         </TableBody>
       </Table>
     </div>

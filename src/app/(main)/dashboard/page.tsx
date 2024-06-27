@@ -11,12 +11,6 @@ import {
 import { Metadata } from 'next'
 
 import { PageContent } from '@/modules/layout/templates/page'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/modules/common/components/tabs/tabs'
 
 import {
   Card,
@@ -31,8 +25,8 @@ import { DataTable } from '@/modules/common/components/table/data-table'
 import { getAllAuditItemsByUser } from './auditoria/lib/actions'
 import { columns } from './auditoria/columns'
 import { getUserWithAttendances } from './recursos-humanos/asistencias/lib/actions'
-import AttendanceTableByUser from './recursos-humanos/asistencias/components/attendance-table-by-user'
 import AttendanceInfoContainerV2 from '@/app/(attendance)/asistencias/consulta/[userId]/attendance-info-container-v2'
+import AttendanceTable from './recursos-humanos/asistencias/components/attendance-table'
 
 export const metadata: Metadata = {
   title: 'Administrador',
@@ -84,51 +78,40 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="overview">Resumen</TabsTrigger>
-          </TabsList>
-          <TabsContent value="overview" className="space-y-4">
-            <Card>
-              <CardHeader className="flex flex-row justify-between">
-                <CardTitle className="text-xl">
-                  Calendario de Asistencias
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* @ts-ignore */}
-                <AttendanceTableByUser user={attendances} />
-              </CardContent>
-            </Card>
+        <Card>
+          <CardHeader className="flex flex-row justify-between">
+            <CardTitle className="text-xl">Tus asistencias</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {/* @ts-ignore */}
+            <AttendanceTable user={attendances} />
+          </CardContent>
+        </Card>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 ">
-              <Card>
-                <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">Información Actual</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* @ts-ignore */}
-                  <AttendanceInfoContainerV2 userId={session?.user?.id} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">
-                    Tu actividad reciente
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    columns={columns}
-                    // @ts-ignore
-                    data={myRecentActivities}
-                    isMultipleDeleteEnabled={false}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2 ">
+          <Card>
+            <CardHeader className="flex flex-row justify-between">
+              <CardTitle className="text-xl">Información Actual</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* @ts-ignore */}
+              <AttendanceInfoContainerV2 userId={session?.user?.id} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row justify-between">
+              <CardTitle className="text-xl">Tu actividad reciente</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={columns}
+                // @ts-ignore
+                data={myRecentActivities}
+                isMultipleDeleteEnabled={false}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </PageContent>
     </>
   )
