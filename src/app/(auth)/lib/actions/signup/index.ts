@@ -38,30 +38,75 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: 'Este correo ya está registrado', field: 'email' }
   }
 
-  await prisma.usuario.create({
-    data: {
-      cedula: validatedFields.data.cedula,
-      tipo_cedula: validatedFields.data.tipo_cedula,
-      nombre: name,
-      email,
-      contrasena: hashedPassword,
-      estado: 'Activo',
-      rol: {
-        connectOrCreate: {
-          where: {
-            rol: 'Básico',
-          },
+  try {
+    await prisma.$transaction(async (prisma) => {
+      // Parte 1: Contar Usuarios
+      const users_count = await prisma.usuario.count()
+
+      // Determinar el rol y su descripción basados en el conteo de usuarios
+      const rolData = {
+        rol: users_count === 0 ? 'Administrador' : 'Básico',
+        descripcion:
+          users_count === 0
+            ? 'Permitir acceso a todas las funcionalidades'
+            : 'Acceso limitado a algunas funcionalidades',
+      }
+
+      // Parte 2: Crear o Conectar Rol
+      const rol = await prisma.rol.upsert({
+        where: { rol: rolData.rol },
+        update: {},
+        create: rolData,
+      })
+
+      // Si es el primer usuario, crear o conectar permiso
+      let permiso
+      if (users_count === 0) {
+        permiso = await prisma.permiso.upsert({
+          where: { key: 'TODAS:FULL' },
+          update: {},
           create: {
-            rol: 'Básico',
+            permiso: 'Acceso de superusuario',
+            key: 'TODAS:FULL',
             descripcion:
-              'Este rol solo tiene permisos para registrar hora de entrada y sálida',
+              'Este permiso otorga acceso total del sistema al rol que lo posee',
+          },
+        })
+
+        await prisma.roles_Permisos.create({
+          data: {
+            rol_nombre: rol.rol,
+            permiso_key: permiso.key,
+            active: true,
+          },
+        })
+      }
+
+      // Parte 4: Asignar Rol y Permiso al Usuario
+      await prisma.usuario.create({
+        data: {
+          cedula: validatedFields.data.cedula,
+          tipo_cedula: validatedFields.data.tipo_cedula,
+          nombre: name,
+          email,
+          contrasena: hashedPassword,
+          estado: 'Activo',
+          rol: {
+            connect: {
+              id: rol.id,
+            },
           },
         },
-      },
-    },
-  })
+      })
+    })
 
-  return { success: 'Registrado correctamente' }
+    console.log('Usuario creado exitosamente')
+    return { success: 'Registrado correctamente' }
+  } catch (error) {
+    console.error('Error al crear el usuario:', error)
+  } finally {
+    await prisma.$disconnect()
+  }
 }
 
 type SignupByFacialID = {
@@ -94,33 +139,76 @@ export const signupByFacialID = async ({
     }
   }
   console.log({ email, facialID, adminPassword, name })
+
   try {
-    await prisma.usuario.create({
-      data: {
-        cedula,
-        tipo_cedula,
-        nombre: name,
-        email,
-        facialID,
-        estado: 'Activo',
-        rol: {
-          connectOrCreate: {
-            where: {
-              rol: 'Básico',
-            },
-            create: {
-              rol: 'Básico',
-              descripcion:
-                'Este rol solo tiene permisos para registrar hora de entrada y sálida',
+    await prisma.$transaction(async (prisma) => {
+      // Parte 1: Contar Usuarios
+      const users_count = await prisma.usuario.count()
+
+      // Determinar el rol y su descripción basados en el conteo de usuarios
+      const rolData = {
+        rol: users_count === 0 ? 'Administrador' : 'Básico',
+        descripcion:
+          users_count === 0
+            ? 'Permitir acceso a todas las funcionalidades'
+            : 'Acceso limitado a algunas funcionalidades',
+      }
+
+      // Parte 2: Crear o Conectar Rol
+      const rol = await prisma.rol.upsert({
+        where: { rol: rolData.rol },
+        update: {},
+        create: rolData,
+      })
+
+      // Si es el primer usuario, crear o conectar permiso
+      let permiso
+      if (users_count === 0) {
+        permiso = await prisma.permiso.upsert({
+          where: { key: 'TODAS:FULL' },
+          update: {},
+          create: {
+            permiso: 'Acceso de superusuario',
+            key: 'TODAS:FULL',
+            descripcion:
+              'Este permiso otorga acceso total del sistema al rol que lo posee',
+          },
+        })
+
+        await prisma.roles_Permisos.create({
+          data: {
+            rol_nombre: rol.rol,
+            permiso_key: permiso.key,
+            active: true,
+          },
+        })
+      }
+
+      // Parte 4: Asignar Rol y Permiso al Usuario
+      await prisma.usuario.create({
+        data: {
+          cedula,
+          tipo_cedula,
+          nombre: name,
+          email,
+          facialID,
+          estado: 'Activo',
+          rol: {
+            connect: {
+              id: rol.id,
             },
           },
         },
-      },
+      })
     })
+
+    console.log('Usuario creado exitosamente')
     return { success: 'Registrado correctamente' }
   } catch (error) {
-    console.log(error)
+    console.error('Error al crear el usuario:', error)
     return { error: 'Error al registrar la persona', field: 'facialID' }
+  } finally {
+    await prisma.$disconnect()
   }
 }
 

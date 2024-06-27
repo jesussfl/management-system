@@ -48,8 +48,10 @@ export const validatePassword = ({
   }
 
   if (options?.hasNumber && !hasNumber) {
+    return 'La contraseña debe tener al menos un número'
   }
 
   if (options?.hasSymbol && !hasSymbol) {
+    return 'La contraseña debe tener al menos un simbolo'
   }
 }
