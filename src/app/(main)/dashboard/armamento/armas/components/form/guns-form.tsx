@@ -33,7 +33,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 interface Props {
   defaultValues?: Armamento
   warehouses: ComboboxData[]
@@ -362,20 +365,15 @@ export default function GunsForm({
                 <FormItem>
                   <FormLabel>Fecha de fabricación (Opcional):</FormLabel>
 
-                  <Input
-                    type="date"
-                    id="fecha_fabricacion"
-                    {...field}
-                    value={
-                      field.value
-                        ? new Date(field.value).toISOString().split('T')[0]
-                        : ''
-                    }
-                    onChange={(e) => {
-                      field.onChange(new Date(e.target.value))
-                    }}
-                    className="w-full flex justify-between"
-                    max={new Date().toISOString().split('T')[0]}
+                  <DatePicker
+                    placeholderText="Seleccionar fecha"
+                    onChange={(date) => field.onChange(date)}
+                    selected={field.value}
+                    locale={es}
+                    peekNextMonth
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
                   />
 
                   <FormMessage />

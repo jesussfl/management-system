@@ -22,7 +22,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { format } from 'date-fns'
-import { CheckIcon, Loader2, Plus, X } from 'lucide-react'
+import { CheckIcon, Loader2, Plus, TrashIcon, X } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -61,7 +61,10 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -646,57 +649,47 @@ export default function ReceptionsForm({
               rules={{
                 required: true,
                 validate: (value) => {
-                  if (value > new Date()) {
-                    return 'La fecha de recepción no debe ser mayor a la fecha actual'
-                  }
+                  if (value > new Date())
+                    return 'La fecha no puede ser mayor a la actual'
                 },
               }}
-              render={({ field }) => {
-                return (
-                  <FormItem className="flex flex-row flex-1 items-center gap-5 ">
-                    <div className="w-[20rem]">
-                      <FormLabel>Fecha de recepción</FormLabel>
-                      <FormDescription>
-                        Selecciona la fecha en la que se reciben los materiales
-                        o renglones{' '}
-                      </FormDescription>
-                    </div>
-                    <div className="flex-1 w-full">
-                      <Input
-                        type="datetime-local"
-                        id="fecha_recepcion"
-                        {...field}
-                        value={
-                          field.value
-                            ? format(
-                                new Date(field.value),
-                                "yyyy-MM-dd'T'HH:mm"
-                              )
-                            : ''
-                        }
-                        onBlur={() => {
-                          form.trigger('fecha_recepcion')
-                        }}
-                        onChange={(e) => {
-                          if (!e.target.value) {
-                            //@ts-ignore
-                            form.setValue('fecha_recepcion', null)
-                            return
-                          }
-
-                          form.setValue(
-                            'fecha_recepcion',
-                            new Date(e.target.value)
-                          )
-                        }}
-                        className="w-full"
+              render={({ field }) => (
+                <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
+                  <div className="w-[20rem]">
+                    <FormLabel>Fecha de recepción</FormLabel>
+                    <FormDescription>
+                      Selecciona la fecha en la que se reciben los materiales o
+                      renglones{' '}
+                    </FormDescription>
+                  </div>
+                  <div>
+                    <div className="flex gap-2">
+                      <DatePicker
+                        placeholderText="Seleccionar fecha"
+                        onChange={(date) => field.onChange(date)}
+                        selected={field.value}
+                        locale={es}
+                        peekNextMonth
+                        showMonthDropdown
+                        showYearDropdown
+                        showTimeSelect
+                        dateFormat="d MMMM, yyyy h:mm aa"
+                        dropdownMode="select"
                       />
-
-                      <FormMessage />
+                      <Button
+                        variant={'secondary'}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          field.onChange(null)
+                        }}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
                     </div>
-                  </FormItem>
-                )
-              }}
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
             />
             <div className="border-b border-base-300" />
 

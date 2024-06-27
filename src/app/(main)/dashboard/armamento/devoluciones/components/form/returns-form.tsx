@@ -1,12 +1,12 @@
 'use client'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { CheckIcon, Plus, X } from 'lucide-react'
+import { CheckIcon, Plus, TrashIcon, X } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -18,7 +18,6 @@ import {
 } from '@/modules/common/components/form'
 
 import { RenglonWithAllRelations } from '@/types/types'
-import { format } from 'date-fns'
 import {
   Popover,
   PopoverContent,
@@ -35,7 +34,6 @@ import {
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Prisma, Devoluciones_Renglones, Devolucion } from '@prisma/client'
 import ModalForm from '@/modules/common/components/modal-form'
-import { getAllReceivers } from '@/app/(main)/dashboard/armamento/destinatarios/lib/actions/receivers'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import {
   Command,
@@ -45,10 +43,12 @@ import {
   CommandItem,
 } from '@/modules/common/components/command/command'
 import Link from 'next/link'
-import { getAllProfessionals } from '@/app/(main)/dashboard/profesionales/lib/actions/professionals'
 import { SelectedItemCard } from './card-item-selected'
 import { createReturn, updateReturn } from '../../lib/actions/returns'
-import { Input } from '@/modules/common/components/input/input'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -617,15 +617,12 @@ export default function ReturnsForm({
               rules={{
                 required: true,
                 validate: (value) => {
-                  //validate if the date is in the future
-
-                  if (value > new Date()) {
-                    return 'La fecha de devolució́n no debe ser después a la fecha actual'
-                  }
+                  if (value > new Date())
+                    return 'La fecha no puede ser mayor a la actual'
                 },
               }}
               render={({ field }) => (
-                <FormItem className="flex flex-row flex-1 items-center gap-5 ">
+                <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
                   <div className="w-[20rem]">
                     <FormLabel>Fecha de devolución</FormLabel>
                     <FormDescription>
@@ -633,33 +630,30 @@ export default function ReturnsForm({
                       o renglones{' '}
                     </FormDescription>
                   </div>
-                  <div className="flex-1 w-full">
-                    <Input
-                      type="datetime-local"
-                      id="fecha_devolucion"
-                      {...field}
-                      value={
-                        field.value
-                          ? format(new Date(field.value), "yyyy-MM-dd'T'HH:mm")
-                          : ''
-                      }
-                      onBlur={() => {
-                        form.trigger('fecha_devolucion')
-                      }}
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          //@ts-ignore
-                          form.setValue('fecha_devolucion', null)
-                          return
-                        }
-
-                        form.setValue(
-                          'fecha_devolucion',
-                          new Date(e.target.value)
-                        )
-                      }}
-                      className="w-full"
-                    />
+                  <div>
+                    <div className="flex gap-2">
+                      <DatePicker
+                        placeholderText="Seleccionar fecha"
+                        onChange={(date) => field.onChange(date)}
+                        selected={field.value}
+                        locale={es}
+                        peekNextMonth
+                        showMonthDropdown
+                        showYearDropdown
+                        showTimeSelect
+                        dateFormat="d MMMM, yyyy h:mm aa"
+                        dropdownMode="select"
+                      />
+                      <Button
+                        variant={'secondary'}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          field.onChange(null)
+                        }}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </div>
                 </FormItem>

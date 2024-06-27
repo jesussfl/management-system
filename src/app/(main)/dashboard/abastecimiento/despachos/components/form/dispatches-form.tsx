@@ -6,7 +6,7 @@ import { cn } from '@/utils/utils'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { CheckIcon, Plus, X } from 'lucide-react'
+import { CheckIcon, Plus, TrashIcon, X } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -55,7 +55,10 @@ import {
 import { Input } from '@/modules/common/components/input/input'
 import Link from 'next/link'
 import { CardItemDispatch } from './card-item-dispatch'
-
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -634,7 +637,7 @@ export default function DispatchesForm({
                 },
               }}
               render={({ field }) => (
-                <FormItem className="flex flex-row flex-1 items-center gap-5 ">
+                <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
                   <div className="w-[20rem]">
                     <FormLabel>Fecha de despacho</FormLabel>
                     <FormDescription>
@@ -642,33 +645,30 @@ export default function DispatchesForm({
                       o renglones{' '}
                     </FormDescription>
                   </div>
-                  <div className="flex-1 w-full">
-                    <Input
-                      type="datetime-local"
-                      id="fecha_despacho"
-                      {...field}
-                      value={
-                        field.value
-                          ? format(new Date(field.value), "yyyy-MM-dd'T'HH:mm")
-                          : ''
-                      }
-                      onBlur={() => {
-                        form.trigger('fecha_despacho')
-                      }}
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          //@ts-ignore
-                          form.setValue('fecha_despacho', null)
-                          return
-                        }
-
-                        form.setValue(
-                          'fecha_despacho',
-                          new Date(e.target.value)
-                        )
-                      }}
-                      className="w-full"
-                    />
+                  <div>
+                    <div className="flex gap-2">
+                      <DatePicker
+                        placeholderText="Seleccionar fecha"
+                        onChange={(date) => field.onChange(date)}
+                        selected={field.value}
+                        locale={es}
+                        peekNextMonth
+                        showMonthDropdown
+                        showYearDropdown
+                        showTimeSelect
+                        dateFormat="d MMMM, yyyy h:mm aa"
+                        dropdownMode="select"
+                      />
+                      <Button
+                        variant={'secondary'}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          field.onChange(null)
+                        }}
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </div>
                 </FormItem>

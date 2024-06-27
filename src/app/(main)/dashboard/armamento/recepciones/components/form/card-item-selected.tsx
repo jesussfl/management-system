@@ -40,11 +40,12 @@ import {
   CommandItem,
 } from '@/modules/common/components/command/command'
 import { cn } from '@/utils/utils'
+import DatePicker, { registerLocale } from 'react-datepicker'
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+import 'react-datepicker/dist/react-datepicker.css'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
-}>
-type PedidoType = Prisma.PedidoGetPayload<{
-  include: { renglones: { include: { renglon: true } } }
 }>
 
 export const CardItemSelected = ({
@@ -227,20 +228,15 @@ export const CardItemSelected = ({
             <FormItem className="items-center flex flex-1 justify-between gap-2">
               <FormLabel className="w-[12rem]">Fecha de fabricación:</FormLabel>
               <div className="flex-1 w-full">
-                <Input
-                  type="date"
-                  id="fecha_fabricacion"
-                  {...field}
-                  value={
-                    field.value
-                      ? new Date(field.value).toISOString().split('T')[0]
-                      : ''
-                  }
-                  onChange={(e) => {
-                    field.onChange(new Date(e.target.value))
-                  }}
-                  className="w-full"
-                  max={new Date().toISOString().split('T')[0]}
+                <DatePicker
+                  placeholderText="Seleccionar fecha"
+                  onChange={(date) => field.onChange(date)}
+                  selected={field.value}
+                  locale={es}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
                 />
 
                 <FormMessage />
@@ -261,19 +257,15 @@ export const CardItemSelected = ({
             <FormItem className=" items-center flex  justify-between gap-2">
               <FormLabel className="w-[12rem]">Fecha de vencimiento:</FormLabel>
               <div className="flex-1 w-full">
-                <Input
-                  type="date"
-                  id="fecha_vencimiento"
-                  {...field}
-                  value={
-                    field.value
-                      ? new Date(field.value).toISOString().split('T')[0]
-                      : ''
-                  }
-                  onChange={(e) => {
-                    field.onChange(new Date(e.target.value))
-                  }}
-                  className="w-full"
+                <DatePicker
+                  placeholderText="Seleccionar fecha"
+                  onChange={(date) => field.onChange(date)}
+                  selected={field.value}
+                  locale={es}
+                  peekNextMonth
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
                 />
 
                 <FormMessage />
@@ -309,8 +301,8 @@ export const CardItemSelected = ({
                 <FormControl>
                   <Input
                     inputMode="decimal"
-                    type="text"
-                    pattern="[0-9]*[.,]?[0-9]*"
+                    type="number"
+                    // pattern="[0-9]*[.,]?[0-9]*"
                     {...field}
                     onChange={(event) =>
                       field.onChange(parseFloat(event.target.value))

@@ -81,6 +81,7 @@
     "react": "^18",
     "react-aria": "^3.31.0",
     "react-currency-input-field": "^3.8.0",
+    "react-datepicker": "^7.2.0",
     "react-day-picker": "^8.9.1",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
