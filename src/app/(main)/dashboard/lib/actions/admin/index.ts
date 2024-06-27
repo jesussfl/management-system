@@ -16,38 +16,6 @@ export const admin = async () => {
   return { error: 'Forbidden Server Action!' }
 }
 
-// export const backup = async () => {
-//   const fileName = 'database-backup-' + new Date().valueOf() + '.tar'
-//   // const publicFolderPath = path.resolve(__dirname, 'public') // Ruta de la carpeta public
-//   const backupFilePath = path.join('./public/backups', fileName) // Ruta completa del archivo de respaldo
-
-//   console.log(backupFilePath)
-//   // Usamos promisify para convertir fs.writeFile en una función asíncrona
-//   const writeFileAsync = promisify(fs.writeFile)
-
-//   try {
-//     await writeFileAsync(backupFilePath, 'This is my text')
-//     console.log('Results Received')
-//   } catch (err) {
-//     console.error('Error writing file:', err)
-//     throw err
-//   }
-
-//   exec(
-//     `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST}  -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
-//       backupFilePath +
-//       ' -F t',
-//     (err, stdout, stderr) => {
-//       console.log('Backup Created!', fileName)
-//       if (err) {
-//         console.error('Error during backup:', err)
-//       }
-//     }
-//   )
-
-//   console.log('Backup Created!', fileName)
-// }
-
 export const backup = async () => {
   try {
     const fileName = 'database-backup-' + new Date().valueOf() + '.tar'
@@ -56,10 +24,12 @@ export const backup = async () => {
     const execAsync = promisify(exec)
 
     await execAsync(
-      `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} postgres_container pg_dump -h ${process.env.PGHOST} -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
-        backupFilePath +
-        ' -F t'
+      `pg_dump -F t -h ${process.env.PGHOST} -U ${process.env.PGUSER} -p ${process.env.PGPORT} ${process.env.PGDATABASE} > ` +
+        backupFilePath
     )
+    // if password in pgpass.conf is not recognized you should change the pg_hba configuration to IPv4 local connections:
+    //host all all 127.0.0.1/32 md5
+    //host all all ::1/128 trust
 
     console.log('Backup Created!', fileName)
     return fileName
@@ -73,7 +43,7 @@ export const restore = async (fileNameToRestore: string) => {
   try {
     const execAsync = promisify(exec)
     await execAsync(
-      `docker exec -e PGPASSWORD=${process.env.PGPASSWORD} -i postgres_container pg_restore -c -x -O -h ${process.env.PGHOST} -p ${process.env.PGPORT} -U ${process.env.PGUSER} -d ${process.env.PGDATABASE} < ` +
+      `pg_restore -c -x -O -h ${process.env.PGHOST} -p ${process.env.PGPORT} -U ${process.env.PGUSER} -d ${process.env.PGDATABASE} < ` +
         `./public/backups/${fileNameToRestore}`
     )
 

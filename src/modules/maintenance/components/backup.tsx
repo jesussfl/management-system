@@ -8,7 +8,7 @@ import { useState } from 'react'
 function BackupButton() {
   const [isLoading, setIsloading] = useState(false)
   const [fileNameToRestore, setFileNameToRestore] = useState('')
-  console.log(fileNameToRestore, 'fileeee')
+  // console.log(fileNameToRestore, 'fileeee')
   const handleBackup = async () => {
     setIsloading(true)
     const fileName = await backup()
