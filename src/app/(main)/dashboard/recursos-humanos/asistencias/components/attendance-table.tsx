@@ -25,16 +25,22 @@ type UserWithAttendances = Prisma.UsuarioGetPayload<{
 type MultipleUsersTableProps = {
   user?: undefined
   users: UserWithAttendances[]
+  isInput?: boolean
 }
 
 type SingleUserTableProps = {
   users?: undefined
   user: UserWithAttendances
+  isInput?: boolean
 }
 
 type AttendanceTableProps = MultipleUsersTableProps | SingleUserTableProps
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ users, user }) => {
+const AttendanceTable: React.FC<AttendanceTableProps> = ({
+  users,
+  user,
+  isInput,
+}) => {
   const store = useStore(useAllAttendanceFilterStore, (state) => state)
 
   if (!store?.currentMonth) return <div>No hay mes seleccionado</div>
@@ -70,7 +76,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ users, user }) => {
           format(currentMonth, 'MMMM yyyy', { locale: es }).slice(1)}
       </h1>
 
-      <AttendanceFilters />
+      <AttendanceFilters isInput={isInput} />
 
       <Table>
         <TableHeader>

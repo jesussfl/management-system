@@ -84,7 +84,7 @@ export default async function Page() {
           </CardHeader>
           <CardContent>
             {/* @ts-ignore */}
-            <AttendanceTable user={attendances} />
+            <AttendanceTable isInput={false} user={attendances} />
           </CardContent>
         </Card>
 

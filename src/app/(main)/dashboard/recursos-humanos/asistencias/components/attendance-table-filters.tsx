@@ -14,8 +14,10 @@ import { Search } from 'lucide-react'
 import { useStore } from '@/lib/hooks/custom-use-store'
 import { useAllAttendanceFilterStore } from '../lib/stores/attendance-filters-store'
 import { ScrollArea } from '@/modules/common/components/scroll-area/scroll-area'
-
-const AttendanceFilters = () => {
+type Props = {
+  isInput?: boolean
+}
+const AttendanceFilters = ({ isInput = true }: Props) => {
   const store = useStore(useAllAttendanceFilterStore, (state) => state)
 
   if (!store?.currentMonth) return <div>No hay mes seleccionado</div>
@@ -23,13 +25,15 @@ const AttendanceFilters = () => {
 
   return (
     <div className="flex w-[70%] items-center gap-4">
-      <Input
-        type="text"
-        placeholder="Buscar por cédula o nombre"
-        value={store.searchText}
-        onChange={(e) => store.handleSearchTextChange(e.target.value)}
-        startIcon={Search}
-      />
+      {isInput && (
+        <Input
+          type="text"
+          placeholder="Buscar por cédula o nombre"
+          value={store.searchText}
+          onChange={(e) => store.handleSearchTextChange(e.target.value)}
+          startIcon={Search}
+        />
+      )}
       <Select
         onValueChange={store?.handleMonthChange}
         defaultValue={String(currentMonth.getMonth())}
