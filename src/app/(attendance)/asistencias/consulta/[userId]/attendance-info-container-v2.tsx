@@ -20,7 +20,7 @@ export default function AttendanceInfoContainerV2({
   } = useAttendance(userId)
   if (isDataLoading || isAttendancesLoading)
     return (
-      <div className="flex justify-center items-center fixed inset-0 bg-black/60">
+      <div className="flex justify-center items-center fixed z-50 inset-0 bg-black/60">
         <Loader2 className="animate-spin" size={88} color="white" />
       </div>
     )
