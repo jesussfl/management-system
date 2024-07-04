@@ -2,9 +2,20 @@
 import { backup, restore } from '@/app/(main)/dashboard/lib/actions/admin'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
-import { Loader2 } from 'lucide-react'
+import { DatabaseBackup, DatabaseZap, Loader2 } from 'lucide-react'
 import { useState } from 'react'
-
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/modules/common/components/alert'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
 function BackupButton() {
   const [isLoading, setIsloading] = useState(false)
   const [fileNameToRestore, setFileNameToRestore] = useState('')
@@ -36,37 +47,63 @@ function BackupButton() {
   }
   return (
     <>
-      <Button
-        variant="default"
-        size={'sm'}
-        onClick={handleBackup}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          'Crear Backup'
-        )}
-      </Button>
-      <Input
-        type="file"
-        onChange={(e) => {
-          // @ts-ignore
-          setFileNameToRestore(e.target.files[0].name || '')
-        }}
-      />
-      <Button
-        variant="default"
-        size={'sm'}
-        onClick={handleRestore}
-        disabled={!fileNameToRestore || isLoading}
-      >
-        {isLoading ? (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-          'Restaurar'
-        )}
-      </Button>
+      <div className="flex w-full gap-4 justify-between">
+        <Card className="flex-1">
+          <CardHeader>
+            <DatabaseZap className="h-8 w-8 text-green-600" />
+            <CardTitle>Crear copia de seguridad</CardTitle>
+            <CardDescription>
+              Con esta opción puedes crear una copia de seguridad de todos los
+              datos del sistema. Esta operación puede tardar varios minutos.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="default"
+              size={'sm'}
+              onClick={handleBackup}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                'Crear Backup'
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="flex-1">
+          <CardHeader>
+            <DatabaseBackup className="h-8 w-8 text-green-600" />
+            <CardTitle>Reestablecer copia de seguridad</CardTitle>
+            <CardDescription>
+              Selecciona una copia de seguridad para reestablecer la base de
+              datos del sistema.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Input
+              type="file"
+              onChange={(e) => {
+                // @ts-ignore
+                setFileNameToRestore(e.target.files[0].name || '')
+              }}
+            />
+            <Button
+              variant="default"
+              size={'sm'}
+              onClick={handleRestore}
+              disabled={!fileNameToRestore || isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                'Restaurar'
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </>
   )
 }

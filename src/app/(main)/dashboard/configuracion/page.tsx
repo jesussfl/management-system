@@ -1,9 +1,8 @@
-import { PackagePlus } from 'lucide-react'
+import { DatabaseBackup } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
   HeaderLeftSide,
-  HeaderRightSide,
   PageContent,
   PageHeader,
   PageHeaderDescription,
@@ -11,37 +10,29 @@ import {
 } from '@/modules/layout/templates/page'
 
 import BackupButton from '@/modules/maintenance/components/backup'
-import { Upload } from './upload'
-import { DataTable } from '@/modules/common/components/table/data-table'
-import { imageColumns } from './columns'
-import { getAllImages } from '.'
 
 export const metadata: Metadata = {
-  title: 'Configuraciones',
-  description: 'Desde aquí puedes gestionar la configuración de tu sistema',
+  title: 'Restauración y Copia de Seguridad',
+  description: 'Desde aqui puedes gestionar los respaldos del sistema',
 }
 
 export default async function Page() {
-  // const images = await getAllImages()
   return (
     <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackagePlus size={24} />
-            Configuración
+            <DatabaseBackup size={24} />
+            Restauración y Copia de Seguridad
           </PageHeaderTitle>
           <PageHeaderDescription>
-            Gestiona la configuración de tu sistema
+            Desde aqui puedes gestionar los respaldos del sistema
           </PageHeaderDescription>
         </HeaderLeftSide>
-        <HeaderRightSide></HeaderRightSide>
       </PageHeader>
 
       <PageContent>
         <BackupButton />
-        {/* <Upload /> */}
-        {/* <DataTable columns={imageColumns} data={images} /> */}
       </PageContent>
     </>
   )
