@@ -1,12 +1,9 @@
 import { useSidebarContext } from '@/lib/context/sidebar-context'
 import { useCurrentUser } from '@/lib/hooks/use-current-user'
-import { Button, buttonVariants } from '@/modules/common/components/button'
+import { Button } from '@/modules/common/components/button'
 import UserNav from '@/modules/common/components/user-nav/user-nav'
 import { isSmallScreen } from '@/utils/helpers/is-small-screen'
-import { cn } from '@/utils/utils'
 import { Navbar } from 'flowbite-react'
-import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState, type FC } from 'react'
 import { HiMenuAlt1, HiX } from 'react-icons/hi'
 import { getLastAttendanceByUserId } from './recursos-humanos/asistencias/lib/actions'
@@ -14,8 +11,6 @@ import { getAttendanceTime } from '@/app/(attendance)/asistencias/lib/helpers/ge
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -94,27 +89,9 @@ export const DashboardNavbar: FC<Record<string, never>> = function () {
                       {`Hora de salida: ${outTime}`}
                     </p>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <Link href={`/asistencias`}>
-                    <DropdownMenuItem>
-                      Ir al Control de Asistencias
-                    </DropdownMenuItem>
-                  </Link>
                 </DropdownMenuContent>
               </DropdownMenu>
-              {/* <p className="text-white text-xs">
-                Tu Hora de entrada: {inTime} - Tu Hora de salida: {outTime}
-              </p>
-              <Link
-                href="/asistencias"
-                className={cn(
-                  buttonVariants({ variant: 'link', size: 'sm' }),
-                  'text-white'
-                )}
-              >
-                Ir al Control de Asistencias
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link> */}
+
               <UserNav />
             </div>
           </div>

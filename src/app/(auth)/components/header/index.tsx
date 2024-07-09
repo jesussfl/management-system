@@ -20,7 +20,7 @@ export const Header = ({ title, label, error }: HeaderProps) => {
         {title || '🔐 Autenticación'}
       </h1>
       <p
-        className={`text-muted-foreground text-sm ${
+        className={`text-muted-foreground text-md ${
           error ? 'text-red-500' : ''
         }`}
       >

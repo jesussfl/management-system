@@ -5,6 +5,7 @@ import Image from 'next/image'
 import ValidationForm from './components/verification-form'
 import { Metadata } from 'next'
 import ModalForm from '@/modules/common/components/modal-form'
+import { ArrowBigDown, ArrowBigUp, Clock } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Asistencias',
@@ -22,15 +23,17 @@ export default function Page() {
           className="rounded-lg"
         />
       </div>
-      <div className="flex lg:flex-1">
+      <div className="flex lg:flex-1 items-center">
         <CardWrapper
           headerTitle="Control de Asistencias"
           headerLabel="Ingresa tu hora de entrada o salida"
         >
-          <div className="flex justify-between gap-4">
+          <div className="flex flex-col gap-24">
             <ModalForm
               triggerName="Registrar Hora de Entrada"
               triggerVariant="default"
+              triggerSize="xl"
+              triggerIcon={<ArrowBigUp className="h-8 w-8" />}
               closeWarning={false}
               className="w-[400px] p-8"
             >
@@ -38,8 +41,10 @@ export default function Page() {
             </ModalForm>
             <ModalForm
               triggerName="Registrar Hora de Salida"
+              triggerIcon={<ArrowBigDown className="h-8 w-8" />}
               triggerVariant="destructive"
               closeWarning={false}
+              triggerSize="xl"
               className="w-[400px] p-8"
             >
               <ValidationForm type="salida" />

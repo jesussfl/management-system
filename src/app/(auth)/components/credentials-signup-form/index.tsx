@@ -156,7 +156,6 @@ export function CredentialsSignupForm() {
                     <SelectItem value="J">J</SelectItem>
                     <SelectItem value="P">P</SelectItem>
                     <SelectItem value="G">G</SelectItem>
-                    <SelectItem value="R">R</SelectItem>
                   </SelectContent>
                 </Select>
 
@@ -172,11 +171,13 @@ export function CredentialsSignupForm() {
               required: 'Este campo es requerido',
               validate: (value) => {
                 const documentType = form.watch('tipo_cedula')
-                if (
-                  documentType === 'V' ||
-                  documentType === 'E' ||
-                  documentType === 'J'
-                ) {
+                if (documentType === 'V') {
+                  return (
+                    /^\d{7,8}$/.test(value) ||
+                    'Debe ser un número de 7 a 8 dígitos'
+                  )
+                }
+                if (documentType === 'E' || documentType === 'J') {
                   return (
                     /^\d{7,10}$/.test(value) ||
                     'Debe ser un número de 7 a 10 dígitos'
@@ -192,15 +193,25 @@ export function CredentialsSignupForm() {
               },
             }}
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex-1">
                 <FormLabel>{`Documento de identidad`}</FormLabel>
 
                 <FormControl>
                   <Input
                     type="text"
+                    className="flex-1"
                     onInput={(e) => {
+                      const documentType = form.watch('tipo_cedula')
+                      if (documentType !== 'P') {
+                        e.currentTarget.value = e.currentTarget.value.replace(
+                          /[^0-9]/g,
+                          ''
+                        )
+
+                        return
+                      }
                       e.currentTarget.value = e.currentTarget.value.replace(
-                        /[^0-9]/g,
+                        /[^a-zA-Z0-9]{5,15}/g,
                         ''
                       )
                     }}

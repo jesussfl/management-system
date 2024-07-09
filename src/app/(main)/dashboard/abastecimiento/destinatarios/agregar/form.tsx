@@ -173,35 +173,30 @@ export default function ReceiversForm({ defaultValues }: Props) {
                 control={control}
                 name="tipo_cedula"
                 rules={{
-                  required: 'Este campo es requerido',
+                  required: 'Tipo de documento es requerido',
                 }}
                 render={({ field }) => (
-                  <FormItem className="flex flex-1 items-center gap-4 justify-between">
-                    <FormLabel className="mb-3">
-                      Tipo de documento de identidad
-                    </FormLabel>
-                    <div className="w-[70%]">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar..." />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="V">V</SelectItem>
-                          <SelectItem value="E">E</SelectItem>
-                          <SelectItem value="J">J</SelectItem>
-                          <SelectItem value="P">P</SelectItem>
-                          <SelectItem value="G">G</SelectItem>
-                          <SelectItem value="R">R</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  <FormItem>
+                    <FormLabel>Tipo de documento de identidad</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="V">V</SelectItem>
+                        <SelectItem value="E">E</SelectItem>
+                        <SelectItem value="J">J</SelectItem>
+                        <SelectItem value="P">P</SelectItem>
+                        <SelectItem value="G">G</SelectItem>
+                      </SelectContent>
+                    </Select>
 
-                      <FormMessage />
-                    </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -213,11 +208,13 @@ export default function ReceiversForm({ defaultValues }: Props) {
                   required: 'Este campo es requerido',
                   validate: (value) => {
                     const documentType = watch('tipo_cedula')
-                    if (
-                      documentType === 'V' ||
-                      documentType === 'E' ||
-                      documentType === 'J'
-                    ) {
+                    if (documentType === 'V') {
+                      return (
+                        /^\d{7,8}$/.test(value) ||
+                        'Debe ser un número de 7 a 8 dígitos'
+                      )
+                    }
+                    if (documentType === 'E' || documentType === 'J') {
                       return (
                         /^\d{7,10}$/.test(value) ||
                         'Debe ser un número de 7 a 10 dígitos'
@@ -233,44 +230,52 @@ export default function ReceiversForm({ defaultValues }: Props) {
                   },
                 }}
                 render={({ field }) => (
-                  <FormItem className=" flex flex-1 items-center justify-between gap-4">
-                    <FormLabel className="mb-3">{`Documento de identidad`}</FormLabel>
+                  <FormItem className="flex-1">
+                    <FormLabel>{`Documento de identidad`}</FormLabel>
 
-                    <div className="w-[70%]">
-                      <FormControl>
-                        <Input
-                          type="text"
-                          onInput={(e) => {
+                    <FormControl>
+                      <Input
+                        type="text"
+                        className="flex-1"
+                        onInput={(e) => {
+                          const documentType = watch('tipo_cedula')
+                          if (documentType !== 'P') {
                             e.currentTarget.value =
                               e.currentTarget.value.replace(/[^0-9]/g, '')
-                          }}
-                          {...field}
-                          onBlur={async () => {
-                            const exists = await checkIfReceiverExists(
-                              field.value
-                            )
 
-                            if (exists) {
-                              toast({
-                                title: 'El destinatario ya existe',
-                                action: (
-                                  <Link
-                                    className={cn(
-                                      buttonVariants({ variant: 'secondary' })
-                                    )}
-                                    href={`/dashboard/abastecimiento/destinatarios/${exists.id}`}
-                                  >
-                                    Ver datos del destinatario
-                                  </Link>
-                                ),
-                                variant: 'destructive',
-                              })
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </div>
+                            return
+                          }
+                          e.currentTarget.value = e.currentTarget.value.replace(
+                            /[^a-zA-Z0-9]{5,15}/g,
+                            ''
+                          )
+                        }}
+                        {...field}
+                        onBlur={async () => {
+                          const exists = await checkIfReceiverExists(
+                            field.value
+                          )
+
+                          if (exists) {
+                            toast({
+                              title: 'El destinatario ya existe',
+                              action: (
+                                <Link
+                                  className={cn(
+                                    buttonVariants({ variant: 'secondary' })
+                                  )}
+                                  href={`/dashboard/abastecimiento/destinatarios/${exists.id}`}
+                                >
+                                  Ver datos del destinatario
+                                </Link>
+                              ),
+                              variant: 'destructive',
+                            })
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

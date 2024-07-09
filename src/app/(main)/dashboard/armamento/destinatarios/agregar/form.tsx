@@ -196,7 +196,6 @@ export default function ReceiversForm({ defaultValues }: Props) {
                           <SelectItem value="J">J</SelectItem>
                           <SelectItem value="P">P</SelectItem>
                           <SelectItem value="G">G</SelectItem>
-                          <SelectItem value="R">R</SelectItem>
                         </SelectContent>
                       </Select>
 
@@ -213,11 +212,13 @@ export default function ReceiversForm({ defaultValues }: Props) {
                   required: 'Este campo es requerido',
                   validate: (value) => {
                     const documentType = watch('tipo_cedula')
-                    if (
-                      documentType === 'V' ||
-                      documentType === 'E' ||
-                      documentType === 'J'
-                    ) {
+                    if (documentType === 'V') {
+                      return (
+                        /^\d{7,8}$/.test(value) ||
+                        'Debe ser un número de 7 a 8 dígitos'
+                      )
+                    }
+                    if (documentType === 'E' || documentType === 'J') {
                       return (
                         /^\d{7,10}$/.test(value) ||
                         'Debe ser un número de 7 a 10 dígitos'
@@ -241,8 +242,18 @@ export default function ReceiversForm({ defaultValues }: Props) {
                         <Input
                           type="text"
                           onInput={(e) => {
+                            const documentType = watch('tipo_cedula')
+                            if (documentType !== 'P') {
+                              e.currentTarget.value =
+                                e.currentTarget.value.replace(/[^0-9]/g, '')
+
+                              return
+                            }
                             e.currentTarget.value =
-                              e.currentTarget.value.replace(/[^0-9]/g, '')
+                              e.currentTarget.value.replace(
+                                /[^a-zA-Z0-9]{5,15}/g,
+                                ''
+                              )
                           }}
                           {...field}
                           onBlur={async () => {

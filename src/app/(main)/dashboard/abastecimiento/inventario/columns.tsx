@@ -125,27 +125,27 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     //   )
     // },
   },
-  {
-    accessorKey: 'estado',
-    header: ({ column }) => <HeaderCell column={column} value="Estado" />,
-    cell: ({ row }) => {
-      const { estado } = row.original
-      const COLORS = {
-        ACTIVO: 'bg-green-500',
-        DESHABILITADO: 'bg-yellow-500',
-        EN_BORRADOR: 'bg-gray-500',
-        ELIMINADO: 'bg-red-500',
-      }
-      return (
-        <div className="w-32 flex gap-2 items-center">
-          <div
-            className={` rounded-full w-2 h-2 ${COLORS[estado || 'ACTIVO']}`}
-          />{' '}
-          {estado}
-        </div>
-      )
-    },
-  },
+  // {
+  //   accessorKey: 'estado',
+  //   header: ({ column }) => <HeaderCell column={column} value="Estado" />,
+  //   cell: ({ row }) => {
+  //     const { estado } = row.original
+  //     const COLORS = {
+  //       ACTIVO: 'bg-green-500',
+  //       DESHABILITADO: 'bg-yellow-500',
+  //       EN_BORRADOR: 'bg-gray-500',
+  //       ELIMINADO: 'bg-red-500',
+  //     }
+  //     return (
+  //       <div className="w-32 flex gap-2 items-center">
+  //         <div
+  //           className={` rounded-full w-2 h-2 ${COLORS[estado || 'ACTIVO']}`}
+  //         />{' '}
+  //         {estado}
+  //       </div>
+  //     )
+  //   },
+  // },
   {
     accessorKey: 'clasificacion.nombre',
     header: ({ column }) => (

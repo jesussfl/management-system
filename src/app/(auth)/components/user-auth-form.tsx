@@ -75,7 +75,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               onChange={(event) => setPassword(event.target.value)}
             />
           </div>
-          <Button disabled={isLoading} type="submit">
+          <Button disabled={isLoading} type="submit" size={'xl'}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}

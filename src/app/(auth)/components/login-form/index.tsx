@@ -193,18 +193,19 @@ function LoginForm() {
             </Link>
           </div>
 
-          <Button disabled={isPending} type="submit">
+          <Button disabled={isPending} type="submit" size={'xl'}>
             {isPending && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
             Iniciar sesión
           </Button>
-          <p className="text-muted-foreground text-sm my-4 text-center">
+          <p className="text-muted-foreground text-md my-4 text-center">
             Ó inicia sesión mediante:
           </p>
           <Button
             variant={'secondary'}
             disabled={isPending}
+            size={'xl'}
             onClick={(e) => {
               e.preventDefault()
               authenticateByFacialID()

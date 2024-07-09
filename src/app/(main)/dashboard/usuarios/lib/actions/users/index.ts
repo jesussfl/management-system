@@ -135,7 +135,101 @@ export const updateUserPassword = async (
     error: false,
   }
 }
+export const assignFacialID = async (
+  id: string,
+  facialID: string,
+  adminPassword: string
+) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissionsArray({
+    sections: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+  const adminPasswordDb = await prisma.admin.findFirst({
+    where: {
+      state: 'Activa',
+    },
+  })
+  if (adminPassword !== adminPasswordDb?.password) {
+    return {
+      error: 'Contraseña de administrador incorrecta',
+      field: 'adminPassword',
+    }
+  }
+
+  const user = await prisma.usuario.update({
+    where: {
+      id,
+    },
+    data: {
+      facialID,
+    },
+  })
+
+  if (!user) {
+    return {
+      success: false,
+      error: 'Usuario no encontrado',
+    }
+  }
+
+  revalidatePath('/dashboard/usuarios')
+
+  return {
+    success: 'Usuario actualizado correctamente',
+    error: false,
+  }
+}
+export const deleteDbFacialID = async (id: string) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissionsArray({
+    sections: [SECTION_NAMES.USUARIOS, SECTION_NAMES.TODAS],
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const user = await prisma.usuario.update({
+    where: {
+      id,
+    },
+    data: {
+      facialID: null,
+    },
+  })
+
+  if (!user) {
+    return {
+      success: false,
+      error: 'Usuario no encontrado',
+    }
+  }
+
+  revalidatePath('/dashboard/usuarios')
+
+  return {
+    success: 'Usuario actualizado correctamente',
+    error: false,
+  }
+}
 export const updateUserState = async (id: string, estado: Usuarios_Estados) => {
   const sessionResponse = await validateUserSession()
 

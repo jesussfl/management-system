@@ -34,8 +34,10 @@ type Props = {
     | 'destructive'
     | 'link'
   disabled?: boolean
+  triggerSize?: 'sm' | 'lg' | 'xl'
   closeWarning?: boolean
   className?: string
+  triggerIcon?: React.ReactNode
   customToogleModal?: () => void
 }
 
@@ -44,10 +46,11 @@ export default function ModalForm({
   triggerName,
   triggerVariant,
   disabled,
-
+  triggerSize,
   height,
   close,
   open,
+  triggerIcon,
   customToogleModal,
   closeWarning = true,
   className = '',
@@ -79,11 +82,12 @@ export default function ModalForm({
       <DialogTrigger asChild>
         <Button
           variant={triggerVariant || 'default'}
-          size={'sm'}
+          size={triggerSize || 'sm'}
           className="gap-2"
           disabled={disabled}
         >
-          <Plus className="h-4 w-4" />
+          {' '}
+          {triggerIcon ? triggerIcon : <Plus className="h-4 w-4" />}
           {triggerName}
         </Button>
       </DialogTrigger>

@@ -68,6 +68,7 @@ export const errorMessages: ErrorMessage = {
   [faceioErrorCode.UNIQUE_PIN_REQUIRED]: 'Código de seguridad único requerido',
   [faceioErrorCode.SESSION_IN_PROGRESS]:
     'Refresca la página para cargar un nuevo rostro',
-  [faceioErrorCode.FACE_DUPLICATION]: 'Cara duplicada',
+  [faceioErrorCode.FACE_DUPLICATION]:
+    'Ya existe un id facial con este rostro, si desea cambiarlo, elimine el id facial existente primero',
   [faceioErrorCode.MINORS_NOT_ALLOWED]: 'Menores no permitidos',
 }

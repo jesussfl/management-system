@@ -37,6 +37,44 @@ export const columns: ColumnDef<Usuario>[] = [
     },
   },
   {
+    id: 'hasPassword',
+    accessorFn: (row) => {
+      return row.contrasena ? 'Si' : 'No'
+    },
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Posee contraseña
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: 'hasFacialId',
+    accessorFn: (row) => {
+      return row.facialID ? 'Si' : 'No'
+    },
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Posee ID Facial
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: 'estado',
     header: ({ column }) => {
       return (
@@ -122,6 +160,8 @@ export const columns: ColumnDef<Usuario>[] = [
     cell: ({ row }) => {
       const user = row.original
       const estado = user.estado
+      const hasFacialId = user.facialID !== null
+      const hasPassword = user.contrasena !== null
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.USUARIOS}
@@ -146,7 +186,12 @@ export const columns: ColumnDef<Usuario>[] = [
           }}
         >
           <Link href={`/dashboard/usuarios/cambiar-contrasena/${user.id}`}>
-            <DropdownMenuItem>Cambiar contraseña</DropdownMenuItem>
+            <DropdownMenuItem>
+              {hasPassword ? 'Cambiar contraseña' : 'Asignar contraseña'}
+            </DropdownMenuItem>
+          </Link>
+          <Link href={`/dashboard/usuarios/cambiar-facialID/${user.id}`}>
+            <DropdownMenuItem>Asignar ID facial</DropdownMenuItem>
           </Link>
         </ProtectedTableActions>
       )

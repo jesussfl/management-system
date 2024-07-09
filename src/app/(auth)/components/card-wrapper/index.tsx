@@ -44,20 +44,17 @@ export const CardWrapper = ({
             <Social />
           </CardFooter>
         )}
-        {
-          backButtonHref && backButtonLabel && (
-            
-        <CardFooter className="flex justify-between">
-          <BackButton label={backButtonLabel} href={backButtonHref} />
-          <Link
+        {backButtonHref && backButtonLabel && (
+          <CardFooter className="flex justify-between">
+            <BackButton label={backButtonLabel} href={backButtonHref} />
+            {/* <Link
             href="/asistencias"
             className={cn(buttonVariants({ variant: 'link' }))}
           >
             Ir al Control de Asistencias
-          </Link>
-        </CardFooter>
-          )
-        }
+          </Link> */}
+          </CardFooter>
+        )}
       </Card>
     </div>
   )

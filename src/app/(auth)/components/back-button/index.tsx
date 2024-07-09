@@ -21,8 +21,10 @@ interface BackLinkButtonProps {
 }
 export const BackButton = ({ href, label }: BackButtonProps) => {
   return (
-    <Button variant="link" size="sm" asChild>
-      <a href={href}>{label}</a>
+    <Button variant="link" size="xl" asChild>
+      <a className="text-[18px]" href={href}>
+        {label}
+      </a>
     </Button>
   )
 }
@@ -30,7 +32,7 @@ export const BackButton = ({ href, label }: BackButtonProps) => {
 export const BackLinkButton = ({ label, variant }: BackLinkButtonProps) => {
   const router = useRouter()
   return (
-    <Button variant={variant} size="sm" onClick={() => router.back()}>
+    <Button variant={variant} size="lg" onClick={() => router.back()}>
       <ArrowLeft className="mr-2 h-4 w-4" />
       {label}
     </Button>
