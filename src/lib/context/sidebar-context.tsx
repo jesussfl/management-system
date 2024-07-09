@@ -4,6 +4,8 @@ import { isBrowser } from '@/utils/helpers/is-browser'
 import { isSmallScreen } from '@/utils/helpers/is-small-screen'
 import type { FC, PropsWithChildren } from 'react'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { useStore } from '../hooks/custom-use-store'
+import { useSidebarStore } from '@/store/sidebar-store'
 
 interface SidebarContextProps {
   isCollapsed: boolean
@@ -16,16 +18,16 @@ const SidebarContext = createContext<SidebarContextProps>(
 
 export const SidebarProvider: FC<PropsWithChildren> = function ({ children }) {
   const location = isBrowser() ? window.location.pathname : '/'
-  const storedIsCollapsed = isBrowser()
-    ? localStorage.getItem('isSidebarCollapsed') === 'true'
-    : false
-
-  const [isCollapsed, setCollapsed] = useState(storedIsCollapsed)
+  // const storedIsCollapsed = isBrowser()
+  //   ? localStorage.getItem('isSidebarCollapsed') === 'true'
+  //   : false
+  const store = useStore(useSidebarStore, (state) => state)
+  // const [isCollapsed, setCollapsed] = useState(storedIsCollapsed)
 
   // Close Sidebar on page change on mobile
   useEffect(() => {
     if (isSmallScreen()) {
-      setCollapsed(true)
+      store?.setCollapsed(true)
     }
   }, [location])
 
@@ -36,7 +38,7 @@ export const SidebarProvider: FC<PropsWithChildren> = function ({ children }) {
       const isClickInsideMain = main?.contains(event.target as Node)
 
       if (isSmallScreen() && isClickInsideMain) {
-        setCollapsed(true)
+        store?.setCollapsed(true)
       }
     }
 
@@ -49,14 +51,15 @@ export const SidebarProvider: FC<PropsWithChildren> = function ({ children }) {
 
   // Update local storage when collapsed state changed
   useEffect(() => {
-    localStorage.setItem('isSidebarCollapsed', isCollapsed ? 'true' : 'false')
-  }, [isCollapsed])
+    // localStorage.setItem('isSidebarCollapsed', isCollapsed ? 'true' : 'false')
+    store?.setCollapsed(store?.isCollapsed ? true : false)
+  }, [store?.isCollapsed])
 
   return (
     <SidebarContext.Provider
       value={{
-        isCollapsed,
-        setCollapsed,
+        isCollapsed: store?.isCollapsed!,
+        setCollapsed: store?.setCollapsed!,
       }}
     >
       {children}
