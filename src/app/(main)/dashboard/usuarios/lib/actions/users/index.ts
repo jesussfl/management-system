@@ -7,6 +7,7 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { Prisma, Usuario, Usuarios_Estados } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import bcrypt from 'bcryptjs'
+import { registerAuditAction } from '@/lib/actions/audit'
 
 export const getAllUsers = async () => {
   const session = await auth()
@@ -71,8 +72,11 @@ export const updateUser = async (
   }
 
   revalidatePath('/dashboard/usuarios')
+  await registerAuditAction(
+    `Se actualizó el usuario con cédula: ${user.cedula}`
+  )
   return {
-    success: 'User updated successfully',
+    success: 'Actualización exitosa',
   }
 }
 
@@ -129,9 +133,11 @@ export const updateUserPassword = async (
   }
 
   revalidatePath('/dashboard/usuarios')
-
+  await registerAuditAction(
+    `Se actualizó la contraseña del usuario con cédula: ${user.cedula}`
+  )
   return {
-    success: 'User updated successfully',
+    success: 'Contraseña actualizada correctamente',
     error: false,
   }
 }
@@ -184,7 +190,9 @@ export const assignFacialID = async (
   }
 
   revalidatePath('/dashboard/usuarios')
-
+  await registerAuditAction(
+    `Se añadió un identificador facial a el usuario con cédula: ${user.cedula}`
+  )
   return {
     success: 'Usuario actualizado correctamente',
     error: false,
@@ -224,7 +232,9 @@ export const deleteDbFacialID = async (id: string) => {
   }
 
   revalidatePath('/dashboard/usuarios')
-
+  await registerAuditAction(
+    `Se eliminó el identificador facial de el usuario con cédula: ${user.cedula}`
+  )
   return {
     success: 'Usuario actualizado correctamente',
     error: false,
@@ -264,6 +274,9 @@ export const updateUserState = async (id: string, estado: Usuarios_Estados) => {
   }
 
   revalidatePath('/dashboard/usuarios')
+  await registerAuditAction(
+    `Se ha cambiado el estado de el usuario con cédula: ${user.cedula} a: ${estado}`
+  )
   return {
     success: `El usuario se ha ${
       estado === 'Activo' ? 'desbloqueado' : 'bloqueado'

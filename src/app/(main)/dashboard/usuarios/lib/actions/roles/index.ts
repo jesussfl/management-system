@@ -2,11 +2,10 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
-import { CreateRolesWithPermissions } from '@/types/types'
-import { error } from 'console'
 
-type Rol = Prisma.RolGetPayload<{ include: { permisos: true } }>
+import { CreateRolesWithPermissions } from '@/types/types'
+
+import { registerAuditAction } from '@/lib/actions/audit'
 
 export const createRol = async (data: CreateRolesWithPermissions) => {
   const session = await auth()
@@ -42,6 +41,9 @@ export const createRol = async (data: CreateRolesWithPermissions) => {
     },
   })
   revalidatePath('/dashboard/abastecimiento/usuarios')
+  await registerAuditAction(
+    `Se creó un nuevo rol con el siguiente nombre: ${rol}`
+  )
   return {
     success: 'Rol creado exitosamente',
   }
@@ -56,8 +58,7 @@ export const updateRol = async (
     throw new Error('You must be signed in to perform this action')
   }
 
-  console.log(data, 'dataaa')
-  await prisma.rol.update({
+  const rol = await prisma.rol.update({
     where: {
       id,
     },
@@ -82,6 +83,9 @@ export const updateRol = async (
   // }
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
+  await registerAuditAction(
+    `Se editó el rol con el siguiente nombre: ${rol.rol}`
+  )
   return {
     success: 'Rol actualizado exitosamente',
   }
@@ -94,14 +98,16 @@ export const deleteRol = async (id: number) => {
     throw new Error('You must be signed in to perform this action')
   }
 
-  await prisma.rol.delete({
+  const rol = await prisma.rol.delete({
     where: {
       id,
     },
   })
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
-
+  await registerAuditAction(
+    `Se eliminó el rol con el siguiente nombre: ${rol.rol}`
+  )
   return {
     success: 'Rol eliminado exitosamente',
     error: false,

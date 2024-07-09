@@ -28,7 +28,7 @@ export const createSystem = async (data: Prisma.SistemaCreateInput) => {
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo sistema llamado ' + data.nombre)
+  await registerAuditAction('Se creó un nuevo sistema llamado: ' + data.nombre)
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {

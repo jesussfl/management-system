@@ -88,7 +88,7 @@ export const createReturn = async (data: FormValues) => {
     continue
   }
 
-  await prisma.devolucion.create({
+  const newReturn = await prisma.devolucion.create({
     data: {
       cedula_destinatario,
       cedula_abastecedor: data.cedula_abastecedor,
@@ -123,11 +123,13 @@ export const createReturn = async (data: FormValues) => {
     },
   })
 
-  await registerAuditAction(`Devolucion creada con motivo: ${motivo}`)
+  await registerAuditAction(
+    `Se creó una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${newReturn.id} `
+  )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
   return {
-    success: true,
+    success: 'Devolución creada correctamente',
     error: false,
   }
 }
@@ -211,7 +213,7 @@ export const updateReturn = async (id: number, data: FormValues) => {
   //       (serialByReturn) => serialByReturn.serial === serial.serial
   //     )
   // )
-  await prisma.devolucion.update({
+  const updatedReturn = await prisma.devolucion.update({
     where: {
       id,
     },
@@ -255,7 +257,9 @@ export const updateReturn = async (id: number, data: FormValues) => {
     },
   })
 
-  await registerAuditAction(`Devolucion actualizada con motivo: ${motivo}`)
+  await registerAuditAction(
+    `Se actualizo una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${updatedReturn.id} `
+  )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
   return {
@@ -317,7 +321,10 @@ export const deleteReturn = async (id: number) => {
       estado: 'Disponible',
     },
   })
-  await registerAuditAction(`Devolucion eliminada con motivo: ${exist.motivo}`)
+
+  await registerAuditAction(
+    `Se eliminó la devolución en abastecimiento con el siguiente motivo: ${exist.motivo}. El ID de la devolución es: ${exist.id} `
+  )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
   return {

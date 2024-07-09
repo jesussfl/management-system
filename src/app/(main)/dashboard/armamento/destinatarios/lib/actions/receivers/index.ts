@@ -48,7 +48,7 @@ export const createReceiver = async (
   })
 
   await registerAuditAction(
-    `Se creó un nuevo destinatario con la cédula: ${data.cedula}`
+    `Se creó un nuevo destinatario de armamento con la cédula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
   )
   revalidatePath('/dashboard/armamento/destinatarios')
 
@@ -147,7 +147,7 @@ export const deleteReceiver = async (id: number) => {
   })
 
   await registerAuditAction(
-    `Se eliminó el destinatario con documento de identidad: ${exists.cedula}`
+    `Se eliminó el destinatario de armamento con documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
   )
   revalidatePath('/dashboard/armamento/destinatarios')
 
@@ -183,7 +183,7 @@ export const deleteMultipleReceivers = async (ids: number[]) => {
   })
 
   await registerAuditAction(
-    `Se han eliminado los siguientes destinatarios ${ids}`
+    `Se han eliminado los siguientes destinatarios de armamento con los siguientes ids: ${ids}`
   )
   revalidatePath('/dashboard/armamento/destinatarios')
 
@@ -225,7 +225,7 @@ export const updateReceiver = async (
     }
   }
 
-  await prisma.destinatario.update({
+  const receiver = await prisma.destinatario.update({
     where: {
       id,
     },
@@ -233,7 +233,7 @@ export const updateReceiver = async (
   })
 
   await registerAuditAction(
-    `Se actualizo el destinatario con la cedula: ${data.cedula}`
+    `Se actualizó el destinatario con la cedula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
   )
 
   revalidatePath('/dashboard/armamento/destinatarios')

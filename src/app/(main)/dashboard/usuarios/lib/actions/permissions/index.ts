@@ -26,6 +26,9 @@ export const createPermission = async (data: Prisma.PermisoCreateInput) => {
     data,
   })
   revalidatePath('/dashboard/usuarios')
+  await registerAuditAction(
+    `Se creó el permiso: ${data.key}. Nombre: ${data.permiso}`
+  )
   return {
     success: 'Permiso creado exitosamente',
   }
@@ -56,13 +59,16 @@ export const updatePermiso = async (
     throw new Error('You must be signed in to perform this action')
   }
 
-  await prisma.permiso.update({
+  const permission = await prisma.permiso.update({
     where: {
       id,
     },
     data,
   })
   revalidatePath('/dashboard/usuarios')
+  await registerAuditAction(
+    `Se actualizó el permiso: ${permission.key}. Nombre: ${permission.permiso}`
+  )
   return {
     success: 'Permiso actualizado exitosamente',
   }
@@ -94,7 +100,9 @@ export const deletePermiso = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Se eliminó el permiso ${permiso.key}`)
+  await registerAuditAction(
+    `Se eliminó el permiso: ${permiso.key}. Nombre: ${permiso.permiso}`
+  )
   revalidatePath('/dashboard/usuarios')
 
   return {

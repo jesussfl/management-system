@@ -52,7 +52,7 @@ export const createOrder = async (data: PedidoFormValues) => {
     return permissionsResponse
   }
 
-  await prisma.pedido.create({
+  const order = await prisma.pedido.create({
     data: {
       ...data,
       servicio: 'Armamento',
@@ -66,7 +66,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   })
 
   await registerAuditAction(
-    `Se creó un nuevo pedido con el siguient motivo: ${data.motivo} y para la fecha: ${data.fecha_solicitud}`
+    `Se creó un nuevo pedido de armamento con el siguient motivo: ${data.motivo} y para la fecha: ${data.fecha_solicitud} con el id ${order.id}`
   )
   revalidatePath('/dashboard/armamento/pedidos')
 
@@ -122,7 +122,9 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
     },
   })
 
-  await registerAuditAction(`Se actualizó el pedido con el id: ${id}`)
+  await registerAuditAction(
+    `Se actualizó el pedido de armamento con el id: ${id}`
+  )
   revalidatePath('/dashboard/armamento/pedidos')
 
   return {
@@ -176,7 +178,7 @@ export const updateOrderStatus = async (
   })
 
   await registerAuditAction(
-    `Se actualizó el estado del pedido con el id: ${id} a: ${data.estado}`
+    `Se actualizó el estado del pedido de armamento con el id: ${id} a: ${data.estado}`
   )
 
   revalidatePath('/dashboard/armamento/pedidos')
@@ -271,7 +273,7 @@ export const deleteOrder = async (id: number) => {
   })
 
   await registerAuditAction(
-    `Se eliminó un pedido que tenía el motivo: ${exist?.motivo}`
+    `Se eliminó un pedido de armamento que tenía el motivo: ${exist?.motivo}`
   )
   revalidatePath('/dashboard/armamento/pedidos')
 

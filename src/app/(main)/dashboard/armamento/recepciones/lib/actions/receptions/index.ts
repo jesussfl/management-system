@@ -147,7 +147,7 @@ export const createReception = async (data: FormValues) => {
     }
   }
 
-  await prisma.recepcion.create({
+  const reception = await prisma.recepcion.create({
     data: {
       ...data,
       motivo,
@@ -171,7 +171,9 @@ export const createReception = async (data: FormValues) => {
     },
   })
 
-  await registerAuditAction(`Se creó una recepción con motivo: ${data.motivo}`)
+  await registerAuditAction(
+    `Se creó una recepción de armamento con motivo: ${data.motivo} y id: ${reception.id} `
+  )
   revalidatePath('/dashboard/armamento/recepciones')
 
   return {
@@ -268,7 +270,7 @@ export const updateReception = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
-    `Se actualizó una recepción con motivo: ${data.motivo}`
+    `Se actualizó una recepción de armamento con motivo: ${data.motivo} y id: ${id}`
   )
   revalidatePath('/dashboard/armamento/recepciones')
 
@@ -408,7 +410,7 @@ export const deleteReception = async (id: number) => {
   })
 
   await registerAuditAction(
-    `Se eliminó la recepción con motivo: ${exist?.motivo}`
+    `Se eliminó la recepción de armamento con motivo: ${exist?.motivo} y id: ${id}`
   )
   revalidatePath('/dashboard/armamento/recepciones')
 
@@ -443,7 +445,7 @@ export const deleteMultipleReceptions = async (ids: number[]) => {
   })
 
   await registerAuditAction(
-    `Se han eliminado las siguientes recepciones ${ids}`
+    `Se han eliminado las siguientes recepciones de armamento con los ids: ${ids}`
   )
   revalidatePath('/dashboard/armamento/recepciones')
 

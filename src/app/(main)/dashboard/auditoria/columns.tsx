@@ -64,7 +64,9 @@ export const columns: ColumnDef<AuditoriaType>[] = [
       format(new Date(row.original?.fecha_realizado), 'dd/MM/yyyy HH:mm'),
   },
   {
-    accessorKey: 'usuario.nombre',
+    id: 'usuario',
+    accessorFn: (row) =>
+      `${row?.usuario?.nombre} ${row?.usuario?.tipo_cedula}-${row?.usuario?.cedula}`,
     header: ({ column }) => {
       return (
         <Button

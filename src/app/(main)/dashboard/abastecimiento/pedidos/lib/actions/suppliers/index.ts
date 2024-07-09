@@ -34,12 +34,12 @@ export const createSupplier = async (data: Prisma.ProveedorCreateInput) => {
     return permissionsResponse
   }
 
-  await prisma.proveedor.create({
+  const supplier = await prisma.proveedor.create({
     data,
   })
 
   await registerAuditAction(
-    `Se creó un nuevo proveedor con el siguiente nombre: ${data.nombre}`
+    `Se creó un nuevo proveedor de abastecimiento con el siguiente nombre: ${data.nombre} y con el siguiente id: ${supplier.id}`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
 
@@ -85,7 +85,7 @@ export const updateSupplier = async (
   }
 
   await registerAuditAction(
-    `Se actualizo el proveedor con el siguiente nombre: ${data.nombre}`
+    `Se actualizó el proveedor de abastecimiento con el siguiente nombre: ${data.nombre} y con el siguiente id: ${supplier.id}`
   )
 
   revalidatePath('/dashboard/abastecimiento/pedidos')
@@ -128,7 +128,7 @@ export const deleteSupplier = async (id: number) => {
   }
 
   await registerAuditAction(
-    `Se elimino el proveedor con el siguiente nombre: ${supplier?.nombre}`
+    `Se elimino el proveedor con el siguiente nombre: ${supplier?.nombre} y con el siguiente id: ${supplier?.id}`
   )
 
   revalidatePath('/dashboard/abastecimiento/pedidos')

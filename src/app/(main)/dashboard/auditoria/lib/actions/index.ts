@@ -11,6 +11,9 @@ export const getAllAuditItems = async () => {
   }
 
   const auditItems = await prisma.auditoria.findMany({
+    orderBy: {
+      fecha_realizado: 'desc',
+    },
     include: {
       usuario: true,
     },
@@ -31,6 +34,9 @@ export const getAllAuditItemsByUser = async (userId: string) => {
   }
 
   const auditItems = await prisma.auditoria.findMany({
+    orderBy: {
+      fecha_realizado: 'desc',
+    },
     where: {
       id_usuario: userId,
     },

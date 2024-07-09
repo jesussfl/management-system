@@ -31,3 +31,27 @@ export const registerAuditAction = async (action: string) => {
     success: true,
   }
 }
+
+export const registerAuditActionWithoutSession = async (
+  action: string,
+  userId: string
+) => {
+  if (!action) {
+    return {
+      error: 'Action is required',
+    }
+  }
+
+  await prisma.auditoria.create({
+    data: {
+      id_usuario: userId,
+      accion: action,
+    },
+  })
+
+  revalidatePath('/dashboard/auditoria')
+
+  return {
+    success: true,
+  }
+}

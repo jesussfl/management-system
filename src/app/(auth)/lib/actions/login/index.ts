@@ -7,6 +7,10 @@ import { LoginByFaceIDSchema, LoginSchema } from '@/utils/schemas'
 import { getUserByEmail, getUserByFacialID } from '@/lib/data/get-user-byEmail'
 
 import bcrypt from 'bcryptjs'
+import {
+  registerAuditAction,
+  registerAuditActionWithoutSession,
+} from '@/lib/actions/audit'
 
 type Credentials = {
   email: string
@@ -52,12 +56,17 @@ export async function login(
   }
 
   try {
+    const user = await getUserByEmail(email)
+
+    await registerAuditActionWithoutSession(
+      `Inició sesión con email y contraseña`,
+      user?.id || ''
+    )
     await signIn('credentials', {
       email,
       password,
       redirectTo: callbackUrl || '/dashboard',
     })
-
     return { success: 'Inicio de sesión exitoso' }
   } catch (error) {
     if (error instanceof AuthError) {
@@ -146,10 +155,16 @@ export async function loginByFacialID(
   }
 
   try {
+    const user = await getUserByFacialID(facialID)
+    await registerAuditActionWithoutSession(
+      `Inició sesión mediante facial ID: ${facialID}`,
+      user?.id || ''
+    )
     await signIn('credentials', {
       facialID: facialID,
       redirectTo: callbackUrl || '/dashboard',
     })
+
     return { success: 'Inicio de sesión exitoso' }
   } catch (error) {
     console.log(error)

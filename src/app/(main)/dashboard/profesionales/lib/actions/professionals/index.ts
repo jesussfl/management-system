@@ -52,7 +52,10 @@ export const createProfessional = async (
   })
 
   await registerAuditAction(
-    'Se creó un nuevo profesional con la cédula ' + data.cedula
+    'Se creó un nuevo profesional con la cédula ' +
+      data.cedula +
+      ' ' +
+      data.nombres
   )
   revalidatePath('/dashboard/profesionales')
 

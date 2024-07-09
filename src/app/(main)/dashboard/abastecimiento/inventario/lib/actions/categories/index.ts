@@ -45,7 +45,7 @@ export const createCategory = async (
     data,
   })
 
-  await registerAuditAction(`Se creó una nueva categoría llamada ${nombre}`)
+  await registerAuditAction(`Se creó una nueva categoría llamada: ${nombre}`)
 
   revalidatePath('/dashboard/abastecimiento/inventario')
 
@@ -95,7 +95,7 @@ export const updateCategory = async (
     data,
   })
 
-  await registerAuditAction(`Se actualizo la categoria ${exist?.nombre}`)
+  await registerAuditAction(`Se actualizó la categoria: ${exist?.nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
@@ -140,7 +140,7 @@ export const deleteCategory = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Se elimino la categoria ${exist?.nombre}`)
+  await registerAuditAction(`Se eliminó la categoria: ${exist?.nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
@@ -173,7 +173,9 @@ export const deleteMultipleCategories = async (ids: number[]) => {
     },
   })
 
-  await registerAuditAction(`Se han eliminado las siguientes categorias ${ids}`)
+  await registerAuditAction(
+    `Se han eliminado las categorias con los siguientes ids: ${ids}`
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {

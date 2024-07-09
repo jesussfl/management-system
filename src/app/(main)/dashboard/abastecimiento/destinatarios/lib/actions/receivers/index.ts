@@ -48,7 +48,7 @@ export const createReceiver = async (
   })
 
   await registerAuditAction(
-    `Se creó un nuevo destinatario con la cédula: ${data.cedula}`
+    `Se creó un nuevo destinatario en abastecimiento con la cédula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
   )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
@@ -147,7 +147,7 @@ export const deleteReceiver = async (id: number) => {
   })
 
   await registerAuditAction(
-    `Se eliminó el destinatario con documento de identidad: ${exists.cedula}`
+    `Se eliminó el destinatario en abastecimiento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
   )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
@@ -183,7 +183,7 @@ export const deleteMultipleReceivers = async (ids: number[]) => {
   })
 
   await registerAuditAction(
-    `Se han eliminado los siguientes destinatarios ${ids}`
+    `Se han eliminado los destinatarios de abastecimiento con los siguientes ids: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
@@ -233,7 +233,7 @@ export const updateReceiver = async (
   })
 
   await registerAuditAction(
-    `Se actualizo el destinatario con la cedula: ${data.cedula}`
+    `Se actualizó el destinatario de abastecimiento con la cedula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
   )
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')

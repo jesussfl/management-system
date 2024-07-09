@@ -9,6 +9,7 @@ import { getUserByEmail } from '@/lib/data/get-user-byEmail'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { Tipos_Cedulas } from '@prisma/client'
+import { registerAuditActionWithoutSession } from '@/lib/actions/audit'
 
 export const signup = async (values: z.infer<typeof RegisterSchema>) => {
   const validatedFields = RegisterSchema.safeParse(values)
@@ -100,6 +101,11 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
       })
     })
 
+    const user = await getUserByEmail(email)
+    await registerAuditActionWithoutSession(
+      `Se ha registrado un nuevo usuario con correo y contraseña. El correo es: ${email}`,
+      user?.id || ''
+    )
     console.log('Usuario creado exitosamente')
     return { success: 'Registrado correctamente' }
   } catch (error) {
@@ -201,7 +207,11 @@ export const signupByFacialID = async ({
         },
       })
     })
-
+    const user = await getUserByEmail(email)
+    await registerAuditActionWithoutSession(
+      `Se ha registrado un nuevo usuario con facialID. El correo es: ${email}`,
+      user?.id || ''
+    )
     console.log('Usuario creado exitosamente')
     return { success: 'Registrado correctamente' }
   } catch (error) {

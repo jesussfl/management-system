@@ -128,7 +128,7 @@ export const createDispatch = async (data: FormValues) => {
     serials.push(...serialsByItem)
   }
 
-  await prisma.despacho.create({
+  const dispatch = await prisma.despacho.create({
     data: {
       servicio: 'Abastecimiento',
       cedula_destinatario,
@@ -166,7 +166,9 @@ export const createDispatch = async (data: FormValues) => {
     },
   })
 
-  await registerAuditAction(`Se realizó un despacho con motivo: ${motivo}`)
+  await registerAuditAction(
+    `Se realizó un despacho en abastecimiento con el siguiente motivo: ${motivo}. El id del despacho es: ${dispatch.id}`
+  )
 
   revalidatePath('/dashboard/abastecimiento/despachos')
 
@@ -340,7 +342,9 @@ export const updateDispatch = async (id: number, data: FormValues) => {
     },
   })
 
-  await registerAuditAction(`Se actualizó un despacho con motivo: ${motivo}`)
+  await registerAuditAction(
+    `Se actualizó el despacho en abastecimiento con el id ${id}`
+  )
 
   revalidatePath('/dashboard/abastecimiento/despachos')
 
@@ -394,7 +398,9 @@ export const deleteDispatch = async (id: number) => {
       estado: 'Disponible',
     },
   })
-  await registerAuditAction(`Se eliminó el despacho con id: ${id}`)
+  await registerAuditAction(
+    `Se eliminó el despacho en abastecimiento con el id: ${id}`
+  )
   revalidatePath('/dashboard/abastecimiento/despachos')
 
   return {
@@ -627,7 +633,9 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
     },
   })
 
-  await registerAuditAction(`Se han eliminado los siguientes despachos ${ids}`)
+  await registerAuditAction(
+    `Se han eliminado despachos en abastecimiento con los siguientes ids: ${ids}`
+  )
   revalidatePath('/dashboard/abastecimiento/despachos')
 
   return {

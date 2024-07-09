@@ -84,7 +84,7 @@ export const createWarehouse = async (data: Prisma.AlmacenCreateInput) => {
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo almacen llamado ' + data.nombre)
+  await registerAuditAction('Se creó un nuevo almacen llamado: ' + data.nombre)
   revalidatePath('/dashboard/almacenes')
   return {
     success: 'Almacen creado exitosamente',
@@ -127,7 +127,9 @@ export const deleteWarehouse = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Se eliminó un almacén ${exist?.nombre}`)
+  await registerAuditAction(
+    `Se eliminó el almacén: ${exist?.nombre} con ID: ${exist?.id}`
+  )
   revalidatePath('/dashboard/almacenes')
 
   return {

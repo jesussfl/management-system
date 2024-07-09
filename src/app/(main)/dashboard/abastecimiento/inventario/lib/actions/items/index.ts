@@ -51,7 +51,9 @@ export const createItem = async (
       },
     })
 
-    await registerAuditAction(`Se ha creado el renglon ${nombre}`)
+    await registerAuditAction(
+      `Se ha creado un renglón de abastecimiento con el nombre: ${nombre}`
+    )
     revalidatePath('/dashboard/abastecimiento/inventario')
 
     return {
@@ -169,7 +171,9 @@ export const updateItem = async (
     data,
   })
 
-  await registerAuditAction(`Se ha actualizado el renglón ${exist?.nombre}`)
+  await registerAuditAction(
+    `Se ha actualizado el renglón de abastecimiento con el id: ${id} y el nombre ${exist?.nombre}`
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
 }
 
@@ -209,7 +213,9 @@ export const deleteItem = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Se ha eliminado el renglon ${id}`)
+  await registerAuditAction(
+    `Se ha eliminado el renglon de abastecimiento con el id ${id} y el nombre ${exist?.nombre}`
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
@@ -243,7 +249,9 @@ export const deleteMultipleItems = async (ids: number[]) => {
     },
   })
 
-  await registerAuditAction(`Se han eliminado los siguientes renglones ${ids}`)
+  await registerAuditAction(
+    `Se han eliminado los renglones de abastecimiento con los siguientes ids: ${ids}`
+  )
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {

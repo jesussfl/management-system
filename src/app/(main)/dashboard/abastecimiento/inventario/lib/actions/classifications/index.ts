@@ -42,7 +42,7 @@ export const createClassification = async (
     data,
   })
 
-  await registerAuditAction(`Se creó una clasificación llamada ${nombre}`)
+  await registerAuditAction(`Se creó una clasificación llamada: ${nombre}`)
 
   revalidatePath('/dashboard/abastecimiento/inventario')
 
@@ -93,7 +93,7 @@ export const updateClassification = async (
   })
 
   await registerAuditAction(
-    `Se actualizo una clasificación llamada ${exist?.nombre}`
+    `Se actualizó una clasificación llamada: ${exist?.nombre}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
   return {
@@ -139,7 +139,7 @@ export const deleteClassification = async (id: number) => {
   })
 
   await registerAuditAction(
-    `Se eliminó una clasificación llamada ${exist?.nombre}`
+    `Se eliminó una clasificación llamada: ${exist?.nombre}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
 
@@ -174,7 +174,7 @@ export const deleteMultipleClassifications = async (ids: number[]) => {
   })
 
   await registerAuditAction(
-    `Se han eliminado las siguientes clasificaciones ${ids}`
+    `Se han eliminado las clasificaciones con los siguientes ids: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
 

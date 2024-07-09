@@ -45,7 +45,7 @@ export const createPackagingUnit = async (
     data,
   })
 
-  await registerAuditAction(`Se ha creado la Unidad de empaque ${nombre}`)
+  await registerAuditAction(`Se ha creado la unidad de empaque: ${nombre}`)
   revalidatePath('/dashboard/abastecimiento/inventario')
 
   return {
@@ -96,7 +96,7 @@ export const updatePackagingUnit = async (
   })
 
   await registerAuditAction(
-    `Se ha actualizado la Unidad de empaque ${exist?.nombre}`
+    `Se ha actualizado la Unidad de empaque_ ${exist?.nombre}`
   )
 
   revalidatePath('/dashboard/abastecimiento/inventario')
@@ -163,7 +163,7 @@ export const deleteMultiplePackagingUnits = async (ids: number[]) => {
   })
 
   await registerAuditAction(
-    `Se han eliminado las siguientes Unidades de empaque ${ids}`
+    `Se han eliminado las siguientes Unidades de empaque: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
 
