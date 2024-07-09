@@ -15,9 +15,7 @@ import { Input } from '@/modules/common/components/input/input'
 import { useState } from 'react'
 import Keyboard from 'react-simple-keyboard'
 import 'react-simple-keyboard/build/css/index.css'
-import spanishLayout from 'simple-keyboard-layouts/build/layouts/spanish' // Importa el layout en español
-import englishLayout from 'simple-keyboard-layouts/build/layouts/english' // Importa el layout en inglés
-import russianLayout from 'simple-keyboard-layouts/build/layouts/russian' // Importa el layout en ruso
+
 import {
   Select,
   SelectContent,
@@ -27,33 +25,21 @@ import {
 } from '@/modules/common/components/select/select'
 import { Button } from '@/modules/common/components/button'
 import { KeyboardIcon } from 'lucide-react'
+import { getCurrentLayout } from '@/utils/helpers/get-keyboard-layout'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/modules/common/components/popover/popover'
 export const Step1 = () => {
   const form = useFormContext()
   const [showKeyboard, setShowKeyboard] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [language, setLanguage] = useState('english')
 
-  const handleKeyboardChange = (input: string) => {
-    form.setValue('nombre', input, { shouldDirty: true })
-    setInputValue(input)
-  }
-
   const handleLanguageChange = (language: string) => {
     const selectedLanguage = language
     setLanguage(selectedLanguage)
-  }
-
-  const getCurrentLayout = () => {
-    switch (language) {
-      case 'spanish':
-        return spanishLayout
-      case 'english':
-        return englishLayout
-      case 'russian':
-        return russianLayout
-      default:
-        return spanishLayout
-    }
   }
 
   return (
@@ -102,57 +88,71 @@ export const Step1 = () => {
                     })
                   }}
                 />
-                <Button
-                  variant={'outline'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setShowKeyboard(!showKeyboard)
-                  }}
-                >
-                  {showKeyboard ? (
-                    <KeyboardIcon className="h-4 w-4 text-red-500" />
-                  ) : (
-                    <KeyboardIcon className="h-4 w-4 text-blue-500" />
-                  )}
-                </Button>
-                <div className="mt-2"></div>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      onClick={(e) => {
+                        setShowKeyboard(!showKeyboard)
+                      }}
+                    >
+                      {showKeyboard ? (
+                        <KeyboardIcon className="h-4 w-4 text-red-500" />
+                      ) : (
+                        <KeyboardIcon className="h-4 w-4 text-blue-500" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-200">
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">
+                          Teclado Virtual
+                        </h4>
+                      </div>
+                      <Select
+                        onValueChange={handleLanguageChange}
+                        defaultValue={'spanish'}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar idioma..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="spanish">Español</SelectItem>
+                          <SelectItem value="english">Inglés</SelectItem>
+                          <SelectItem value="russian">Ruso</SelectItem>
+                          <SelectItem value="french">Francés</SelectItem>
+                          <SelectItem value="japanese">Japonés</SelectItem>
+                          <SelectItem value="korean">Coreano</SelectItem>
+                          <SelectItem value="chinese">Chino</SelectItem>
+                          <SelectItem value="arabic">Arabe</SelectItem>
+                          <SelectItem value="turkish">Turco</SelectItem>
+                          <SelectItem value="german">Alemán</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Keyboard
+                        onChange={(e) => {
+                          if (form.formState.errors[field.name]) {
+                            form.clearErrors(field.name)
+                          }
+                          const value = e
+                          setInputValue(value)
+                          form.setValue(field.name, value, {
+                            shouldDirty: true,
+                          })
+                        }}
+                        inputName={field.name}
+                        value={inputValue}
+                        {...getCurrentLayout(language)}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </FormControl>
             <FormMessage />
-            {showKeyboard && (
-              <div className="my-2">
-                <Keyboard
-                  onChange={(e) => {
-                    if (form.formState.errors[field.name]) {
-                      form.clearErrors(field.name)
-                    }
-                    const value = e
-                    setInputValue(value)
-                    form.setValue(field.name, value, {
-                      shouldDirty: true,
-                    })
-                  }}
-                  inputName={field.name}
-                  value={inputValue}
-                  {...getCurrentLayout()}
-                />
-                <Select
-                  onValueChange={handleLanguageChange}
-                  defaultValue={'spanish'}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccionar idioma..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="spanish">Español</SelectItem>
-                    <SelectItem value="english">Inglés</SelectItem>
-                    <SelectItem value="russian">Ruso</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
           </FormItem>
         )}
       />
