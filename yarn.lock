@@ -9729,6 +9729,11 @@ react-resize-detector@^8.0.4:
   dependencies:
     lodash "^4.17.21"
 
+react-simple-keyboard@^3.7.131:
+  version "3.7.131"
+  resolved "https://registry.yarnpkg.com/react-simple-keyboard/-/react-simple-keyboard-3.7.131.tgz#05e43c74d1e0495d92fb5f57ccba1a48e8e59f17"
+  integrity sha512-dAgCdR1Aot2n3VK9SdAOsKLj4xmR2EsJM7tEYDhCuvfze1OjX/u/7XfkrOCd6Lb+tp7RwKLBHjlHh0TdRPpUbw==
+
 react-smooth@^2.0.4:
   version "2.0.5"
   resolved "https://registry.npmjs.org/react-smooth/-/react-smooth-2.0.5.tgz"
@@ -10273,6 +10278,11 @@ simple-get@^4.0.0, simple-get@^4.0.1:
     decompress-response "^6.0.0"
     once "^1.3.1"
     simple-concat "^1.0.0"
+
+simple-keyboard-layouts@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/simple-keyboard-layouts/-/simple-keyboard-layouts-3.4.1.tgz#12634a7b262542805478661ddbf4d64ae415d289"
+  integrity sha512-2P6hroZh9KSSpyTvCXB4bMZY8qE4dS8TqveLjK8zUZ+fTAPbrFjxNYU/zovh0/LT86kVe/CeedPUwJHDhyAsZg==
 
 simple-swizzle@^0.2.2:
   version "0.2.2"

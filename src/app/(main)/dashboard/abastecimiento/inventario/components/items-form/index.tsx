@@ -154,17 +154,17 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
       style={{
         scrollbarGutter: 'stable both-edges',
       }}
-      className="flex-1 overflow-y-auto p-6 mb-10 gap-8"
+      className="flex-1 overflow-y-auto p-6 pb-20 gap-8"
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="px-24">
+          <div className="px-24 ">
             {currentStep === 1 && <Step1 />}
             {currentStep === 2 && <Step2 />}
             {currentStep === 3 && <Step3 image={image} setImage={setImage} />}
           </div>
 
-          <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+          <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
             {(form.formState.errors.nombre ||
               form.formState.errors.descripcion) && (
               <p className="text-sm font-medium text-destructive">
