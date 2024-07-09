@@ -35,6 +35,7 @@ export const backup = async () => {
     return fileName
   } catch (error) {
     console.error('Error during backup:', error)
+
     throw error // Re-throw the error to be handled elsewhere if needed
   }
 }
@@ -48,8 +49,10 @@ export const restore = async (fileNameToRestore: string) => {
     )
 
     console.log('Restore Completed!', fileNameToRestore)
+    return true
   } catch (error) {
     console.error('Error during restore:', error)
+
     throw error
   }
 }

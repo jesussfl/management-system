@@ -16,9 +16,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
+import { useToast } from '@/modules/common/components/toast/use-toast'
 function BackupButton() {
   const [isLoading, setIsloading] = useState(false)
   const [fileNameToRestore, setFileNameToRestore] = useState('')
+  const { toast } = useToast()
   // console.log(fileNameToRestore, 'fileeee')
   const handleBackup = async () => {
     setIsloading(true)
@@ -42,7 +44,16 @@ function BackupButton() {
 
   const handleRestore = async () => {
     setIsloading(true)
-    await restore(fileNameToRestore)
+    const res = await restore(fileNameToRestore)
+
+    if (res) {
+      toast({
+        title: 'Copia de seguridad reestablecida',
+        description: 'Se ha reestablecido la copia de seguridad',
+        variant: 'success',
+      })
+    }
+
     setIsloading(false)
   }
   return (
@@ -98,7 +109,7 @@ function BackupButton() {
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                'Restaurar'
+                'Restaurar Copia de Seguridad'
               )}
             </Button>
           </CardContent>
