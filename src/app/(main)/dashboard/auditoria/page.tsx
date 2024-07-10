@@ -1,7 +1,8 @@
-import { FolderSearch } from 'lucide-react'
+import { DownloadIcon, FolderSearch } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
+  HeaderRightSide,
   PageContent,
   PageHeader,
   PageHeaderDescription,
@@ -11,6 +12,9 @@ import {
 import { getAllAuditItems } from './lib/actions'
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
+import { getAllUsers } from '../usuarios/lib/actions/users'
+import ModalForm from '@/modules/common/components/modal-form'
+import ExportAuditReport from './components/modal-export'
 
 export const metadata: Metadata = {
   title: 'Auditoría',
@@ -19,6 +23,7 @@ export const metadata: Metadata = {
 }
 export default async function Page() {
   const auditItems = await getAllAuditItems()
+  const users = await getAllUsers()
   return (
     <>
       <PageHeader>
@@ -31,6 +36,18 @@ export default async function Page() {
             Visualiza todas las acciones realizadas en el sistema
           </PageHeaderDescription>
         </HeaderLeftSide>
+        <HeaderRightSide>
+          <ModalForm
+            triggerName="Exportar"
+            triggerVariant="outline"
+            triggerSize="sm"
+            closeWarning={false}
+            className="w-[300px] px-4 py-8 overflow-y-hidden"
+            triggerIcon={<DownloadIcon className="h-4 w-4" />}
+          >
+            <ExportAuditReport users={users} />
+          </ModalForm>
+        </HeaderRightSide>
       </PageHeader>
 
       <PageContent>

@@ -158,7 +158,7 @@ export function Combobox({
                         }
                         form.setValue(
                           name,
-                          isValueString ? info.label : Number(info.value),
+                          isValueString ? info.value : Number(info.value),
                           {
                             shouldDirty: true,
                           }

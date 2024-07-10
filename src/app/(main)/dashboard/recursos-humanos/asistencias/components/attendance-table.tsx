@@ -15,7 +15,7 @@ import { useStore } from '@/lib/hooks/custom-use-store'
 import { useAllAttendanceFilterStore } from '../lib/stores/attendance-filters-store'
 import AttendanceFilters from './attendance-table-filters'
 
-type UserWithAttendances = Prisma.UsuarioGetPayload<{
+export type UserWithAttendances = Prisma.UsuarioGetPayload<{
   include: {
     asistencias: true
     personal: true
@@ -83,7 +83,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
           <TableRow>
             <TableHead>Personal</TableHead>
             {daysInMonth.map((day) => (
-              <TableHead key={day.toString()}>{format(day, 'd')}</TableHead>
+              <TableHead className="text-center" key={day.toString()}>
+                {format(day, 'd')}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
