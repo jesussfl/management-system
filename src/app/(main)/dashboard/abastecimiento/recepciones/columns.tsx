@@ -24,10 +24,38 @@ dayjs.extend(require('dayjs/plugin/duration'))
 
 type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
-    destinatario: true
-    supervisor: true
-    abastecedor: true
-    autorizador: true
+    destinatario: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    supervisor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    abastecedor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    autorizador: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
     renglones: { include: { renglon: true } }
   }
 }>
@@ -65,7 +93,8 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'destinatario',
     accessorFn: (row: RecepcionType) =>
-      row.destinatario?.nombres + ' ' + row.destinatario?.apellidos,
+      `${row.destinatario?.grado?.abreviatura || ''} ${row.destinatario
+        ?.nombres} ${row.destinatario?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -88,7 +117,8 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'supervisor',
     accessorFn: (row: RecepcionType) => {
-      const name = row.supervisor?.nombres + ' ' + row.supervisor?.apellidos
+      const name = `${row.supervisor?.grado?.abreviatura || ''} ${row.supervisor
+        ?.nombres} ${row.supervisor?.apellidos}`
 
       if (!row.supervisor) return 'No asignado'
 
@@ -118,7 +148,8 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'autorizador',
     accessorFn: (row: RecepcionType) =>
-      row?.autorizador?.nombres + ' ' + row.autorizador?.apellidos,
+      `${row.autorizador?.grado?.abreviatura || ''} ${row.autorizador
+        ?.nombres} ${row.autorizador?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -143,7 +174,8 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'abastecedor',
     accessorFn: (row: RecepcionType) => {
-      return row?.abastecedor?.nombres + ' ' + row.abastecedor?.apellidos
+      return `${row.abastecedor?.grado?.abreviatura || ''} ${row.abastecedor
+        ?.nombres} ${row.abastecedor?.apellidos}`
     },
     header: ({ column }) => {
       return (

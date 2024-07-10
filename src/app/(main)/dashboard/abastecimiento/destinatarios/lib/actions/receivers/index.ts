@@ -102,6 +102,10 @@ export const getAllReceiversToCombobox = async (
   }))
 }
 export const checkIfReceiverExists = async (cedula: string) => {
+  if (!cedula) {
+    return
+  }
+
   const exists = await prisma.destinatario.findUnique({
     where: {
       cedula,
