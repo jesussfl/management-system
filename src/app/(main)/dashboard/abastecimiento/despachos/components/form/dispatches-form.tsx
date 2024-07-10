@@ -731,6 +731,7 @@ export default function DispatchesForm({
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid md:grid-cols-2 gap-4">
                 {selectedItems.map((item, index) => {
+                  console.log('item', item, item.devoluciones, item.despachos)
                   const receptions = item.recepciones.reduce(
                     (total, item) => total + item.cantidad,
                     0
@@ -739,7 +740,7 @@ export default function DispatchesForm({
                     (total, item) => total + item.seriales.length,
                     0
                   )
-                  const returnedSerials = item.devoluciones.reduce(
+                  const returnedSerials = item?.devoluciones?.reduce(
                     (total, item) => total + item.seriales.length,
                     0
                   )
