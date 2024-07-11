@@ -340,6 +340,9 @@ export const getAllItems = async () => {
   }
 
   const renglones = await prisma.renglon.findMany({
+    orderBy: {
+      ultima_actualizacion: 'desc',
+    },
     where: {
       servicio: 'Armamento',
     },
