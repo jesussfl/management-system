@@ -31,10 +31,38 @@ type PedidoType = Prisma.PedidoGetPayload<{
   include: {
     unidad: true
     proveedor: true
-    destinatario: true
-    supervisor: true
-    abastecedor: true
-    autorizador: true
+    destinatario: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    supervisor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    abastecedor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    autorizador: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
     renglones: { include: { renglon: true } }
   }
 }>
@@ -122,7 +150,10 @@ export const columns: ColumnDef<PedidoType>[] = [
   },
   {
     id: 'destinatario',
-    accessorFn: (row: PedidoType) => row.destinatario?.nombres,
+    accessorFn: (row: PedidoType) =>
+      `${row?.destinatario?.grado?.abreviatura || ''} ${
+        row?.destinatario?.nombres || ''
+      } ${row?.destinatario?.apellidos || ''}`,
     header: ({ column }) => {
       return (
         <Button
@@ -157,7 +188,8 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'supervisor',
     accessorFn: (row: PedidoType) =>
-      row?.supervisor?.nombres + ' ' + row.supervisor?.apellidos,
+      `${row?.supervisor?.grado?.abreviatura || ''} ${row?.supervisor
+        ?.nombres} ${row?.supervisor?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -182,7 +214,8 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'autorizador',
     accessorFn: (row: PedidoType) =>
-      row?.autorizador?.nombres + ' ' + row.autorizador?.apellidos,
+      `${row?.autorizador?.grado?.abreviatura || ''} ${row?.autorizador
+        ?.nombres} ${row?.autorizador?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -207,7 +240,8 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'abastecedor',
     accessorFn: (row: PedidoType) => {
-      return row?.abastecedor?.nombres + ' ' + row.abastecedor?.apellidos
+      return `${row?.abastecedor?.grado?.abreviatura || ''} ${row?.abastecedor
+        ?.nombres} ${row?.abastecedor?.apellidos}`
     },
     header: ({ column }) => {
       return (

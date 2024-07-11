@@ -739,7 +739,7 @@ export default function DispatchesForm({
                     (total, item) => total + item.seriales.length,
                     0
                   )
-                  const returnedSerials = item.devoluciones.reduce(
+                  const returnedSerials = item?.devoluciones?.reduce(
                     (total, item) => total + item.seriales.length,
                     0
                   )

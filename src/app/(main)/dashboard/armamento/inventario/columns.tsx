@@ -16,7 +16,15 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/modules/common/components/alert-dialog'
 export type RenglonColumns = {
   id: number
   nombre: string
@@ -69,12 +77,32 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       if (!image) return 'Sin imágen'
 
       return (
-        <Image
-          src={row.original.imagen || ''}
-          alt={row.original.imagen || ''}
-          width={50}
-          height={50}
-        />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Image
+              src={row.original.imagen || ''}
+              alt={row.original.imagen || ''}
+              width={50}
+              height={50}
+            />
+          </AlertDialogTrigger>
+          <AlertDialogContent className="max-h-[90vh]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Imágen del Renglón</AlertDialogTitle>
+
+              <Image
+                src={row.original.imagen || ''}
+                alt={row.original.imagen || ''}
+                width={500}
+                height={500}
+              />
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cerrar</AlertDialogCancel>
+              {/* <AlertDialogAction>Continue</AlertDialogAction> */}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )
     },
   },

@@ -25,10 +25,38 @@ export const getAllOrders = async () => {
           renglon: true,
         },
       },
-      abastecedor: true,
-      autorizador: true,
-      supervisor: true,
-      destinatario: true,
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
       proveedor: true,
       unidad: true,
     },

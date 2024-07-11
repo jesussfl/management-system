@@ -428,10 +428,38 @@ export const getAllDispatches = async () => {
           seriales: true,
         },
       },
-      destinatario: true,
-      supervisor: true,
-      abastecedor: true,
-      autorizador: true,
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
     },
   })
   return dispatch

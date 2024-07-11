@@ -102,6 +102,10 @@ export const getAllReceiversToCombobox = async (
   }))
 }
 export const checkIfReceiverExists = async (cedula: string) => {
+  if (!cedula) {
+    return
+  }
+
   const exists = await prisma.destinatario.findUnique({
     where: {
       cedula,
@@ -233,7 +237,7 @@ export const updateReceiver = async (
   })
 
   await registerAuditAction(
-    `Se actualizó el destinatario con la cedula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
+    `Se actualizó el destinatario con la cedula: ${receiver.cedula} y nombre: ${receiver.nombres} ${receiver.apellidos}`
   )
 
   revalidatePath('/dashboard/armamento/destinatarios')

@@ -35,6 +35,7 @@ import { Switch } from '@/modules/common/components/switch/switch'
 import { getAllWarehouses } from '../../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
 import ImageUpload from '@/modules/common/components/file-upload'
+import Image from 'next/image'
 export const Step3 = ({
   image,
   setImage,
@@ -368,7 +369,19 @@ export const Step3 = ({
         />
       </div>
 
-      {/* <ImageUpload setFile={setImage} /> */}
+      <FormLabel>Selecciona una imagen:</FormLabel>
+      <div className="flex flex-1 gap-4">
+        {form.watch('imagen') && !image ? (
+          <Image
+            src={form.watch('imagen')}
+            alt={'Imagen del renglón'}
+            width={250}
+            height={250}
+          />
+        ) : null}
+
+        <ImageUpload setFile={setImage} />
+      </div>
 
       {
         <FormField

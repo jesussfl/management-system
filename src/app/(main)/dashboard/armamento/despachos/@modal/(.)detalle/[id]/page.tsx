@@ -34,9 +34,9 @@ export default async function Page({
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {renglones.map((renglon, index) => (
-            <Card key={index} className="min-w-[300px]">
+            <Card key={index} className="min-w-[200px]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground">
                   Renglón {index + 1}

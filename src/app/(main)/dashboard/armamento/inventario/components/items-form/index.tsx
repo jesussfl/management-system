@@ -76,7 +76,7 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
         return
       }
       const dirtyValues = getDirtyValues(dirtyFields, data) as Renglon
-      updateItem(defaultValues.id, dirtyValues).then(() => {
+      updateItem(defaultValues.id, dirtyValues, image).then(() => {
         toast({
           title: 'Renglon actualizado',
           description: 'El renglon se ha actualizado correctamente',
