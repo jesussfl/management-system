@@ -191,7 +191,7 @@ export const updateProfessional = async (
     }
   }
 
-  await prisma.profesional_Abastecimiento.update({
+  const updatedProfessional = await prisma.profesional_Abastecimiento.update({
     where: {
       id,
     },
@@ -199,7 +199,7 @@ export const updateProfessional = async (
   })
 
   await registerAuditAction(
-    'Se actualizó el profesional con la cedula ' + data.cedula
+    'Se actualizó el profesional con la cedula ' + updatedProfessional.cedula
   )
 
   revalidatePath('/dashboard/profesionales')

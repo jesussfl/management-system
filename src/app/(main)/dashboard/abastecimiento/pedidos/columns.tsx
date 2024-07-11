@@ -151,8 +151,9 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'destinatario',
     accessorFn: (row: PedidoType) =>
-      `${row?.destinatario?.grado?.abreviatura || ''} ${row?.destinatario
-        ?.nombres} ${row?.destinatario?.apellidos}`,
+      `${row?.destinatario?.grado?.abreviatura || ''} ${
+        row?.destinatario?.nombres || ''
+      } ${row?.destinatario?.apellidos || ''}`,
     header: ({ column }) => {
       return (
         <Button

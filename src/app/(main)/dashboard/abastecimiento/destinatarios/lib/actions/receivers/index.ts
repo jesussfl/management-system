@@ -229,7 +229,7 @@ export const updateReceiver = async (
     }
   }
 
-  await prisma.destinatario.update({
+  const updatedReceiver = await prisma.destinatario.update({
     where: {
       id,
     },
@@ -237,7 +237,7 @@ export const updateReceiver = async (
   })
 
   await registerAuditAction(
-    `Se actualizó el destinatario de abastecimiento con la cedula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
+    `Se actualizó el destinatario de abastecimiento con la cedula: ${updatedReceiver.cedula} y nombre: ${updatedReceiver.nombres} ${updatedReceiver.apellidos}`
   )
 
   revalidatePath('/dashboard/abastecimiento/destinatarios')

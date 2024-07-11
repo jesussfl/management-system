@@ -166,7 +166,25 @@ export const updateItem = async (
       success: null,
     }
   }
-  const imageData = (image?.get('image') as File) || null
+  if (!image) {
+    await prisma.renglon.update({
+      where: {
+        id,
+      },
+      data,
+    })
+
+    await registerAuditAction(
+      `Se ha actualizado un renglón de armamento con el nombre: ${data.nombre}`
+    )
+    revalidatePath('/dashboard/armamento/inventario')
+
+    return {
+      success: 'Se ha actualizado el renglón correctamente',
+      error: false,
+    }
+  }
+  const imageData = (image.get('image') as File) || null
 
   const buffer = Buffer.from(await imageData.arrayBuffer())
   const relativeUploadDir = `/uploads/${new Date(Date.now())
