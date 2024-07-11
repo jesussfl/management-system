@@ -135,7 +135,8 @@ export const createItem = async (
 
 export const updateItem = async (
   id: number,
-  data: Prisma.RenglonUpdateInput
+  data: Prisma.RenglonUpdateInput,
+  image: FormData | null
 ) => {
   const sessionResponse = await validateUserSession()
 
@@ -144,7 +145,7 @@ export const updateItem = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ARMAMENTO,
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -165,18 +166,68 @@ export const updateItem = async (
       success: null,
     }
   }
+  const imageData = (image?.get('image') as File) || null
 
-  await prisma.renglon.update({
-    where: {
-      id,
-    },
-    data,
-  })
+  const buffer = Buffer.from(await imageData.arrayBuffer())
+  const relativeUploadDir = `/uploads/${new Date(Date.now())
+    .toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    .replace(/\//g, '-')}`
 
-  await registerAuditAction(
-    `Se ha actualizado el renglón de armamento con el nombre ${exist?.nombre} y con el id ${exist?.id}`
-  )
-  revalidatePath('/dashboard/armamento/inventario')
+  const uploadDir = join(process.cwd(), 'public', relativeUploadDir)
+
+  try {
+    await stat(uploadDir)
+  } catch (e: any) {
+    if (e.code === 'ENOENT') {
+      // This is for checking the directory is exist (ENOENT : Error No Entry)
+      await mkdir(uploadDir, { recursive: true })
+    } else {
+      console.error(
+        'Error while trying to create directory when uploading a file\n',
+        e
+      )
+      return { error: 'Something went wrong.' }
+    }
+  }
+
+  try {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
+    const filename = `${imageData.name.replace(
+      /\.[^/.]+$/,
+      ''
+    )}-${uniqueSuffix}.${mime.getExtension(imageData.type)}`
+    await writeFile(`${uploadDir}/${filename}`, buffer)
+    const fileUrl = `${relativeUploadDir}/${filename}`
+
+    await prisma.renglon.update({
+      where: {
+        id,
+      },
+      data: {
+        ...data,
+        imagen: fileUrl,
+      },
+    })
+
+    await registerAuditAction(
+      `Se ha actualizado el renglón de armamento con el id: ${id} y el nombre ${exist?.nombre}`
+    )
+
+    // Save to database
+
+    revalidatePath('/dashboard/armamento/inventario')
+    return {
+      success: 'Se ha actualizado el renglón correctamente',
+      error: false,
+    }
+  } catch (e) {
+    console.error('Error while trying to upload a file\n', e)
+    return { error: 'Something went wrong.' }
+  }
 }
 
 export const deleteItem = async (id: number) => {
