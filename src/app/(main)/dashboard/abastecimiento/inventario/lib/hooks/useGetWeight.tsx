@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 const useGetWeight = () => {
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
   const [weight, setWeight] = useState(0)
   const packagingUnitId = watch('unidadEmpaqueId')
 
@@ -15,10 +15,11 @@ const useGetWeight = () => {
   }, [watch])
 
   useEffect(() => {
-    getPackagingUnitById(packagingUnitId).then((data) =>
+    getPackagingUnitById(packagingUnitId).then((data) => {
       setWeight(Number(data.peso) || 0)
-    )
-  }, [packagingUnitId])
+      setValue('peso', data.peso)
+    })
+  }, [packagingUnitId, setValue])
 
   return { weight }
 }
