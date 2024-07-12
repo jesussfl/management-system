@@ -264,7 +264,7 @@ export const Step3 = ({
             required: false,
           }}
           // disabled={weight > 0 ? true : false}
-          render={({ field: { value, ref, ...rest } }) => (
+          render={({ field: { value, onChange, ref, ...rest } }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Peso por unidad (Opcional): </FormLabel>
               <FormDescription>
@@ -286,6 +286,9 @@ export const Step3 = ({
                     if (weight > 0) {
                       e.preventDefault()
                     }
+                  }}
+                  onValueChange={({ floatValue }) => {
+                    onChange(floatValue)
                   }}
                   {...rest}
                 />

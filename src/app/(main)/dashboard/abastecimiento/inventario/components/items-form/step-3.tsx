@@ -264,7 +264,7 @@ export const Step3 = ({
             required: false,
           }}
           // disabled={weight > 0 ? true : false}
-          render={({ field: { value, ref, ...rest } }) => (
+          render={({ field: { value, onChange, ref, ...rest } }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Peso por unidad (Opcional): </FormLabel>
               <FormDescription>
@@ -287,18 +287,11 @@ export const Step3 = ({
                       e.preventDefault()
                     }
                   }}
+                  onValueChange={({ floatValue }) => {
+                    onChange(floatValue)
+                  }}
                   {...rest}
                 />
-                {/* <Input
-                  type="number"
-                  placeholder="Ingresa el peso del renglón"
-                  {...field}
-                  onChange={(value) => {
-                    field.onChange(parseFloat(value.target.value))
-                  }}
-                  value={field.value}
-                  // disabled={weight > 0 ? true : false}
-                /> */}
               </FormControl>
               <FormMessage />
             </FormItem>

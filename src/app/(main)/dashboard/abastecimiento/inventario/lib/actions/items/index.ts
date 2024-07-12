@@ -47,6 +47,7 @@ export const createItem = async (
     await prisma.renglon.create({
       data: {
         ...data,
+        peso: !data.peso ? 0 : data.peso,
         servicio: 'Abastecimiento',
       },
     })
@@ -103,6 +104,7 @@ export const createItem = async (
       data: {
         ...data,
         imagen: fileUrl, // Agregamos la ruta de la imagen a la base de datos
+        peso: !data.peso ? 0 : data.peso,
         servicio: 'Abastecimiento',
       },
     })
@@ -229,6 +231,7 @@ export const updateItem = async (
       },
       data: {
         ...data,
+
         imagen: fileUrl,
       },
     })

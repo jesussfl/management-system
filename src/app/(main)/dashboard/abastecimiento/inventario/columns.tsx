@@ -145,7 +145,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
     },
     header: ({ column }) => (
-      <HeaderCell column={column} value="Peso Por Unidad" />
+      <HeaderCell column={column} value="Peso del Renglón" />
     ),
 
     // cell: ({ row }) => {
