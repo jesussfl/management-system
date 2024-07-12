@@ -1,4 +1,4 @@
-import { Calendar, DownloadIcon, PackagePlus } from 'lucide-react'
+import { Calendar, DownloadIcon, PackagePlus, Settings } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
@@ -13,6 +13,10 @@ import { getAllAttendances, getAllUsersWithAttendances } from './lib/actions'
 import AttendanceTable from './components/attendance-table'
 import ModalForm from '@/modules/common/components/modal-form'
 import ExportAttendanceReport from './components/export-attendance-report'
+import SwitchShowCredentials from './components/switch-show-credentials'
+import { checkIfShowCredentialsEnabled } from '@/app/(attendance)/asistencias/lib/actions'
+import { validateSections } from '@/lib/data/validate-permissions'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
 export const metadata: Metadata = {
   title: 'Asistencias',
@@ -20,6 +24,9 @@ export const metadata: Metadata = {
 }
 export default async function Page() {
   const usersWithAttendances = await getAllUsersWithAttendances()
+  const isAuthorized = await validateSections({
+    sections: [SECTION_NAMES.TODAS],
+  })
   return (
     <>
       <PageHeader>
@@ -33,6 +40,18 @@ export default async function Page() {
           </PageHeaderDescription>
         </HeaderLeftSide>
         <HeaderRightSide>
+          {isAuthorized && (
+            <ModalForm
+              triggerName="Configuración"
+              triggerVariant="outline"
+              triggerSize="sm"
+              triggerIcon={<Settings className="h-4 w-4" />}
+              closeWarning={false}
+              className="w-[400px] p-8"
+            >
+              <SwitchShowCredentials />
+            </ModalForm>
+          )}
           <ModalForm
             triggerName="Exportar"
             triggerVariant="outline"

@@ -5,12 +5,17 @@ import {
   getLastAttendanceByUserId,
   updateAttendance,
 } from '@/app/(main)/dashboard/recursos-humanos/asistencias/lib/actions'
+import { prisma } from '@/lib/prisma'
 import { Usuario } from '@prisma/client'
 import { isSameDay } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 
+export const checkIfShowCredentialsEnabled = async () => {
+  const record = await prisma.attendanceCredentials.findFirst()
+  return record?.show_credentials
+}
 export const checkInTime = async (user: Usuario) => {
-  console.log('checkAttendance')
+  // console.log('checkAttendance')
 
   if (!user || !user.id) {
     return {

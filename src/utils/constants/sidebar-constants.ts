@@ -72,7 +72,7 @@ export enum SECTION_NAMES {
   USUARIOS = 'USUARIOS',
 
   AUDITORIA = 'AUDITORIA',
-
+  GUARDIAS = 'GUARDIAS',
   CONFIGURACION = 'CONFIGURACION',
   UNIDADES = 'UNIDADES',
   AYUDA = 'AYUDA',
@@ -284,11 +284,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
       },
       {
         title: 'Guardias',
-        identifier: SECTION_NAMES.ASISTENCIAS,
+        identifier: SECTION_NAMES.GUARDIAS,
         path: '/dashboard/recursos-humanos/guardias',
         icon: Contact2,
         requiredPermissions: [
-          SECTION_NAMES.ASISTENCIAS,
+          SECTION_NAMES.GUARDIAS,
           SECTION_NAMES.TODAS,
           SECTION_NAMES.RECURSOS_HUMANOS,
         ],

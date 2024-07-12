@@ -8,7 +8,16 @@ import { Prisma } from '@prisma/client'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { format, getDaysInMonth } from 'date-fns'
 import { es } from 'date-fns/locale'
-
+export const switchShowCredentialsRecord = async (value: boolean) => {
+  await prisma.attendanceCredentials.update({
+    where: {
+      id: 1,
+    },
+    data: {
+      show_credentials: value,
+    },
+  })
+}
 export const createAttendance = async (
   data: Prisma.AsistenciaUncheckedCreateInput
 ) => {

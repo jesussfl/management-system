@@ -42,9 +42,11 @@ type FormValues = {
 function ValidationForm({
   type,
   close,
+  isCredentialsEnabled = false,
 }: {
   type: 'entrada' | 'salida'
   close?: () => void
+  isCredentialsEnabled?: boolean
 }) {
   const { toast } = useToast()
   const { faceio } = useFaceio()
@@ -243,59 +245,66 @@ function ValidationForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} id="validation-form">
         <div className="flex flex-col gap-2">
-          <FormField
-            control={form.control}
-            name="email"
-            rules={{
-              required: 'Este campo es requerido',
-              validate: handleEmailValidation,
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Correo electrónico</FormLabel>
-                <FormControl>
-                  <Input type="email" {...field} disabled={isLoading} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            rules={{ required: 'Contraseña requerida' }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl>
-                  <Input
-                    type="password"
-                    {...field}
-                    disabled={isLoading}
-                    placeholder="**********"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end">
-            <Link
-              href="/auth/reset"
-              className={cn(
-                buttonVariants({ variant: 'ghost' }),
-                'text-green-600'
+          {isCredentialsEnabled && (
+            <>
+              <FormField
+                control={form.control}
+                name="email"
+                rules={{
+                  required: 'Este campo es requerido',
+                  validate: handleEmailValidation,
+                }}
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} disabled={isLoading} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                rules={{ required: 'Contraseña requerida' }}
+                render={({ field }) => (
+                  <FormItem className="">
+                    <FormLabel>Contraseña</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        {...field}
+                        disabled={isLoading}
+                        placeholder="**********"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end">
+                <Link
+                  href="/auth/reset"
+                  className={cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'text-green-600'
+                  )}
+                >
+                  Olvidé mi contraseña
+                </Link>
+              </div>
+            </>
+          )}
+
+          {isCredentialsEnabled && (
+            <Button disabled={isLoading} type="submit">
+              {isLoading && (
+                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
               )}
-            >
-              Olvidé mi contraseña
-            </Link>
-          </div>
-          <Button disabled={isLoading} type="submit">
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Verificar credenciales
-          </Button>
+              Verificar credenciales
+            </Button>
+          )}
 
           <Button
             variant={'secondary'}
@@ -308,7 +317,7 @@ function ValidationForm({
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            ID Facial
+            {type === 'entrada' ? 'Verificar entrada' : 'Verificar salida'}
           </Button>
         </div>
       </form>

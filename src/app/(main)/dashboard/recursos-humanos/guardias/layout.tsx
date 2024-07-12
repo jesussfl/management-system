@@ -7,7 +7,11 @@ export default async function Layout({
   children: React.ReactNode
 }) {
   const isAuthorized = await validateSections({
-    sections: [SECTION_NAMES.PERSONAL, SECTION_NAMES.RECURSOS_HUMANOS],
+    sections: [
+      SECTION_NAMES.PERSONAL,
+      SECTION_NAMES.RECURSOS_HUMANOS,
+      SECTION_NAMES.GUARDIAS,
+    ],
   })
 
   if (!isAuthorized) {
