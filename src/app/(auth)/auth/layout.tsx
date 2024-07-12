@@ -15,6 +15,11 @@ export default function AuthLayout({
           alt="background"
           className="rounded-lg"
         />
+        <div className="p-3 absolute top-4 left-4 bg-white rounded-lg">
+          <span className="self-center font-extrabold whitespace-nowrap px-3 text-blue-700 tex-sm md:text-2xl dark:text-blue-700">
+            CeserNET
+          </span>
+        </div>
       </div>
       <div className="flex lg:flex-1">{children}</div>
     </div>

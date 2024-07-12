@@ -58,7 +58,7 @@ export const DashboardNavbar: FC<Record<string, never>> = function () {
               </button>
               <Navbar.Brand href="/">
                 <span className="self-center whitespace-nowrap px-3 text-white tex-sm md:text-xl font-semibold dark:text-white">
-                  Administrador
+                  CeserNET.
                 </span>
               </Navbar.Brand>
             </div>
