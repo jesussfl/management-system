@@ -88,13 +88,14 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
   }
 
   const validateAndProceed = async (
-    fields: Array<keyof Renglon>
+    fields: Array<keyof Renglon>,
+    step: number
   ): Promise<void> => {
-    await form.trigger(fields)
-
-    if (!Object.values(form.formState.errors).some(Boolean)) {
-      setCurrentStep((prev) => prev + 1)
-    }
+    form.trigger(fields).then((res) => {
+      if (res || step < currentStep) {
+        setCurrentStep((step) => step + 1)
+      }
+    })
   }
 
   const handleNextStep = async () => {
@@ -115,25 +116,23 @@ export default function ItemsForm({ defaultValues }: Props): React.JSX.Element {
           return
         }
 
-        await validateAndProceed(['nombre', 'descripcion'])
+        await validateAndProceed(['nombre', 'descripcion'], 1)
 
         setIsLoading(false)
         break
 
       case 2:
-        await validateAndProceed([
-          'clasificacionId',
-          'unidadEmpaqueId',
-          'categoriaId',
-        ])
+        await validateAndProceed(
+          ['clasificacionId', 'unidadEmpaqueId', 'categoriaId'],
+          2
+        )
         break
 
       case 3:
-        await validateAndProceed([
-          'stock_minimo',
-          'stock_maximo',
-          'numero_parte',
-        ])
+        await validateAndProceed(
+          ['stock_minimo', 'stock_maximo', 'numero_parte'],
+          3
+        )
         break
 
       default:
