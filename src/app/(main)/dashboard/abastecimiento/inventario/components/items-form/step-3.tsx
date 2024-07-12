@@ -14,29 +14,16 @@ import { Input } from '@/modules/common/components/input/input'
 import useGetWeight from '../../lib/hooks/useGetWeight'
 import { useEffect, useState } from 'react'
 import { getAllSubsystems } from '../../lib/actions/subsystems'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
 import { cn } from '@/utils/utils'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/modules/common/components/command/command'
-import { Button, buttonVariants } from '@/modules/common/components/button'
+import { buttonVariants } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
-import { CheckIcon, Loader2 } from 'lucide-react'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { getAllWarehouses } from '../../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
 import ImageUpload from '@/modules/common/components/file-upload'
 import Image from 'next/image'
 import { NumericFormat } from 'react-number-format'
+import { Combobox } from '@/modules/common/components/combobox'
 
 export const Step3 = ({
   image,
@@ -45,7 +32,7 @@ export const Step3 = ({
   image: FormData | null
   setImage: (image: FormData | null) => void
 }) => {
-  const { control, watch, setValue, getValues } = useFormContext()
+  const form = useFormContext()
   const { weight } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
   const [warehouses, setWarehouses] = useState<ComboboxData[]>([])
@@ -74,12 +61,8 @@ export const Step3 = ({
     setIsSubsystemLoading(false)
   }, [])
 
-  const subsystemId = watch('id_subsistema')
+  const subsystemId = form.watch('id_subsistema')
 
-  // useEffect(() => {
-  //   setValue('peso', weight)
-  // }, [weight, setValue])
-  console.log(watch('peso'), 'pesooo')
   useEffect(() => {
     setHasSubsystem(!!subsystemId)
   }, [subsystemId])
@@ -96,81 +79,29 @@ export const Step3 = ({
         </FormInstructionsDescription>
       </FormInstructions>
       <FormField
-        control={control}
+        control={form.control}
         name="id_almacen"
         rules={{ required: 'Este campo es requerido' }}
         render={({ field }) => (
-          <FormItem className="flex flex-1 justify-between gap-4 items-center">
+          <FormItem className="flex flex-col w-full ">
             <FormLabel>En qué almacen se encuentra:</FormLabel>
-            <div className="w-[70%]">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        'w-full justify-between',
-                        !field.value && 'text-muted-foreground'
-                      )}
-                    >
-                      {field.value
-                        ? warehouses.find(
-                            (warehouse) => warehouse.value === field.value
-                          )?.label
-                        : 'Seleccionar almacén...'}
-                      <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="PopoverContent">
-                  <Command>
-                    <CommandInput
-                      placeholder="Buscar almacén..."
-                      className="h-9"
-                    />
-                    <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                    <CommandGroup>
-                      {isWarehouseLoading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        warehouses.map((warehouse) => (
-                          <CommandItem
-                            value={warehouse.label}
-                            key={warehouse.value}
-                            onSelect={() => {
-                              setValue('id_almacen', warehouse.value, {
-                                shouldDirty: true,
-                              })
-                            }}
-                          >
-                            {warehouse.label}
-                            <CheckIcon
-                              className={cn(
-                                'ml-auto h-4 w-4',
-                                warehouse.value === field.value
-                                  ? 'opacity-100'
-                                  : 'opacity-0'
-                              )}
-                            />
-                          </CommandItem>
-                        ))
-                      )}
-                    </CommandGroup>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Si no encuentras el almacén, puedes crearlo
-                <Link
-                  href="/dashboard/almacenes/almacen"
-                  className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
-                >
-                  Crear Almacén
-                </Link>
-              </FormDescription>
-              <FormMessage />
-            </div>
+
+            <Combobox
+              name={field.name}
+              data={warehouses}
+              form={form}
+              field={field}
+            />
+            <FormDescription>
+              Si no encuentras el almacén, puedes crearlo
+              <Link
+                href="/dashboard/almacenes/almacen"
+                className={cn(buttonVariants({ variant: 'link' }), 'h-[1px]')}
+              >
+                Crear Almacén
+              </Link>
+            </FormDescription>
+            <FormMessage />
           </FormItem>
         )}
       />
@@ -183,7 +114,7 @@ export const Step3 = ({
             if (value) {
               setHasSubsystem(true)
             } else {
-              setValue('id_subsistema', null, { shouldDirty: true })
+              form.setValue('id_subsistema', null, { shouldDirty: true })
               setHasSubsystem(false)
             }
           }}
@@ -193,70 +124,17 @@ export const Step3 = ({
       {hasSubsystem && (
         <>
           <FormField
-            control={control}
+            control={form.control}
             name="id_subsistema"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col w-full">
                 <FormLabel>Subsistema:</FormLabel>
-
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        disabled={!hasSubsystem}
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-full justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? subsystems.find(
-                              (subsystem) => subsystem.value === field.value
-                            )?.label
-                          : 'Seleccionar subsistema'}
-                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent">
-                    <Command>
-                      <CommandInput
-                        placeholder="Buscar subsistema..."
-                        className="h-9"
-                      />
-                      <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                      <CommandGroup>
-                        {isSubsystemLoading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          subsystems.map((subsystem) => (
-                            <CommandItem
-                              value={subsystem.label}
-                              key={subsystem.value}
-                              onSelect={() => {
-                                setValue('id_subsistema', subsystem.value, {
-                                  shouldDirty: true,
-                                })
-                              }}
-                            >
-                              {subsystem.label}
-                              <CheckIcon
-                                className={cn(
-                                  'ml-auto h-4 w-4',
-                                  subsystem.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))
-                        )}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <Combobox
+                  name={field.name}
+                  data={subsystems}
+                  form={form}
+                  field={field}
+                />
                 <FormDescription>
                   Si no encuentras el subsistema, puedes crearlo
                   <Link
@@ -277,7 +155,7 @@ export const Step3 = ({
       )}
 
       <FormField
-        control={control}
+        control={form.control}
         name="numero_parte"
         render={({ field }) => (
           <FormItem className="w-full">
@@ -297,15 +175,15 @@ export const Step3 = ({
       />
       <div className="flex flex-1 gap-4">
         <FormField
-          control={control}
+          control={form.control}
           name="stock_minimo"
           rules={{
             required: true,
             min: 0,
             max: 1000000,
             validate: (value) => {
-              if (getValues('stock_maximo')) {
-                if (value > getValues('stock_maximo')) {
+              if (form.getValues('stock_maximo')) {
+                if (value > form.getValues('stock_maximo')) {
                   return 'El stock minimo no puede ser mayor al stock maximo'
                 }
                 return true
@@ -331,13 +209,13 @@ export const Step3 = ({
           )}
         />
         <FormField
-          control={control}
+          control={form.control}
           name="stock_maximo"
           rules={{
             required: false,
             validate: (value) => {
-              if (getValues('stock_minimo')) {
-                if (value < getValues('stock_minimo')) {
+              if (form.getValues('stock_minimo')) {
+                if (value < form.getValues('stock_minimo')) {
                   return 'El stock maximo no puede ser menor al stock minimo'
                 }
                 return true
@@ -366,9 +244,9 @@ export const Step3 = ({
       </div>
       <FormLabel>Selecciona una imagen:</FormLabel>
       <div className="flex flex-1 gap-4">
-        {watch('imagen') && !image ? (
+        {form.watch('imagen') && !image ? (
           <Image
-            src={watch('imagen')}
+            src={form.watch('imagen')}
             alt={'Imagen del renglón'}
             width={250}
             height={250}
@@ -380,7 +258,7 @@ export const Step3 = ({
 
       {
         <FormField
-          control={control}
+          control={form.control}
           name="peso"
           rules={{
             required: false,

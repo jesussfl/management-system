@@ -56,11 +56,11 @@ export const createGunType = async (
     return permissionsResponse
   }
 
-  await prisma.tipo_Armamento.create({
+  const gunType = await prisma.tipo_Armamento.create({
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo tipo de arma: ' + data.nombre)
+  await registerAuditAction('Se creó un nuevo tipo de arma: ' + gunType.nombre)
   revalidatePath('/dashboard/armamento/armas')
 
   return {

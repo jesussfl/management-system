@@ -56,11 +56,11 @@ export const createGunBrand = async (
     return permissionsResponse
   }
 
-  await prisma.marca_Armamento.create({
+  const brand = await prisma.marca_Armamento.create({
     data,
   })
 
-  await registerAuditAction('Se creó una nueva marca de arma: ' + data.nombre)
+  await registerAuditAction('Se creó una nueva marca de arma: ' + brand.nombre)
   revalidatePath('/dashboard/armamento/armas')
 
   return {

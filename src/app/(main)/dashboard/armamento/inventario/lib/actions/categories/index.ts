@@ -41,11 +41,13 @@ export const createCategory = async (
     }
   }
 
-  await prisma.categoria.create({
+  const categoryCreated = await prisma.categoria.create({
     data,
   })
 
-  await registerAuditAction(`Se creó una nueva categoría llamada ${nombre}`)
+  await registerAuditAction(
+    `Se creó una nueva categoría llamada ${categoryCreated.nombre}`
+  )
 
   revalidatePath('/dashboard/armamento/inventario')
 

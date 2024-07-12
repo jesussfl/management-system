@@ -53,12 +53,12 @@ export const createGunComponent = async (
     return permissionsResponse
   }
 
-  await prisma.accesorio_Arma.create({
+  const gunComponent = await prisma.accesorio_Arma.create({
     data,
   })
 
   await registerAuditAction(
-    'Se creó un nuevo componente de arma: ' + data.nombre
+    'Se creó un nuevo componente de arma: ' + gunComponent.nombre
   )
   revalidatePath('/dashboard/armamento/armas')
 

@@ -159,77 +159,24 @@ export default function GunModelsForm({ defaultValues }: Props) {
               name="id_calibre"
               rules={{ required: 'Este campo es requerido' }}
               render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem className="flex flex-col flex-1 w-full">
                   <FormLabel>¿A qué calibre de arma pertenece?</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value
-                            ? calibers.find(
-                                (caliber) => caliber.value === field.value
-                              )?.label
-                            : 'Seleccionar Calibre de Arma'}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="PopoverContent">
-                      <Command>
-                        <CommandInput
-                          placeholder="Buscar calibre de arma..."
-                          className="h-9"
-                        />
-                        <CommandEmpty>
-                          No se encontaron resultados.
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {isPending ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            calibers.map((caliber) => (
-                              <CommandItem
-                                value={caliber.label}
-                                key={caliber.value}
-                                onSelect={() => {
-                                  form.setValue('id_calibre', caliber.value, {
-                                    shouldDirty: true,
-                                  })
-                                }}
-                              >
-                                {caliber.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    caliber.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))
-                          )}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <Combobox
+                    name={field.name}
+                    data={calibers}
+                    form={form}
+                    field={field}
+                  />
 
                   <FormDescription>
                     <Link
-                      href="/dashboard/armamento/armas/tipo"
+                      href="/dashboard/armamento/armas/calibre"
                       className={cn(
                         buttonVariants({ variant: 'link' }),
                         'h-[1px] text-xs'
                       )}
                     >
-                      Crear tipo de arma
+                      Crear calibre
                     </Link>
                   </FormDescription>
                   <FormMessage />
@@ -241,67 +188,14 @@ export default function GunModelsForm({ defaultValues }: Props) {
               name="id_marca"
               rules={{ required: 'Este campo es requerido' }}
               render={({ field }) => (
-                <FormItem className="flex-1">
+                <FormItem className="flex flex-col flex-1 w-full">
                   <FormLabel>¿A qué marca de arma pertenece?</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground'
-                          )}
-                        >
-                          {field.value
-                            ? brands.find(
-                                (gunBrand) => gunBrand.value === field.value
-                              )?.label
-                            : 'Seleccionar Marca de Arma'}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="PopoverContent">
-                      <Command>
-                        <CommandInput
-                          placeholder="Buscar marca..."
-                          className="h-9"
-                        />
-                        <CommandEmpty>
-                          No se encontaron resultados.
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {isPending ? (
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : (
-                            brands.map((gunBrand) => (
-                              <CommandItem
-                                value={gunBrand.label}
-                                key={gunBrand.value}
-                                onSelect={() => {
-                                  form.setValue('id_marca', gunBrand.value, {
-                                    shouldDirty: true,
-                                  })
-                                }}
-                              >
-                                {gunBrand.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    gunBrand.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))
-                          )}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <Combobox
+                    name={field.name}
+                    data={brands}
+                    form={form}
+                    field={field}
+                  />
 
                   <FormDescription>
                     <Link
@@ -324,69 +218,14 @@ export default function GunModelsForm({ defaultValues }: Props) {
             name="id_tipo_armamento"
             rules={{ required: 'Este campo es requerido' }}
             render={({ field }) => (
-              <FormItem className="flex-1">
+              <FormItem className="flex flex-col flex-1 w-full">
                 <FormLabel>¿A qué tipo de arma pertenece?</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-full justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? gunTypes.find(
-                              (gunType) => gunType.value === field.value
-                            )?.label
-                          : 'Seleccionar Tipo de Arma'}
-                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent">
-                    <Command>
-                      <CommandInput
-                        placeholder="Buscar tipo de arma..."
-                        className="h-9"
-                      />
-                      <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                      <CommandGroup>
-                        {isPending ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          gunTypes.map((gunType) => (
-                            <CommandItem
-                              value={gunType.label}
-                              key={gunType.value}
-                              onSelect={() => {
-                                form.setValue(
-                                  'id_tipo_armamento',
-                                  gunType.value,
-                                  {
-                                    shouldDirty: true,
-                                  }
-                                )
-                              }}
-                            >
-                              {gunType.label}
-                              <CheckIcon
-                                className={cn(
-                                  'ml-auto h-4 w-4',
-                                  gunType.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))
-                        )}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <Combobox
+                  name={field.name}
+                  data={gunTypes}
+                  form={form}
+                  field={field}
+                />
 
                 <FormDescription>
                   <Link

@@ -76,11 +76,11 @@ export const createGun = async (data: Prisma.ArmamentoUncheckedCreateInput) => {
     return permissionsResponse
   }
 
-  await prisma.armamento.create({
+  const gun = await prisma.armamento.create({
     data,
   })
 
-  await registerAuditAction('Se creó una nueva arma de tipo ' + data.id)
+  await registerAuditAction('Se agregó una nueva arma con el id ' + gun.id)
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -116,7 +116,7 @@ export const updateGun = async (
     data,
   })
 
-  await registerAuditAction('Se actualizo una nueva arma de tipo ' + gunId)
+  await registerAuditAction('Se actualizó el arma con id: ' + gunId)
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -148,7 +148,7 @@ export const deleteGun = async (id: number) => {
     },
   })
 
-  await registerAuditAction('Se elimino una arma de tipo ' + id)
+  await registerAuditAction('Se eliminó el arma con el id ' + id)
   revalidatePath('/dashboard/armamento/armas')
 
   return {

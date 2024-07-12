@@ -55,11 +55,11 @@ export const createGunCaliber = async (data: Prisma.CalibreCreateInput) => {
     return permissionsResponse
   }
 
-  await prisma.calibre.create({
+  const caliber = await prisma.calibre.create({
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo calibre: ' + data.nombre)
+  await registerAuditAction('Se creó un nuevo calibre: ' + caliber.nombre)
   revalidatePath('/dashboard/armamento/armas')
 
   return {

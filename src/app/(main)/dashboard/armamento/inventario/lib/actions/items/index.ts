@@ -167,7 +167,7 @@ export const updateItem = async (
     }
   }
   if (!image) {
-    await prisma.renglon.update({
+    const renglon = await prisma.renglon.update({
       where: {
         id,
       },
@@ -175,7 +175,7 @@ export const updateItem = async (
     })
 
     await registerAuditAction(
-      `Se ha actualizado un renglón de armamento con el nombre: ${data.nombre}`
+      `Se ha actualizado un renglón de armamento con el nombre: ${renglon.nombre}`
     )
     revalidatePath('/dashboard/armamento/inventario')
 

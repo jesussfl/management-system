@@ -40,7 +40,7 @@ export const createReceiver = async (
     }
   }
 
-  await prisma.destinatario.create({
+  const receiver = await prisma.destinatario.create({
     data: {
       ...data,
       servicio: 'Armamento',
@@ -48,7 +48,7 @@ export const createReceiver = async (
   })
 
   await registerAuditAction(
-    `Se creó un nuevo destinatario de armamento con la cédula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
+    `Se creó un nuevo destinatario de armamento con la cédula: ${receiver.cedula} y nombre: ${receiver.nombres} ${receiver.apellidos}`
   )
   revalidatePath('/dashboard/armamento/destinatarios')
 

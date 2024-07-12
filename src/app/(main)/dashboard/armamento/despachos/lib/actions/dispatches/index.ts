@@ -343,7 +343,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
-    `Se actualizó el despacho de armamento con motivo: ${motivo} y id: ${id}`
+    `Se actualizó el despacho de armamento con motivo: ${despacho.motivo} y id: ${id}`
   )
 
   revalidatePath('/dashboard/armamento/despachos')

@@ -34,30 +34,7 @@ export const columns: ColumnDef<ArmamentoType>[] = [
     accessorKey: 'id',
     header: 'ID',
   },
-  {
-    accessorKey: 'descripcion',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          className="text-xs"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Descripción
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      // max width 100
-      return (
-        <div className="max-w-[300px] truncate">
-          {row.getValue<string>('motivo')}
-        </div>
-      )
-    },
-  },
+
   {
     accessorKey: 'modelo.nombre',
     header: ({ column }) => {
