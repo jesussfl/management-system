@@ -147,7 +147,7 @@ export const updateItem = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.INVENTARIO_ARMAMENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

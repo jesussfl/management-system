@@ -343,32 +343,6 @@ export const columns: ColumnDef<PedidoType>[] = [
       format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
 
-  // {
-  //   accessorKey: 'detalles',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         className="text-xs"
-  //         size={'sm'}
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Detalles
-  //         <ArrowUpDown className="ml-2 h-3 w-3" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => {
-  //     return (
-  //       <Link
-  //         className={cn(buttonVariants({ variant: 'outline' }))}
-  //         href={`/dashboard/abastecimiento/pedidos/detalle/${row.original.id}`}
-  //       >
-  //         Ver detalles
-  //       </Link>
-  //     )
-  //   },
-  // },
   {
     id: 'acciones',
     cell: ({ row }) => {
@@ -376,7 +350,7 @@ export const columns: ColumnDef<PedidoType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.PEDIDOS_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.PEDIDOS_ARMAMENTO}
           editConfig={{
             href: `/dashboard/armamento/pedidos/${data.id}`,
           }}

@@ -138,7 +138,7 @@ export const Step3 = ({
                 <FormDescription>
                   Si no encuentras el subsistema, puedes crearlo
                   <Link
-                    href="/dashboard/abastecimiento/inventario/subsistema"
+                    href="/dashboard/armamento/inventario/subsistema"
                     className={cn(
                       buttonVariants({ variant: 'link' }),
                       'h-[1px]'

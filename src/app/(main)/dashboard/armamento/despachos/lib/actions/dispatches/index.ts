@@ -94,6 +94,7 @@ export const createDispatch = async (data: FormValues) => {
   const items = data.renglones
   const serials: { id_renglon: number; serial: string }[] = []
   for (const item of items) {
+    console.log(item)
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
@@ -111,14 +112,20 @@ export const createDispatch = async (data: FormValues) => {
       },
       select: {
         id_renglon: true,
+        renglon: true,
         serial: true,
       },
       take: item.cantidad,
     })
-
+    console.log(serialsByItem.length, item.cantidad, item.id_renglon)
     if (serialsByItem.length < item.cantidad) {
       return {
-        error: 'No hay suficientes seriales',
+        error:
+          'No hay suficientes seriales en el renglon' +
+          item.id_renglon +
+          ' ' +
+          ' Cantidad a despachar:' +
+          item.cantidad,
         success: false,
 
         fields: [item.id_renglon],
@@ -128,19 +135,20 @@ export const createDispatch = async (data: FormValues) => {
     serials.push(...serialsByItem)
   }
 
-  const despacho = await prisma.despacho.create({
+  const dispatch = await prisma.despacho.create({
     data: {
       servicio: 'Armamento',
       cedula_destinatario,
       cedula_abastecedor: data.cedula_abastecedor,
-      cedula_supervisor: data.cedula_supervisor,
+      cedula_supervisor: data.cedula_supervisor || undefined,
       cedula_autorizador: data.cedula_autorizador,
       motivo,
       fecha_despacho,
 
       renglones: {
         create: renglones.map((renglon) => ({
-          ...renglon,
+          manualSelection: renglon.manualSelection,
+          observacion: renglon.observacion,
           id_renglon: renglon.id_renglon,
           cantidad: serials.filter(
             (serial) => serial.id_renglon === renglon.id_renglon
@@ -167,7 +175,7 @@ export const createDispatch = async (data: FormValues) => {
   })
 
   await registerAuditAction(
-    `Se realizó un despacho de armamento con motivo: ${motivo} y su id es: ${despacho.id}`
+    `Se realizó un despacho en armamento con el siguiente motivo: ${motivo}. El id del despacho es: ${dispatch.id}`
   )
 
   revalidatePath('/dashboard/armamento/despachos')
@@ -250,6 +258,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
     }))
   const serials: { id_renglon: number; serial: string }[] = []
   for (const item of items) {
+    console.log(item)
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
@@ -262,19 +271,27 @@ export const updateDispatch = async (id: number, data: FormValues) => {
       where: {
         id_renglon: item.id_renglon,
         AND: {
-          estado: 'Disponible',
+          estado: {
+            in: ['Despachado'],
+          },
         },
       },
       select: {
         id_renglon: true,
+        renglon: true,
         serial: true,
       },
       take: item.cantidad,
     })
-
+    console.log(serialsByItem.length, item.cantidad, item.id_renglon)
     if (serialsByItem.length < item.cantidad) {
       return {
-        error: 'No hay suficientes seriales',
+        error:
+          'No hay suficientes seriales en el renglon' +
+          item.id_renglon +
+          ' ' +
+          ' Cantidad a despachar:' +
+          item.cantidad,
         success: false,
 
         fields: [item.id_renglon],
@@ -289,7 +306,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
     delete renglon.id
   })
 
-  const despacho = await prisma.despacho.update({
+  await prisma.despacho.update({
     where: {
       id,
     },
@@ -343,7 +360,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
-    `Se actualizó el despacho de armamento con motivo: ${despacho.motivo} y id: ${id}`
+    `Se actualizó el despacho en armamento con el id ${id}`
   )
 
   revalidatePath('/dashboard/armamento/despachos')

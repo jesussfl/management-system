@@ -227,7 +227,7 @@ export const columns: ColumnDef<DespachoType>[] = [
       return (
         <Link
           className={cn(buttonVariants({ variant: 'outline' }))}
-          href={`/dashboard/abastecimiento/despachos/detalle/${row.original.id}`}
+          href={`/dashboard/armamento/despachos/detalle/${row.original.id}`}
         >
           Ver detalles
         </Link>
@@ -277,7 +277,7 @@ export const columns: ColumnDef<DespachoType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.DESPACHOS_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.DESPACHOS_ARMAMENTO}
           editConfig={{
             href: `/dashboard/armamento/despachos/${data.id}`,
           }}

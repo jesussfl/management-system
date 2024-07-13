@@ -50,7 +50,7 @@ export const Step1 = () => {
         </FormInstructionsTitle>
         <FormInstructionsDescription>
           Ingresa un nombre descriptivo y una breve explicación para identificar
-          este renglón en el abastecimiento
+          este renglón en el inventario
         </FormInstructionsDescription>
       </FormInstructions>
 
