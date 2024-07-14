@@ -216,6 +216,22 @@ function LoginForm() {
             )}
             ID Facial
           </Button>
+          <Button
+            variant={'secondary'}
+            size={'xl'}
+            onClick={(e) => {
+              e.preventDefault()
+              fetch('http://localhost:3000/api/faceio-events', {
+                method: 'POST',
+                body: JSON.stringify({ message: 'test' }),
+                headers: {
+                  'content-type': 'application/json',
+                },
+              }).then((res) => console.log(res))
+            }}
+          >
+            Test
+          </Button>
         </div>
       </form>
     </Form>
