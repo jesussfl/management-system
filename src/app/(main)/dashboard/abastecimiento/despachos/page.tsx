@@ -59,7 +59,7 @@ export default async function Page() {
             {/* <CardTitle>Lista de Despachos</CardTitle> */}
           </CardHeader>
           <CardContent>
-            <Overview />
+            <Overview servicio="Abastecimiento" />
 
             <DataTable
               columns={columns}

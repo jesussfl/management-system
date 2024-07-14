@@ -55,14 +55,22 @@ export const getStatistics = async (
 type DispatchesParams = {
   from?: Date
   to?: Date
+  servicio: 'Abastecimiento' | 'Armamento'
 }
-export const getDispatchesStats = async ({ from, to }: DispatchesParams) => {
+export const getDispatchesStats = async ({
+  from,
+  to,
+  servicio,
+}: DispatchesParams) => {
   console.log(from, to)
   const dispatches = await prisma.despacho.findMany({
     where: {
-      fecha_creacion: {
-        gte: from,
-        lte: to,
+      servicio,
+      AND: {
+        fecha_creacion: {
+          gte: from,
+          lte: to,
+        },
       },
     },
     select: {

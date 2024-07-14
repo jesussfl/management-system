@@ -17,7 +17,7 @@ export default function AuthLayout({
         />
         <div className="p-3 absolute top-4 left-4 bg-white rounded-lg">
           <span className="self-center font-extrabold whitespace-nowrap px-3 text-blue-700 tex-sm md:text-2xl dark:text-blue-700">
-            CeserNET
+            SIGECAI
           </span>
         </div>
       </div>

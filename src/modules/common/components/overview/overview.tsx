@@ -30,7 +30,11 @@ const months = [
   'Nov',
   'Dic',
 ] as string[]
-export function Overview({}: {}) {
+export function Overview({
+  servicio,
+}: {
+  servicio: 'Abastecimiento' | 'Armamento'
+}) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(new Date().getFullYear(), 0, 1),
     to: new Date(new Date().getFullYear(), 11, 31),
@@ -39,28 +43,30 @@ export function Overview({}: {}) {
   const [filteredData, setFilteredData] = useState<any>()
 
   React.useEffect(() => {
-    getDispatchesStats({ from: date?.from, to: date?.to }).then((res) => {
-      const dispatchCountsByMonth = {} as Record<string, number>
-      // Inicializar userCountsByMonth con 0 para cada mes
-      months.forEach((month) => {
-        dispatchCountsByMonth[month] = 0
-      })
-      // Contar el número de usuarios registrados en cada mes
-      res.forEach((dispatch) => {
-        const createdAt = new Date(dispatch.fecha_creacion)
-        const monthIndex = createdAt.getMonth()
-        const monthName = months[monthIndex]
-        dispatchCountsByMonth[monthName]++
-      })
-      // Convertir userCountsByMonth a un array de objetos con la estructura { name: string, total: number }
-      const data = Object.entries(dispatchCountsByMonth).map(
-        ([name, total]) => ({
-          name,
-          total,
+    getDispatchesStats({ from: date?.from, to: date?.to, servicio }).then(
+      (res) => {
+        const dispatchCountsByMonth = {} as Record<string, number>
+        // Inicializar userCountsByMonth con 0 para cada mes
+        months.forEach((month) => {
+          dispatchCountsByMonth[month] = 0
         })
-      )
-      setFilteredData(data)
-    })
+        // Contar el número de usuarios registrados en cada mes
+        res.forEach((dispatch) => {
+          const createdAt = new Date(dispatch.fecha_creacion)
+          const monthIndex = createdAt.getMonth()
+          const monthName = months[monthIndex]
+          dispatchCountsByMonth[monthName]++
+        })
+        // Convertir userCountsByMonth a un array de objetos con la estructura { name: string, total: number }
+        const data = Object.entries(dispatchCountsByMonth).map(
+          ([name, total]) => ({
+            name,
+            total,
+          })
+        )
+        setFilteredData(data)
+      }
+    )
   }, [date])
   return (
     <Card className="col-span-4">
