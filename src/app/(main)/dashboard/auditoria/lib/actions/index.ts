@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
 import { DateRange } from 'react-day-picker'
 import { format } from 'date-fns'
+import { Acciones_Cortas } from '@prisma/client'
 
 export const getAllAuditItems = async () => {
   const session = await auth()
@@ -52,7 +53,8 @@ export const getAllAuditItemsByUser = async (userId: string) => {
 
 export const generateAuditReportData = async (
   userId: string,
-  dateRange: DateRange
+  dateRange: DateRange,
+  shortAction: Acciones_Cortas
 ) => {
   const session = await auth()
   if (!session?.user) {
@@ -69,6 +71,7 @@ export const generateAuditReportData = async (
         gte: dateRange.from,
         lte: dateRange.to,
       },
+      accion_corta: shortAction,
     },
     include: {
       usuario: true,

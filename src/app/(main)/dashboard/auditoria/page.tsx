@@ -42,7 +42,7 @@ export default async function Page() {
             triggerVariant="outline"
             triggerSize="sm"
             closeWarning={false}
-            className="w-[300px] px-4 py-8 overflow-y-hidden"
+            className="w-[400px] px-4 py-8 overflow-y-auto"
             triggerIcon={<DownloadIcon className="h-4 w-4" />}
           >
             <ExportAuditReport users={users} />

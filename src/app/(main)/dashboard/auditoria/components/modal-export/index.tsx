@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +16,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { useRouter } from 'next/navigation'
 
-import { Usuario } from '@prisma/client'
+import { Acciones_Cortas, Usuario } from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { DateRange } from 'react-day-picker'
 import { Calendar } from '@/modules/common/components/calendar'
@@ -33,11 +34,19 @@ import {
   RadioGroupItem,
 } from '@/modules/common/components/radio-group'
 import { Label } from '@/modules/common/components/label/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
 
 // type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
 type FormValues = {
   userId: string
   dateRange: DateRange
+  shortAction: Acciones_Cortas
 }
 interface Props {
   users: Usuario[]
@@ -119,9 +128,9 @@ export default function ExportAuditReport({ users }: Props) {
     startTransition(async () => {
       const data = await generateAuditReportData(
         values.userId,
-        values.dateRange
+        values.dateRange,
+        values.shortAction
       )
-      console.log('data', data)
       handleExport(data)
     })
   }
@@ -132,7 +141,7 @@ export default function ExportAuditReport({ users }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-hidden gap-8 mb-36"
+        className="flex-1 overflow-y-auto gap-8 pb-32"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex flex-col gap-6">
@@ -165,6 +174,7 @@ export default function ExportAuditReport({ users }: Props) {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="dateRange"
@@ -215,6 +225,39 @@ export default function ExportAuditReport({ users }: Props) {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="shortAction"
+            rules={{
+              required: 'Acción requerida',
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Selecciona la acción</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="CREAR">Crear</SelectItem>
+                    <SelectItem value="ACTUALIZAR">Actualizar</SelectItem>
+                    <SelectItem value="ELIMINAR">Eliminar</SelectItem>
+                    <SelectItem value="DESHABILITAR">Deshabilitar</SelectItem>
+                    <SelectItem value="INICIAR_SESION">
+                      Iniciar Sesión
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <RadioGroup
             disabled={loading}
             defaultValue="comfortable"
@@ -233,8 +276,12 @@ export default function ExportAuditReport({ users }: Props) {
         </div>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
-          <Button variant="default" type="submit" disabled={isPending}>
-            {isPending ? (
+          <Button
+            variant="default"
+            type="submit"
+            disabled={isPending || loading}
+          >
+            {isPending || loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <DownloadIcon className="mr-2 h-4 w-4" />

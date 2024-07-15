@@ -46,23 +46,38 @@ export const columns: ColumnDef<AuditoriaType>[] = [
     },
   },
   {
-    accessorKey: 'accion',
+    id: 'usuario',
+    accessorFn: (row) =>
+      `${row?.usuario?.nombre} ${row?.usuario?.tipo_cedula}-${row?.usuario?.cedula}`,
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          size={'sm'}
           className="text-xs"
+          size={'sm'}
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Descripción
+          Usuario
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
-    cell: ({ row }) => {
-      // max width 100
-      return <div className=" truncate">{row.getValue<string>('accion')}</div>
+  },
+  {
+    id: 'rol',
+    accessorFn: (row) => row?.usuario?.rol_nombre,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Rol
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
     },
   },
   {
@@ -83,47 +98,32 @@ export const columns: ColumnDef<AuditoriaType>[] = [
       format(new Date(row.original?.fecha_realizado), 'dd/MM/yyyy HH:mm'),
   },
   {
-    id: 'usuario',
-    accessorFn: (row) =>
-      `${row?.usuario?.nombre} ${row?.usuario?.tipo_cedula}-${row?.usuario?.cedula}`,
+    accessorKey: 'accion',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          className="text-xs"
           size={'sm'}
+          className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Usuario
+          Descripción
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
+    cell: ({ row }) => {
+      // max width 100
+      return <div className=" truncate">{row.getValue<string>('accion')}</div>
+    },
   },
+
   {
     id: 'acciones',
     cell: ({ row }) => {
       const data = row.original
 
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(String(data.id))}
-            >
-              Copiar código
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
+      return <></>
     },
   },
 ]
