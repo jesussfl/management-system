@@ -665,14 +665,24 @@ model Personal {
   guardias             Guardia[]
 }
 
-model Auditoria {
-  id         Int     @id @default(autoincrement())
-  id_usuario String
-  usuario    Usuario @relation(fields: [id_usuario], references: [id])
-  accion     String
+enum Acciones_Cortas {
+  CREAR
+  ELIMINAR
+  DESHABILITAR
+  ACTUALIZAR
+  INICIAR_SESION
+  ASISTENCIA_ENTRADA
+  ASISTENCIA_SALIDA
+}
 
-  fecha_realizado      DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+model Auditoria {
+  id                   Int              @id @default(autoincrement())
+  id_usuario           String
+  usuario              Usuario          @relation(fields: [id_usuario], references: [id])
+  accion               String
+  accion_corta         Acciones_Cortas?
+  fecha_realizado      DateTime         @default(now())
+  ultima_actualizacion DateTime         @updatedAt
 }
 
 model reposos {

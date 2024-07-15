@@ -60,7 +60,10 @@ export const createGunBrand = async (
     data,
   })
 
-  await registerAuditAction('Se creó una nueva marca de arma: ' + brand.nombre)
+  await registerAuditAction(
+    'CREAR',
+    'Se creó una nueva marca de arma: ' + brand.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -96,7 +99,10 @@ export const updateGunBrand = async (
     data,
   })
 
-  await registerAuditAction('Se actualizó la marca de arma: ' + gunBrand.nombre)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizó la marca de arma: ' + gunBrand.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -128,7 +134,10 @@ export const deleteGunBrand = async (id: number) => {
     },
   })
 
-  await registerAuditAction('Se eliminó la marca de arma: ' + gunBrand.nombre)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se eliminó la marca de arma: ' + gunBrand.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {

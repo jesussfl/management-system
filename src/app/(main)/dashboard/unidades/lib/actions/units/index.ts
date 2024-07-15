@@ -114,7 +114,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
     data,
   })
 
-  await registerAuditAction(`La unidad ${data?.nombre} fue creada`)
+  await registerAuditAction('CREAR', `La unidad ${data?.nombre} fue creada`)
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -159,7 +159,10 @@ export const deleteUnit = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`La unidad ${exist?.nombre}  fue eliminada`)
+  await registerAuditAction(
+    'ELIMINAR',
+    `La unidad ${exist?.nombre}  fue eliminada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -208,7 +211,10 @@ export const updateUnit = async (
     data,
   })
 
-  await registerAuditAction(`La unidad ${data?.nombre}  fue actualizada`)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    `La unidad ${data?.nombre}  fue actualizada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {

@@ -42,6 +42,7 @@ export const createRol = async (data: CreateRolesWithPermissions) => {
   })
   revalidatePath('/dashboard/abastecimiento/usuarios')
   await registerAuditAction(
+    'CREAR',
     `Se creó un nuevo rol con el siguiente nombre: ${rol}`
   )
   return {
@@ -84,6 +85,7 @@ export const updateRol = async (
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se editó el rol con el siguiente nombre: ${rol.rol}`
   )
   return {
@@ -106,6 +108,7 @@ export const deleteRol = async (id: number) => {
 
   revalidatePath('/dashboard/abastecimiento/usuarios')
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el rol con el siguiente nombre: ${rol.rol}`
   )
   return {

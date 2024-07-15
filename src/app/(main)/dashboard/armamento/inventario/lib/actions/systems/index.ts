@@ -28,7 +28,10 @@ export const createSystem = async (data: Prisma.SistemaCreateInput) => {
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo sistema llamado ' + data.nombre)
+  await registerAuditAction(
+    'CREAR',
+    'Se creó un nuevo sistema llamado ' + data.nombre
+  )
   revalidatePath('/dashboard/armamento/inventario')
 
   return {
@@ -77,7 +80,10 @@ export const updateSystem = async (
     data,
   })
 
-  await registerAuditAction('Se actualizó el sistema llamado ' + exist.nombre)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizó el sistema llamado ' + exist.nombre
+  )
   revalidatePath('/dashboard/armamento/inventario')
 
   return {
@@ -115,7 +121,10 @@ export const deleteSystem = async (id: number) => {
     },
   })
 
-  await registerAuditAction('Se eliminó el sistema llamado ' + exist?.nombre)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se eliminó el sistema llamado ' + exist?.nombre
+  )
   revalidatePath('/dashboard/armamento/inventario')
 
   return {
@@ -148,7 +157,10 @@ export const deleteMultipleSystems = async (ids: number[]) => {
     },
   })
 
-  await registerAuditAction(`Se han eliminado los siguientes sistemas ${ids}`)
+  await registerAuditAction(
+    'ELIMINAR',
+    `Se han eliminado los siguientes sistemas ${ids}`
+  )
   revalidatePath('/dashboard/armamento/inventario')
 
   return {

@@ -61,6 +61,7 @@ export const createAccessory = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó un nuevo accesorio de arma: ' + gunAccessory.nombre
   )
   revalidatePath('/dashboard/armamento/armas')
@@ -99,6 +100,7 @@ export const updateGunAccessory = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el accesorio de arma: ' + gunAccessory.nombre
   )
   revalidatePath('/dashboard/armamento/armas')
@@ -133,6 +135,7 @@ export const deleteGunAccessory = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     'Se eliminó el accesorio de arma: ' + gunAccessory.nombre
   )
   revalidatePath('/dashboard/armamento/armas')

@@ -31,6 +31,7 @@ export const createSubsystem = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó un nuevo subsistema llamado: ' + data.nombre
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
@@ -80,6 +81,7 @@ export const updateSubsystem = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el subsistema llamado: ' + exist?.nombre
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
@@ -125,6 +127,7 @@ export const deleteSubsystem = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     'Se eliminó el subsistema llamado: ' + exist?.nombre
   )
 
@@ -161,6 +164,7 @@ export const deleteMultipleSubsystems = async (ids: number[]) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se han eliminado los siguientes subsistemas: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')

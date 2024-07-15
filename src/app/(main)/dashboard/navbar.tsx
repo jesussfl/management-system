@@ -70,7 +70,7 @@ export const DashboardNavbar: FC<Record<string, never>> = function () {
                     variant="ghost"
                     className="flex justify-start gap-2 text-white"
                   >
-                    Asistencia
+                    Asistencia de hoy
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent

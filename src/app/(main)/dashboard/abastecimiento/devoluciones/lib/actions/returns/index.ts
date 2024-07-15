@@ -124,6 +124,7 @@ export const createReturn = async (data: FormValues) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Se creó una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${newReturn.id} `
   )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
@@ -258,6 +259,7 @@ export const updateReturn = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizo una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${updatedReturn.id} `
   )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
@@ -323,6 +325,7 @@ export const deleteReturn = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó la devolución en abastecimiento con el siguiente motivo: ${exist.motivo}. El ID de la devolución es: ${exist.id} `
   )
   revalidatePath('/dashboard/abastecimiento/devoluciones')

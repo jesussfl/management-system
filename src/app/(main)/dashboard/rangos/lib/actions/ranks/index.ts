@@ -58,7 +58,7 @@ export const createComponent = async (
     data,
   })
 
-  await registerAuditAction(`Componente ${data.nombre} creado`)
+  await registerAuditAction('CREAR', `Componente ${data.nombre} creado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -120,7 +120,7 @@ export const createGrade = async (data: CreateGradosWithComponentes) => {
     },
   })
 
-  await registerAuditAction(`Grado ${data.nombre} creado`)
+  await registerAuditAction('CREAR', `Grado ${data.nombre} creado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -173,7 +173,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
     data,
   })
 
-  await registerAuditAction(`Unidad ${data.nombre} creada`)
+  await registerAuditAction('CREAR', `Unidad ${data.nombre} creada`)
 
   revalidatePath('/dashboard/unidades')
 }
@@ -217,7 +217,10 @@ export const updateComponent = async (
     data,
   })
 
-  await registerAuditAction(`Componente ${data.nombre} actualizado`)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    `Componente ${data.nombre} actualizado`
+  )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -273,7 +276,7 @@ export const updateGrade = async (
     },
   })
 
-  await registerAuditAction(`Grado ${data.nombre} actualizado`)
+  await registerAuditAction('ACTUALIZAR', `Grado ${data.nombre} actualizado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -338,7 +341,10 @@ export const updateCategory = async (
     },
   })
 
-  await registerAuditAction(`Categoría ${data.nombre} actualizada`)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    `Categoría ${data.nombre} actualizada`
+  )
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -382,7 +388,7 @@ export const deleteComponent = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Componente ${exists.nombre} eliminado`)
+  await registerAuditAction('ELIMINAR', `Componente ${exists.nombre} eliminado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -425,7 +431,7 @@ export const deleteCategory = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Categoría ${exists.nombre} eliminada`)
+  await registerAuditAction('ELIMINAR', `Categoría ${exists.nombre} eliminada`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -468,7 +474,7 @@ export const deleteGrade = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`Grado ${exists.nombre} eliminado`)
+  await registerAuditAction('ELIMINAR', `Grado ${exists.nombre} eliminado`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
 
   return {
@@ -530,7 +536,7 @@ export const createCategory = async (data: CreateCategoriasWithGrados) => {
     },
   })
 
-  await registerAuditAction(`Categoría ${data.nombre} creada`)
+  await registerAuditAction('CREAR', `Categoría ${data.nombre} creada`)
   revalidatePath('/dashboard/abastecimiento/destinatarios')
   return {
     success: 'Category created successfully',

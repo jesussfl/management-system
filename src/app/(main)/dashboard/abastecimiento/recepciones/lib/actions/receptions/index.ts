@@ -172,6 +172,7 @@ export const createReception = async (data: FormValues) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Se creó una recepción de abastecimiento con motivo: ${data.motivo} y el id ${recepcion.id}`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')
@@ -270,6 +271,7 @@ export const updateReception = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó una recepción de abastecimiento con motivo: ${data.motivo} y el id ${reception.id}`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')
@@ -438,6 +440,7 @@ export const deleteReception = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó la recepción de abastecimiento con motivo: ${exist?.motivo} y el id ${id}`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')
@@ -473,6 +476,7 @@ export const deleteMultipleReceptions = async (ids: number[]) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se han eliminado las siguientes recepciones de abastecimiento con los ids: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')

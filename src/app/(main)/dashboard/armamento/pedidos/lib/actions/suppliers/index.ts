@@ -39,6 +39,7 @@ export const createSupplier = async (data: Prisma.ProveedorCreateInput) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Se creó un nuevo proveedor de armamento con el siguiente nombre: ${data.nombre}`
   )
   revalidatePath('/dashboard/armamento/pedidos')
@@ -85,6 +86,7 @@ export const updateSupplier = async (
   }
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el proveedor de armamento con el siguiente nombre: ${data.nombre}`
   )
 
@@ -128,6 +130,7 @@ export const deleteSupplier = async (id: number) => {
   }
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el proveedor de armamento con el siguiente nombre: ${supplier?.nombre}`
   )
 

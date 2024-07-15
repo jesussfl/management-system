@@ -91,7 +91,7 @@ export const createRedi = async (data: Prisma.RediCreateInput) => {
     data,
   })
 
-  await registerAuditAction(`La redi ${nombre} fue creado`)
+  await registerAuditAction('CREAR', `La redi ${nombre} fue creado`)
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -129,7 +129,10 @@ export const deleteRedi = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`La redi ${exists?.nombre} fue eliminada`)
+  await registerAuditAction(
+    'ELIMINAR',
+    `La redi ${exists?.nombre} fue eliminada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -175,7 +178,10 @@ export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
     data,
   })
 
-  await registerAuditAction(`La redi ${exists?.nombre} fue actualizada`)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    `La redi ${exists?.nombre} fue actualizada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {

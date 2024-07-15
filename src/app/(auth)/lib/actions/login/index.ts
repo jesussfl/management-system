@@ -58,6 +58,7 @@ export async function login(
     const user = await getUserByEmail(email)
 
     await registerAuditActionWithoutSession(
+      'INICIAR_SESION',
       `Inició sesión con email y contraseña`,
       user?.id || ''
     )
@@ -107,6 +108,7 @@ export async function loginByFacialID(
 
   try {
     await registerAuditActionWithoutSession(
+      'INICIAR_SESION',
       `Inició sesión mediante facial ID: ${facialID}`,
       existingUser?.id || ''
     )
@@ -217,6 +219,7 @@ export async function validatePin(pin: string, facialID: string) {
 
   try {
     await registerAuditActionWithoutSession(
+      'INICIAR_SESION',
       `Inició sesión mediante facial ID: ${facialID}`,
       existingUser?.id
     )

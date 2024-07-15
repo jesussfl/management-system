@@ -45,6 +45,7 @@ export const createPersonnel = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó un nuevo personal con la cédula ' + data.cedula
   )
   revalidatePath('/dashboard/recursos-humanos/personal')
@@ -119,7 +120,10 @@ export const deletePersonnel = async (cedula: string) => {
     },
   })
 
-  await registerAuditAction('Se elimino el personal con la cedula ' + cedula)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se elimino el personal con la cedula ' + cedula
+  )
   revalidatePath('/dashboard/recursos-humanos/personal')
 
   return {
@@ -158,6 +162,7 @@ export const updatePersonnel = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el personal con la cedula ' + exists.cedula
   )
 

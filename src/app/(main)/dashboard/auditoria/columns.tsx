@@ -22,9 +22,28 @@ type AuditoriaType = Prisma.AuditoriaGetPayload<{
 
 export const columns: ColumnDef<AuditoriaType>[] = [
   SELECT_COLUMN,
+
   {
-    accessorKey: 'id',
-    header: 'ID',
+    accessorKey: 'accion_corta',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Acción
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      // max width 100
+      return (
+        <div className=" truncate">{row.getValue<string>('accion_corta')}</div>
+      )
+    },
   },
   {
     accessorKey: 'accion',
@@ -36,7 +55,7 @@ export const columns: ColumnDef<AuditoriaType>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Acción
+          Descripción
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )

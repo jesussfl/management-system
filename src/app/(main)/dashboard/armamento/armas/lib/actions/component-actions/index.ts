@@ -58,6 +58,7 @@ export const createGunComponent = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó un nuevo componente de arma: ' + gunComponent.nombre
   )
   revalidatePath('/dashboard/armamento/armas')

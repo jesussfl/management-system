@@ -2,8 +2,12 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
+import { Acciones_Cortas } from '@prisma/client'
 
-export const registerAuditAction = async (action: string) => {
+export const registerAuditAction = async (
+  shortAction: Acciones_Cortas,
+  action: string
+) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -22,6 +26,7 @@ export const registerAuditAction = async (action: string) => {
     data: {
       id_usuario: session.user.id,
       accion: action,
+      accion_corta: shortAction,
     },
   })
 
@@ -33,6 +38,7 @@ export const registerAuditAction = async (action: string) => {
 }
 
 export const registerAuditActionWithoutSession = async (
+  shortAction: Acciones_Cortas,
   action: string,
   userId: string
 ) => {
@@ -46,6 +52,7 @@ export const registerAuditActionWithoutSession = async (
     data: {
       id_usuario: userId,
       accion: action,
+      accion_corta: shortAction,
     },
   })
 

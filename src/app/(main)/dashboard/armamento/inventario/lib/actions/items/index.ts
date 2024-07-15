@@ -53,6 +53,7 @@ export const createItem = async (
     })
 
     await registerAuditAction(
+      'CREAR',
       `Se ha creado el renglon de armamento con el nombre: ${nombre}`
     )
     revalidatePath('/dashboard/armamento/inventario')
@@ -110,6 +111,7 @@ export const createItem = async (
     })
 
     await registerAuditAction(
+      'CREAR',
       `Se ha creado el renglon de armamento con el nombre: ${nombre}`
     )
     revalidatePath('/dashboard/armamento/inventario')
@@ -122,17 +124,6 @@ export const createItem = async (
     console.error('Error while trying to upload a file\n', e)
     return { error: 'Something went wrong.' }
   }
-  // await prisma.renglon.create({
-  //   data,
-  // })
-
-  // await registerAuditAction(`Se ha creado el renglon ${nombre}`)
-  // revalidatePath('/dashboard/armamento/inventario')
-
-  // return {
-  //   success: 'Se ha creado el renglón correctamente',
-  //   error: false,
-  // }
 }
 
 export const updateItem = async (
@@ -177,6 +168,7 @@ export const updateItem = async (
     })
 
     await registerAuditAction(
+      'ACTUALIZAR',
       `Se ha actualizado un renglón de armamento con el nombre: ${renglon.nombre}`
     )
     revalidatePath('/dashboard/armamento/inventario')
@@ -234,6 +226,7 @@ export const updateItem = async (
     })
 
     await registerAuditAction(
+      'ACTUALIZAR',
       `Se ha actualizado el renglón de armamento con el id: ${id} y el nombre ${exist?.nombre}`
     )
 
@@ -287,6 +280,7 @@ export const deleteItem = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se ha eliminado el renglon de armamento con el nombre ${exist?.nombre} y con el id ${id}`
   )
   revalidatePath('/dashboard/armamento/inventario')
@@ -323,6 +317,7 @@ export const deleteMultipleItems = async (ids: number[]) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se han eliminado los siguientes renglones de armamento con los siguientes ids: ${ids}`
   )
   revalidatePath('/dashboard/armamento/inventario')

@@ -27,6 +27,7 @@ export const createPermission = async (data: Prisma.PermisoCreateInput) => {
   })
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'CREAR',
     `Se creó el permiso: ${data.key}. Nombre: ${data.permiso}`
   )
   return {
@@ -67,6 +68,7 @@ export const updatePermiso = async (
   })
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el permiso: ${permission.key}. Nombre: ${permission.permiso}`
   )
   return {
@@ -101,6 +103,7 @@ export const deletePermiso = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el permiso: ${permiso.key}. Nombre: ${permiso.permiso}`
   )
   revalidatePath('/dashboard/usuarios')

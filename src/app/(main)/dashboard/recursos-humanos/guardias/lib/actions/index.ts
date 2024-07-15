@@ -52,7 +52,7 @@ export const updateGuard = async (data: GuardiasForm, id: string) => {
     },
   })
 
-  await registerAuditAction('Se asignaron guardias a ' + id)
+  await registerAuditAction('ACTUALIZAR', 'Se asignaron guardias a ' + id)
   revalidatePath('/dashboard/recursos-humanos/guardias')
 
   return {
@@ -115,7 +115,10 @@ export const deletePersonnel = async (cedula: string) => {
     },
   })
 
-  await registerAuditAction('Se elimino el personal con la cedula ' + cedula)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se elimino el personal con la cedula ' + cedula
+  )
   revalidatePath('/dashboard/recursos-humanos/personal')
 
   return {
@@ -154,6 +157,7 @@ export const updatePersonnel = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el personal con la cedula ' + exists.cedula
   )
 

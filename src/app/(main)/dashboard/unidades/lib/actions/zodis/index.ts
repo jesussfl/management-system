@@ -92,7 +92,7 @@ export const createZodi = async (data: Prisma.ZodiUncheckedCreateInput) => {
     data,
   })
 
-  await registerAuditAction(`La zodi ${data.nombre} fue creada`)
+  await registerAuditAction('CREAR', `La zodi ${data.nombre} fue creada`)
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -137,7 +137,10 @@ export const deleteZodi = async (id: number) => {
     },
   })
 
-  await registerAuditAction(`La zodi ${exists?.nombre} fue eliminada`)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    `La zodi ${exists?.nombre} fue eliminada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {
@@ -186,7 +189,10 @@ export const updateZodi = async (
     data,
   })
 
-  await registerAuditAction(`La zodi ${data.nombre} fue actualizada`)
+  await registerAuditAction(
+    'ELIMINAR',
+    `La zodi ${data.nombre} fue actualizada`
+  )
   revalidatePath('/dashboard/unidades')
 
   return {

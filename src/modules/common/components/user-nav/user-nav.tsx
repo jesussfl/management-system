@@ -1,4 +1,3 @@
-import { auth } from '@/auth'
 import { Button } from '@/modules/common/components/button'
 import {
   DropdownMenu,
@@ -7,7 +6,6 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { useSession, signOut } from 'next-auth/react'
@@ -58,14 +56,13 @@ export default function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session?.user?.name}
+              {session?.user?.nombre}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {session?.user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
-        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuGroup></DropdownMenuGroup>
         <DropdownMenuSeparator />
         <Link href={`/dashboard/contrasena-administrador`}>
@@ -77,7 +74,6 @@ export default function UserNav() {
         </Link>
         <DropdownMenuItem onClick={() => signOut()}>
           Cerrar Sesión
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

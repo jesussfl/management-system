@@ -124,6 +124,7 @@ export const createReturn = async (data: FormValues) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Devolución creada con motivo: ${newReturn.motivo} y con id: ${newReturn.id}`
   )
   revalidatePath('/dashboard/armamento/devoluciones')
@@ -258,6 +259,7 @@ export const updateReturn = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Devolución actualizada con motivo: ${newReturn.motivo} y con id: ${newReturn.id}`
   )
   revalidatePath('/dashboard/armamento/devoluciones')
@@ -322,6 +324,7 @@ export const deleteReturn = async (id: number) => {
     },
   })
   await registerAuditAction(
+    'ELIMINAR',
     `Devolucion eliminada con motivo: ${exist.motivo} y con id: ${exist.id}`
   )
   revalidatePath('/dashboard/armamento/devoluciones')

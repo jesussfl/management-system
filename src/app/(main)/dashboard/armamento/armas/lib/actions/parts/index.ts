@@ -62,6 +62,7 @@ export const createGunPart = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó una nueva parte de arma: ' + gunPart.nombre
   )
   revalidatePath('/dashboard/armamento/armas')
@@ -99,7 +100,10 @@ export const updateGunPart = async (
     data,
   })
 
-  await registerAuditAction('Se actualizó la parte de arma: ' + gunPart.nombre)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizó la parte de arma: ' + gunPart.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -131,7 +135,10 @@ export const deleteGunPart = async (id: number) => {
     },
   })
 
-  await registerAuditAction('Se eliminó la parte de arma: ' + gunPart.nombre)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se eliminó la parte de arma: ' + gunPart.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {

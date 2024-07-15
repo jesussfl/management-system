@@ -60,7 +60,10 @@ export const createGunType = async (
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo tipo de arma: ' + gunType.nombre)
+  await registerAuditAction(
+    'CREAR',
+    'Se creó un nuevo tipo de arma: ' + gunType.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -96,7 +99,10 @@ export const updateGunType = async (
     data,
   })
 
-  await registerAuditAction('Se actualizó el tipo de arma: ' + gunType.nombre)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizó el tipo de arma: ' + gunType.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -128,7 +134,10 @@ export const deleteGunType = async (id: number) => {
     },
   })
 
-  await registerAuditAction('Se eliminó el tipo de arma: ' + gunType.nombre)
+  await registerAuditAction(
+    'ELIMINAR',
+    'Se eliminó el tipo de arma: ' + gunType.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {

@@ -175,6 +175,7 @@ export const createDispatch = async (data: FormValues) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Se realizó un despacho en abastecimiento con el siguiente motivo: ${motivo}. El id del despacho es: ${dispatch.id}`
   )
 
@@ -360,6 +361,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el despacho en abastecimiento con el id ${id}`
   )
 
@@ -416,6 +418,7 @@ export const deleteDispatch = async (id: number) => {
     },
   })
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el despacho en abastecimiento con el id: ${id}`
   )
   revalidatePath('/dashboard/abastecimiento/despachos')
@@ -679,6 +682,7 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se han eliminado despachos en abastecimiento con los siguientes ids: ${ids}`
   )
   revalidatePath('/dashboard/abastecimiento/despachos')

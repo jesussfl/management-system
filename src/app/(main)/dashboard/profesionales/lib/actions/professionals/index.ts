@@ -52,6 +52,7 @@ export const createProfessional = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se creó un nuevo profesional con la cédula ' +
       data.cedula +
       ' ' +
@@ -149,6 +150,7 @@ export const deleteProfessional = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     'Se elimino el profesional con la cedula ' + exists.cedula
   )
   revalidatePath('/dashboard/profesionales')
@@ -199,6 +201,7 @@ export const updateProfessional = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el profesional con la cedula ' + updatedProfessional.cedula
   )
 

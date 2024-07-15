@@ -77,6 +77,7 @@ export const updateUser = async (
 
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el usuario con cédula: ${user.cedula}`
   )
   return {
@@ -140,6 +141,7 @@ export const updateUserPassword = async (
 
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó la contraseña del usuario con cédula: ${user.cedula}`
   )
   return {
@@ -187,6 +189,7 @@ export const assignFacialID = async (
 
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se añadió un identificador facial a el usuario con cédula: ${user.cedula}`
   )
   return {
@@ -229,6 +232,7 @@ export const deleteDbFacialID = async (id: string) => {
 
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el identificador facial de el usuario con cédula: ${user.cedula}`
   )
   return {
@@ -271,6 +275,7 @@ export const updateUserState = async (id: string, estado: Usuarios_Estados) => {
 
   revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se ha cambiado el estado de el usuario con cédula: ${user.cedula} a: ${estado}`
   )
   return {

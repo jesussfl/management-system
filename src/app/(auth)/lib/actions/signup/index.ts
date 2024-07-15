@@ -103,6 +103,7 @@ export const signup = async (values: z.infer<typeof RegisterSchema>) => {
 
     const user = await getUserByEmail(email)
     await registerAuditActionWithoutSession(
+      'CREAR',
       `Se ha registrado un nuevo usuario con correo y contraseña. El correo es: ${email}`,
       user?.id || ''
     )
@@ -196,6 +197,7 @@ export const signupByAdmin = async (values: z.infer<typeof RegisterSchema>) => {
 
     const user = await getUserByEmail(email)
     await registerAuditActionWithoutSession(
+      'CREAR',
       `Se ha registrado un nuevo usuario con correo y contraseña. El correo es: ${email}`,
       user?.id || ''
     )
@@ -301,6 +303,7 @@ export const signupByFacialID = async ({
     })
     const user = await getUserByEmail(email)
     await registerAuditActionWithoutSession(
+      'CREAR',
       `Se ha registrado un nuevo usuario con facialID. El correo es: ${email}`,
       user?.id || ''
     )
@@ -399,6 +402,7 @@ export const signupByFacialIDByAdmin = async ({
     })
     const user = await getUserByEmail(email)
     await registerAuditActionWithoutSession(
+      'CREAR',
       `Se ha registrado un nuevo usuario con facialID. El correo es: ${email}`,
       user?.id || ''
     )

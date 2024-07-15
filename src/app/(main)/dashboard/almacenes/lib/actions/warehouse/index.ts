@@ -84,7 +84,10 @@ export const createWarehouse = async (data: Prisma.AlmacenCreateInput) => {
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo almacen llamado: ' + data.nombre)
+  await registerAuditAction(
+    'CREAR',
+    'Se creó un nuevo almacen llamado: ' + data.nombre
+  )
   revalidatePath('/dashboard/almacenes')
   return {
     success: 'Almacen creado exitosamente',
@@ -128,6 +131,7 @@ export const deleteWarehouse = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó el almacén: ${exist?.nombre} con ID: ${exist?.id}`
   )
   revalidatePath('/dashboard/almacenes')
@@ -162,7 +166,10 @@ export const deleteMultipleWarehouses = async (ids: number[]) => {
     },
   })
 
-  await registerAuditAction(`Se han eliminado las siguientes almacenes ${ids}`)
+  await registerAuditAction(
+    'ELIMINAR',
+    `Se han eliminado las siguientes almacenes ${ids}`
+  )
   revalidatePath('/dashboard/almacenes')
 
   return {
@@ -210,7 +217,10 @@ export const updateWarehouse = async (
     data,
   })
 
-  await registerAuditAction('Se actualizó el almacen llamado ' + exist.nombre)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizó el almacen llamado ' + exist.nombre
+  )
 
   revalidatePath('/dashboard/almacenes')
   return {

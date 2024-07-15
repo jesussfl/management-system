@@ -94,6 +94,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   })
 
   await registerAuditAction(
+    'CREAR',
     `Se creó un nuevo pedido de abastecimiento con el siguient motivo: ${data.motivo}, para la fecha: ${data.fecha_solicitud} y su Id es: ${order.id}`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
@@ -151,6 +152,7 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el pedido de abastecimiento con el id: ${id}`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
@@ -206,6 +208,7 @@ export const updateOrderStatus = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     `Se actualizó el estado del pedido de abastecimiento con el id: ${id} a: ${data.estado}`
   )
 
@@ -301,6 +304,7 @@ export const deleteOrder = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     `Se eliminó un pedido de abastecimiento que tenía el motivo: ${exist?.motivo} con el id: ${id}`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
@@ -310,38 +314,3 @@ export const deleteOrder = async (id: number) => {
     success: 'Pedido eliminado exitosamente',
   }
 }
-// export const deleteMultipleReceptions = async (ids: number[]) => {
-//   const sessionResponse = await validateUserSession()
-
-//   if (sessionResponse.error || !sessionResponse.session) {
-//     return sessionResponse
-//   }
-
-//   const permissionsResponse = validateUserPermissions({
-//     sectionName: SECTION_NAMES.RECEPCION,
-//     actionName: 'ELIMINAR',
-//     userPermissions: sessionResponse.session?.user.rol.permisos,
-//   })
-
-//   if (!permissionsResponse.success) {
-//     return permissionsResponse
-//   }
-
-//   await prisma.recepcion.deleteMany({
-//     where: {
-//       id: {
-//         in: ids,
-//       },
-//     },
-//   })
-
-//   await registerAuditAction(
-//     `Se han eliminado las siguientes recepciones ${ids}`
-//   )
-//   revalidatePath('/dashboard/abastecimiento/recepciones')
-
-//   return {
-//     success: 'Se ha eliminado la recepción correctamente',
-//     error: false,
-//   }
-// }

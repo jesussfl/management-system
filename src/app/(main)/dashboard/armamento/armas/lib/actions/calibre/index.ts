@@ -59,7 +59,10 @@ export const createGunCaliber = async (data: Prisma.CalibreCreateInput) => {
     data,
   })
 
-  await registerAuditAction('Se creó un nuevo calibre: ' + caliber.nombre)
+  await registerAuditAction(
+    'CREAR',
+    'Se creó un nuevo calibre: ' + caliber.nombre
+  )
   revalidatePath('/dashboard/armamento/armas')
 
   return {
@@ -96,6 +99,7 @@ export const updateGunCaliber = async (
   })
 
   await registerAuditAction(
+    'ACTUALIZAR',
     'Se actualizó el calibre de arma: ' + gunCaliber.nombre
   )
   revalidatePath('/dashboard/armamento/armas')
@@ -130,6 +134,7 @@ export const deleteGunCaliber = async (id: number) => {
   })
 
   await registerAuditAction(
+    'ELIMINAR',
     'Se eliminó el calibre de arma: ' + gunCaliber.nombre
   )
   revalidatePath('/dashboard/armamento/armas')

@@ -26,6 +26,7 @@ export const createAttendance = async (
   })
 
   await registerAuditAction(
+    'CREAR',
     'Se registro una nueva asistencia de el usuario con el id' + data.id_usuario
   )
   revalidatePath('/dashboard/recursos-humanos/asistencias')
@@ -46,7 +47,10 @@ export const updateAttendance = async (
     data,
   })
 
-  await registerAuditAction('Se actualizo la asistencia con el id ' + id)
+  await registerAuditAction(
+    'ACTUALIZAR',
+    'Se actualizo la asistencia con el id ' + id
+  )
 
   revalidatePath('/dashboard/recursos-humanos/asistencias')
 
