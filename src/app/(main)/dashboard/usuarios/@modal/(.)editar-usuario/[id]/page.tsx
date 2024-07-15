@@ -6,8 +6,8 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 
-import UsersForm from '../../components/users-form'
-import { getUserById } from '../../lib/actions/users'
+import UsersForm from '../../../components/users-form'
+import { getUserById } from '../../../lib/actions/users'
 
 export default async function Page({
   params: { id },

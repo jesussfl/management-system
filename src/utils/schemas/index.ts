@@ -15,15 +15,18 @@ export const LoginByFaceIDSchema = z.object({
   }),
 })
 export const RegisterSchema = z.object({
+  rol: z.number().min(1, {
+    message: 'Rol is required',
+  }),
   email: z.string().email({
     message: 'Email is required',
   }),
   password: z.string().min(6, {
     message: 'Minimum 6 characters required',
   }),
-  adminPassword: z.string().min(1, {
-    message: 'Admin password is required',
-  }),
+  // adminPassword: z.string().min(1, {
+  //   message: 'Admin password is required',
+  // }),
   name: z.string().min(1, {
     message: 'Username is required',
   }),

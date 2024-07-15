@@ -1,6 +1,6 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
@@ -23,6 +23,7 @@ import {
   signupByFacialID,
   getAllUsers,
   checkIfUserExists,
+  signupByFacialIDByAdmin,
 } from '@/app/(auth)/lib/actions/signup'
 import { signIn } from 'next-auth/react'
 
@@ -41,23 +42,53 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import { Tipos_Cedulas } from '@prisma/client'
+import { useRouter } from 'next/navigation'
+import { Plus } from 'lucide-react'
+import { ComboboxData } from '@/types/types'
+import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
+import { Combobox } from '@/modules/common/components/combobox'
 type FormValues = {
   email: string
   name: string
   adminPassword: string
   tipo_cedula: Tipos_Cedulas
   cedula: string
+  rol: number
 }
 
 export function FaceSignupForm() {
   const { toast } = useToast()
   const { faceio } = useFaceio()
-  const form = useForm<FormValues>()
+  const router = useRouter()
+  const form = useForm<FormValues>({
+    mode: 'onChange',
+  })
 
   const [isPending, startTransition] = useTransition()
+  const [roles, setRoles] = useState<ComboboxData[]>([])
+  useEffect(() => {
+    getAllRoles().then((rol) => {
+      const formattedRoles = rol.map((rol) => ({
+        value: rol.id,
+        label: rol.rol,
+      }))
 
+      setRoles(formattedRoles)
+    })
+  }, [form])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    const { email, name, adminPassword, cedula, tipo_cedula } = values
+    const exists = await checkIfUserExists(values.cedula)
+
+    if (exists) {
+      form.setError('cedula', {
+        type: 'custom',
+        message: 'El usuario ya existe',
+      })
+
+      return
+    }
+
+    const { email, name, cedula, rol, tipo_cedula } = values
 
     try {
       let response = await faceio
@@ -92,14 +123,15 @@ export function FaceSignupForm() {
 
       console.log(` Unique Facial ID: ${response.facialId}
       Enrollment Date: ${response.timestamp}
+      Pin: ${response.details.pin || response.pin || 'N/A'}
       Gender: ${response.details.gender}
       Age Approximation: ${response.details.age}`)
 
       startTransition(() => {
-        signupByFacialID({
+        signupByFacialIDByAdmin({
           email,
+          rol,
           facialID: response.facialId,
-          adminPassword,
           name,
           cedula,
           tipo_cedula,
@@ -118,11 +150,8 @@ export function FaceSignupForm() {
               description: data.success,
               variant: 'success',
             })
-            signIn('credentials', {
-              email,
-              facialID: response.facialId,
-              callbackUrl: '/dashboard',
-            })
+
+            router.back()
           }
         })
       })
@@ -130,44 +159,7 @@ export function FaceSignupForm() {
       console.log(error)
     }
   }
-  const deleteFacialId = async () => {
-    console.log(
-      'Deleting facial ID... ',
-      process.env.NEXT_PUBLIC_FACEIO_API_KEY
-    )
-    startTransition(() => {
-      getAllUsers().then((users) => {
-        users &&
-          users.map((user) => {
-            if (!user.facialID) return
-            console.log(user.facialID)
-            const url =
-              'https://api.faceio.net/deletefacialid?fid=' +
-              user.facialID +
-              '&key=' +
-              process.env.NEXT_PUBLIC_FACEIO_API_KEY
 
-            console.log(url)
-            user.facialID &&
-              fetch(url, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-              }).then((response) => {
-                if (response.status === 200) {
-                  console.log(
-                    'Facial ID, datos de carga útil y hash biométrico eliminados de esta aplicación'
-                  )
-                }
-                if (response.status !== 200) {
-                  console.error(response.status)
-                }
-              })
-          })
-      })
-    })
-  }
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
@@ -307,17 +299,6 @@ export function FaceSignupForm() {
                       )
                     }}
                     {...field}
-                    onBlur={async () => {
-                      const exists = await checkIfUserExists(field.value)
-
-                      if (exists) {
-                        toast({
-                          title: 'El usuario ya está registrado',
-
-                          variant: 'destructive',
-                        })
-                      }
-                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -327,48 +308,33 @@ export function FaceSignupForm() {
         </div>
         <FormField
           control={form.control}
-          name="adminPassword"
-          rules={{
-            required: 'Contraseña de administrador requerida',
-            validate: validateAdminPassword,
-          }}
+          name="rol"
           render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Contraseña del administrador</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                  disabled={isPending}
-                  placeholder="**********"
-                />
-              </FormControl>
-              <FormDescription>
-                Pide a tu administrador una contraseña para poder registrarte.
-              </FormDescription>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel>Rol:</FormLabel>
+              <Combobox
+                name={field.name}
+                data={roles}
+                form={form}
+                field={field}
+              />
+
               <FormMessage />
             </FormItem>
           )}
         />
+
         <div className="flex flex-col-reverse gap-2 mt-4">
-          {/* <Button
-            variant={'destructive'}
-            disabled={isPending}
-            onClick={(e) => {
-              e.preventDefault()
-              deleteFacialId()
-            }}
-          >
-            {isPending && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Borrar mi facial ID
-          </Button> */}
+          {form.formState.errors.cedula && (
+            <p className="text-sm text-red-500"> {`Corrija los errores`}</p>
+          )}
           <Button disabled={isPending} type="submit">
-            {isPending && (
+            {isPending ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Plus className="mr-2 h-4 w-4" />
             )}
-            Crear ID Facial
+            Agregar usuario
           </Button>
         </div>
       </form>

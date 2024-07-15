@@ -1,7 +1,7 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { Button, buttonVariants } from '@/modules/common/components/button'
-import { FileDown, Plus, User2 } from 'lucide-react'
+import { DownloadIcon, FileDown, Plus, User2 } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
@@ -30,6 +30,9 @@ import { getAllPermissions } from '@/app/(main)/dashboard/usuarios/lib/actions/p
 import Link from 'next/link'
 import { columns as permissionsColumns } from './components/permissions-table'
 import { columns as rolesColumns } from './components/roles-table'
+import ModalForm from '@/modules/common/components/modal-form'
+import { CredentialsSignupForm } from '@/app/(auth)/components/credentials-signup-form'
+import { FaceSignupForm } from '@/app/(auth)/components/face-signup-form'
 export const metadata: Metadata = {
   title: 'Usuarios',
   description: 'Administra los usuarios registrados y sus roles',
@@ -52,6 +55,15 @@ export default async function Page() {
             Administra los usuarios registrados y sus roles
           </PageHeaderDescription>
         </HeaderLeftSide>
+        <HeaderRightSide>
+          <Link
+            href="/dashboard/usuarios/agregar-usuario"
+            className={buttonVariants({ variant: 'secondary' })}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Agregar Usuario
+          </Link>
+        </HeaderRightSide>
       </PageHeader>
       <Tabs defaultValue="users">
         <TabsList className="mx-5">

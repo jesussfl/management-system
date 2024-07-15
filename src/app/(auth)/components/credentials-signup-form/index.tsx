@@ -1,9 +1,9 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { Icons } from '@/modules/common/components/icons/icons'
-import { Button, buttonVariants } from '@/modules/common/components/button'
+import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
 // @ts-ignore
 import {
@@ -19,10 +19,12 @@ import {
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
-import { checkIfUserExists, signup } from '@/app/(auth)/lib/actions/signup'
-import { signIn } from 'next-auth/react'
+import {
+  checkIfUserExists,
+  signup,
+  signupByAdmin,
+} from '@/app/(auth)/lib/actions/signup'
 import { validatePassword } from '@/utils/helpers/validate-password'
-import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 import {
   Select,
   SelectContent,
@@ -31,8 +33,11 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import { Tipos_Cedulas } from '@prisma/client'
-import Link from 'next/link'
-import { cn } from '@/utils/utils'
+import { Plus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { ComboboxData } from '@/types/types'
+import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
+import { Combobox } from '@/modules/common/components/combobox'
 type FormValues = {
   email: string
   password: string
@@ -40,19 +45,43 @@ type FormValues = {
   name: string
   adminPassword: string
   cedula: string
+  rol: number
   tipo_cedula: Tipos_Cedulas
 }
 
 export function CredentialsSignupForm() {
   const { toast } = useToast()
+  const router = useRouter()
+
   const form = useForm<FormValues>({
-    mode: 'all',
+    mode: 'onChange',
   })
   const [isPending, startTransition] = useTransition()
+  const [roles, setRoles] = useState<ComboboxData[]>([])
+  useEffect(() => {
+    getAllRoles().then((rol) => {
+      const formattedRoles = rol.map((rol) => ({
+        value: rol.id,
+        label: rol.rol,
+      }))
 
+      setRoles(formattedRoles)
+    })
+  }, [form])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    const exists = await checkIfUserExists(values.cedula)
+
+    if (exists) {
+      form.setError('cedula', {
+        type: 'custom',
+        message: 'El usuario ya existe',
+      })
+
+      return
+    }
+
     startTransition(() => {
-      signup(values).then((data) => {
+      signupByAdmin(values).then((data) => {
         if (data?.error) {
           form.setError(data.field as any, {
             type: 'custom',
@@ -67,11 +96,7 @@ export function CredentialsSignupForm() {
             description: data.success,
             variant: 'success',
           })
-          signIn('credentials', {
-            email: values.email,
-            password: values.password,
-            callbackUrl: '/dashboard',
-          })
+          router.back()
         }
       })
     })
@@ -216,17 +241,6 @@ export function CredentialsSignupForm() {
                       )
                     }}
                     {...field}
-                    onBlur={async () => {
-                      const exists = await checkIfUserExists(field.value)
-
-                      if (exists) {
-                        toast({
-                          title: 'El usuario ya está registrado',
-
-                          variant: 'destructive',
-                        })
-                      }
-                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -285,33 +299,32 @@ export function CredentialsSignupForm() {
         />
         <FormField
           control={form.control}
-          name="adminPassword"
-          rules={{
-            required: 'Contraseña de administrador requerida',
-            validate: validateAdminPassword,
-          }}
+          name="rol"
           render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Contraseña del administrador</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                  disabled={isPending}
-                  placeholder="**********"
-                />
-              </FormControl>
-              <FormDescription>
-                Pide a tu administrador una contraseña para poder registrarte.
-              </FormDescription>
+            <FormItem className="flex flex-col w-full">
+              <FormLabel>Rol:</FormLabel>
+              <Combobox
+                name={field.name}
+                data={roles}
+                form={form}
+                field={field}
+              />
+
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button disabled={isPending} type="submit" className="w-full">
-          {isPending && <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />}
-          Registrarme
+        {form.formState.errors.cedula && (
+          <p className="text-sm text-red-500"> {`Corrija los errores`}</p>
+        )}
+        <Button disabled={isPending} type="submit">
+          {isPending ? (
+            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Plus className="mr-2 h-4 w-4" />
+          )}
+          Agregar usuario
         </Button>
       </form>
     </Form>

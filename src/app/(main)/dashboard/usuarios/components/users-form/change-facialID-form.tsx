@@ -48,12 +48,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
+import { NumericFormat } from 'react-number-format'
 
 // type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
 type FormValues = {
-  password: string
-  confirmPassword: string
-  adminPassword: string
+  facial_pin: string
 }
 interface Props {
   id: string
@@ -142,18 +141,15 @@ export default function ChangeUserFacialIDForm({
   }
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    // if (values.password !== adminPassword) {
-    //   console.log('Contraseña incorrecta', values.password, adminPassword)
-    //   return
-    // }
-
     startTransition(async () => {
       let response = await faceio
         .enroll({
           locale: 'es',
           payload: {
+            pin: `${values.facial_pin}`,
             email: `${email}`,
           },
+          userConsent: true,
           permissionTimeout: 15,
           enrollIntroTimeout: 4,
         })
@@ -181,14 +177,34 @@ export default function ChangeUserFacialIDForm({
           await new Promise((resolve) => setTimeout(resolve, 5000))
           window.location.reload()
         })
-
+      console.log('response', response)
       console.log(` Unique Facial ID: ${response.facialId}
-      Enrollment Date: ${response.timestamp}
-      Gender: ${response.details.gender}
-      Age Approximation: ${response.details.age}`)
-      assignFacialID(id, response.facialId, values.adminPassword).then(
-        (data) => {
+          Enrollment Date: ${response.timestamp}
+          Response: ${response}
+          Gender: ${response.details.gender}
+          Age Approximation: ${response.details.age}`)
+      assignFacialID(id, response.facialId, values.facial_pin).then(
+        async (data) => {
           if (data?.success) {
+            try {
+              const res = await fetch(
+                `/api/set-facial-pin?facialId=${response.facialId}&facialPin=${values.facial_pin}`,
+                {
+                  method: 'POST',
+                }
+              )
+
+              const data = await res.json()
+
+              if (res.status === 200) {
+                console.log('Facial pin asignado')
+              } else {
+                console.error(data.error)
+              }
+            } catch (error) {
+              console.error('Error:', error)
+            }
+
             toast({
               title: 'ID Facial Asignado',
               description: 'El usuario se ha actualizado correctamente',
@@ -208,43 +224,60 @@ export default function ChangeUserFacialIDForm({
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto px-8 gap-8 mb-36"
+        className="flex-1 flex justify-center overflow-y-auto px-8 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <Alert variant={'destructive'}>
-          <FileWarning className="h-4 w-4" />
-          <AlertTitle>Importante</AlertTitle>
-          <AlertDescription>
-            Desde aquí puedes asignar o actualizar el ID Facial de un usuario.
-          </AlertDescription>
-        </Alert>
+        <div className="flex flex-col gap-4 w-[500px]">
+          <Alert variant={'destructive'} className="mb-8">
+            <FileWarning className="h-4 w-4" />
+            <AlertTitle>Importante</AlertTitle>
+            <AlertDescription>
+              Desde aquí puedes asignar o actualizar el ID Facial de un usuario.
+            </AlertDescription>
+          </Alert>
 
-        <FormField
-          control={form.control}
-          name="adminPassword"
-          rules={{
-            required: 'Contraseña de administrador requerida',
-            validate: validateAdminPassword,
-          }}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Contraseña del administrador</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  {...field}
-                  disabled={isPending}
-                  placeholder="**********"
-                />
-              </FormControl>
-              <FormDescription>
-                Para realizar esta acción necesitas la contraseña de
-                administrador.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="facial_pin"
+            rules={{
+              required: 'El pin es requerido',
+              minLength: {
+                value: 4,
+                message: 'El pin debe tener al menos 4 caracteres',
+              },
+              maxLength: {
+                value: 16,
+                message: 'El pin debe tener al menos 16 caracteres',
+              },
+            }}
+            render={({
+              field: { ref, onChange, ...rest },
+              fieldState: { error },
+            }) => (
+              <FormItem>
+                <FormLabel>Pin de desbloqueo</FormLabel>
+                <FormDescription>
+                  Se te solicitará este pin de desbloqueo más adelante
+                </FormDescription>
+                <FormControl>
+                  <NumericFormat
+                    className="rounded-md border-1 border-border  text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    allowNegative={false}
+                    thousandSeparator=""
+                    prefix=""
+                    decimalScale={0}
+                    maxLength={16}
+                    getInputRef={ref}
+                    onValueChange={({ value }) => onChange(value)}
+                    {...rest}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
           <AlertDialog>
             <AlertDialogTrigger asChild>

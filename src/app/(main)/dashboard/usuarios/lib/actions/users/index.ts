@@ -122,6 +122,8 @@ export const updateUserPassword = async (
     },
     data: {
       contrasena: hashedPassword,
+      estado: 'Activo',
+      intentos_fallidos: 0,
     },
   })
 
@@ -144,7 +146,7 @@ export const updateUserPassword = async (
 export const assignFacialID = async (
   id: string,
   facialID: string,
-  adminPassword: string
+  facial_pin: string
 ) => {
   const sessionResponse = await validateUserSession()
 
@@ -161,17 +163,6 @@ export const assignFacialID = async (
   if (!permissionsResponse.success) {
     return permissionsResponse
   }
-  const adminPasswordDb = await prisma.admin.findFirst({
-    where: {
-      state: 'Activa',
-    },
-  })
-  if (adminPassword !== adminPasswordDb?.password) {
-    return {
-      error: 'Contraseña de administrador incorrecta',
-      field: 'adminPassword',
-    }
-  }
 
   const user = await prisma.usuario.update({
     where: {
@@ -179,6 +170,7 @@ export const assignFacialID = async (
     },
     data: {
       facialID,
+      facial_pin,
     },
   })
 

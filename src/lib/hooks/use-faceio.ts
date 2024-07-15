@@ -1,11 +1,7 @@
-import { useTransition, useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 
 // @ts-ignore
 import faceIO from '@faceio/fiojs'
-import {
-  errorMessages,
-  faceioErrorCode,
-} from '@/utils/constants/face-auth-errors'
 
 export const useFaceio = () => {
   const [faceio, setFaceio] = useState<faceIO | null>(null)
@@ -17,7 +13,7 @@ export const useFaceio = () => {
       )
 
       setFaceio(faceioInstance)
-      console.log('FaceIO initialized successfully')
+      // console.log('FaceIO initialized successfully')
     } catch (error) {
       console.log(error)
     }

@@ -11,11 +11,17 @@ export default function Page() {
   return (
     <CardWrapper
       headerTitle="Inicia sesión"
-      headerLabel="Ingresa tus datos correspondientes para acceder al sistema."
-      backButtonLabel="No tengo una cuenta"
+      headerLabel="Ingresa tus datos correspondientes para acceder al sistema. Solo tienes 6 intentos antes de que sea bloqueado."
+      // backButtonLabel="No tengo una cuenta"
       backButtonHref="/auth/signup"
     >
-      <LoginForm />
+      <div className="flex flex-col h-full flex-1 justify-between gap-4">
+        <LoginForm />
+        <p className="text-center text-sm text-gray-500">
+          Si olvidaste tu contraseña o pin de acceso, contacta a un
+          administrador.
+        </p>
+      </div>
     </CardWrapper>
   )
 }

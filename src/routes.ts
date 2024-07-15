@@ -10,6 +10,7 @@ export const publicRoutes = [
   '/asistencias/consulta',
   '/asistencias/entrada',
   '/asistencias/salida',
+  '/auth/login/pin',
 ]
 
 /**
@@ -19,9 +20,9 @@ export const publicRoutes = [
  */
 export const authRoutes = [
   '/auth/login',
-  '/auth/signup',
+  // '/auth/signup',
   '/auth/error',
-  '/auth/reset',
+  '/auth/pin',
   '/auth/new-password',
 ]
 

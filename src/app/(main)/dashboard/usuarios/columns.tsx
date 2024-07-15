@@ -167,7 +167,7 @@ export const columns: ColumnDef<Usuario>[] = [
           sectionName={SECTION_NAMES.USUARIOS}
           editConfig={{
             actionName: 'Editar Rol',
-            href: `/dashboard/usuarios/${user.id}`,
+            href: `/dashboard/usuarios/editar-usuario/${user.id}`,
           }}
           deleteConfig={{
             actionName: `${estado === 'Activo' ? 'Bloquear' : 'Desbloquear'}`,
