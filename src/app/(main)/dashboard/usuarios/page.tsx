@@ -1,7 +1,7 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Button, buttonVariants } from '@/modules/common/components/button'
-import { DownloadIcon, FileDown, Plus, User2 } from 'lucide-react'
+import { buttonVariants } from '@/modules/common/components/button'
+import { Plus, User2 } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
@@ -30,9 +30,6 @@ import { getAllPermissions } from '@/app/(main)/dashboard/usuarios/lib/actions/p
 import Link from 'next/link'
 import { columns as permissionsColumns } from './components/permissions-table'
 import { columns as rolesColumns } from './components/roles-table'
-import ModalForm from '@/modules/common/components/modal-form'
-import { CredentialsSignupForm } from '@/app/(auth)/components/credentials-signup-form'
-import { FaceSignupForm } from '@/app/(auth)/components/face-signup-form'
 export const metadata: Metadata = {
   title: 'Usuarios',
   description: 'Administra los usuarios registrados y sus roles',

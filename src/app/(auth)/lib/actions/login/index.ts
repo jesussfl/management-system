@@ -5,12 +5,8 @@ import { AuthError } from 'next-auth'
 import { signIn } from '@/auth'
 import { LoginByFaceIDSchema, LoginSchema } from '@/utils/schemas'
 import { getUserByEmail, getUserByFacialID } from '@/lib/data/get-user-byEmail'
-import { headers } from 'next/headers'
 import bcrypt from 'bcryptjs'
-import {
-  registerAuditAction,
-  registerAuditActionWithoutSession,
-} from '@/lib/actions/audit'
+import { registerAuditActionWithoutSession } from '@/lib/actions/audit'
 import { prisma } from '@/lib/prisma'
 
 type Credentials = {
@@ -18,26 +14,9 @@ type Credentials = {
   password: string
 }
 
-type facialIdCredentials = {
-  facialID: string
-}
-export async function checkFailedTries(email: string) {
-  if (!email) {
-    return null
-  }
-  const user = await prisma.usuario.findUnique({
-    where: {
-      email,
-    },
-    select: {
-      intentos_fallidos: true,
-    },
-  })
-  return user?.intentos_fallidos || 6
-}
 export async function login(
   values: z.infer<typeof LoginSchema>,
-  // tries: number,
+
   callbackUrl?: string | null
 ) {
   const validatedFields = LoginSchema.safeParse(values)
@@ -68,64 +47,11 @@ export async function login(
 
   const passwordMatch = await bcrypt.compare(password, existingUser.contrasena)
   if (!passwordMatch) {
-    const failedTries = await prisma.usuario.findUnique({
-      where: {
-        email,
-      },
-      select: {
-        intentos_fallidos: true,
-      },
-    })
-
-    if (!failedTries?.intentos_fallidos) {
-      await prisma.usuario.update({
-        where: {
-          email,
-        },
-        data: {
-          intentos_fallidos: 1,
-        },
-      })
-      return {
-        error: 'Contraseña incorrecta, intenta de nuevo',
-        field: 'password',
-      }
-    }
-
-    if (failedTries.intentos_fallidos < 5) {
-      await prisma.usuario.update({
-        where: {
-          email,
-        },
-        data: {
-          intentos_fallidos: failedTries?.intentos_fallidos + 1,
-        },
-      })
-
-      return {
-        error:
-          'Contraseña incorrecta, intenta de nuevo, quedan ' +
-          (5 - failedTries.intentos_fallidos) +
-          ' intentos',
-        field: 'password',
-      }
-    }
-    if (failedTries.intentos_fallidos >= 5) {
-      await prisma.usuario.update({
-        where: {
-          email,
-        },
-        data: {
-          estado: 'Bloqueado',
-          intentos_fallidos: failedTries?.intentos_fallidos + 1,
-        },
-      })
-      return {
-        error: 'Este usuario está bloqueado',
-        field: null,
-      }
-    }
-    return { error: 'Contraseña incorrecta', field: 'password' }
+    return await checkFailedAttempts(
+      existingUser.intentos_fallidos,
+      'Contraseña',
+      email
+    )
   }
 
   try {
@@ -162,7 +88,43 @@ export async function login(
     throw error
   }
 }
+export async function loginByFacialID(
+  values: z.infer<typeof LoginByFaceIDSchema>
+) {
+  const validatedFields = LoginByFaceIDSchema.safeParse(values)
 
+  if (!validatedFields.success) {
+    return { error: 'No hay un facial id valido', field: 'facialID' }
+  }
+
+  const { facialID } = validatedFields.data
+
+  const existingUser = await getUserByFacialID(facialID)
+
+  if (!existingUser) {
+    return { error: 'No hay un usuario con este facial id', field: 'facialID' }
+  }
+
+  try {
+    await registerAuditActionWithoutSession(
+      `Inició sesión mediante facial ID: ${facialID}`,
+      existingUser?.id || ''
+    )
+
+    return { success: 'Inicio de sesión exitoso' }
+  } catch (error) {
+    console.log(error)
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return { error: 'Invalid credentials!' }
+        default:
+          return { error: 'Something went wrong!' }
+      }
+    }
+    throw error
+  }
+}
 export async function validateUser(credentials: Credentials) {
   if (!credentials.email || !credentials.password) {
     return {
@@ -222,7 +184,15 @@ export async function validatePin(pin: string, facialID: string) {
   if (!facialID) {
     return {
       error: 'No hay un facial id valido',
-      field: 'facialID',
+      field: 'pin',
+      success: false,
+    }
+  }
+
+  if (!pin) {
+    return {
+      error: 'No hay un pin valido',
+      field: 'pin',
       success: false,
     }
   }
@@ -230,141 +200,119 @@ export async function validatePin(pin: string, facialID: string) {
   const existingUser = await getUserByFacialID(facialID)
 
   if (!existingUser) {
-    return { error: 'No hay un usuario con este facial id', field: 'facialID' }
+    return {
+      error: 'No hay un usuario con este facial id',
+      field: 'pin',
+      success: false,
+    }
   }
 
   if (pin !== existingUser.facial_pin) {
-    const failedTries = await prisma.usuario.findUnique({
-      where: {
-        facialID,
-      },
-      select: {
-        intentos_fallidos: true,
-      },
-    })
-
-    if (!failedTries?.intentos_fallidos) {
-      await prisma.usuario.update({
-        where: {
-          facialID,
-        },
-        data: {
-          intentos_fallidos: 1,
-        },
-      })
-      return {
-        error: 'Pin incorrecto, intenta de nuevo por favor',
-        field: 'password',
-      }
-    }
-
-    if (failedTries.intentos_fallidos < 5) {
-      await prisma.usuario.update({
-        where: {
-          facialID,
-        },
-        data: {
-          intentos_fallidos: failedTries?.intentos_fallidos + 1,
-        },
-      })
-
-      return {
-        error:
-          'Pin incorrecto, intenta de nuevo, quedan ' +
-          (5 - failedTries.intentos_fallidos) +
-          ' intentos',
-        field: 'password',
-      }
-    }
-    if (failedTries.intentos_fallidos >= 5) {
-      await prisma.usuario.update({
-        where: {
-          facialID,
-        },
-        data: {
-          estado: 'Bloqueado',
-          intentos_fallidos: failedTries?.intentos_fallidos + 1,
-        },
-      })
-      return {
-        error: 'Este usuario está bloqueado',
-        field: null,
-      }
-    }
-    // return { error: 'Pin incorrecto ', field: 'password' }
+    return await checkFailedAttempts(
+      existingUser.intentos_fallidos,
+      'Pin',
+      existingUser.email
+    )
   }
 
   try {
-    const user = await getUserByFacialID(facialID)
     await registerAuditActionWithoutSession(
       `Inició sesión mediante facial ID: ${facialID}`,
-      user?.id || ''
+      existingUser?.id
     )
     await signIn('credentials', {
-      facialID: facialID,
+      facialID,
       redirectTo: '/dashboard',
     })
 
-    return { success: 'Inicio de sesión exitoso' }
+    return { success: 'Inicio de sesión exitoso', error: false, field: null }
   } catch (error) {
     console.log(error)
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return { error: 'Invalid credentials!' }
+          return { error: 'Invalid credentials!', field: 'pin', success: false }
         default:
-          return { error: 'Something went wrong!' }
+          return {
+            error: 'Something went wrong!',
+            field: 'pin',
+            success: false,
+          }
       }
     }
     throw error
   }
 }
-export async function loginByFacialID(
-  values: z.infer<typeof LoginByFaceIDSchema>
+
+async function checkFailedAttempts(
+  attempts: number | null | undefined,
+  type: 'Pin' | 'Contraseña',
+  userEmail?: string | null
 ) {
-  const validatedFields = LoginByFaceIDSchema.safeParse(values)
+  const errorMessage =
+    type === 'Pin' ? 'Pin incorrecto' : 'Contraseña incorrecta'
 
-  if (!validatedFields.success) {
-    return { error: 'No hay un facial id valido', field: 'facialID' }
-  }
+  if (!userEmail) {
+    return {
+      error: `${errorMessage}, intenta de nuevo por favor`,
+      success: false,
 
-  const { facialID } = validatedFields.data
-
-  const existingUser = await getUserByFacialID(facialID)
-
-  if (!existingUser) {
-    return { error: 'No hay un usuario con este facial id', field: 'facialID' }
-  }
-
-  try {
-    const user = await getUserByFacialID(facialID)
-    await registerAuditActionWithoutSession(
-      `Inició sesión mediante facial ID: ${facialID}`,
-      user?.id || ''
-    )
-    // await signIn('credentials', {
-    //   facialID: facialID,
-    //   redirectTo: callbackUrl || '/dashboard',
-    // })
-
-    return { success: 'Inicio de sesión exitoso' }
-  } catch (error) {
-    console.log(error)
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return { error: 'Invalid credentials!' }
-        default:
-          return { error: 'Something went wrong!' }
-      }
+      field: 'password',
     }
-    throw error
   }
-}
 
-export async function getIp() {
-  const response = await fetch('https://api.ipify.org?format=json')
-  console.log('response', response)
-  const data = await response.json()
-  return data
+  if (!attempts) {
+    await prisma.usuario.update({
+      where: {
+        email: userEmail,
+      },
+      data: {
+        intentos_fallidos: 1,
+      },
+    })
+    return {
+      error: `${errorMessage}, intenta de nuevo por favor`,
+      success: false,
+
+      field: 'password',
+    }
+  }
+
+  if (attempts < 5) {
+    await prisma.usuario.update({
+      where: {
+        email: userEmail,
+      },
+      data: {
+        intentos_fallidos: attempts + 1,
+      },
+    })
+
+    return {
+      error: `${errorMessage}, intenta de nuevo, quedan ${
+        5 - attempts
+      } intentos`,
+      success: false,
+
+      field: 'password',
+    }
+  }
+  if (attempts >= 5) {
+    await prisma.usuario.update({
+      where: {
+        email: userEmail,
+      },
+      data: {
+        estado: 'Bloqueado',
+        intentos_fallidos: attempts + 1,
+      },
+    })
+    return {
+      error: 'Este usuario está bloqueado',
+      success: false,
+      field: null,
+    }
+  }
+
+  return { error: errorMessage, success: false, field: 'password' }
 }

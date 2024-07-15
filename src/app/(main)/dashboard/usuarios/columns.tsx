@@ -15,10 +15,6 @@ import { updateUserState } from './lib/actions/users'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
 
   {
     accessorKey: 'nombre',

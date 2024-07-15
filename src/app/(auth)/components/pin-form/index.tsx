@@ -2,7 +2,6 @@
 
 import * as React from 'react'
 import { useTransition } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
 
@@ -18,7 +17,6 @@ import {
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { validatePin } from '@/app/(auth)/lib/actions/login'
-import { useFaceio } from '@/lib/hooks/use-faceio'
 import { NumericFormat } from 'react-number-format'
 
 type FormValues = {
@@ -28,8 +26,6 @@ type FormValues = {
 function PinForm({ facialId }: { facialId: string }) {
   const { toast } = useToast()
   const form = useForm<FormValues>()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams?.get('callbackUrl')
   const [isPending, startTransition] = useTransition()
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
@@ -46,7 +42,10 @@ function PinForm({ facialId }: { facialId: string }) {
 
             if (data.field === null) {
               toast({
-                title: data.error,
+                title:
+                  typeof data.error !== 'string'
+                    ? 'Algo ha salido mal'
+                    : data.error,
                 variant: 'destructive',
               })
               return
@@ -61,7 +60,7 @@ function PinForm({ facialId }: { facialId: string }) {
             })
           }
         })
-        .catch(() =>
+        .catch((err) =>
           toast({
             title: 'Algo ha salido mal',
             variant: 'destructive',

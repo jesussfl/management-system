@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import { useTransition } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button, buttonVariants } from '@/modules/common/components/button'
@@ -18,11 +17,7 @@ import {
 
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  loginByFacialID,
-  validateFacialId,
-  validateUser,
-} from '@/app/(auth)/lib/actions/login'
+import { validateFacialId, validateUser } from '@/app/(auth)/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
@@ -66,11 +61,6 @@ function ValidationForm({
         })
         .catch((error: faceioErrorCode) => {
           const errorMessage = errorMessages[error] || error.toString()
-
-          if (error === faceioErrorCode.UNRECOGNIZED_FACE) {
-            window.location.href = '/auth/signup?error=unrecognizedFace'
-            return
-          }
 
           if (error === faceioErrorCode.SESSION_EXPIRED) {
             toast({

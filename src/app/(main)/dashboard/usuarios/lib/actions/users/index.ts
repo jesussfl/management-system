@@ -14,7 +14,11 @@ export const getAllUsers = async () => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const users = await prisma.usuario.findMany()
+  const users = await prisma.usuario.findMany({
+    orderBy: {
+      updatedAt: 'desc',
+    },
+  })
   return users
 }
 

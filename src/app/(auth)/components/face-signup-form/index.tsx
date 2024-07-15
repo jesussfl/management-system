@@ -20,12 +20,9 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import {
-  signupByFacialID,
-  getAllUsers,
   checkIfUserExists,
   signupByFacialIDByAdmin,
 } from '@/app/(auth)/lib/actions/signup'
-import { signIn } from 'next-auth/react'
 
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
@@ -33,7 +30,6 @@ import {
   faceioErrorCode,
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
-import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 import {
   Select,
   SelectContent,
@@ -47,6 +43,7 @@ import { Plus } from 'lucide-react'
 import { ComboboxData } from '@/types/types'
 import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 import { Combobox } from '@/modules/common/components/combobox'
+import { NumericFormat } from 'react-number-format'
 type FormValues = {
   email: string
   name: string
@@ -54,6 +51,7 @@ type FormValues = {
   tipo_cedula: Tipos_Cedulas
   cedula: string
   rol: number
+  facial_pin: string
 }
 
 export function FaceSignupForm() {
@@ -95,6 +93,7 @@ export function FaceSignupForm() {
         .enroll({
           locale: 'es',
           payload: {
+            pin: `${values.facial_pin}`,
             email: `${values.email}`,
           },
           permissionTimeout: 15,
@@ -121,12 +120,6 @@ export function FaceSignupForm() {
           })
         })
 
-      console.log(` Unique Facial ID: ${response.facialId}
-      Enrollment Date: ${response.timestamp}
-      Pin: ${response.details.pin || response.pin || 'N/A'}
-      Gender: ${response.details.gender}
-      Age Approximation: ${response.details.age}`)
-
       startTransition(() => {
         signupByFacialIDByAdmin({
           email,
@@ -135,7 +128,7 @@ export function FaceSignupForm() {
           name,
           cedula,
           tipo_cedula,
-        }).then((data) => {
+        }).then(async (data) => {
           if (data?.error) {
             form.setError(data.field as any, {
               type: 'custom',
@@ -144,10 +137,28 @@ export function FaceSignupForm() {
           }
 
           if (data?.success) {
-            form.reset()
+            try {
+              const res = await fetch(
+                `/api/set-facial-pin?facialId=${response.facialId}&facialPin=${values.facial_pin}`,
+                {
+                  method: 'POST',
+                }
+              )
+
+              const data = await res.json()
+
+              if (res.status === 200) {
+                console.log('Facial pin asignado')
+              } else {
+                console.error(data.error)
+              }
+            } catch (error) {
+              console.error('Error:', error)
+            }
+
             toast({
-              title: 'Exitoso',
-              description: data.success,
+              title: 'ID Facial Asignado',
+              description: 'El usuario se ha actualizado correctamente',
               variant: 'success',
             })
 
@@ -318,6 +329,47 @@ export function FaceSignupForm() {
                 form={form}
                 field={field}
               />
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="facial_pin"
+          rules={{
+            required: 'El pin es requerido',
+            minLength: {
+              value: 4,
+              message: 'El pin debe tener al menos 4 caracteres',
+            },
+            maxLength: {
+              value: 16,
+              message: 'El pin debe tener al menos 16 caracteres',
+            },
+          }}
+          render={({
+            field: { ref, onChange, ...rest },
+            fieldState: { error },
+          }) => (
+            <FormItem className="mb-4">
+              <FormLabel>Pin de desbloqueo</FormLabel>
+              <FormDescription>
+                Se te solicitará este pin de desbloqueo más adelante
+              </FormDescription>
+              <FormControl>
+                <NumericFormat
+                  className="rounded-md border-1 border-border mb-4 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  allowNegative={false}
+                  thousandSeparator=""
+                  prefix=""
+                  decimalScale={0}
+                  maxLength={16}
+                  getInputRef={ref}
+                  onValueChange={({ value }) => onChange(value)}
+                  {...rest}
+                />
+              </FormControl>
 
               <FormMessage />
             </FormItem>

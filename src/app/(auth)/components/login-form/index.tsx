@@ -2,9 +2,7 @@
 
 import * as React from 'react'
 import { useTransition } from 'react'
-import { cn } from '@/utils/utils'
-import { buttonVariants } from '@/modules/common/components/button'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Icons } from '@/modules/common/components/icons/icons'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
@@ -12,22 +10,15 @@ import { Input } from '@/modules/common/components/input/input'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/modules/common/components/form'
 
-import Link from 'next/link'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  checkFailedTries,
-  getIp,
-  login,
-  loginByFacialID,
-} from '@/app/(auth)/lib/actions/login'
+import { login, loginByFacialID } from '@/app/(auth)/lib/actions/login'
 import { handleEmailValidation } from '@/utils/helpers/validate-email'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
@@ -35,8 +26,6 @@ import {
   faceioErrorCode,
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
-import { useStore } from '@/lib/hooks/custom-use-store'
-import { usePasswordStore } from '@/store/sidebar-store copy'
 
 type FormValues = {
   email: string
@@ -46,12 +35,10 @@ type FormValues = {
 function LoginForm() {
   const { toast } = useToast()
   const { faceio } = useFaceio()
-  const router = useRouter()
   const form = useForm<FormValues>()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams?.get('callbackUrl')
   const [isPending, startTransition] = useTransition()
-  const [tries, setTries] = React.useState(0)
   const authenticateByFacialID = async () => {
     try {
       const response = await faceio
@@ -60,11 +47,6 @@ function LoginForm() {
         })
         .catch((error: faceioErrorCode) => {
           const errorMessage = errorMessages[error] || error.toString()
-
-          // if (error === faceioErrorCode.UNRECOGNIZED_FACE) {
-          //   window.location.href = '/auth/signup?error=unrecognizedFace'
-          //   return
-          // }
 
           if (error === faceioErrorCode.SESSION_EXPIRED) {
             toast({
@@ -100,7 +82,6 @@ function LoginForm() {
         }
 
         if (res?.success) {
-          console.log('sgsfdsfsdfsd')
           window.location.replace('/auth/login/pin/' + response.facialId)
         }
       })
@@ -122,10 +103,6 @@ function LoginForm() {
               return
             }
 
-            // if (data.error === 'Contraseña incorrecta') {
-            //   store?.sumPasswordTries()
-            // }
-
             form.setError(data.field as any, {
               type: 'custom',
               message: data.error,
@@ -135,7 +112,7 @@ function LoginForm() {
           if (data?.success) {
             form.reset()
             toast({
-              title: data.success,
+              title: `Inicio de sesión exitoso`,
               variant: 'success',
             })
           }
@@ -165,19 +142,7 @@ function LoginForm() {
               <FormItem className="">
                 <FormLabel>Correo electrónico</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    {...field}
-                    // onChange={async (e) => {
-                    //   const numberOfTries = await checkFailedTries(
-                    //     e.target.value
-                    //   )
-
-                    //   setTries(numberOfTries)
-                    //   field.onChange(e.target.value)
-                    // }}
-                    disabled={isPending}
-                  />
+                  <Input type="email" {...field} disabled={isPending} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -200,9 +165,6 @@ function LoginForm() {
                   />
                 </FormControl>
                 <FormMessage />
-                {/* <FormDescription>
-                  Quedan {6 - store?.passwordTries || 0} intentos
-                </FormDescription> */}
               </FormItem>
             )}
           />

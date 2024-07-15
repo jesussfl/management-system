@@ -16,27 +16,19 @@ import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { useRouter } from 'next/navigation'
-import {
-  assignFacialID,
-  deleteDbFacialID,
-  updateUserPassword,
-} from '../../lib/actions/users'
-import { Input } from '@/modules/common/components/input/input'
-import { validatePassword } from '@/utils/helpers/validate-password'
-import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
+import { assignFacialID, deleteDbFacialID } from '../../lib/actions/users'
 import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from '@/modules/common/components/alert'
-import { FileWarning, Rocket, Trash } from 'lucide-react'
+import { FileWarning, Plus } from 'lucide-react'
 import { useFaceio } from '@/lib/hooks/use-faceio'
 import {
   errorMessages,
   faceioErrorCode,
 } from '@/utils/constants/face-auth-errors'
 import { ToastAction } from '@/modules/common/components/toast/toast'
-import ModalForm from '@/modules/common/components/modal-form'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,8 +41,8 @@ import {
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { NumericFormat } from 'react-number-format'
+import { Icons } from '@/modules/common/components/icons/icons'
 
-// type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
 type FormValues = {
   facial_pin: string
 }
@@ -64,7 +56,6 @@ interface Props {
 export default function ChangeUserFacialIDForm({
   id,
   email,
-  adminPassword,
   currentFacialID,
 }: Props) {
   const { toast } = useToast()
@@ -177,12 +168,7 @@ export default function ChangeUserFacialIDForm({
           await new Promise((resolve) => setTimeout(resolve, 5000))
           window.location.reload()
         })
-      console.log('response', response)
-      console.log(` Unique Facial ID: ${response.facialId}
-          Enrollment Date: ${response.timestamp}
-          Response: ${response}
-          Gender: ${response.details.gender}
-          Age Approximation: ${response.details.age}`)
+
       assignFacialID(id, response.facialId, values.facial_pin).then(
         async (data) => {
           if (data?.success) {
@@ -301,8 +287,13 @@ export default function ChangeUserFacialIDForm({
             </AlertDialogContent>
           </AlertDialog>
 
-          <Button variant="default" type="submit">
-            Asignar ID Facial
+          <Button disabled={isPending} type="submit">
+            {isPending ? (
+              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Plus className="mr-2 h-4 w-4" />
+            )}
+            Asignar ID Facial al usuario
           </Button>
         </DialogFooter>
       </form>
