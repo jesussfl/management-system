@@ -75,6 +75,14 @@ export default async function Page({
                     .split('T')[0]
                 : 'Sin fecha de vencimiento'}
             </p>
+            <p className="text-sm text-foreground">
+              Seriales recibidos:
+              <ul className="list-disc ml-4">
+                {renglon.seriales.map((serial, index) => (
+                  <li key={index}>{serial.serial}</li>
+                ))}
+              </ul>
+            </p>
           </CardContent>
           {/* Puedes agregar más información aquí */}
         </Card>

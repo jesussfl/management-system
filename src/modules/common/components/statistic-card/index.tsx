@@ -1,10 +1,7 @@
-// components/StatisticCard.tsx
-
 import React from 'react'
 import {
   Card,
   CardHeader,
-  CardContent,
   CardTitle,
 } from '@/modules/common/components/card/card'
 

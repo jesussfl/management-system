@@ -65,6 +65,7 @@ import { Badge } from '@/modules/common/components/badge'
 import { getStatistics } from '../../lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
+import { useToast } from '@/modules/common/components/toast/use-toast'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -128,7 +129,7 @@ export default async function Page() {
           <TabsTrigger value="systems">Sistemas y Subsistemas</TabsTrigger>
           {lowStockItems.length > 0 && (
             <TabsTrigger value="lowStock">
-              <Badge variant="destructive">Hay Renglones con Stock Bajo</Badge>
+              <Badge variant="destructive">Ver Renglones con Stock Bajo</Badge>
             </TabsTrigger>
           )}
         </TabsList>
@@ -159,6 +160,7 @@ export default async function Page() {
               <CardContent>
                 <TableWithExport
                   itemsData={itemsData}
+                  lowStockItems={lowStockItems}
                   // formatFn={formatExcelData}
                 />
               </CardContent>
