@@ -150,7 +150,7 @@ export default function ReturnsForm({
         if (!exists) {
           append({
             id_renglon: item.id,
-
+            fecha_eliminacion: null,
             seriales: [],
           })
         }

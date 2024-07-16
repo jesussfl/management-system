@@ -109,7 +109,9 @@ export const getAllProfessionalsToCombobox = async (): Promise<
   })
   return professionals.map((professional) => ({
     value: professional.cedula,
-    label: `${professional.tipo_cedula}-${professional.cedula} ${professional.nombres}-${professional.apellidos}`,
+    label: `${professional.tipo_cedula}-${professional.cedula} ${
+      professional.grado.abreviatura || ''
+    }-${professional.nombres} ${professional.apellidos}`,
   }))
 }
 export const deleteProfessional = async (id: number) => {

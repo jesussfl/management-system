@@ -67,6 +67,7 @@ model Usuario {
   personal          Personal?
   asistencias       Asistencia[]
   estado            Usuarios_Estados?
+  fecha_eliminacion DateTime?
 
   @@map("User")
 }
@@ -89,20 +90,22 @@ model PasswordResetToken {
 }
 
 model Rol {
-  id          Int              @id @default(autoincrement())
-  rol         String           @unique
-  descripcion String
-  usuarios    Usuario[]
-  permisos    Roles_Permisos[]
+  id                Int              @id @default(autoincrement())
+  rol               String           @unique
+  descripcion       String
+  usuarios          Usuario[]
+  permisos          Roles_Permisos[]
+  fecha_eliminacion DateTime?
 }
 
 model Roles_Permisos {
-  id          Int      @id @default(autoincrement())
-  rol_nombre  String
-  permiso_key String
-  active      Boolean?
-  rol         Rol      @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
-  permiso     Permiso  @relation(fields: [permiso_key], references: [key], onDelete: Cascade, onUpdate: Cascade)
+  id                Int       @id @default(autoincrement())
+  rol_nombre        String
+  permiso_key       String
+  active            Boolean?
+  rol               Rol       @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
+  permiso           Permiso   @relation(fields: [permiso_key], references: [key], onDelete: Cascade, onUpdate: Cascade)
+  fecha_eliminacion DateTime?
 }
 
 model Permiso {
@@ -110,8 +113,9 @@ model Permiso {
   permiso     String
   descripcion String
 
-  key   String           @unique
-  roles Roles_Permisos[]
+  key               String           @unique
+  roles             Roles_Permisos[]
+  fecha_eliminacion DateTime?
 }
 
 //#endregion
@@ -148,11 +152,12 @@ model Renglon {
   id_almacen           Int?
   almacen              Almacen?       @relation(fields: [id_almacen], references: [id])
 
-  despachos    Despachos_Renglones[]
-  recepciones  Recepciones_Renglones[]
-  devoluciones Devoluciones_Renglones[]
-  seriales     Serial[]
-  pedidos      Pedidos_Renglones[]
+  despachos         Despachos_Renglones[]
+  recepciones       Recepciones_Renglones[]
+  devoluciones      Devoluciones_Renglones[]
+  seriales          Serial[]
+  pedidos           Pedidos_Renglones[]
+  fecha_eliminacion DateTime?
 }
 
 enum Medidas {
@@ -178,6 +183,7 @@ model UnidadEmpaque {
   id_categoria         Int
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Categoria {
@@ -191,6 +197,7 @@ model Categoria {
   clasificacion        Clasificacion   @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
   fecha_creacion       DateTime        @default(now())
   ultima_actualizacion DateTime        @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Clasificacion {
@@ -201,6 +208,7 @@ model Clasificacion {
   categorias           Categoria[]
   fecha_creacion       DateTime    @default(now())
   ultima_actualizacion DateTime    @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Sistema {
@@ -209,8 +217,9 @@ model Sistema {
   descripcion String
   subsistemas Subsistema[]
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Subsistema {
@@ -221,8 +230,9 @@ model Subsistema {
   sistema     Sistema   @relation(fields: [id_sistema], references: [id], onDelete: Cascade, onUpdate: Cascade)
   renglones   Renglon[]
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 enum RenglonStates {
@@ -240,10 +250,11 @@ model Almacen {
   fecha_creacion       DateTime   @default(now())
   ultima_actualizacion DateTime   @updatedAt
 
-  renglones Renglon[]
-  armamento Armamento[]
-  unidad    Unidad_Militar? @relation(fields: [id_unidad], references: [id])
-  id_unidad Int?
+  renglones         Renglon[]
+  armamento         Armamento[]
+  unidad            Unidad_Militar? @relation(fields: [id_unidad], references: [id])
+  id_unidad         Int?
+  fecha_eliminacion DateTime?
 }
 
 //#region Recepciones
@@ -263,8 +274,9 @@ model Recepcion {
   abastecedor  Profesional_Abastecimiento  @relation(name: "abastecedor_recepcion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
   supervisor   Profesional_Abastecimiento? @relation(name: "supervisor_recepcion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Recepciones_Renglones {
@@ -287,6 +299,7 @@ model Recepciones_Renglones {
   ultima_actualizacion DateTime  @updatedAt
   fecha_fabricacion    DateTime?
   fecha_vencimiento    DateTime?
+  fecha_eliminacion    DateTime?
 }
 
 //#endregion
@@ -303,8 +316,9 @@ model Serial {
   devolucion    Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
   id_devolucion Int?
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Devolucion {
@@ -323,8 +337,9 @@ model Devolucion {
   abastecedor         Profesional_Abastecimiento  @relation(name: "abastecedor_devolucion", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
   supervisor          Profesional_Abastecimiento? @relation(name: "supervisor_devolucion", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Devoluciones_Renglones {
@@ -336,6 +351,7 @@ model Devoluciones_Renglones {
   seriales             Serial[]
   fecha_creacion       DateTime   @default(now())
   ultima_actualizacion DateTime   @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Despacho {
@@ -353,23 +369,25 @@ model Despacho {
   abastecedor         Profesional_Abastecimiento  @relation(name: "abastecedor", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
   supervisor          Profesional_Abastecimiento? @relation(name: "supervisor", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Despachos_Renglones {
   id Int @id @default(autoincrement())
 
   id_renglon           Int
-  renglon              Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  renglon              Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
   id_despacho          Int
-  despacho             Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho             Despacho  @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
   seriales             Serial[]
-  observacion          String?  @default("s/o")
+  observacion          String?   @default("s/o")
   manualSelection      Boolean
   cantidad             Int
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Pedidos_Renglones {
@@ -381,8 +399,9 @@ model Pedidos_Renglones {
   id_pedido   Int
   observacion String? @default("s/o")
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 enum Estados_Pedidos {
@@ -427,6 +446,7 @@ model Pedido {
   fecha_creacion       DateTime                @default(now())
   ultima_actualizacion DateTime                @updatedAt
   recepciones          Recepciones_Renglones[]
+  fecha_eliminacion    DateTime?
 }
 
 model Proveedor {
@@ -441,8 +461,9 @@ model Proveedor {
   email               String?
   pedidos             Pedido[]
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 enum Tipos_Cedulas {
@@ -492,6 +513,7 @@ model Destinatario {
   Devolucion           Devolucion[]
   Recepcion            Recepcion[]
   Pedido               Pedido[]
+  fecha_eliminacion    DateTime?
 }
 
 model Profesional_Abastecimiento {
@@ -529,9 +551,10 @@ model Profesional_Abastecimiento {
   autorizador_devolucion Devolucion[] @relation("autorizador_devolucion")
   supervisor_devolucion  Devolucion[] @relation("supervisor_devolucion")
 
-  abastecedor_pedido Pedido[] @relation("abastecedor_pedido")
-  autorizador_pedido Pedido[] @relation("autorizador_pedido")
-  supervisor_pedido  Pedido[] @relation("supervisor_pedido")
+  abastecedor_pedido Pedido[]  @relation("abastecedor_pedido")
+  autorizador_pedido Pedido[]  @relation("autorizador_pedido")
+  supervisor_pedido  Pedido[]  @relation("supervisor_pedido")
+  fecha_eliminacion  DateTime?
 }
 
 model Componente_Militar {
@@ -548,6 +571,7 @@ model Componente_Militar {
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
   personal             Personal[]
+  fecha_eliminacion    DateTime?
 }
 
 model Grados_Componentes {
@@ -558,6 +582,7 @@ model Grados_Componentes {
   componente           Componente_Militar @relation(fields: [id_componente], references: [id], onDelete: Cascade, onUpdate: Cascade)
   fecha_creacion       DateTime           @default(now())
   ultima_actualizacion DateTime           @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Grado_Militar {
@@ -576,6 +601,7 @@ model Grado_Militar {
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
   personal             Personal[]
+  fecha_eliminacion    DateTime?
 }
 
 model Categorias_Grados {
@@ -586,6 +612,7 @@ model Categorias_Grados {
   ultima_actualizacion DateTime          @updatedAt
   id_grado             Int
   grado                Grado_Militar     @relation(fields: [id_grado], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fecha_eliminacion    DateTime?
 }
 
 model Categoria_Militar {
@@ -599,6 +626,7 @@ model Categoria_Militar {
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
   personal             Personal[]
+  fecha_eliminacion    DateTime?
 }
 
 model Unidad_Militar {
@@ -613,28 +641,31 @@ model Unidad_Militar {
   ultima_actualizacion DateTime                     @updatedAt
   profesionales        Profesional_Abastecimiento[]
 
-  armamento Armamento[]
-  almacenes Almacen[]
-  personal  Personal[]
-  Pedido    Pedido[]
+  armamento         Armamento[]
+  almacenes         Almacen[]
+  personal          Personal[]
+  Pedido            Pedido[]
+  fecha_eliminacion DateTime?
 }
 
 model Zodi {
-  id          Int              @id @default(autoincrement())
-  nombre      String           @unique
-  descripcion String
-  ubicacion   String
-  id_redi     Int
-  redi        Redi             @relation(fields: [id_redi], references: [id])
-  unidades    Unidad_Militar[]
+  id                Int              @id @default(autoincrement())
+  nombre            String           @unique
+  descripcion       String
+  ubicacion         String
+  id_redi           Int
+  redi              Redi             @relation(fields: [id_redi], references: [id])
+  unidades          Unidad_Militar[]
+  fecha_eliminacion DateTime?
 }
 
 model Redi {
-  id          Int    @id @default(autoincrement())
-  nombre      String @unique
-  descripcion String
-  ubicacion   String
-  zodis       Zodi[]
+  id                Int       @id @default(autoincrement())
+  nombre            String    @unique
+  descripcion       String
+  ubicacion         String
+  zodis             Zodi[]
+  fecha_eliminacion DateTime?
 }
 
 model Personal {
@@ -663,6 +694,7 @@ model Personal {
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
   guardias             Guardia[]
+  fecha_eliminacion    DateTime?
 }
 
 enum Acciones_Cortas {
@@ -683,6 +715,7 @@ model Auditoria {
   accion_corta         Acciones_Cortas?
   fecha_realizado      DateTime         @default(now())
   ultima_actualizacion DateTime         @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model reposos {
@@ -690,16 +723,18 @@ model reposos {
 }
 
 model Marca_Armamento {
-  id      Int                @id @default(autoincrement())
-  nombre  String
-  modelos Modelo_Armamento[]
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  modelos           Modelo_Armamento[]
+  fecha_eliminacion DateTime?
 }
 
 model Calibre {
-  id               Int                @id @default(autoincrement())
-  nombre           String
-  descripcion      String?
-  Modelo_Armamento Modelo_Armamento[]
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  descripcion       String?
+  Modelo_Armamento  Modelo_Armamento[]
+  fecha_eliminacion DateTime?
 }
 
 model Parte_Arma {
@@ -707,8 +742,9 @@ model Parte_Arma {
   nombre      String
   descripcion String
 
-  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
-  id_modelo Int
+  modelo            Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int
+  fecha_eliminacion DateTime?
 }
 
 model Componente_Arma {
@@ -716,23 +752,26 @@ model Componente_Arma {
   nombre      String
   descripcion String
 
-  modelo    Modelo_Armamento @relation(fields: [id_modelo], references: [id])
-  id_modelo Int
+  modelo            Modelo_Armamento @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int
+  fecha_eliminacion DateTime?
 }
 
 model Accesorio_Arma {
-  id          Int               @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  modelo      Modelo_Armamento? @relation(fields: [id_modelo], references: [id])
-  id_modelo   Int?
+  id                Int               @id @default(autoincrement())
+  nombre            String
+  descripcion       String
+  modelo            Modelo_Armamento? @relation(fields: [id_modelo], references: [id])
+  id_modelo         Int?
+  fecha_eliminacion DateTime?
 }
 
 model Tipo_Armamento {
-  id          Int                @id @default(autoincrement())
-  nombre      String
-  descripcion String
-  modelos     Modelo_Armamento[]
+  id                Int                @id @default(autoincrement())
+  nombre            String
+  descripcion       String
+  modelos           Modelo_Armamento[]
+  fecha_eliminacion DateTime?
 }
 
 model Modelo_Armamento {
@@ -746,10 +785,11 @@ model Modelo_Armamento {
   calibre           Calibre         @relation(fields: [id_calibre], references: [id])
   id_calibre        Int
 
-  partes      Parte_Arma[]
-  accesorios  Accesorio_Arma[]
-  componentes Componente_Arma[]
-  Armamento   Armamento[]
+  partes            Parte_Arma[]
+  accesorios        Accesorio_Arma[]
+  componentes       Componente_Arma[]
+  Armamento         Armamento[]
+  fecha_eliminacion DateTime?
 }
 
 enum Condiciones_Armamento {
@@ -808,9 +848,10 @@ model Armamento {
   id_unidad Int
   unidad    Unidad_Militar @relation(fields: [id_unidad], references: [id])
 
-  id_almacen Int
-  almacen    Almacen @relation(fields: [id_almacen], references: [id], onDelete: Cascade)
-  pasillo    String?
+  id_almacen        Int
+  almacen           Almacen   @relation(fields: [id_almacen], references: [id], onDelete: Cascade)
+  pasillo           String?
+  fecha_eliminacion DateTime?
 }
 
 model Image {
@@ -827,7 +868,8 @@ model Asistencia {
   hora_entrada DateTime?
   hora_salida  DateTime?
 
-  fecha_realizado DateTime @default(now())
+  fecha_realizado   DateTime  @default(now())
+  fecha_eliminacion DateTime?
 }
 
 enum AdminPasswordStates {
@@ -841,8 +883,9 @@ model Admin {
   password String
   state    AdminPasswordStates
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model Guardia {
@@ -855,8 +898,9 @@ model Guardia {
   cedula_usuario String
   personal       Personal @relation(fields: [cedula_usuario], references: [cedula])
 
-  fecha_creacion       DateTime @default(now())
-  ultima_actualizacion DateTime @updatedAt
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
 }
 
 model AttendanceCredentials {

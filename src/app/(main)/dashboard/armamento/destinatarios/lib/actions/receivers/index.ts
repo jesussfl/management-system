@@ -99,7 +99,9 @@ export const getAllReceiversToCombobox = async (
   })
   return receivers.map((receiver) => ({
     value: receiver.cedula,
-    label: `${receiver.tipo_cedula}-${receiver.cedula} ${receiver.nombres}-${receiver.apellidos}`,
+    label: `${receiver.tipo_cedula}-${receiver.cedula} ${
+      receiver.grado?.abreviatura || ''
+    } ${receiver.nombres} ${receiver.apellidos}`,
   }))
 }
 export const checkIfReceiverExists = async (cedula: string) => {

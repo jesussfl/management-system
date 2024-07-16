@@ -288,6 +288,9 @@ export const getAllReceptions = async () => {
     throw new Error('You must be signed in to perform this action')
   }
   const recepciones = await prisma.recepcion.findMany({
+    orderBy: {
+      ultima_actualizacion: 'desc',
+    },
     where: {
       servicio: 'Armamento',
     },

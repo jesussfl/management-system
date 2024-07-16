@@ -171,6 +171,7 @@ export default function DispatchesForm({
             manualSelection: false,
             seriales: [],
             observacion: '',
+            fecha_eliminacion: null,
           })
         }
       })

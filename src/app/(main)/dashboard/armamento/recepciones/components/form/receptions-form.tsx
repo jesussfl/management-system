@@ -173,6 +173,7 @@ export default function ReceptionsForm({
             seriales: [],
             seriales_automaticos: false,
             observacion: null,
+            fecha_eliminacion: null,
           })
         }
       })
