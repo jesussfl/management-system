@@ -32,21 +32,25 @@ export const getStatistics = async (
   const dispatches = await prisma.despacho.count({
     where: {
       servicio,
+      fecha_eliminacion: null,
     },
   })
   const receptions = await prisma.recepcion.count({
     where: {
       servicio,
+      fecha_eliminacion: null,
     },
   })
   const devolutions = await prisma.devolucion.count({
     where: {
       servicio,
+      fecha_eliminacion: null,
     },
   })
   const pedidos = await prisma.pedido.count({
     where: {
       servicio,
+      fecha_eliminacion: null,
     },
   })
   return { items, users, dispatches, receptions, devolutions, pedidos }

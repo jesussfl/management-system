@@ -361,7 +361,7 @@ export const checkItemExistance = async (name: string) => {
   return !!exists
 }
 
-export const getAllItems = async () => {
+export const getAllItems = async (onlyInactive?: 'actives' | 'inactives') => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -374,6 +374,7 @@ export const getAllItems = async () => {
     },
     where: {
       servicio: 'Abastecimiento',
+      fecha_eliminacion: onlyInactive === 'inactives' ? { not: null } : null,
     },
     include: {
       recepciones: {

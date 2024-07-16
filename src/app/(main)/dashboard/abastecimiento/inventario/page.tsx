@@ -66,6 +66,7 @@ import { getStatistics } from '../../lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
 import { useToast } from '@/modules/common/components/toast/use-toast'
+import { columns } from './columns'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -74,6 +75,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const itemsData = await getAllItems()
+  const itemsInactive = await getAllItems('inactives')
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
   const packagingUnitsData = await getAllPackagingUnits()
@@ -127,6 +129,7 @@ export default async function Page() {
           </TabsTrigger>
           <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
           <TabsTrigger value="systems">Sistemas y Subsistemas</TabsTrigger>
+          <TabsTrigger value="deleted">Renglones eliminados</TabsTrigger>
           {lowStockItems.length > 0 && (
             <TabsTrigger value="lowStock">
               <Badge variant="destructive">Ver Renglones con Stock Bajo</Badge>
@@ -304,6 +307,16 @@ export default async function Page() {
                   itemsData={lowStockItems}
                   // formatFn={formatExcelData}
                 />
+              </CardContent>
+            </Card>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="deleted">
+          <PageContent>
+            <Card>
+              <CardHeader className="flex flex-row items-center gap-8 "></CardHeader>
+              <CardContent>
+                <DataTable columns={columns} data={itemsInactive} />
               </CardContent>
             </Card>
           </PageContent>

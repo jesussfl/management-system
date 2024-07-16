@@ -51,7 +51,9 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 const prismaClientSingleton = () => {
-  const prisma = new PrismaClient().$extends({
+  const prisma = new PrismaClient({
+    log: ['info', 'warn', 'error'],
+  }).$extends({
     model: {
       $allModels: {
         async delete<M, A>(
@@ -69,71 +71,10 @@ const prismaClientSingleton = () => {
         },
       },
     },
-    query: {
-      $allModels: {
-        async $allOperations({ model, operation, args, query }) {
-          if (operation === 'findUnique' || operation === 'findMany') {
-            args.where = {
-              ...args.where,
-              fecha_eliminacion: null,
-            }
-            return query(args)
-          }
-
-          return query(args)
-        },
-      },
-    },
-    // query: {
-    //   $allModels: {
-    //     async $allOperations({ model, operation, args, query }) {
-    //       if (operation === 'findUnique' || operation === 'findMany') {
-    //         args.where = {
-    //           ...args.where,
-    //           fecha_eliminacion: null,
-    //         }
-    //         return query(args)
-    //       }
-    //     },
-    //   },
-    // },
   })
 
   return prisma
 }
-
-// .$extends({
-//   model: {
-//     $allModels: {
-//       async delete<M, A>(
-//         this: M,
-//         where: Prisma.Args<M, 'delete'>
-//       ): Promise<Prisma.Result<M, A, 'update'>> {
-//         const context = Prisma.getExtensionContext(this)
-
-//         return (context as any).update({
-//           ...where,
-//           data: {
-//             fecha_eliminacion: new Date(),
-//           },
-//         })
-//       },
-//     },
-//   },
-// query: {
-//   $allModels: {
-//     async $allOperations({ model, operation, args, query }) {
-//       if (operation === 'findUnique' || operation === 'findMany') {
-//         args.where = {
-//           ...args.where,
-//           fecha_eliminacion: null,
-//         }
-//         return query(args)
-//       }
-//     },
-//   },
-// },
-// })
 
 declare const globalThis: {
   prismaGlobal: ReturnType<typeof prismaClientSingleton>
