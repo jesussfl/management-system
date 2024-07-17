@@ -155,6 +155,7 @@ export default function ReturnsForm({
 
             seriales: [],
             fecha_eliminacion: null,
+            observacion: '',
           })
         }
       })

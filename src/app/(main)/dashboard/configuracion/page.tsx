@@ -8,8 +8,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-
-import BackupButton from '@/modules/maintenance/components/backup'
+import BackupButton from './components/backup'
 
 export const metadata: Metadata = {
   title: 'Restauración y Copia de Seguridad',

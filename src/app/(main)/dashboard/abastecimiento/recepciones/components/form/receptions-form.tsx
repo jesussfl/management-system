@@ -65,6 +65,7 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
+import { Combobox } from '@/modules/common/components/combobox'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -291,65 +292,15 @@ export default function ReceptionsForm({
                 name="cedula_destinatario"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className="flex-1 ">
+                  <FormItem className="flex flex-col flex-1 ">
                     <FormLabel>Persona que entrega:</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? receivers.find(
-                                  (receiver) => receiver.value === field.value
-                                )?.label
-                              : 'Seleccionar destinatario'}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent">
-                        <Command>
-                          <CommandInput
-                            placeholder="Buscar destinatario..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>
-                            No se encontaron resultados.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {receivers.map((receiver) => (
-                              <CommandItem
-                                value={receiver.label}
-                                key={receiver.value}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'cedula_destinatario',
-                                    receiver.value,
-                                    { shouldDirty: true }
-                                  )
-                                }}
-                              >
-                                {receiver.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    receiver.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <Combobox
+                      name={field.name}
+                      form={form}
+                      field={field}
+                      data={receivers}
+                      isValueString
+                    />
 
                     <FormDescription>
                       <Link
@@ -372,66 +323,15 @@ export default function ReceptionsForm({
                 name="cedula_abastecedor"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className=" flex-1 ">
+                  <FormItem className=" flex flex-col flex-1">
                     <FormLabel>Profesional que recibe:</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? professionals.find(
-                                  (professional) =>
-                                    professional.value === field.value
-                                )?.label
-                              : 'Seleccionar profesional'}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent">
-                        <Command>
-                          <CommandInput
-                            placeholder="Buscar profesional..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>
-                            No se encontaron resultados.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {professionals.map((professional) => (
-                              <CommandItem
-                                value={professional.label}
-                                key={professional.value}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'cedula_abastecedor',
-                                    professional.value,
-                                    { shouldDirty: true }
-                                  )
-                                }}
-                              >
-                                {professional.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    professional.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <Combobox
+                      name={field.name}
+                      form={form}
+                      field={field}
+                      data={professionals}
+                      isValueString
+                    />
 
                     <FormDescription>
                       <Link
@@ -456,69 +356,17 @@ export default function ReceptionsForm({
                 name="cedula_autorizador"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem className="flex flex-col flex-1">
                     <FormLabel>
                       Profesional que autorizará la recepción:
                     </FormLabel>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? professionals.find(
-                                  (professional) =>
-                                    professional.value === field.value
-                                )?.label
-                              : 'Seleccionar profesional'}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent">
-                        <Command>
-                          <CommandInput
-                            placeholder="Buscar profesional..."
-                            className="h-9"
-                          />
-                          <CommandEmpty>
-                            No se encontaron resultados.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {professionals.map((professional) => (
-                              <CommandItem
-                                value={professional.label}
-                                key={professional.value}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'cedula_autorizador',
-                                    professional.value,
-                                    { shouldDirty: true }
-                                  )
-                                }}
-                              >
-                                {professional.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    professional.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <Combobox
+                      name={field.name}
+                      form={form}
+                      field={field}
+                      data={professionals}
+                      isValueString
+                    />
 
                     <FormMessage />
                   </FormItem>
@@ -528,81 +376,18 @@ export default function ReceptionsForm({
                 control={form.control}
                 name="cedula_supervisor"
                 render={({ field }) => (
-                  <FormItem className="flex-1">
+                  <FormItem className="flex flex-col flex-1">
                     <FormLabel>
                       Profesional que supervisa la recepción (opcional):
                     </FormLabel>
 
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              'w-full justify-between',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                          >
-                            {field.value
-                              ? professionals.find(
-                                  (professional) =>
-                                    professional.value === field.value
-                                )?.label
-                              : 'Seleccionar profesional'}
-                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="PopoverContent">
-                        <Command>
-                          <div className="flex items-center gap-2">
-                            <CommandInput
-                              placeholder="Buscar profesional..."
-                              className="flex-1 h-9"
-                            />
-                            <Button
-                              className="px-2"
-                              variant="destructive"
-                              size="sm"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                form.setValue('cedula_supervisor', '')
-                              }}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <CommandEmpty>
-                            No se encontaron resultados.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {professionals.map((professional) => (
-                              <CommandItem
-                                value={professional.label}
-                                key={professional.value}
-                                onSelect={() => {
-                                  form.setValue(
-                                    'cedula_supervisor',
-                                    professional.value
-                                  )
-                                }}
-                              >
-                                {professional.label}
-                                <CheckIcon
-                                  className={cn(
-                                    'ml-auto h-4 w-4',
-                                    professional.value === field.value
-                                      ? 'opacity-100'
-                                      : 'opacity-0'
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <Combobox
+                      name={field.name}
+                      form={form}
+                      field={field}
+                      data={professionals}
+                      isValueString
+                    />
 
                     <FormMessage />
                   </FormItem>
@@ -676,6 +461,8 @@ export default function ReceptionsForm({
                         showTimeSelect
                         dateFormat="d MMMM, yyyy h:mm aa"
                         dropdownMode="select"
+                        minDate={new Date()}
+                        maxDate={new Date(2025, 12, 31)}
                       />
                       <Button
                         variant={'secondary'}

@@ -3,14 +3,13 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown } from 'lucide-react'
 
-import { Button, buttonVariants } from '@/modules/common/components/button'
+import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import { cn } from '@/utils/utils'
 import { deleteOrder } from './lib/actions/orders'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
@@ -133,7 +132,7 @@ export const columns: ColumnDef<PedidoType>[] = [
   },
   {
     id: 'unidad',
-    accessorFn: (row: PedidoType) => row.unidad?.nombre,
+    accessorFn: (row: PedidoType) => row.unidad?.nombre || 'No aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -150,10 +149,17 @@ export const columns: ColumnDef<PedidoType>[] = [
   },
   {
     id: 'destinatario',
-    accessorFn: (row: PedidoType) =>
-      `${row?.destinatario?.grado?.abreviatura || ''} ${
+    accessorFn: (row: PedidoType) => {
+      const text = `${row?.destinatario?.grado?.abreviatura || ''} ${
         row?.destinatario?.nombres || ''
-      } ${row?.destinatario?.apellidos || ''}`,
+      } ${row?.destinatario?.apellidos || ''}`
+
+      if (row?.destinatario?.cedula) {
+        return `${text}`
+      } else {
+        return 'No aplica'
+      }
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -170,7 +176,7 @@ export const columns: ColumnDef<PedidoType>[] = [
   },
   {
     id: 'proveedor',
-    accessorFn: (row: PedidoType) => row.proveedor?.nombre,
+    accessorFn: (row: PedidoType) => row.proveedor?.nombre || 'No aplica',
     header: ({ column }) => {
       return (
         <Button

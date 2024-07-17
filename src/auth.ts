@@ -1,14 +1,9 @@
-import { PrismaAdapter } from '@auth/prisma-adapter'
-// import { PrismaClient } from '@prisma/client'
-
 import NextAuth from 'next-auth'
 import bcrypt from 'bcryptjs'
 import Credentials from '@auth/core/providers/credentials'
 
 import type { NextAuthConfig } from 'next-auth'
-import type { Adapter } from '@auth/core/adapters'
-import { prisma } from './lib/prisma copy'
-// const prisma = new PrismaClient()
+import { prisma } from './lib/prisma-auth'
 
 /**
  * Authentication Configuration
@@ -23,7 +18,7 @@ import { prisma } from './lib/prisma copy'
  */
 
 export const authOptions = {
-  adapter: PrismaAdapter(prisma) as Adapter,
+  // adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
     Credentials({
       credentials: {

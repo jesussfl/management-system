@@ -89,12 +89,14 @@ function BackupButton() {
             <CardTitle>Reestablecer copia de seguridad</CardTitle>
             <CardDescription>
               Selecciona una copia de seguridad para reestablecer la base de
-              datos del sistema.
+              datos del sistema. (Archivo .tar)
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Input
+              className="py-0 mb-3"
               type="file"
+              accept=".tar"
               onChange={(e) => {
                 // @ts-ignore
                 setFileNameToRestore(e.target.files[0].name || '')

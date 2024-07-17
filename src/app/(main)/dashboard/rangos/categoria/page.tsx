@@ -1,5 +1,5 @@
 import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
-import CategoriesForm from '@/modules/rangos/components/forms/categories-form'
+import CategoriesForm from '@/app/(main)/dashboard/rangos/components/forms/categories-form'
 
 export default async function Page() {
   return (

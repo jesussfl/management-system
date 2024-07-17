@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import GradesForm from '@/modules/rangos/components/forms/grades-form'
+import GradesForm from '@/app/(main)/dashboard/rangos/components/forms/grades-form'
 
 export default async function Page({
   params: { id },

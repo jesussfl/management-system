@@ -1,7 +1,7 @@
 import { getGradeById } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 
 import { PageHeader, PageHeaderTitle } from '@/modules/layout/templates/page'
-import GradesForm from '@/modules/rangos/components/forms/grades-form'
+import GradesForm from '@/app/(main)/dashboard/rangos/components/forms/grades-form'
 
 export default async function Page({
   params: { id },

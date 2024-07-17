@@ -159,11 +159,30 @@ export const Step3 = ({
         name="numero_parte"
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel>Número de Parte o Modelo</FormLabel>
+            <FormLabel>Número de Parte o Modelo (Opcional)</FormLabel>
             <FormControl>
               <Input
                 type="text"
                 placeholder="Numero de parte o modelo"
+                {...field}
+                value={field.value || ''}
+              />
+            </FormControl>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="ubicacion"
+        render={({ field }) => (
+          <FormItem className="w-full">
+            <FormLabel>Ubicación (Opcional)</FormLabel>
+            <FormControl>
+              <Input
+                type="text"
+                placeholder="Ej. Pasillo, Estante, Cajón, etc."
                 {...field}
                 value={field.value || ''}
               />
@@ -212,7 +231,7 @@ export const Step3 = ({
           control={form.control}
           name="stock_maximo"
           rules={{
-            required: false,
+            required: true,
             validate: (value) => {
               if (form.getValues('stock_minimo')) {
                 if (value < form.getValues('stock_minimo')) {
@@ -242,7 +261,7 @@ export const Step3 = ({
           )}
         />
       </div>
-      <FormLabel>Selecciona una imagen:</FormLabel>
+      <FormLabel>Selecciona una imagen (Opcional):</FormLabel>
       <div className="flex flex-1 gap-4">
         {form.watch('imagen') && !image ? (
           <Image

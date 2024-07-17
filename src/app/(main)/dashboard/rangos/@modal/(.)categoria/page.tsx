@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import CategoriesForm from '@/modules/rangos/components/forms/categories-form'
+import CategoriesForm from '@/app/(main)/dashboard/rangos/components/forms/categories-form'
 
 export default async function Page() {
   return (

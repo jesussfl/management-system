@@ -22,27 +22,3 @@ export const validateSections = async ({ sections }: Params) => {
 
   return true
 }
-
-// export const validatePermissions = async ({
-//   sections,
-//   permission,
-// }: {
-//   sections: SECTION_NAMES[]
-//   permission: string
-// }) => {
-//   const permissions = await getUserPermissions()
-
-//   const isPageAuthorized = permissions?.some((permission) => {
-//     const [permisoSection, permisoAction] = permission.permiso_key.split(':')
-//     return (
-//       sections.includes(permisoSection as SECTION_NAMES) ||
-//       permisoSection === 'TODAS'
-//     )
-//   })
-
-//   if (!isPageAuthorized) {
-//     return false
-//   }
-
-//   return true
-// }

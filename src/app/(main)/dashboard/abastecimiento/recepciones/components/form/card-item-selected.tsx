@@ -195,14 +195,20 @@ export const CardItemSelected = ({
 
               <div className="flex-1 w-full">
                 <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(event) => {
-                      field.onChange(parseInt(event.target.value))
-                      setValue(`renglones.${index}.seriales`, [])
-                    }}
-                  />
+                  <div className="flex flex-row gap-2 items-center">
+                    <Input
+                      className="flex-1"
+                      type="number"
+                      {...field}
+                      onChange={(event) => {
+                        field.onChange(parseInt(event.target.value))
+                        setValue(`renglones.${index}.seriales`, [])
+                      }}
+                    />
+                    <p className="text-foreground text-sm">
+                      {`${item.unidad_empaque.nombre}(s)`}
+                    </p>{' '}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </div>

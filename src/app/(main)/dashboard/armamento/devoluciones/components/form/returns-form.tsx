@@ -152,6 +152,7 @@ export default function ReturnsForm({
             id_renglon: item.id,
             fecha_eliminacion: null,
             seriales: [],
+            observacion: '',
           })
         }
       })

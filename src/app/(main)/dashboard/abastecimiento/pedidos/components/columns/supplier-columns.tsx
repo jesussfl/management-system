@@ -87,6 +87,7 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
   },
   {
     accessorKey: 'telefono_secundario',
+    accessorFn: (row) => row.telefono_secundario || 'S/A',
     header: ({ column }) => {
       return (
         <Button
@@ -103,6 +104,8 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
   },
   {
     accessorKey: 'email',
+    accessorFn: (row) => row.email || 'S/A',
+
     header: ({ column }) => {
       return (
         <Button
@@ -120,6 +123,8 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
 
   {
     accessorKey: 'sitio_web',
+    accessorFn: (row) => row.sitio_web || 'S/A',
+
     header: ({ column }) => {
       return (
         <Button

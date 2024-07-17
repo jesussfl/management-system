@@ -282,7 +282,7 @@ export const updateReception = async (id: number, data: FormValues) => {
   }
 }
 
-export const getAllReceptions = async () => {
+export const getAllReceptions = async (onlyActives = true) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -293,6 +293,7 @@ export const getAllReceptions = async () => {
     },
     where: {
       servicio: 'Abastecimiento',
+      fecha_eliminacion: onlyActives ? null : { not: null },
     },
     include: {
       renglones: {

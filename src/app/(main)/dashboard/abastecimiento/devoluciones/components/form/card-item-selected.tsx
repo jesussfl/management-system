@@ -2,7 +2,14 @@
 import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Box, Trash } from 'lucide-react'
-import { FormDescription } from '@/modules/common/components/form'
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/modules/common/components/form'
 
 import {
   Card,
@@ -14,6 +21,7 @@ import {
 import ModalForm from '@/modules/common/components/modal-form'
 import { RenglonWithAllRelations } from '@/types/types'
 import { SerialsFormNew } from './serials-form'
+import { Input } from '@/modules/common/components/input/input'
 
 export const SelectedItemCard = ({
   item,
@@ -72,6 +80,32 @@ export const SelectedItemCard = ({
         />
       </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-start gap-4">
+        <FormField
+          control={control}
+          name={`renglones.${index}.observacion`}
+          rules={{
+            required: 'La observación es obligatoria',
+            maxLength: {
+              value: 125,
+              message: 'La observación no puede superar los 125 caracteres',
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="flex flex-col flex-1 gap-2">
+              <FormLabel className="w-[12rem]">{`Observación:`}</FormLabel>
+
+              <div className="flex-1 w-full">
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+                <FormDescription>
+                  {`La observación no puede superar los 125 caracteres`}
+                </FormDescription>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
         <ModalForm
           triggerName={`${
             watch(`renglones.${index}.seriales`).length > 0
