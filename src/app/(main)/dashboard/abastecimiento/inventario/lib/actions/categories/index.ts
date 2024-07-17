@@ -157,6 +157,56 @@ export const deleteCategory = async (id: number) => {
     success: 'Categoria eliminada exitosamente',
   }
 }
+export const recoverCategory = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.categoria.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La categoria no existe',
+      success: null,
+    }
+  }
+
+  await prisma.categoria.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó la categoria: ${exist?.nombre}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    error: null,
+    success: 'Categoria recuperada exitosamente',
+  }
+}
 export const deleteMultipleCategories = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

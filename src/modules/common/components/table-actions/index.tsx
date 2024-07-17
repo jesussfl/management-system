@@ -32,9 +32,15 @@ interface TableActionProps {
     actionName?: string
   }
   deleteConfig: {
+    isDeleted?: boolean
+
     actionName?: string
     alertTitle: string
     alertDescription: string
+    onRecover: () => Promise<{
+      error: boolean | string | null
+      success: boolean | string | null
+    }>
     onConfirm: () => Promise<{
       error: boolean | string | null
       success: boolean | string | null
@@ -95,18 +101,37 @@ function ProtectedTableActions({
 
           {deleteAuthorization.success && (
             <AlertDialogTrigger asChild>
-              <DropdownMenuItem>
-                {deleteConfig.actionName || 'Eliminar'}
-              </DropdownMenuItem>
+              {typeof deleteConfig.isDeleted === 'boolean' ? (
+                <DropdownMenuItem>
+                  {deleteConfig.isDeleted ? 'Recuperar' : 'Eliminar'}
+                </DropdownMenuItem>
+              ) : null}
+              {/* <DropdownMenuItem>
+                {deleteConfig.actionName || deleteConfig.isDeleted
+                  ? 'Recuperar'
+                  : 'Eliminar'}
+              </DropdownMenuItem> */}
             </AlertDialogTrigger>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
 
       <DeleteDialog
-        title={deleteConfig.alertTitle}
-        description={deleteConfig.alertDescription}
-        actionMethod={deleteConfig.onConfirm}
+        title={
+          deleteConfig.isDeleted
+            ? 'Quitar de eliminados'
+            : deleteConfig.alertTitle
+        }
+        description={
+          deleteConfig.isDeleted
+            ? 'Con esta acción puedes recuperar el registro'
+            : deleteConfig.alertDescription
+        }
+        actionMethod={
+          deleteConfig.isDeleted
+            ? deleteConfig.onRecover
+            : deleteConfig.onConfirm
+        }
         sectionName={sectionName}
       />
     </AlertDialog>

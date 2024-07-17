@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
 import Link from 'next/link'
-import { deleteItem } from './lib/actions/items'
+import { deleteItem, recoverItem } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
@@ -250,8 +250,12 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
             href: `/dashboard/abastecimiento/inventario/renglon/${renglon.id}`,
           }}
           deleteConfig={{
+            isDeleted: renglon.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este renglon?',
             alertDescription: `Estas a punto de eliminar este renglon. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverItem(renglon.id)
+            },
             onConfirm: () => {
               return deleteItem(renglon.id)
             },

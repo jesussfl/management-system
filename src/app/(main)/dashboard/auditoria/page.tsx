@@ -51,7 +51,11 @@ export default async function Page() {
       </PageHeader>
 
       <PageContent>
-        <DataTable columns={columns} data={auditItems} />
+        <DataTable
+          isStatusEnabled={false}
+          columns={columns}
+          data={auditItems}
+        />
       </PageContent>
     </>
   )

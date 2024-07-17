@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import SubsystemForm from '../../components/subsystem-form'
-import SystemForm from '../../components/system-form'
+import SubsystemForm from '../../components/forms/subsystem-form'
+import SystemForm from '../../components/forms/system-form'
 
 export default async function Page() {
   return (

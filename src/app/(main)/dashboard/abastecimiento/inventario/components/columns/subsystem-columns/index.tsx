@@ -3,30 +3,29 @@
 import * as React from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-
-import { Button } from '@/modules/common/components/button'
-import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { Clasificacion, Sistema } from '@prisma/client'
+import Link from 'next/link'
+
+import { Button } from '@/modules/common/components/button'
+import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
+import { Categoria, Subsistema } from '@prisma/client'
 import { MoreHorizontal } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
-import Link from 'next/link'
-import { deleteSystem } from '../../lib/actions/systems'
+import { deleteSubsystem } from '../../../lib/actions/subsystems'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-
-export const columns: ColumnDef<Sistema>[] = [
+export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -77,23 +76,38 @@ export const columns: ColumnDef<Sistema>[] = [
       )
     },
   },
+
+  {
+    accessorKey: 'sistema.nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Sistema
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
   {
     id: 'acciones',
-    enableHiding: false,
+
     cell: ({ row }) => {
-      const system = row.original
+      const subsystem = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
+            href: `/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`,
           }}
           deleteConfig={{
-            alertTitle: '¿Estás seguro de eliminar este sistema?',
-            alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
+            alertTitle: '¿Estás seguro de eliminar este subsistema?',
+            alertDescription: `Estas a punto de eliminar este subsistema. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
-              return deleteSystem(system.id)
+              return deleteSubsystem(subsystem.id)
             },
           }}
         />

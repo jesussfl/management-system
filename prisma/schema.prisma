@@ -706,6 +706,7 @@ enum Acciones_Cortas {
   INICIAR_SESION
   ASISTENCIA_ENTRADA
   ASISTENCIA_SALIDA
+  RECUPERAR
 }
 
 model Auditoria {

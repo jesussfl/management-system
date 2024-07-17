@@ -31,11 +31,11 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-columns'
-import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-columns'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/packaging-units-columns'
-import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/subsystem-columns'
-import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/system-columns'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/classification-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/system-columns'
 import {
   Card,
   CardContent,
@@ -75,7 +75,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const itemsData = await getAllItems()
-  const itemsInactive = await getAllItems('inactives')
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
   const packagingUnitsData = await getAllPackagingUnits()
@@ -129,7 +128,7 @@ export default async function Page() {
           </TabsTrigger>
           <TabsTrigger value="packagingUnits">Unidades de empaque</TabsTrigger>
           <TabsTrigger value="systems">Sistemas y Subsistemas</TabsTrigger>
-          <TabsTrigger value="deleted">Renglones eliminados</TabsTrigger>
+
           {lowStockItems.length > 0 && (
             <TabsTrigger value="lowStock">
               <Badge variant="destructive">Ver Renglones con Stock Bajo</Badge>
@@ -143,7 +142,7 @@ export default async function Page() {
                 <StatisticCard
                   className="flex-1 h-[116px]"
                   title="Renglones Totales"
-                  number={itemsData.length}
+                  number={statistics?.items}
                   Icon={<Box size={24} />}
                 />
 
@@ -307,16 +306,6 @@ export default async function Page() {
                   itemsData={lowStockItems}
                   // formatFn={formatExcelData}
                 />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
-        <TabsContent value="deleted">
-          <PageContent>
-            <Card>
-              <CardHeader className="flex flex-row items-center gap-8 "></CardHeader>
-              <CardContent>
-                <DataTable columns={columns} data={itemsInactive} />
               </CardContent>
             </Card>
           </PageContent>

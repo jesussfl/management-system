@@ -69,7 +69,11 @@ export default async function Page() {
         </TabsList>
         <TabsContent value="users">
           <PageContent>
-            <DataTable columns={columns} data={usersData} />
+            <DataTable
+              columns={columns}
+              data={usersData}
+              isStatusEnabled={false}
+            />
           </PageContent>
         </TabsContent>
         <TabsContent value="roles">

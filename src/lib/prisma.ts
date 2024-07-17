@@ -71,23 +71,23 @@ const prismaClientSingleton = () => {
         },
       },
     },
-    query: {
-      $allModels: {
-        async $allOperations({ model, operation, args, query }) {
-          if (operation === 'findUnique' || operation === 'findMany') {
-            // Agregar condición sólo si no está especificada por el usuario
-            if (args.where && !('fecha_eliminacion' in args.where)) {
-              args.where = {
-                ...args.where,
-                fecha_eliminacion: null,
-              }
-            }
-            return query(args)
-          }
-          return query(args)
-        },
-      },
-    },
+    // query: {
+    //   $allModels: {
+    //     async $allOperations({ model, operation, args, query }) {
+    //       if (operation === 'findUnique' || operation === 'findMany') {
+    //         // Agregar condición sólo si no está especificada por el usuario
+    //         if (args.where && !('fecha_eliminacion' in args.where)) {
+    //           args.where = {
+    //             ...args.where,
+    //             fecha_eliminacion: null,
+    //           }
+    //         }
+    //         return query(args)
+    //       }
+    //       return query(args)
+    //     },
+    //   },
+    // },
   })
 
   return prisma

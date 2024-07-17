@@ -19,7 +19,7 @@ import { Sistema, Subsistema } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
-import { createSystem, updateSystem } from '../../lib/actions/systems'
+import { createSystem, updateSystem } from '../../../lib/actions/systems'
 
 interface Props {
   defaultValues?: Sistema

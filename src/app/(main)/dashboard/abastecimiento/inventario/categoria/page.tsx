@@ -1,4 +1,4 @@
-import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/categories-form'
+import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/forms/categories-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {

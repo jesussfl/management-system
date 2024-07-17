@@ -19,8 +19,8 @@ import {
 import { useState } from 'react'
 
 //   import DeleteDialog from '../permissions-delete-dialog'
-import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/classification-form'
-import PackagingUnitsForm from '../packaging-units-form'
+import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/forms/classification-form'
+import PackagingUnitsForm from '../forms/packaging-units-form'
 
 type Props = {
   packagingUnit: UnidadEmpaque

@@ -2,12 +2,6 @@
 import React, { useState } from 'react'
 import { Button } from '@/modules/common/components/button'
 import { Input } from '@/modules/common/components/input/input'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { useToast } from '../toast/use-toast'
 import {
   AlertDialog,
@@ -32,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../select/select'
+import { DataTableFacetedFilter } from './data-table-faceted-filter'
+
 interface MultipleDeleteProps {
   isMultipleDeleteEnabled: true
   selectedIds: number[]
@@ -73,100 +69,78 @@ export default function DataTableFilters({
   }
   return (
     <div className="flex flex-1 justify-between items-center py-4">
-      <div className="flex gap-4">
-        <Input
-          placeholder="Buscar..."
-          value={filtering}
-          onChange={(event) => setFiltering(event.target.value)}
-          startIcon={Search}
-          className="w-[450px]"
-          // value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
-          // onChange={(event) =>
-          //   table.getColumn('nombre')?.setFilterValue(event.target.value)
-          // }
-        />
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              onClick={(e) => {
-                setShowKeyboard(!showKeyboard)
-              }}
-            >
-              {showKeyboard ? (
-                <KeyboardIcon className="h-4 w-4 text-red-500" />
-              ) : (
-                <KeyboardIcon className="h-4 w-4 text-blue-500" />
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-200">
-            <div className="grid gap-4">
-              <div className="space-y-2">
-                <h4 className="font-medium leading-none">Teclado Virtual</h4>
-              </div>
-              <Select
-                onValueChange={handleLanguageChange}
-                defaultValue={'spanish'}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar idioma..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-56">
-                  <SelectItem value="spanish">Español</SelectItem>
-                  <SelectItem value="english">Inglés</SelectItem>
-                  <SelectItem value="russian">Ruso</SelectItem>
-                  <SelectItem value="french">Frances</SelectItem>
-                  <SelectItem value="japanese">Japones</SelectItem>
-                  <SelectItem value="korean">Coreano</SelectItem>
-                  <SelectItem value="chinese">Chino</SelectItem>
-                  <SelectItem value="arabic">Arabe</SelectItem>
-                  <SelectItem value="turkish">Turco</SelectItem>
-                  <SelectItem value="german">Alemán</SelectItem>
-                </SelectContent>
-              </Select>
-              <Keyboard
-                onChange={(e) => {
-                  const value = e
-                  setFiltering(value)
+      <div className="flex justify-start flex-1 gap-4">
+        <div className="flex w-[50%] gap-4">
+          <Input
+            placeholder="Buscar..."
+            value={filtering}
+            onChange={(event) => setFiltering(event.target.value)}
+            startIcon={Search}
+            // value={(table.getColumn('nombre')?.getFilterValue() as string) ?? ''}
+            // onChange={(event) =>
+            //   table.getColumn('nombre')?.setFilterValue(event.target.value)
+            // }
+          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={'outline'}
+                onClick={(e) => {
+                  setShowKeyboard(!showKeyboard)
                 }}
-                inputName={'keyboard'}
-                value={inputValue}
-                {...getCurrentLayout(language)}
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
+              >
+                {showKeyboard ? (
+                  <KeyboardIcon className="h-4 w-4 text-red-500" />
+                ) : (
+                  <KeyboardIcon className="h-4 w-4 text-blue-500" />
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-200">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none">Teclado Virtual</h4>
+                </div>
+                <Select
+                  onValueChange={handleLanguageChange}
+                  defaultValue={'spanish'}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar idioma..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-56">
+                    <SelectItem value="spanish">Español</SelectItem>
+                    <SelectItem value="english">Inglés</SelectItem>
+                    <SelectItem value="russian">Ruso</SelectItem>
+                    <SelectItem value="french">Frances</SelectItem>
+                    <SelectItem value="japanese">Japones</SelectItem>
+                    <SelectItem value="korean">Coreano</SelectItem>
+                    <SelectItem value="chinese">Chino</SelectItem>
+                    <SelectItem value="arabic">Arabe</SelectItem>
+                    <SelectItem value="turkish">Turco</SelectItem>
+                    <SelectItem value="german">Alemán</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Keyboard
+                  onChange={(e) => {
+                    const value = e
+                    setFiltering(value)
+                  }}
+                  inputName={'keyboard'}
+                  value={inputValue}
+                  {...getCurrentLayout(language)}
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
       <div className="flex gap-4">
         {isColumnFilterEnabled && (
-          <></>
-          // <DropdownMenu>
-          //   <DropdownMenuTrigger asChild>
-          //     <Button variant="outline" className="ml-auto">
-          //       Columnas
-          //     </Button>
-          //   </DropdownMenuTrigger>
-          //   <DropdownMenuContent align="end">
-          //     {table
-          //       .getAllColumns()
-          //       .filter((column: any) => column.getCanHide())
-          //       .map((column: any) => {
-          //         return (
-          //           <DropdownMenuCheckboxItem
-          //             key={column.id}
-          //             className="capitalize"
-          //             checked={column.getIsVisible()}
-          //             onCheckedChange={(value) =>
-          //               column.toggleVisibility(!!value)
-          //             }
-          //           >
-          //             {column.id}
-          //           </DropdownMenuCheckboxItem>
-          //         )
-          //       })}
-          //   </DropdownMenuContent>
-          // </DropdownMenu>
+          <DataTableFacetedFilter
+            column={table.getColumn('Estado')}
+            title="Estado"
+          />
         )}
         {isMultipleDeleteEnabled === true && selectedIds.length > 0 ? (
           <AlertDialog>

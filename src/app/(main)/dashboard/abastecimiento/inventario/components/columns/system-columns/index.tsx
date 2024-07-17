@@ -9,23 +9,24 @@ import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { UnidadEmpaque } from '@prisma/client'
+import { Clasificacion, Sistema } from '@prisma/client'
 import { MoreHorizontal } from 'lucide-react'
-import Link from 'next/link'
 import {
   AlertDialog,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
-import { deletePackagingUnit } from '../../lib/actions/packaging-units'
+import Link from 'next/link'
+import { deleteSystem } from '../../../lib/actions/systems'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-export const columns: ColumnDef<UnidadEmpaque>[] = [
+
+export const columns: ColumnDef<Sistema>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -62,36 +63,6 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
-
-  {
-    accessorKey: 'tipo_medida',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Tipo de medida
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'peso',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Peso Fijo
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
   {
     accessorKey: 'descripcion',
     header: ({ column }) => {
@@ -106,24 +77,23 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
-
   {
     id: 'acciones',
     enableHiding: false,
     cell: ({ row }) => {
-      const packagingUnit = row.original
+      const system = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/unidad-empaque/${packagingUnit.id}`,
+            href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
           }}
           deleteConfig={{
-            alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',
-            alertDescription: `Estas a punto de eliminar esta unidad de empaque. Pero puedes recuperar el registro más tarde.`,
+            alertTitle: '¿Estás seguro de eliminar este sistema?',
+            alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
-              return deletePackagingUnit(packagingUnit.id)
+              return deleteSystem(system.id)
             },
           }}
         />

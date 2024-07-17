@@ -54,6 +54,7 @@ import {
 } from '@/modules/common/components/popover/popover'
 import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
 import { FilterIcon } from 'lucide-react'
+import { STATUS_COLUMN } from '@/modules/layout/components/status-column/indext'
 declare module '@tanstack/table-core' {
   interface FilterFns {
     fuzzy: FilterFn<unknown>
@@ -108,6 +109,7 @@ type DataTableProps<TData, TValue> = {
   data: TData[]
   onDataChange?: (data: any[]) => void
   isColumnFilterEnabled?: boolean
+  isStatusEnabled?: boolean
   selectedData?: any
   setSelectedData?: (data: any) => void
   onSelectedRowsChange?: (lastSelectedRow: any) => void
@@ -122,6 +124,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   setSelectedData,
   multipleDeleteAction,
   onDataChange,
+  isStatusEnabled = true,
   isMultipleDeleteEnabled,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
@@ -133,7 +136,15 @@ export function DataTable<TData extends { id: any }, TValue>({
 
   //Memoization
   const data = useMemo(() => tableData, [tableData])
-  const columns = useMemo(() => tableColumns, [tableColumns])
+
+  const columns = useMemo(() => {
+    if (!isStatusEnabled) return tableColumns
+    // Crear una copia de tableColumns
+    const columnsCopy = [...tableColumns]
+    // Insertar STATUS_COLUMN en la penúltima posición
+    columnsCopy.splice(columnsCopy.length - 1, 0, STATUS_COLUMN)
+    return columnsCopy
+  }, [tableColumns])
 
   useEffect(() => {
     const handleSelectionState = (selections: RowSelectionState) => {
@@ -185,11 +196,14 @@ export function DataTable<TData extends { id: any }, TValue>({
       globalFilter: filtering,
     },
   })
-  const { rows } = table.getFilteredRowModel()
+
+  const { rows } = table.getGlobalFacetedRowModel()
+
   useEffect(() => {
     if (!onDataChange) return
     onDataChange(rows)
   }, [rows])
+
   return (
     <div className="flex flex-col px-2 gap-2">
       {isMultipleDeleteEnabled ? (
@@ -197,7 +211,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           table={table}
           filtering={filtering}
           setFiltering={setFiltering}
-          isColumnFilterEnabled={isColumnFilterEnabled}
+          isColumnFilterEnabled={isStatusEnabled}
           isMultipleDeleteEnabled={true}
           selectedIds={selectedRows.map((row) => row.id)}
           multipleDeleteAction={multipleDeleteAction}
@@ -207,7 +221,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           table={table}
           filtering={filtering}
           setFiltering={setFiltering}
-          isColumnFilterEnabled={isColumnFilterEnabled}
+          isColumnFilterEnabled={isStatusEnabled}
           isMultipleDeleteEnabled={false}
         />
       )}
@@ -266,29 +280,31 @@ export function DataTable<TData extends { id: any }, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="border-b-0"
-                >
-                  {row.getVisibleCells().map((cell, index) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        index === row.getVisibleCells().length - 1
-                          ? 'sticky right-0 top-0 bg-background'
-                          : ''
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className="border-b-0"
+                  >
+                    {row.getVisibleCells().map((cell, index) => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          index === row.getVisibleCells().length - 1
+                            ? 'sticky right-0 top-0 bg-background'
+                            : ''
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
                 <TableCell

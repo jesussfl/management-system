@@ -12,6 +12,7 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteReceiver } from './lib/actions/receivers'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
+import { Badge } from '@/modules/common/components/badge'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
   {
@@ -117,22 +118,7 @@ export const columns: ColumnDef<DestinatarioType>[] = [
       )
     },
   },
-  {
-    accessorKey: 'estado',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="text-xs"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Estado
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-  },
+
   {
     accessorKey: 'tipo',
     header: ({ column }) => {
@@ -216,6 +202,36 @@ export const columns: ColumnDef<DestinatarioType>[] = [
       )
     },
   },
+  // {
+  //   id: 'Estado',
+  //   accessorFn: (row) => {
+  //     const fecha_eliminacion = row?.fecha_eliminacion
+
+  //     return fecha_eliminacion ? 'Eliminados' : 'Activos'
+  //   },
+  //   header: ({ column }) => (
+  //     <Button
+  //       variant="ghost"
+  //       className="text-xs"
+  //       size={'sm'}
+  //       onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //     >
+  //       Estado
+  //       <ArrowUpDown className="ml-2 h-3 w-3" />
+  //     </Button>
+  //   ),
+  //   cell: ({ row }) => {
+  //     const status = row.original.fecha_eliminacion
+  //     const color = !status ? 'success' : 'destructive'
+
+  //     return (
+  //       <Badge variant={color} className="capitalize">
+  //         {status ? 'Eliminado' : 'Activo'}
+  //       </Badge>
+  //     )
+  //   },
+  // },
+
   {
     accessorKey: 'fecha_creacion',
     filterFn: 'dateBetweenFilterFn',

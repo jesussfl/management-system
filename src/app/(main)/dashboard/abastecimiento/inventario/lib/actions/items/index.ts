@@ -304,7 +304,43 @@ export const deleteItem = async (id: number) => {
     error: false,
   }
 }
+export const recoverItem = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.renglon.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'ELIMINAR',
+    `Se ha recuperado el renglon de abastecimiento con el id ${id} y el nombre ${exist?.nombre}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Se ha recuperado el renglón correctamente',
+    error: false,
+  }
+}
 export const deleteMultipleItems = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 
@@ -361,7 +397,7 @@ export const checkItemExistance = async (name: string) => {
   return !!exists
 }
 
-export const getAllItems = async (onlyInactive?: 'actives' | 'inactives') => {
+export const getAllItems = async () => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -374,7 +410,6 @@ export const getAllItems = async (onlyInactive?: 'actives' | 'inactives') => {
     },
     where: {
       servicio: 'Abastecimiento',
-      fecha_eliminacion: onlyInactive === 'inactives' ? { not: null } : null,
     },
     include: {
       recepciones: {

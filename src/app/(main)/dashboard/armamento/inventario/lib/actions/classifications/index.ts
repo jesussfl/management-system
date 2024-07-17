@@ -153,6 +153,56 @@ export const deleteClassification = async (id: number) => {
     error: false,
   }
 }
+export const recoverClassification = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.clasificacion.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La clasificación no existe',
+      success: false,
+    }
+  }
+
+  await prisma.clasificacion.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó la clasificación llamada ${exist?.nombre}`
+  )
+  revalidatePath('/dashboard/armamento/inventario')
+
+  return {
+    success: 'Clasificación recuperada exitosamente',
+    error: false,
+  }
+}
 export const deleteMultipleClassifications = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

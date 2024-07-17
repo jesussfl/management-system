@@ -1,5 +1,5 @@
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { columns as serialColumns } from '../serial-columns'
+import { columns as serialColumns } from '../columns/serial-columns'
 import { getSerialsByItemId } from '@/lib/actions/serials'
 export default async function ModalContentSerials({ id }: { id: number }) {
   const seriales = await getSerialsByItemId(id)

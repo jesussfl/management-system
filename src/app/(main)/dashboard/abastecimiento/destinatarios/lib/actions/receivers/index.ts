@@ -59,7 +59,7 @@ export const createReceiver = async (
   }
 }
 
-export const getAllReceivers = async (isDeleted = false) => {
+export const getAllReceivers = async () => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -67,7 +67,6 @@ export const getAllReceivers = async (isDeleted = false) => {
   const receivers = await prisma.destinatario.findMany({
     where: {
       servicio: 'Abastecimiento',
-      fecha_eliminacion: isDeleted ? { not: null } : null,
     },
     include: {
       despachos: true,
