@@ -75,7 +75,7 @@ export const gunPartColumns: ColumnDef<Parte_Arma>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta parte de arma?',
-            alertDescription: `Estas a punto de eliminar esta parte de arma y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta parte de arma. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGunPart(data.id)
             },

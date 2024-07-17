@@ -89,7 +89,7 @@ export const gunTypeColumns: ColumnDef<Tipo_Armamento>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este tipo de armamento?',
-            alertDescription: `Estas a punto de eliminar este tipo de armamento y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este tipo de armamento. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGunType(data.id)
             },

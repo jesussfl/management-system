@@ -105,7 +105,7 @@ export const columns: ColumnDef<Subsistema>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este subsistema?',
-            alertDescription: `Estas a punto de eliminar este subsistema y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este subsistema. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteSubsystem(subsystem.id)
             },

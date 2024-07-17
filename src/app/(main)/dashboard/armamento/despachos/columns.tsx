@@ -283,7 +283,7 @@ export const columns: ColumnDef<DespachoType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este despacho?',
-            alertDescription: `Estas a punto de eliminar este despacho y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este despacho. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteDispatch(data.id)
             },

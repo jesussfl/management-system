@@ -76,7 +76,7 @@ export const gunBrandColumns: ColumnDef<Marca_Armamento>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta marca de arma?',
-            alertDescription: `Estas a punto de eliminar esta marca de arma y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta marca de arma. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGunBrand(data.id)
             },

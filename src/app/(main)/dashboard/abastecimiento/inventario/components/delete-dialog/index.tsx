@@ -21,9 +21,9 @@ function DeleteDialog({ renglon }: { renglon: Renglon }) {
       <DialogHeader>
         <DialogTitle>Eliminar Renglón - {renglon.nombre}</DialogTitle>
         <DialogDescription>
-          Estás a punto de eliminar este renglón y todas sus dependencias,
-          introduce la contraseña de administrador para borrarlo
-          permanentemente.
+          Estás a punto de eliminar este renglón. Pero puedes recuperar el
+          registro más tarde., introduce la contraseña de administrador para
+          borrarlo permanentemente.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">

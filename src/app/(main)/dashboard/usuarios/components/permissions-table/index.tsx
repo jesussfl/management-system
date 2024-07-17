@@ -109,7 +109,7 @@ export const columns: ColumnDef<Permiso>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este permiso?',
-            alertDescription: `Estas a punto de eliminar este permiso y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este permiso. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deletePermiso(permission.id)
             },

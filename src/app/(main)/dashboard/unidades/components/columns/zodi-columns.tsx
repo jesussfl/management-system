@@ -123,7 +123,7 @@ export const columns: ColumnDef<ZodiType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta zodi?',
-            alertDescription: `Estas a punto de eliminar esta zodi y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta zodi. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteZodi(data.id)
             },

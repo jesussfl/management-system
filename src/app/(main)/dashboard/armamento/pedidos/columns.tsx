@@ -356,7 +356,7 @@ export const columns: ColumnDef<PedidoType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este pedido?',
-            alertDescription: `Estas a punto de eliminar este pedido y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este pedido. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteOrder(data.id)
             },

@@ -114,7 +114,7 @@ export const columns: ColumnDef<Redi>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta redi?',
-            alertDescription: `Estas a punto de eliminar esta redi y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta redi. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteRedi(data.id)
             },

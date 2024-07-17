@@ -75,7 +75,7 @@ export const gunAccessoryColumns: ColumnDef<Accesorio_Arma>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este accesorio de arma?',
-            alertDescription: `Estas a punto de eliminar este accesorio de arma y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este accesorio de arma. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGunAccessory(data.id)
             },

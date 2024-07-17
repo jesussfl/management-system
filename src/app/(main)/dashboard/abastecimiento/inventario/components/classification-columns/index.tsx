@@ -91,7 +91,7 @@ export const columns: ColumnDef<Clasificacion>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta clasificación?',
-            alertDescription: `Estas a punto de eliminar esta clasificación y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta clasificación. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteClassification(classification.id)
             },

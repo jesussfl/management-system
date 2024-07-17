@@ -95,7 +95,7 @@ export const columns: ColumnDef<Rol>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este rol?',
-            alertDescription: `Estas a punto de eliminar este rol y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este rol. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteRol(rol.id)
             },

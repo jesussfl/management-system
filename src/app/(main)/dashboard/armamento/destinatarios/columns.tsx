@@ -246,7 +246,7 @@ export const columns: ColumnDef<DestinatarioType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este destinatario?',
-            alertDescription: `Estas a punto de eliminar este destinatario y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este destinatario. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteReceiver(receiver.id)
             },

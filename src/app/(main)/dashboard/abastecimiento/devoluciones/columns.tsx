@@ -141,7 +141,7 @@ export const columns: ColumnDef<ReturnType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta devolución?',
-            alertDescription: `Estas a punto de eliminar esta devolución y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta devolución. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteReturn(data.id)
             },

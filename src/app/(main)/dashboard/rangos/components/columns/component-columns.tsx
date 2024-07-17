@@ -79,7 +79,7 @@ export const columns: ColumnDef<Componente_Militar>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este componente?',
-            alertDescription: `Estas a punto de eliminar este componente y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este componente. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteComponent(data.id)
             },

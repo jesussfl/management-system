@@ -62,7 +62,7 @@ export const gunCaliberColumns: ColumnDef<Calibre>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este calibre de arma?',
-            alertDescription: `Estas a punto de eliminar este calibre y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este calibre. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGunCaliber(data.id)
             },

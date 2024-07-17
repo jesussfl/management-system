@@ -291,7 +291,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta recepción?',
-            alertDescription: `Estas a punto de eliminar esta recepción y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta recepción. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteReception(data.id)
             },

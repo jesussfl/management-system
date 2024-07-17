@@ -241,7 +241,7 @@ export const columns: ColumnDef<ProfesionalType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este profesional?',
-            alertDescription: `Estas a punto de eliminar este profesional y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este profesional. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteProfessional(professional.id)
             },

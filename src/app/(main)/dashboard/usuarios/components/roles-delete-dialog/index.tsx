@@ -27,8 +27,9 @@ function DeleteDialog({ rol, close }: Props) {
       <DialogHeader>
         <DialogTitle>Eliminar Rol - {rol.rol}</DialogTitle>
         <DialogDescription>
-          Estás a punto de eliminar este rol y todas sus dependencias, introduce
-          la contraseña de administrador para borrarlo permanentemente.
+          Estás a punto de eliminar este rol. Pero puedes recuperar el registro
+          más tarde., introduce la contraseña de administrador para borrarlo
+          permanentemente.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">

@@ -27,9 +27,9 @@ function DeleteDialog({ permiso, close }: Props) {
       <DialogHeader>
         <DialogTitle>Eliminar Permiso - {permiso.permiso}</DialogTitle>
         <DialogDescription>
-          Estás a punto de eliminar este permiso y todas sus dependencias,
-          introduce la contraseña de administrador para borrarlo
-          permanentemente.
+          Estás a punto de eliminar este permiso. Pero puedes recuperar el
+          registro más tarde., introduce la contraseña de administrador para
+          borrarlo permanentemente.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">

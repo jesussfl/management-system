@@ -91,7 +91,7 @@ export const columns: ColumnDef<Sistema>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este sistema?',
-            alertDescription: `Estas a punto de eliminar este sistema y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteSystem(system.id)
             },

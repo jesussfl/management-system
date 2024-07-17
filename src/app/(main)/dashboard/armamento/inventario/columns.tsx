@@ -265,7 +265,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este renglon?',
-            alertDescription: `Estas a punto de eliminar este renglon y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este renglon. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteItem(renglon.id)
             },

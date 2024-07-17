@@ -110,7 +110,7 @@ export const columns: ColumnDef<Almacen>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este almacén?',
-            alertDescription: `Estas a punto de eliminar este almacén y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este almacén. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteWarehouse(data.id)
             },

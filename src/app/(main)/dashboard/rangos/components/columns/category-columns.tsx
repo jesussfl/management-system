@@ -75,7 +75,7 @@ export const columns: ColumnDef<Categoria_Militar>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta categoría?',
-            alertDescription: `Estas a punto de eliminar esta categoría y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta categoría. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteCategory(data.id)
             },

@@ -121,7 +121,7 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',
-            alertDescription: `Estas a punto de eliminar esta unidad de empaque y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar esta unidad de empaque. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deletePackagingUnit(packagingUnit.id)
             },

@@ -81,7 +81,7 @@ export const columns: ColumnDef<UnidadesType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta unidad?',
-            alertDescription: `Estas a punto de eliminar este unidad y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este unidad. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteUnit(unit.id)
             },

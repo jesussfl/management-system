@@ -263,7 +263,7 @@ export const columns: ColumnDef<PersonalType>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este personal?',
-            alertDescription: `Estas a punto de eliminar este personal y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este personal. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deletePersonnel(personnel.cedula)
             },

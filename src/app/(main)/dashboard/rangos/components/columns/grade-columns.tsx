@@ -138,7 +138,7 @@ export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este grado?',
-            alertDescription: `Estas a punto de eliminar este grado y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este grado. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteGrade(data.id)
             },

@@ -170,7 +170,7 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar este proveedor?',
-            alertDescription: `Estas a punto de eliminar este proveedor y todas sus dependencias.`,
+            alertDescription: `Estas a punto de eliminar este proveedor. Pero puedes recuperar el registro más tarde.`,
             onConfirm: () => {
               return deleteSupplier(supplier.id)
             },
