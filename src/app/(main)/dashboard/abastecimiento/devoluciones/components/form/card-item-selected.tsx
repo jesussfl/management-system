@@ -1,5 +1,5 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Box, Trash } from 'lucide-react'
 import {
@@ -22,6 +22,7 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { RenglonWithAllRelations } from '@/types/types'
 import { SerialsFormNew } from './serials-form'
 import { Input } from '@/modules/common/components/input/input'
+import { Button } from '@/modules/common/components/button'
 
 export const SelectedItemCard = ({
   item,
@@ -45,7 +46,8 @@ export const SelectedItemCard = ({
   const { watch, control } = useFormContext()
 
   const serialsLength = watch(`renglones.${index}.seriales`).length
-
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
   useEffect(() => {
     if (serialsLength > 0) {
       setItemsWithoutSerials((prev) => {
@@ -120,13 +122,24 @@ export const SelectedItemCard = ({
           closeWarning={false}
           className="max-h-[80vh]"
           disabled={isEmpty ? true : false}
+          open={isModalOpen}
+          customToogleModal={toogleModal}
         >
-          <SerialsFormNew
-            index={index}
-            id={item.id}
-            returnId={returnId}
-            isEditEnabled={isEditEnabled}
-          />
+          <>
+            <SerialsFormNew
+              index={index}
+              id={item.id}
+              returnId={returnId}
+              isEditEnabled={isEditEnabled}
+            />
+            <Button
+              className="w-[200px] sticky bottom-8 left-8"
+              variant={'default'}
+              onClick={() => setIsModalOpen(false)}
+            >
+              Listo
+            </Button>
+          </>
         </ModalForm>
 
         <FormDescription>

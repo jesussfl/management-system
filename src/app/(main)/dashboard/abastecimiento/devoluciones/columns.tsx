@@ -13,6 +13,7 @@ import { deleteReturn } from './lib/actions/returns'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { recoverDispatch } from '../despachos/lib/actions/dispatches'
 
 type ReturnType = Prisma.DevolucionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
@@ -140,8 +141,12 @@ export const columns: ColumnDef<ReturnType>[] = [
             href: `/dashboard/abastecimiento/devoluciones/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta devolución?',
             alertDescription: `Estas a punto de eliminar esta devolución. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverDispatch(data.id)
+            },
             onConfirm: () => {
               return deleteReturn(data.id)
             },

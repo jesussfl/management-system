@@ -56,7 +56,7 @@ export const columns: ColumnDef<SerialWithRenglon>[] = [
           size={'sm'}
           className="text-xs"
         >
-          Estado
+          Estado del Serial
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )

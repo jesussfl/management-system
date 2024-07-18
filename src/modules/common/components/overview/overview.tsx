@@ -69,7 +69,7 @@ export function Overview({
     )
   }, [date])
   return (
-    <Card className="col-span-4">
+    <Card className="w-[600px]">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-sm font-medium">Resumen</CardTitle>
         <div className={cn('grid gap-2')}>

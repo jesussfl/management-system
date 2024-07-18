@@ -22,11 +22,13 @@ export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
     }
     despachos: {
       include: {
+        despacho: true
         seriales: true
       }
     }
     devoluciones: {
       include: {
+        devolucion: true
         seriales: true
       }
     }

@@ -16,15 +16,20 @@ export const selectItemColumns: ColumnDef<RenglonWithAllRelations>[] = [
 
   {
     id: 'stock',
-    accessorFn: (row) =>
-      row.recepciones.reduce((total, item) => {
+    accessorFn: (row) => {
+      const activeReceptions = row.recepciones.filter(
+        (reception) => reception.recepcion.fecha_eliminacion === null
+      )
+
+      return activeReceptions.reduce((total, item) => {
         const serials = item.seriales.filter(
           (serial) =>
             serial.estado === 'Disponible' || serial.estado === 'Devuelto'
         ).length
 
         return total + serials
-      }, 0),
+      }, 0)
+    },
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
   },
   {

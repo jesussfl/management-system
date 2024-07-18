@@ -335,7 +335,75 @@ export const deleteReturn = async (id: number) => {
     error: false,
   }
 }
+export const recoverReturn = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.devolucion.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
+    },
+  })
+
+  if (!exist) {
+    throw new Error('Devolucion no existe')
+  }
+
+  await prisma.devolucion.update({
+    where: {
+      id: id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  //TODO: REVISAR ESTO
+  await prisma.serial.updateMany({
+    where: {
+      serial: {
+        in: exist.renglones
+          .flatMap((renglon) => renglon.seriales)
+          .filter((serial) => serial.estado === 'Disponible')
+          .map((serial) => serial.serial),
+      },
+    },
+    data: {
+      estado: 'Devuelto',
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó la devolución en abastecimiento con el siguiente motivo: ${exist.motivo}. El ID de la devolución es: ${exist.id} `
+  )
+  revalidatePath('/dashboard/abastecimiento/devoluciones')
+
+  return {
+    success: 'Devolucion recuperada correctamente',
+    error: false,
+  }
+}
 export const getAllReturns = async () => {
   const session = await auth()
   if (!session?.user) {

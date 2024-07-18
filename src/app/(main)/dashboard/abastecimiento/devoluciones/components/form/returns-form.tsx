@@ -96,7 +96,8 @@ export default function ReturnsForm({
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues
-
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
   const form = useForm<FormValues>({
     defaultValues,
   })
@@ -672,6 +673,8 @@ export default function ReturnsForm({
               <ModalForm
                 triggerName="Seleccionar renglones"
                 closeWarning={false}
+                open={isModalOpen}
+                customToogleModal={toogleModal}
               >
                 <div className="flex flex-col gap-4 p-8">
                   <CardTitle>
@@ -695,7 +698,15 @@ export default function ReturnsForm({
                     isColumnFilterEnabled={false}
                     selectedData={selectedRowIdentifiers}
                     setSelectedData={setSelectedRowIdentifiers}
+                    isStatusEnabled={false}
                   />
+                  <Button
+                    className="w-[200px] sticky bottom-8 left-8"
+                    variant={'default'}
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Listo
+                  </Button>
                 </div>
               </ModalForm>
             </div>

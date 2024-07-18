@@ -20,7 +20,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
 } from '@/modules/common/components/card/card'
 import { Overview } from '@/modules/common/components/overview/overview'
 
@@ -55,9 +54,7 @@ export default async function Page() {
 
       <PageContent>
         <Card>
-          <CardHeader>
-            {/* <CardTitle>Lista de Despachos</CardTitle> */}
-          </CardHeader>
+          <CardHeader></CardHeader>
           <CardContent>
             <Overview servicio="Abastecimiento" />
 

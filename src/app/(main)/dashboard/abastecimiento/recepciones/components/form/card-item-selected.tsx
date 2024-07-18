@@ -62,8 +62,8 @@ export const CardItemSelected = ({
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control, setValue, trigger } = useFormContext()
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   useEffect(() => {

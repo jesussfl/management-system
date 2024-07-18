@@ -80,6 +80,7 @@ export function SerialSelector({
           isColumnFilterEnabled={false}
           selectedData={selectedItems}
           setSelectedData={setSelectedItems}
+          isStatusEnabled={false}
         />
       </div>
     </div>

@@ -428,6 +428,65 @@ export const deleteDispatch = async (id: number) => {
     error: false,
   }
 }
+export const recoverDispatch = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const exist = await prisma.despacho.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      renglones: {
+        include: {
+          seriales: true,
+        },
+      },
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'Despacho no existe',
+      success: false,
+    }
+  }
+
+  await prisma.despacho.update({
+    where: {
+      id: id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await prisma.serial.updateMany({
+    where: {
+      id_renglon: {
+        in: exist.renglones.flatMap((renglon) =>
+          renglon.seriales.map((serial) => serial.id_renglon)
+        ),
+      },
+    },
+    data: {
+      estado: 'Despachado',
+    },
+  })
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el despacho en abastecimiento con el id: ${id}`
+  )
+  revalidatePath('/dashboard/abastecimiento/despachos')
+
+  return {
+    success: 'Despacho recuperado exitosamente',
+    error: false,
+  }
+}
 export const getAllDispatches = async () => {
   const session = await auth()
   if (!session?.user) {

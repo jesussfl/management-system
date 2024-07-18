@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 import Link from 'next/link'
-import { deleteDispatch } from './lib/actions/dispatches'
+import { deleteDispatch, recoverDispatch } from './lib/actions/dispatches'
 import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
@@ -282,8 +282,12 @@ export const columns: ColumnDef<DespachoType>[] = [
             href: `/dashboard/abastecimiento/despachos/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este despacho?',
             alertDescription: `Estas a punto de eliminar este despacho. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverDispatch(data.id)
+            },
             onConfirm: () => {
               return deleteDispatch(data.id)
             },

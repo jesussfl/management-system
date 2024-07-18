@@ -1,3 +1,5 @@
+'use client'
+import { useEffect, useState } from 'react'
 import {
   Card,
   CardContent,
@@ -18,9 +20,9 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { RenglonWithAllRelations } from '@/types/types'
 import { Box, Trash } from 'lucide-react'
-import { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { SerialSelector } from './serial-selector'
+import { Button } from '@/modules/common/components/button'
 
 export const CardItemDispatch = ({
   item,
@@ -46,7 +48,8 @@ export const CardItemDispatch = ({
   const { watch, control } = useFormContext()
 
   const serialsLength = watch(`renglones.${index}.seriales`).length
-
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
   useEffect(() => {
     if (serialsLength > 0) {
       setItemsWithoutSerials((prev) => {
@@ -194,13 +197,24 @@ export const CardItemDispatch = ({
               closeWarning={false}
               className="max-h-[80vh]"
               disabled={isEmpty ? true : false}
+              open={isModalOpen}
+              customToogleModal={toogleModal}
             >
-              <SerialSelector
-                index={index}
-                id={item.id}
-                dispatchId={dispatchId}
-                isEditEnabled={isEditEnabled}
-              />
+              <>
+                <SerialSelector
+                  index={index}
+                  id={item.id}
+                  dispatchId={dispatchId}
+                  isEditEnabled={isEditEnabled}
+                />
+                <Button
+                  className="w-[200px] sticky bottom-8 left-8"
+                  variant={'default'}
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Listo
+                </Button>
+              </>
             </ModalForm>
 
             <FormDescription>

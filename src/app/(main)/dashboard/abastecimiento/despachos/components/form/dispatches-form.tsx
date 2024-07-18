@@ -1,12 +1,12 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 
 import { selectItemColumns } from '../columns/select-item-columns'
 import { cn } from '@/utils/utils'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import { CheckIcon, Plus, TrashIcon, X } from 'lucide-react'
+import { CheckIcon, Loader2, Plus, TrashIcon, X } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -59,6 +59,7 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
+import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -110,6 +111,9 @@ export default function DispatchesForm({
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues
+  const [isPending, startTransition] = useTransition()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   const form = useForm<FormValues>({
     mode: 'all',
@@ -214,7 +218,30 @@ export default function DispatchesForm({
     }
 
     if (!isEditEnabled) {
-      createDispatch(data).then((res) => {
+      startTransition(() => {
+        createDispatch(data).then((res) => {
+          if (res?.error) {
+            toast({
+              title: 'Error',
+              description: res?.error,
+              variant: 'destructive',
+            })
+            return
+          }
+          toast({
+            title: 'Despacho creado',
+            description: 'Los despachos se han creado correctamente',
+            variant: 'success',
+          })
+          router.replace('/dashboard/abastecimiento/despachos')
+        })
+      })
+
+      return
+    }
+
+    startTransition(() => {
+      updateDispatch(defaultValues.id, data).then((res) => {
         if (res?.error) {
           toast({
             title: 'Error',
@@ -224,31 +251,12 @@ export default function DispatchesForm({
           return
         }
         toast({
-          title: 'Despacho creado',
-          description: 'Los despachos se han creado correctamente',
+          title: 'Despacho actualizado',
+          description: 'Los despachos se han actualizado correctamente',
           variant: 'success',
         })
         router.replace('/dashboard/abastecimiento/despachos')
       })
-
-      return
-    }
-
-    updateDispatch(defaultValues.id, data).then((res) => {
-      if (res?.error) {
-        toast({
-          title: 'Error',
-          description: res?.error,
-          variant: 'destructive',
-        })
-        return
-      }
-      toast({
-        title: 'Despacho actualizado',
-        description: 'Los despachos se han actualizado correctamente',
-        variant: 'success',
-      })
-      router.replace('/dashboard/abastecimiento/despachos')
     })
   }
   return (
@@ -684,6 +692,8 @@ export default function DispatchesForm({
               <ModalForm
                 triggerName="Seleccionar renglones"
                 closeWarning={false}
+                open={isModalOpen}
+                customToogleModal={toogleModal}
               >
                 <div className="flex flex-col gap-4 p-8">
                   <CardTitle>Selecciona los renglones despachados</CardTitle>
@@ -711,7 +721,15 @@ export default function DispatchesForm({
                     isColumnFilterEnabled={false}
                     selectedData={selectedRowIdentifiers}
                     setSelectedData={setSelectedRowIdentifiers}
+                    isStatusEnabled={false}
                   />
+                  <Button
+                    className="w-[200px] sticky bottom-8 left-8"
+                    variant={'default'}
+                    onClick={() => setIsModalOpen(false)}
+                  >
+                    Listo
+                  </Button>
                 </div>
               </ModalForm>
             </div>
@@ -733,15 +751,29 @@ export default function DispatchesForm({
               <div className="grid md:grid-cols-2 gap-4">
                 {selectedItems.map((item, index) => {
                   // console.log('item', item, item.devoluciones, item.despachos)
-                  const receptions = item.recepciones.reduce(
+                  const enabledReceptions = item.recepciones.filter(
+                    (reception) =>
+                      reception.recepcion.fecha_eliminacion === null
+                  )
+                  const receptions = enabledReceptions.reduce(
                     (total, item) => total + item.cantidad,
                     0
                   )
-                  const dispatchedSerials = item.despachos.reduce(
+
+                  const enabledDispatches = item.despachos.filter(
+                    (dispatch) => dispatch.despacho.fecha_eliminacion === null
+                  )
+
+                  const dispatchedSerials = enabledDispatches.reduce(
                     (total, item) => total + item.seriales.length,
                     0
                   )
-                  const returnedSerials = item?.devoluciones?.reduce(
+
+                  const enabledReturns = item.devoluciones.filter(
+                    (returnItem) =>
+                      returnItem.devolucion.fecha_eliminacion === null
+                  )
+                  const returnedSerials = enabledReturns.reduce(
                     (total, item) => total + item.seriales.length,
                     0
                   )
@@ -755,7 +787,7 @@ export default function DispatchesForm({
                       (currentDispatch?.seriales.length ?? 0) +
                       returnedSerials
                     : receptions - dispatchedSerials + returnedSerials
-                  const isEmpty = totalStock === 0
+                  const isEmpty = totalStock <= 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
                     <CardItemDispatch
@@ -763,7 +795,7 @@ export default function DispatchesForm({
                       item={item}
                       index={index}
                       // @ts-ignore
-                      totalStock={totalStock}
+                      totalStock={totalStock < 0 ? 0 : totalStock}
                       dispatchId={defaultValues?.id}
                       deleteItem={deleteItem}
                       isEmpty={isEmpty ? 'Este renglon no tiene stock' : false}
@@ -779,9 +811,20 @@ export default function DispatchesForm({
             </CardContent>
           </Card>
         )}
-        <Button variant="default" type={'submit'}>
-          Guardar despacho
-        </Button>
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          <Button
+            className="w-[200px]"
+            disabled={isPending}
+            variant="default"
+            type={'submit'}
+          >
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   )

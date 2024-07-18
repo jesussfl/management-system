@@ -42,6 +42,15 @@ export const getAllSerialsByItemId = async (id: number) => {
     where: {
       renglon: {
         id,
+        recepciones: {
+          some: {
+            recepcion: {
+              fecha_eliminacion: {
+                equals: null,
+              },
+            },
+          },
+        },
       },
     },
     include: {

@@ -424,6 +424,7 @@ export const getAllItems = async (onlyActives?: boolean) => {
       },
       despachos: {
         include: {
+          despacho: true,
           seriales: {
             include: {
               renglon: true,
@@ -433,6 +434,7 @@ export const getAllItems = async (onlyActives?: boolean) => {
       },
       devoluciones: {
         include: {
+          devolucion: true,
           seriales: {
             include: {
               renglon: true,
