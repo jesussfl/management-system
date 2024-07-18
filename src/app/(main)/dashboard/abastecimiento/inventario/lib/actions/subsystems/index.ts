@@ -138,6 +138,57 @@ export const deleteSubsystem = async (id: number) => {
     error: false,
   }
 }
+export const recoverSubsystem = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.subsistema.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El subsistema no existe',
+      success: false,
+    }
+  }
+  await prisma.subsistema.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó el subsistema llamado: ' + exist?.nombre
+  )
+
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Subsistema recuperado exitosamente',
+    error: false,
+  }
+}
+
 export const deleteMultipleSubsystems = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

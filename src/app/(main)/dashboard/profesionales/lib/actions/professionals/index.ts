@@ -74,12 +74,15 @@ export const checkIfProfessionalExists = async (cedula: string) => {
 
   return exists
 }
-export const getAllProfessionals = async () => {
+export const getAllProfessionals = async (onlyActives?: boolean) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const professionals = await prisma.profesional_Abastecimiento.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
     include: {
       abastecedor: true,
       autorizador: true,
@@ -92,14 +95,17 @@ export const getAllProfessionals = async () => {
   })
   return professionals
 }
-export const getAllProfessionalsToCombobox = async (): Promise<
-  { value: string; label: string }[]
-> => {
+export const getAllProfessionalsToCombobox = async (
+  onlyActives?: boolean
+): Promise<{ value: string; label: string }[]> => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const professionals = await prisma.profesional_Abastecimiento.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
     include: {
       grado: true,
       categoria: true,

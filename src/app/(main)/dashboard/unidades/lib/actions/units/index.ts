@@ -30,7 +30,7 @@ export const getAllUnitsToCombobox = async () => {
     }
   })
 }
-export const getAllUnits = async () => {
+export const getAllUnits = async (onlyActives?: boolean) => {
   const session = await auth()
 
   if (!session?.user) {
@@ -38,6 +38,9 @@ export const getAllUnits = async () => {
   }
 
   const units = await prisma.unidad_Militar.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
     include: {
       zodi: true,
     },

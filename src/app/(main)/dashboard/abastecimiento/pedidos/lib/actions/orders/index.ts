@@ -314,3 +314,54 @@ export const deleteOrder = async (id: number) => {
     success: 'Pedido eliminado exitosamente',
   }
 }
+
+export const recoverOrder = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.pedido.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El pedido no existe',
+      success: null,
+    }
+  }
+
+  await prisma.pedido.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el pedido de abastecimiento que tenía el motivo: ${exist?.motivo} con el id: ${id}`
+  )
+  revalidatePath('/dashboard/abastecimiento/pedidos')
+
+  return {
+    error: null,
+    success: 'Pedido recuperado exitosamente',
+  }
+}

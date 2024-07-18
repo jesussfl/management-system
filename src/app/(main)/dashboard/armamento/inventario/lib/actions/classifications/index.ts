@@ -239,14 +239,18 @@ export const deleteMultipleClassifications = async (ids: number[]) => {
     error: false,
   }
 }
-export const getAllClassifications = async () => {
+export const getAllClassifications = async (onlyActives?: boolean) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
     return []
   }
 
-  const classifications = await prisma.clasificacion.findMany()
+  const classifications = await prisma.clasificacion.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
+  })
   return classifications
 }
 

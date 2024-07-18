@@ -132,6 +132,43 @@ export const deleteSystem = async (id: number) => {
     success: 'sistema eliminado exitosamente',
   }
 }
+
+export const recoverSystem = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  await prisma.sistema.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recupero el sistema con el id: ' + id
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    error: false,
+    success: 'sistema recuperado exitosamente',
+  }
+}
 export const deleteMultipleSystems = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

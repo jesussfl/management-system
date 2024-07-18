@@ -282,7 +282,7 @@ export const updateReception = async (id: number, data: FormValues) => {
   }
 }
 
-export const getAllReceptions = async (onlyActives = true) => {
+export const getAllReceptions = async (onlyActives?: boolean) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
@@ -293,7 +293,7 @@ export const getAllReceptions = async (onlyActives = true) => {
     },
     where: {
       servicio: 'Abastecimiento',
-      fecha_eliminacion: onlyActives ? null : { not: null },
+      fecha_eliminacion: onlyActives ? null : undefined,
     },
     include: {
       renglones: {
@@ -452,6 +452,56 @@ export const deleteReception = async (id: number) => {
   return {
     error: null,
     success: 'Recepción eliminada exitosamente',
+  }
+}
+export const recoverReception = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RECEPCIONES_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.recepcion.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La recepción no existe',
+      success: null,
+    }
+  }
+
+  await prisma.recepcion.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó la recepción de abastecimiento con motivo: ${exist?.motivo} y el id ${id}`
+  )
+  revalidatePath('/dashboard/abastecimiento/recepciones')
+
+  return {
+    error: null,
+    success: 'Recepción recuperada exitosamente',
   }
 }
 export const deleteMultipleReceptions = async (ids: number[]) => {

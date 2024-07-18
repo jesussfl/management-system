@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import { deleteOrder } from './lib/actions/orders'
+import { deleteOrder, recoverOrder } from './lib/actions/orders'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
@@ -97,7 +97,7 @@ export const columns: ColumnDef<PedidoType>[] = [
     },
   },
   {
-    id: 'estado',
+    id: 'seguimiento',
     accessorFn: (row) => row.estado || 'S/E',
     header: ({ column }) => {
       return (
@@ -107,7 +107,7 @@ export const columns: ColumnDef<PedidoType>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Estado
+          Seguimiento
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -349,32 +349,6 @@ export const columns: ColumnDef<PedidoType>[] = [
       format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
   },
 
-  // {
-  //   accessorKey: 'detalles',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant="ghost"
-  //         className="text-xs"
-  //         size={'sm'}
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Detalles
-  //         <ArrowUpDown className="ml-2 h-3 w-3" />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => {
-  //     return (
-  //       <Link
-  //         className={cn(buttonVariants({ variant: 'outline' }))}
-  //         href={`/dashboard/abastecimiento/pedidos/detalle/${row.original.id}`}
-  //       >
-  //         Ver detalles
-  //       </Link>
-  //     )
-  //   },
-  // },
   {
     id: 'acciones',
     cell: ({ row }) => {
@@ -387,8 +361,13 @@ export const columns: ColumnDef<PedidoType>[] = [
             href: `/dashboard/abastecimiento/pedidos/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este pedido?',
             alertDescription: `Estas a punto de eliminar este pedido. Pero puedes recuperar el registro más tarde.`,
+
+            onRecover: () => {
+              return recoverOrder(data.id)
+            },
             onConfirm: () => {
               return deleteOrder(data.id)
             },

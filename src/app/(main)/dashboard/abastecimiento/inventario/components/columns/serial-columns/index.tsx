@@ -7,6 +7,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Prisma, Serial } from '@prisma/client'
+import { format } from 'date-fns'
 
 export const columns: ColumnDef<
   Prisma.SerialGetPayload<{ include: { renglon: true } }>
@@ -70,6 +71,22 @@ export const columns: ColumnDef<
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Estado
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: 'fecha_creacion',
+    accessorFn: (row) =>
+      format(new Date(row?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Fecha de Registro
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )

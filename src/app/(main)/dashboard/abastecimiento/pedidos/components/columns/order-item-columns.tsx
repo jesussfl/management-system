@@ -10,7 +10,7 @@ type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     unidad_empaque: true
     recepciones: {
-      include: { seriales: true }
+      include: { recepcion: true; seriales: true }
     }
   }
 }>
@@ -23,15 +23,20 @@ export const orderItemColumns: ColumnDef<RenglonType>[] = [
 
   {
     id: 'stock',
-    accessorFn: (row) =>
-      row.recepciones.reduce((total, item) => {
+    accessorFn: (row) => {
+      const activeReceptions = row.recepciones.filter(
+        (reception) => reception.recepcion.fecha_eliminacion === null
+      )
+
+      return activeReceptions.reduce((total, item) => {
         const serials = item.seriales.filter(
           (serial) =>
             serial.estado === 'Disponible' || serial.estado === 'Devuelto'
         ).length
 
         return total + serials
-      }, 0),
+      }, 0)
+    },
     header: ({ column }) => {
       return (
         <Button

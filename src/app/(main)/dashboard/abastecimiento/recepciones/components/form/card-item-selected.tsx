@@ -377,7 +377,11 @@ export const CardItemSelected = ({
                 id={watch(`renglones.${index}.id`)}
                 quantity={watch(`renglones.${index}.cantidad`)}
               />
-              <Button variant={'default'} onClick={() => setIsModalOpen(false)}>
+              <Button
+                className="w-[200px] sticky bottom-8 left-8"
+                variant={'default'}
+                onClick={() => setIsModalOpen(false)}
+              >
                 Listo
               </Button>
             </>

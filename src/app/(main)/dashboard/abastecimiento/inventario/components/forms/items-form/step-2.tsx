@@ -14,10 +14,10 @@ import { Input } from '@/modules/common/components/input/input'
 import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
-import useItemCreationData from '../../lib/hooks/useItemCreationData'
 import Link from 'next/link'
 import { buttonVariants } from '@/modules/common/components/button'
 import { cn } from '@/utils/utils'
+import useItemCreationData from '@/app/(main)/dashboard/armamento/inventario/lib/hooks/useItemCreationData'
 
 export const Step2 = () => {
   const form = useFormContext()

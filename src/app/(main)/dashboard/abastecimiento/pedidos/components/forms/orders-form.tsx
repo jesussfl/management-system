@@ -69,7 +69,7 @@ type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     unidad_empaque: true
     recepciones: {
-      include: { seriales: true }
+      include: { recepcion: true; seriales: true }
     }
   }
 }>
@@ -891,6 +891,7 @@ export default function OrdersForm({
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
                     selectedData={selectedItems}
+                    isStatusEnabled={false}
                     setSelectedData={setSelectedItems}
                   />
                   <Button

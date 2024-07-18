@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems()
-  const receivers = await getAllReceivers()
-  const suppliers = await getAllSuppliers()
+  const itemsData = await getAllItems(true)
+  const receivers = await getAllReceivers(true)
+  const suppliers = await getAllSuppliers(true)
 
   const comboBoxSuppliers = suppliers.map((supplier) => {
     return {
@@ -39,7 +39,7 @@ export default async function Page() {
     }
   })
 
-  const professionals = await getAllProfessionals()
+  const professionals = await getAllProfessionals(true)
 
   const comboBoxProfessionals = professionals.map((professional) => {
     return {
@@ -47,7 +47,7 @@ export default async function Page() {
       label: `${professional.tipo_cedula}-${professional.cedula} ${professional.nombres}`,
     }
   })
-  const units = await getAllUnits()
+  const units = await getAllUnits(true)
 
   const comboBoxUnits = units.map((unit) => {
     return {

@@ -27,7 +27,7 @@ export const getAllWarehousesToCombobox = async () => {
     label: warehouse.nombre,
   }))
 }
-export const getAllWarehouses = async () => {
+export const getAllWarehouses = async (onlyActives?: boolean) => {
   const session = await auth()
 
   if (!session?.user) {

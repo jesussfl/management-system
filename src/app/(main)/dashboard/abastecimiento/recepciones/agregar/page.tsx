@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true)
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
-  const professionals = await getAllProfessionalsToCombobox()
+  const professionals = await getAllProfessionalsToCombobox(true)
   return (
     <>
       <PageHeader className="mb-0">

@@ -397,9 +397,8 @@ export const checkItemExistance = async (name: string) => {
   return !!exists
 }
 
-export const getAllItems = async () => {
+export const getAllItems = async (onlyActives?: boolean) => {
   const sessionResponse = await validateUserSession()
-
   if (sessionResponse.error || !sessionResponse.session) {
     return []
   }
@@ -410,10 +409,12 @@ export const getAllItems = async () => {
     },
     where: {
       servicio: 'Abastecimiento',
+      fecha_eliminacion: onlyActives ? null : undefined,
     },
     include: {
       recepciones: {
         include: {
+          recepcion: true,
           seriales: {
             include: {
               renglon: true,

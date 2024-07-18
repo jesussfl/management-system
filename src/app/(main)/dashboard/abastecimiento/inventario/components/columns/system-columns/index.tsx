@@ -6,23 +6,8 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { Clasificacion, Sistema } from '@prisma/client'
-import { MoreHorizontal } from 'lucide-react'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
-import Link from 'next/link'
-import { deleteSystem } from '../../../lib/actions/systems'
+import { Sistema } from '@prisma/client'
+import { deleteSystem, recoverSystem } from '../../../lib/actions/systems'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 
@@ -90,8 +75,12 @@ export const columns: ColumnDef<Sistema>[] = [
             href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
           }}
           deleteConfig={{
+            isDeleted: system.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este sistema?',
             alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverSystem(system.id)
+            },
             onConfirm: () => {
               return deleteSystem(system.id)
             },

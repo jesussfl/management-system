@@ -11,7 +11,7 @@ import { Prisma } from '@prisma/client'
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { cn } from '@/utils/utils'
-import { deleteReception } from './lib/actions/receptions'
+import { deleteReception, recoverReception } from './lib/actions/receptions'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
@@ -291,8 +291,12 @@ export const columns: ColumnDef<RecepcionType>[] = [
             href: `/dashboard/abastecimiento/recepciones/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta recepción?',
             alertDescription: `Estas a punto de eliminar esta recepción. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverReception(data.id)
+            },
             onConfirm: () => {
               return deleteReception(data.id)
             },

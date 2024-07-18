@@ -11,19 +11,19 @@ import {
   FormDescription,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
-import useGetWeight from '../../lib/hooks/useGetWeight'
 import { useEffect, useState } from 'react'
-import { getAllSubsystems } from '../../lib/actions/subsystems'
 import { cn } from '@/utils/utils'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
 import { Switch } from '@/modules/common/components/switch/switch'
-import { getAllWarehouses } from '../../../../almacenes/lib/actions/warehouse'
 import Link from 'next/link'
 import ImageUpload from '@/modules/common/components/file-upload'
 import Image from 'next/image'
 import { NumericFormat } from 'react-number-format'
 import { Combobox } from '@/modules/common/components/combobox'
+import useGetWeight from '@/app/(main)/dashboard/armamento/inventario/lib/hooks/useGetWeight'
+import { getAllSubsystems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/subsystems'
+import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
 
 export const Step3 = ({
   image,
@@ -42,7 +42,7 @@ export const Step3 = ({
   useEffect(() => {
     setIsSubsystemLoading(true)
     setIsWarehouseLoading(true)
-    getAllSubsystems().then((data) => {
+    getAllSubsystems(true).then((data) => {
       const transformedData = data.map((subsystem) => ({
         value: subsystem.id,
         label: `${subsystem.nombre} - ${subsystem.sistema.nombre}`,
@@ -50,7 +50,7 @@ export const Step3 = ({
 
       setSubsystems(transformedData)
     })
-    getAllWarehouses().then((data) => {
+    getAllWarehouses(true).then((data) => {
       const transformedData = data.map((warehouse) => ({
         value: warehouse.id,
         label: warehouse.nombre,

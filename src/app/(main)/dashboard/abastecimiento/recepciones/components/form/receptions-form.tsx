@@ -516,9 +516,11 @@ export default function ReceptionsForm({
                     onSelectedRowsChange={handleTableSelect}
                     isColumnFilterEnabled={false}
                     selectedData={selectedRows}
+                    isStatusEnabled={false}
                     setSelectedData={setSelectedRows}
                   />
                   <Button
+                    className="w-[200px] sticky bottom-8 left-8"
                     variant={'default'}
                     onClick={() => setIsModalOpen(false)}
                   >
@@ -565,8 +567,13 @@ export default function ReceptionsForm({
           </Card>
         )}
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          <Button disabled={isPending} variant="default" type={'submit'}>
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          <Button
+            className="w-[200px]"
+            disabled={isPending}
+            variant="default"
+            type={'submit'}
+          >
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

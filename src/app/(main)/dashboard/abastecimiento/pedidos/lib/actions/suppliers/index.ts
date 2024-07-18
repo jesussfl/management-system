@@ -6,15 +6,18 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
-import { PedidoFormValues } from '../../../components/forms/orders-form'
 import { Prisma } from '@prisma/client'
 
-export const getAllSuppliers = async () => {
+export const getAllSuppliers = async (onlyActives?: boolean) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const suppliers = await prisma.proveedor.findMany()
+  const suppliers = await prisma.proveedor.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
+  })
   return suppliers
 }
 export const createSupplier = async (data: Prisma.ProveedorCreateInput) => {

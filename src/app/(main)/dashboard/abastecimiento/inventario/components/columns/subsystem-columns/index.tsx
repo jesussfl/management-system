@@ -3,26 +3,14 @@
 import * as React from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Categoria, Subsistema } from '@prisma/client'
-import { MoreHorizontal } from 'lucide-react'
+import { Subsistema } from '@prisma/client'
 import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
-import { deleteSubsystem } from '../../../lib/actions/subsystems'
+  deleteSubsystem,
+  recoverSubsystem,
+} from '../../../lib/actions/subsystems'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 export const columns: ColumnDef<Subsistema>[] = [
@@ -104,8 +92,12 @@ export const columns: ColumnDef<Subsistema>[] = [
             href: `/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`,
           }}
           deleteConfig={{
+            isDeleted: subsystem.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este subsistema?',
             alertDescription: `Estas a punto de eliminar este subsistema. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverSubsystem(subsystem.id)
+            },
             onConfirm: () => {
               return deleteSubsystem(subsystem.id)
             },

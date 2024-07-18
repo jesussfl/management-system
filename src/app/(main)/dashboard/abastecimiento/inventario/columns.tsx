@@ -109,15 +109,20 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     id: 'stock',
-    accessorFn: (row) =>
-      row.recepciones.reduce((total, item) => {
+    accessorFn: (row) => {
+      const activeReceptions = row.recepciones.filter(
+        (reception) => reception.recepcion.fecha_eliminacion === null
+      )
+
+      return activeReceptions.reduce((total, item) => {
         const serials = item.seriales.filter(
           (serial) =>
             serial.estado === 'Disponible' || serial.estado === 'Devuelto'
         ).length
 
         return total + serials
-      }, 0),
+      }, 0)
+    },
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
   },
   {
@@ -125,10 +130,15 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     // accessorKey: 'peso_total',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
-      const stock = row.recepciones.reduce((total, item) => {
+      const activeReceptions = row.recepciones.filter(
+        (reception) => reception.recepcion.fecha_eliminacion === null
+      )
+
+      const stock = activeReceptions.reduce((total, item) => {
         const serials = item.seriales.filter(
           (serial) =>
-            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+            (serial.estado === 'Disponible' || serial.estado === 'Devuelto') &&
+            serial.fecha_eliminacion === null
         ).length
         return total + serials
       }, 0)

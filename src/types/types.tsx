@@ -16,6 +16,7 @@ export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
   include: {
     recepciones: {
       include: {
+        recepcion: true
         seriales: true
       }
     }

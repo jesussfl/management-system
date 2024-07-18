@@ -218,6 +218,7 @@ export const getPackagingUnitsByCategoryId = async (id: number) => {
   const packagingUnits = await prisma.unidadEmpaque.findMany({
     where: {
       id_categoria: id,
+      fecha_eliminacion: null,
     },
   })
   return packagingUnits

@@ -1,6 +1,6 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Plus, PackagePlus, PackageCheck } from 'lucide-react'
+import { Plus, PackageCheck } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
@@ -18,18 +18,6 @@ import {
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/modules/common/components/tabs/tabs'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -38,7 +26,6 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const receptionsData = await getAllReceptions()
-  const deletedReceptionsData = await getAllReceptions(false)
   return (
     <>
       <PageHeader>
@@ -61,51 +48,14 @@ export default async function Page() {
           </Link>
         </HeaderRightSide>
       </PageHeader>
-
-      <Tabs defaultValue="receptions">
-        <TabsList className="mx-5">
-          <TabsTrigger value="receptions">Recepciones</TabsTrigger>
-          <TabsTrigger value="deleted">Eliminadas</TabsTrigger>
-        </TabsList>
-        <TabsContent value="receptions">
-          <PageContent>
-            <Card>
-              <CardHeader className="flex flex-row justify-between">
-                <CardTitle className="text-md">Lista de Recepciones</CardTitle>
-              </CardHeader>
-
-              <CardContent>
-                <DataTable
-                  columns={columns}
-                  data={receptionsData}
-                  isMultipleDeleteEnabled
-                  multipleDeleteAction={deleteMultipleReceptions}
-                />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
-        <TabsContent value="deleted">
-          <PageContent>
-            <Card>
-              <CardHeader className="flex flex-row justify-between">
-                <CardTitle className="text-md">
-                  Lista de Recepciones Eliminadas
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent>
-                <DataTable
-                  columns={columns}
-                  data={deletedReceptionsData}
-                  isMultipleDeleteEnabled
-                  multipleDeleteAction={deleteMultipleReceptions}
-                />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
-      </Tabs>
+      <PageContent>
+        <DataTable
+          columns={columns}
+          data={receptionsData}
+          isMultipleDeleteEnabled
+          multipleDeleteAction={deleteMultipleReceptions}
+        />
+      </PageContent>
     </>
   )
 }
