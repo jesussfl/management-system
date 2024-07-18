@@ -116,7 +116,32 @@ export const deleteRol = async (id: number) => {
     error: false,
   }
 }
+export const recoverRol = async (id: number) => {
+  const session = await auth()
 
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const rol = await prisma.rol.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  revalidatePath('/dashboard/abastecimiento/usuarios')
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el rol con el siguiente nombre: ${rol.rol}`
+  )
+  return {
+    success: 'Rol recuperado exitosamente',
+    error: false,
+  }
+}
 export const getAllRoles = async () => {
   const session = await auth()
   if (!session?.user) {

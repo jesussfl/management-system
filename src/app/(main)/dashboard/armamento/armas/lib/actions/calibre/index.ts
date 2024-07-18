@@ -144,3 +144,41 @@ export const deleteGunCaliber = async (id: number) => {
     success: 'Calibre de arma eliminada exitosamente',
   }
 }
+
+export const recoverGunCaliber = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunCaliber = await prisma.calibre.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó el calibre de arma: ' + gunCaliber.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Calibre de arma recuperada exitosamente',
+  }
+}

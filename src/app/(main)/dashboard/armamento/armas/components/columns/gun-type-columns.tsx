@@ -3,27 +3,13 @@
 import * as React from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Accesorio_Arma, Tipo_Armamento } from '@prisma/client'
-import { MoreHorizontal } from 'lucide-react'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
+import { Tipo_Armamento } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGunType } from '../../lib/actions/type'
+import { deleteGunType, recoverGunType } from '../../lib/actions/type'
 export const gunTypeColumns: ColumnDef<Tipo_Armamento>[] = [
   {
     id: 'seleccionar',
@@ -88,8 +74,12 @@ export const gunTypeColumns: ColumnDef<Tipo_Armamento>[] = [
             href: `/dashboard/armamento/armas/tipo/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este tipo de armamento?',
             alertDescription: `Estas a punto de eliminar este tipo de armamento. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunType(data.id)
+            },
             onConfirm: () => {
               return deleteGunType(data.id)
             },

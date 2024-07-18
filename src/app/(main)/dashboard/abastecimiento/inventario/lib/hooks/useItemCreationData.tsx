@@ -28,7 +28,7 @@ const useItemCreationData = () => {
     setIsClassificationsLoading(true)
     setIsCategoriesLoading(true)
     setIsPackagingUnitsLoading(true)
-    getAllClassifications().then((data) => {
+    getAllClassifications(true).then((data) => {
       const transformedData = data.map((classification) => ({
         value: classification.id,
         label: classification.nombre,

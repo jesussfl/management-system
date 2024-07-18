@@ -225,12 +225,15 @@ export const deleteMultipleSubsystems = async (ids: number[]) => {
     error: false,
   }
 }
-export const getAllSubsystems = async () => {
+export const getAllSubsystems = async (onlyActives?: boolean) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const subsystems = await prisma.subsistema.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
     include: {
       sistema: true,
     },

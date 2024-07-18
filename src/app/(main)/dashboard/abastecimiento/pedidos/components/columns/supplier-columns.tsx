@@ -14,6 +14,7 @@ import { format } from 'date-fns'
 import { Proveedor } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { deleteSupplier } from '../../lib/actions/suppliers'
+import { recoverOrder } from '../../lib/actions/orders'
 export const supplierColumns: ColumnDef<Proveedor>[] = [
   SELECT_COLUMN,
   {
@@ -169,8 +170,12 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
             href: `/dashboard/abastecimiento/pedidos/proveedor/${supplier.id}`,
           }}
           deleteConfig={{
+            isDeleted: supplier.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este proveedor?',
             alertDescription: `Estas a punto de eliminar este proveedor. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverOrder(supplier.id)
+            },
             onConfirm: () => {
               return deleteSupplier(supplier.id)
             },

@@ -13,7 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { deleteGrade } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
+import {
+  deleteGrade,
+  recoverGrade,
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
@@ -137,8 +140,12 @@ export const columns: ColumnDef<GradosWithComponentesAndIncludeComponente>[] = [
             href: `/dashboard/rangos/grado/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este grado?',
             alertDescription: `Estas a punto de eliminar este grado. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGrade(data.id)
+            },
             onConfirm: () => {
               return deleteGrade(data.id)
             },

@@ -126,7 +126,57 @@ export const deletePersonnel = async (cedula: string) => {
     error: false,
   }
 }
+export const recoverPersonnel = async (cedula: string) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RECURSOS_HUMANOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.personal.findUnique({
+    where: {
+      cedula,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'El personal no existe',
+      field: 'cedula',
+      success: false,
+    }
+  }
+
+  await prisma.destinatario.update({
+    where: {
+      cedula,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó el personal con la cedula ' + cedula
+  )
+  revalidatePath('/dashboard/recursos-humanos/personal')
+
+  return {
+    success: 'El personal ha sido recuperado con exito',
+    error: false,
+  }
+}
 export const updatePersonnel = async (
   data: Prisma.PersonalUpdateInput,
   id: number

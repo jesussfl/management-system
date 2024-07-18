@@ -108,8 +108,12 @@ export const columns: ColumnDef<Permiso>[] = [
             href: `/dashboard/usuarios/permiso/${permission.id}`,
           }}
           deleteConfig={{
+            isDeleted: permission.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este permiso?',
             alertDescription: `Estas a punto de eliminar este permiso. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return deletePermiso(permission.id)
+            },
             onConfirm: () => {
               return deletePermiso(permission.id)
             },

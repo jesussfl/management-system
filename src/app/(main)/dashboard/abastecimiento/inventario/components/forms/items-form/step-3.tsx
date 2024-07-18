@@ -21,9 +21,10 @@ import ImageUpload from '@/modules/common/components/file-upload'
 import Image from 'next/image'
 import { NumericFormat } from 'react-number-format'
 import { Combobox } from '@/modules/common/components/combobox'
-import useGetWeight from '@/app/(main)/dashboard/armamento/inventario/lib/hooks/useGetWeight'
-import { getAllSubsystems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/subsystems'
+
 import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
+import useGetWeight from '../../../lib/hooks/useGetWeight'
+import { getAllSubsystems } from '../../../lib/actions/subsystems'
 
 export const Step3 = ({
   image,

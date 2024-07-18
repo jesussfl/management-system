@@ -11,7 +11,7 @@ import { ArrowUpDown } from 'lucide-react'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deletePersonnel } from '../guardias/lib/actions'
+import { deletePersonnel, recoverPersonnel } from '../guardias/lib/actions'
 export const columns: ColumnDef<PersonalType>[] = [
   SELECT_COLUMN,
   {
@@ -262,8 +262,12 @@ export const columns: ColumnDef<PersonalType>[] = [
             href: `/dashboard/recursos-humanos/personal/${personnel.id}`,
           }}
           deleteConfig={{
+            isDeleted: personnel.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este personal?',
             alertDescription: `Estas a punto de eliminar este personal. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverPersonnel(personnel.cedula)
+            },
             onConfirm: () => {
               return deletePersonnel(personnel.cedula)
             },

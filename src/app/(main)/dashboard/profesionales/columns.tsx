@@ -20,7 +20,10 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteProfessional } from './lib/actions/professionals'
+import {
+  deleteProfessional,
+  recoverProfessional,
+} from './lib/actions/professionals'
 export const columns: ColumnDef<ProfesionalType>[] = [
   SELECT_COLUMN,
   {
@@ -240,8 +243,12 @@ export const columns: ColumnDef<ProfesionalType>[] = [
             href: `/dashboard/profesionales/${professional.id}`,
           }}
           deleteConfig={{
+            isDeleted: professional.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este profesional?',
             alertDescription: `Estas a punto de eliminar este profesional. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverProfessional(professional.id)
+            },
             onConfirm: () => {
               return deleteProfessional(professional.id)
             },

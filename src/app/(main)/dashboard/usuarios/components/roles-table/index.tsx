@@ -20,7 +20,7 @@ import {
 import Link from 'next/link'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteRol } from '../../lib/actions/roles'
+import { deleteRol, recoverRol } from '../../lib/actions/roles'
 type Rol = Prisma.RolGetPayload<{
   include: {
     permisos: true
@@ -94,8 +94,12 @@ export const columns: ColumnDef<Rol>[] = [
             href: `/dashboard/usuarios/rol/${rol.id}`,
           }}
           deleteConfig={{
+            isDeleted: rol.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este rol?',
             alertDescription: `Estas a punto de eliminar este rol. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverRol(rol.id)
+            },
             onConfirm: () => {
               return deleteRol(rol.id)
             },

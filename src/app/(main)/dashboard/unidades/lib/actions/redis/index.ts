@@ -140,7 +140,49 @@ export const deleteRedi = async (id: number) => {
     error: false,
   }
 }
+export const recoverRedi = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.UNIDADES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.redi.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  await prisma.redi.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `La redi ${exists?.nombre} fue recuperada`
+  )
+  revalidatePath('/dashboard/unidades')
+
+  return {
+    success: true,
+    error: false,
+  }
+}
 export const updateRedi = async (id: number, data: Prisma.RediUpdateInput) => {
   const sessionResponse = await validateUserSession()
 

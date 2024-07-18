@@ -17,7 +17,7 @@ import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { buttonVariants } from '@/modules/common/components/button'
 import { cn } from '@/utils/utils'
-import useItemCreationData from '@/app/(main)/dashboard/armamento/inventario/lib/hooks/useItemCreationData'
+import useItemCreationData from '../../../lib/hooks/useItemCreationData'
 
 export const Step2 = () => {
   const form = useFormContext()

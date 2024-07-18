@@ -153,6 +153,56 @@ export const deleteClassification = async (id: number) => {
     error: false,
   }
 }
+export const recoverClassification = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.clasificacion.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La clasificación no existe',
+      success: false,
+    }
+  }
+
+  await prisma.clasificacion.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó una clasificación llamada: ${exist?.nombre}`
+  )
+  revalidatePath('/dashboard/abastecimiento/inventario')
+
+  return {
+    success: 'Clasificación eliminada exitosamente',
+    error: false,
+  }
+}
 export const deleteMultipleClassifications = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 
@@ -189,14 +239,18 @@ export const deleteMultipleClassifications = async (ids: number[]) => {
     error: false,
   }
 }
-export const getAllClassifications = async () => {
+export const getAllClassifications = async (onlyActives?: boolean) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
     return []
   }
 
-  const classifications = await prisma.clasificacion.findMany()
+  const classifications = await prisma.clasificacion.findMany({
+    where: {
+      fecha_eliminacion: onlyActives ? null : undefined,
+    },
+  })
   return classifications
 }
 

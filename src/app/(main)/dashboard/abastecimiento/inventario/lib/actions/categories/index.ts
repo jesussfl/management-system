@@ -291,6 +291,7 @@ export const getCategoriesByClassificationId = async (id: number) => {
   const categories = await prisma.categoria.findMany({
     where: {
       id_clasificacion: id,
+      fecha_eliminacion: null,
     },
   })
 

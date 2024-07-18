@@ -145,7 +145,52 @@ export const deleteSupplier = async (id: number) => {
     fields: [],
   }
 }
+export const recoverSupplier = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const supplier = await prisma.proveedor.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  if (!supplier) {
+    return {
+      error: 'El proveedor no existe',
+      success: false,
+    }
+  }
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el proveedor con el siguiente nombre: ${supplier?.nombre} y con el siguiente id: ${supplier?.id}`
+  )
+
+  revalidatePath('/dashboard/abastecimiento/pedidos')
+
+  return {
+    success: 'Proveedor recuperado exitosamente',
+    error: false,
+    fields: [],
+  }
+}
 export const getSupplierById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {

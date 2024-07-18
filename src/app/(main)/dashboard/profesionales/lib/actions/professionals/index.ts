@@ -168,7 +168,57 @@ export const deleteProfessional = async (id: number) => {
     error: false,
   }
 }
+export const recoverProfessional = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissionsArray({
+    sections: requiredSections,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.profesional_Abastecimiento.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'El profesional no existe',
+      field: 'cedula',
+      success: false,
+    }
+  }
+
+  await prisma.profesional_Abastecimiento.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó el profesional con la cedula ' + exists.cedula
+  )
+  revalidatePath('/dashboard/profesionales')
+
+  return {
+    success: 'Professional deleted successfully',
+    error: false,
+  }
+}
 export const updateProfessional = async (
   data: Prisma.Profesional_AbastecimientoUpdateInput,
   id: number

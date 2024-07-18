@@ -145,3 +145,41 @@ export const deleteGunType = async (id: number) => {
     success: 'Tipo de arma eliminada exitosamente',
   }
 }
+
+export const recoverGunType = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunType = await prisma.tipo_Armamento.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó el tipo de arma: ' + gunType.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Tipo de arma recuperada exitosamente',
+  }
+}

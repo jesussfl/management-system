@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
+import ItemsForm from '../../components/forms/items-form'
 
 export default async function Page() {
   return (

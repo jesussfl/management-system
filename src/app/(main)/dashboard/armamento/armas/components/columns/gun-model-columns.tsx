@@ -3,27 +3,16 @@
 import * as React from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Accesorio_Arma, Modelo_Armamento } from '@prisma/client'
-import { MoreHorizontal } from 'lucide-react'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
+import { Modelo_Armamento } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGunModel } from '../../lib/actions/model-actions'
+import {
+  deleteGunModel,
+  recoverGunModel,
+} from '../../lib/actions/model-actions'
 export const gunModelColumns: ColumnDef<Modelo_Armamento>[] = [
   {
     id: 'seleccionar',
@@ -116,8 +105,12 @@ export const gunModelColumns: ColumnDef<Modelo_Armamento>[] = [
             href: `/dashboard/armamento/armas/modelo/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este modelo de arma?',
             alertDescription: `Estas a punto de eliminar este modelo de arma. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunModel(data.id)
+            },
             onConfirm: () => {
               return deleteGunModel(data.id)
             },

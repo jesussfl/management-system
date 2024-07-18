@@ -21,7 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { DeleteDialog } from '@/modules/common/components/delete-dialog'
-import { deleteWarehouse } from './lib/actions/warehouse'
+import { deleteWarehouse, recoverWarehouse } from './lib/actions/warehouse'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
@@ -109,8 +109,12 @@ export const columns: ColumnDef<Almacen>[] = [
             href: `/dashboard/almacenes/almacen/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este almacén?',
             alertDescription: `Estas a punto de eliminar este almacén. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverWarehouse(data.id)
+            },
             onConfirm: () => {
               return deleteWarehouse(data.id)
             },

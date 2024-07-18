@@ -166,7 +166,56 @@ export const deleteReceiver = async (id: number) => {
     error: false,
   }
 }
+export const recoverReceiver = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.destinatario.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Receiver not found',
+      success: false,
+    }
+  }
+
+  await prisma.destinatario.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el destinatario en abastecimiento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
+  )
+  revalidatePath('/dashboard/abastecimiento/destinatarios')
+
+  return {
+    success: 'El destinatario se ha recuperado correctamente',
+    error: false,
+  }
+}
 export const deleteMultipleReceivers = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

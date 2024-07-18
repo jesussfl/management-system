@@ -23,7 +23,7 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGunBrand } from '../../lib/actions/brand'
+import { deleteGunBrand, recoverGunBrand } from '../../lib/actions/brand'
 export const gunBrandColumns: ColumnDef<Marca_Armamento>[] = [
   {
     id: 'seleccionar',
@@ -75,8 +75,12 @@ export const gunBrandColumns: ColumnDef<Marca_Armamento>[] = [
             href: `/dashboard/armamento/armas/marca/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta marca de arma?',
             alertDescription: `Estas a punto de eliminar esta marca de arma. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunBrand(data.id)
+            },
             onConfirm: () => {
               return deleteGunBrand(data.id)
             },

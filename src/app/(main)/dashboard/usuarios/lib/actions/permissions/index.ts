@@ -113,7 +113,46 @@ export const deletePermiso = async (id: number) => {
     error: false,
   }
 }
+export const recoverPermiso = async (id: number) => {
+  const session = await auth()
 
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const permiso = await prisma.permiso.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!permiso) {
+    return {
+      error: 'Permiso no encontrado',
+      success: false,
+    }
+  }
+
+  await prisma.permiso.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el permiso: ${permiso.key}. Nombre: ${permiso.permiso}`
+  )
+  revalidatePath('/dashboard/usuarios')
+
+  return {
+    success: 'Permiso recuperado exitosamente',
+    error: false,
+  }
+}
 export const getAllPermissions = async () => {
   const session = await auth()
   if (!session?.user) {

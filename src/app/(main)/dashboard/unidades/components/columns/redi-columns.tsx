@@ -19,7 +19,7 @@ import { MoreHorizontal } from 'lucide-react'
 import { Redi } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteRedi } from '../../lib/actions/redis'
+import { deleteRedi, recoverRedi } from '../../lib/actions/redis'
 
 export const columns: ColumnDef<Redi>[] = [
   {
@@ -113,8 +113,12 @@ export const columns: ColumnDef<Redi>[] = [
             href: `/dashboard/unidades/redi/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta redi?',
             alertDescription: `Estas a punto de eliminar esta redi. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverRedi(data.id)
+            },
             onConfirm: () => {
               return deleteRedi(data.id)
             },

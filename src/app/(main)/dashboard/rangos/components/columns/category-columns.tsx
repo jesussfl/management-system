@@ -7,7 +7,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Categoria_Militar } from '@prisma/client'
-import { deleteCategory } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
+import {
+  deleteCategory,
+  recoverCategory,
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 
@@ -74,8 +77,12 @@ export const columns: ColumnDef<Categoria_Militar>[] = [
             href: `/dashboard/rangos/categoria/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta categoría?',
             alertDescription: `Estas a punto de eliminar esta categoría. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverCategory(data.id)
+            },
             onConfirm: () => {
               return deleteCategory(data.id)
             },

@@ -165,6 +165,7 @@ export const columns: ColumnDef<Usuario>[] = [
             actionName: 'Editar Rol',
             href: `/dashboard/usuarios/editar-usuario/${user.id}`,
           }}
+          // @ts-expect-error
           deleteConfig={{
             actionName: `${estado === 'Activo' ? 'Bloquear' : 'Desbloquear'}`,
             alertTitle: `¿Estás seguro de ${

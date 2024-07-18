@@ -1,25 +1,15 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
-import TableActions from '@/app/(main)/dashboard/armamento/recepciones/components/table-actions'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGun } from './lib/actions/guns'
+import { deleteGun, recoverGun } from './lib/actions/guns'
 type ArmamentoType = Prisma.ArmamentoGetPayload<{
   include: {
     modelo: { include: { tipo: true; partes: true } }
@@ -268,8 +258,12 @@ export const columns: ColumnDef<ArmamentoType>[] = [
             href: `/dashboard/armamento/armas/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este armamento?',
             alertDescription: `Estas a punto de eliminar este armamento. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGun(data.id)
+            },
             onConfirm: () => {
               return deleteGun(data.id)
             },

@@ -22,7 +22,7 @@ export const createComponent = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -74,7 +74,7 @@ export const createGrade = async (data: CreateGradosWithComponentes) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -121,7 +121,7 @@ export const createGrade = async (data: CreateGradosWithComponentes) => {
   })
 
   await registerAuditAction('CREAR', `Grado ${data.nombre} creado`)
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos')
 
   return {
     success: 'Grade created successfully',
@@ -136,7 +136,7 @@ export const createUnit = async (data: Omit<Unidad_Militar, 'id'>) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -189,7 +189,7 @@ export const updateComponent = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -221,7 +221,7 @@ export const updateComponent = async (
     'ACTUALIZAR',
     `Componente ${data.nombre} actualizado`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos')
 
   return {
     error: false,
@@ -240,7 +240,7 @@ export const updateGrade = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -277,7 +277,7 @@ export const updateGrade = async (
   })
 
   await registerAuditAction('ACTUALIZAR', `Grado ${data.nombre} actualizado`)
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos')
 
   return {
     error: false,
@@ -295,7 +295,7 @@ export const updateCategory = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -345,7 +345,7 @@ export const updateCategory = async (
     'ACTUALIZAR',
     `Categoría ${data.nombre} actualizada`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos/')
 
   return {
     success: 'Category actualizada exitosamente',
@@ -360,7 +360,7 @@ export const deleteComponent = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -396,6 +396,56 @@ export const deleteComponent = async (id: number) => {
     error: false,
   }
 }
+export const recoverComponent = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RANGOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.componente_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Componente no encontrado',
+      success: false,
+    }
+  }
+
+  await prisma.componente_Militar.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Componente ${exists.nombre} recuperado`
+  )
+  revalidatePath('/dashboard/rangos')
+
+  return {
+    success: 'Component deleted successfully',
+    error: false,
+  }
+}
 export const deleteCategory = async (id: number) => {
   const sessionResponse = await validateUserSession()
 
@@ -404,7 +454,7 @@ export const deleteCategory = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -432,7 +482,56 @@ export const deleteCategory = async (id: number) => {
   })
 
   await registerAuditAction('ELIMINAR', `Categoría ${exists.nombre} eliminada`)
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos/')
+
+  return {
+    success: 'Category deleted successfully',
+    error: false,
+  }
+}
+export const recoverCategory = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RANGOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.categoria_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Categoría no encontrada',
+      success: false,
+    }
+  }
+  await prisma.categoria_Militar.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Categoría ${exists.nombre} recuperada`
+  )
+  revalidatePath('/dashboard/rangos/')
 
   return {
     success: 'Category deleted successfully',
@@ -447,7 +546,7 @@ export const deleteGrade = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -475,14 +574,59 @@ export const deleteGrade = async (id: number) => {
   })
 
   await registerAuditAction('ELIMINAR', `Grado ${exists.nombre} eliminado`)
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/rangos/')
 
   return {
     success: 'Grado eliminado exitosamente',
     error: false,
   }
 }
+export const recoverGrade = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.RANGOS,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.grado_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Grade not found',
+      success: false,
+    }
+  }
+  await prisma.grado_Militar.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction('RECUPERAR', `Grado ${exists.nombre} recuperado`)
+  revalidatePath('/dashboard/rangos')
+
+  return {
+    success: 'Grado eliminado exitosamente',
+    error: false,
+  }
+}
 export const createCategory = async (data: CreateCategoriasWithGrados) => {
   const sessionResponse = await validateUserSession()
 
@@ -491,7 +635,7 @@ export const createCategory = async (data: CreateCategoriasWithGrados) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.RANGOS,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

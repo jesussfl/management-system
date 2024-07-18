@@ -55,7 +55,7 @@ export const createZodi = async (data: Prisma.ZodiUncheckedCreateInput) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -109,7 +109,7 @@ export const deleteZodi = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -138,8 +138,8 @@ export const deleteZodi = async (id: number) => {
   })
 
   await registerAuditAction(
-    'ACTUALIZAR',
-    `La zodi ${exists?.nombre} fue eliminada`
+    'RECUPERAR',
+    `La zodi ${exists?.nombre} fue recuperada`
   )
   revalidatePath('/dashboard/unidades')
 
@@ -148,7 +148,56 @@ export const deleteZodi = async (id: number) => {
     error: false,
   }
 }
+export const recoverZodi = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.UNIDADES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exists = await prisma.zodi.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exists) {
+    return {
+      error: 'Zodi not found',
+      success: false,
+    }
+  }
+
+  await prisma.zodi.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `La zodi ${exists?.nombre} fue recuperada`
+  )
+  revalidatePath('/dashboard/unidades')
+
+  return {
+    success: true,
+    error: false,
+  }
+}
 export const updateZodi = async (
   id: number,
   data: Prisma.ZodiUncheckedUpdateInput
@@ -160,7 +209,7 @@ export const updateZodi = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.UNIDADES,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

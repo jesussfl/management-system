@@ -146,3 +146,41 @@ export const deleteGunPart = async (id: number) => {
     success: 'Parte de arma eliminada exitosamente',
   }
 }
+
+export const recoverGunPart = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunPart = await prisma.parte_Arma.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó la parte de arma: ' + gunPart.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Parte de arma recuperada exitosamente',
+  }
+}

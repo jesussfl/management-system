@@ -173,7 +173,56 @@ export const deleteUnit = async (id: number) => {
     error: false,
   }
 }
+export const recoverUnit = async (id: number) => {
+  const sessionResponse = await validateUserSession()
 
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.UNIDADES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.unidad_Militar.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'La unidad no existe',
+      success: false,
+    }
+  }
+
+  await prisma.unidad_Militar.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `La unidad ${exist?.nombre}  fue recuperada`
+  )
+  revalidatePath('/dashboard/unidades')
+
+  return {
+    success: 'La unidad fue recuperada',
+    error: false,
+  }
+}
 export const updateUnit = async (
   id: number,
   data: Prisma.Unidad_MilitarUncheckedUpdateInput

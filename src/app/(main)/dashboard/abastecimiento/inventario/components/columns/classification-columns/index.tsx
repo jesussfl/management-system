@@ -13,7 +13,8 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deleteClassification,
   recoverClassification,
-} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
+} from '../../../lib/actions/classifications'
+
 export const columns: ColumnDef<Clasificacion>[] = [
   {
     id: 'seleccionar',

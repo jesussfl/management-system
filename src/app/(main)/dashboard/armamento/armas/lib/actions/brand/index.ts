@@ -145,3 +145,38 @@ export const deleteGunBrand = async (id: number) => {
     success: 'Marca de arma eliminada exitosamente',
   }
 }
+
+export const recoverGunBrand = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ARMAS_ARMAMENTO,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const gunBrand = await prisma.marca_Armamento.delete({
+    where: {
+      id,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    'Se recuperó la marca de arma: ' + gunBrand.nombre
+  )
+  revalidatePath('/dashboard/armamento/armas')
+
+  return {
+    error: false,
+    success: 'Marca de arma recuperada exitosamente',
+  }
+}

@@ -8,7 +8,7 @@ import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Parte_Arma } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import { deleteGunPart } from '../../lib/actions/parts'
+import { deleteGunPart, recoverGunPart } from '../../lib/actions/parts'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 export const gunPartColumns: ColumnDef<Parte_Arma>[] = [
   {
@@ -74,8 +74,12 @@ export const gunPartColumns: ColumnDef<Parte_Arma>[] = [
             href: `/dashboard/armamento/armas/parte/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta parte de arma?',
             alertDescription: `Estas a punto de eliminar esta parte de arma. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunPart(data.id)
+            },
             onConfirm: () => {
               return deleteGunPart(data.id)
             },

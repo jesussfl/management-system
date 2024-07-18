@@ -9,7 +9,10 @@ import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Accesorio_Arma } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGunAccessory } from '../../lib/actions/accesories'
+import {
+  deleteGunAccessory,
+  recoverGunAccessory,
+} from '../../lib/actions/accesories'
 export const gunAccessoryColumns: ColumnDef<Accesorio_Arma>[] = [
   {
     id: 'seleccionar',
@@ -74,8 +77,12 @@ export const gunAccessoryColumns: ColumnDef<Accesorio_Arma>[] = [
             href: `/dashboard/armamento/armas/accesorio/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este accesorio de arma?',
             alertDescription: `Estas a punto de eliminar este accesorio de arma. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunAccessory(data.id)
+            },
             onConfirm: () => {
               return deleteGunAccessory(data.id)
             },

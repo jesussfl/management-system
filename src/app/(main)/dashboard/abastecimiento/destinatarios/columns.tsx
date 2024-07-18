@@ -9,7 +9,7 @@ import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { DestinatarioType } from '@/types/types'
 import { ArrowUpDown } from 'lucide-react'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteReceiver } from './lib/actions/receivers'
+import { deleteReceiver, recoverReceiver } from './lib/actions/receivers'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { Badge } from '@/modules/common/components/badge'
@@ -261,8 +261,12 @@ export const columns: ColumnDef<DestinatarioType>[] = [
             href: `/dashboard/abastecimiento/destinatarios/${receiver.id}`,
           }}
           deleteConfig={{
+            isDeleted: receiver.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este destinatario?',
             alertDescription: `Estas a punto de eliminar este destinatario. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverReceiver(receiver.id)
+            },
             onConfirm: () => {
               return deleteReceiver(receiver.id)
             },

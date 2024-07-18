@@ -11,7 +11,7 @@ import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteUnit } from './lib/actions/units'
+import { deleteUnit, recoverUnit } from './lib/actions/units'
 
 export const columns: ColumnDef<UnidadesType>[] = [
   SELECT_COLUMN,
@@ -80,8 +80,12 @@ export const columns: ColumnDef<UnidadesType>[] = [
             href: `/dashboard/unidades/${unit.id}`,
           }}
           deleteConfig={{
+            isDeleted: unit.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta unidad?',
             alertDescription: `Estas a punto de eliminar este unidad. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverUnit(unit.id)
+            },
             onConfirm: () => {
               return deleteUnit(unit.id)
             },

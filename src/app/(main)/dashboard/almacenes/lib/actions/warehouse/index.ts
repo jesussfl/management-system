@@ -141,6 +141,56 @@ export const deleteWarehouse = async (id: number) => {
     error: false,
   }
 }
+export const recoverWarehouse = async (id: number) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.ALMACENES,
+    actionName: 'ELIMINAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+
+  const exist = await prisma.almacen.findUnique({
+    where: {
+      id,
+    },
+  })
+
+  if (!exist) {
+    return {
+      error: 'El almacén no existe',
+      success: false,
+    }
+  }
+
+  await prisma.almacen.update({
+    where: {
+      id,
+    },
+    data: {
+      fecha_eliminacion: null,
+    },
+  })
+
+  await registerAuditAction(
+    'RECUPERAR',
+    `Se recuperó el almacén: ${exist?.nombre} con ID: ${exist?.id}`
+  )
+  revalidatePath('/dashboard/almacenes')
+
+  return {
+    success: 'Almacén recuperado exitosamente',
+    error: false,
+  }
+}
 export const deleteMultipleWarehouses = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 

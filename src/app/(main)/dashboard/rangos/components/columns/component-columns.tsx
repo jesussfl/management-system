@@ -9,7 +9,10 @@ import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Componente_Militar } from '@prisma/client'
 
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteComponent } from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
+import {
+  deleteComponent,
+  recoverComponent,
+} from '@/app/(main)/dashboard/rangos/lib/actions/ranks'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 interface DataTableProps {
   data: Componente_Militar[]
@@ -78,8 +81,12 @@ export const columns: ColumnDef<Componente_Militar>[] = [
             href: `/dashboard/rangos/componente/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este componente?',
             alertDescription: `Estas a punto de eliminar este componente. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverComponent(data.id)
+            },
             onConfirm: () => {
               return deleteComponent(data.id)
             },

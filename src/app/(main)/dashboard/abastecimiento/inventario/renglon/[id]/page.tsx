@@ -1,7 +1,7 @@
 import { getItemById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import ItemsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-form'
 
 import PageForm from '@/modules/layout/components/page-form'
+import ItemsForm from '../../components/forms/items-form'
 
 export default async function Page({
   params: { id },

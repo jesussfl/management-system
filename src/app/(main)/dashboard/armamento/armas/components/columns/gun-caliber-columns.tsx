@@ -9,7 +9,7 @@ import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Calibre } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteGunCaliber } from '../../lib/actions/calibre'
+import { deleteGunCaliber, recoverGunCaliber } from '../../lib/actions/calibre'
 export const gunCaliberColumns: ColumnDef<Calibre>[] = [
   {
     id: 'seleccionar',
@@ -61,8 +61,12 @@ export const gunCaliberColumns: ColumnDef<Calibre>[] = [
             href: `/dashboard/armamento/armas/calibre/${data.id}`,
           }}
           deleteConfig={{
+            isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este calibre de arma?',
             alertDescription: `Estas a punto de eliminar este calibre. Pero puedes recuperar el registro más tarde.`,
+            onRecover: () => {
+              return recoverGunCaliber(data.id)
+            },
             onConfirm: () => {
               return deleteGunCaliber(data.id)
             },
