@@ -25,6 +25,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/modules/common/components/hover-card'
 
 export type RenglonColumns = {
   id: number
@@ -166,8 +171,53 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     id: 'ubicacion',
-    accessorFn: (row) => row.ubicacion || 'Sin ubicación',
-    header: ({ column }) => <HeaderCell column={column} value="Ubicación" />,
+    accessorFn: (row) => {
+      const referencia = row.referencia
+      const peldano = row.peldano
+      const pasillo = row.pasillo
+      const estante = row.estante
+
+      return `${referencia} - ${peldano} - ${pasillo} - ${estante}`
+    },
+
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Ubicación
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const referencia = row.original.referencia || 'Sin definir'
+      const peldano = row.original.peldano || 'Sin definir'
+      const pasillo = row.original.pasillo || 'Sin definir'
+      const estante = row.original.estante || 'Sin definir'
+      return (
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">Ver ubicación</Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <div className="space-y-1">
+              <div>
+                <div className="text-sm font-semibold">Pasillo: {pasillo}</div>
+                <div className="text-sm font-semibold">Estante: {estante}</div>
+                <div className="text-sm font-semibold">Peldaño: {peldano}</div>
+                <div className="text-sm font-semibold">
+                  Punto de Referencia: {referencia}
+                </div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
   },
   {
     accessorKey: 'clasificacion.nombre',

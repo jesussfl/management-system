@@ -26,7 +26,11 @@ export default async function Page({
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <DataTable columns={columns} data={serialsData} />
+        <DataTable
+          columns={columns}
+          data={serialsData}
+          isStatusEnabled={false}
+        />
       </DialogContent>
     </Dialog>
   )

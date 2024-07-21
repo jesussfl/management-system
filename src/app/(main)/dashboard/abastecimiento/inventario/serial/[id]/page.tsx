@@ -13,7 +13,7 @@ export default async function Page({
       title="Ver seriales"
       backLink="/dashboard/abastecimiento/inventario"
     >
-      <DataTable columns={columns} data={serialsData} />
+      <DataTable columns={columns} data={serialsData} isStatusEnabled={false} />
     </PageForm>
   )
 }

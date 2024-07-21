@@ -174,12 +174,73 @@ export const Step3 = ({
           </FormItem>
         )}
       />
+      <div className="flex flex-1 gap-4">
+        <FormField
+          control={form.control}
+          name="pasillo"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Pasillo (Opcional)</FormLabel>
+
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Ej. 1, 2, 3, etc."
+                  {...field}
+                  value={field.value || ''}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="estante"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Estante (Opcional)</FormLabel>
+
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Ej. A, B, C, etc."
+                  {...field}
+                  value={field.value || ''}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="peldano"
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel>Peldaño (Opcional)</FormLabel>
+
+              <FormControl>
+                <Input type="text" {...field} value={field.value || ''} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
       <FormField
         control={form.control}
-        name="ubicacion"
+        name="referencia"
         render={({ field }) => (
           <FormItem className="w-full">
-            <FormLabel>Ubicación (Opcional)</FormLabel>
+            <FormLabel>Punto de Referencia (Opcional)</FormLabel>
+            <FormDescription>
+              Escribe un punto de referencia dentro del almacén para saber su
+              ubicación
+            </FormDescription>
             <FormControl>
               <Input
                 type="text"

@@ -46,7 +46,6 @@ import {
   Box,
   Boxes,
   Info,
-  IterationCcw,
   PackageCheck,
   PackageMinus,
   PackagePlus,
@@ -65,8 +64,6 @@ import { Badge } from '@/modules/common/components/badge'
 import { getStatistics } from '../../lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
-import { useToast } from '@/modules/common/components/toast/use-toast'
-import { columns } from './columns'
 
 export const metadata: Metadata = {
   title: 'Inventario',

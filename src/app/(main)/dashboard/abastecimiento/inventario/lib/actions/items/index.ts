@@ -9,7 +9,14 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import mime from 'mime'
 import { join } from 'path'
-import { stat, mkdir, writeFile, unlink } from 'fs/promises' // Agregamos unlink
+import { stat, mkdir, writeFile } from 'fs/promises' // Agregamos unlink
+import {
+  differenceInHours,
+  differenceInMinutes,
+  isAfter,
+  subHours,
+  subMinutes,
+} from 'date-fns'
 export const createItem = async (
   data: Prisma.RenglonUncheckedCreateInput,
   image: FormData | null
@@ -474,4 +481,48 @@ export const getItemById = async (id: number) => {
     throw new Error('El renglon no existe')
   }
   return renglon
+}
+
+export const showNotification = async () => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const user = await prisma.usuario.findUnique({
+    where: {
+      id: session.user.id,
+    },
+
+    select: {
+      ultima_notificacion: true,
+    },
+  })
+
+  if (!user?.ultima_notificacion) {
+    await prisma.usuario.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        ultima_notificacion: new Date(),
+      },
+    })
+
+    return true
+  }
+
+  if (differenceInMinutes(new Date(), user.ultima_notificacion) > 30) {
+    await prisma.usuario.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        ultima_notificacion: new Date(),
+      },
+    })
+    return true
+  }
+
+  return false
 }

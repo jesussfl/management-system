@@ -65,6 +65,7 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
+import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: {
     unidad_empaque: true
@@ -84,7 +85,7 @@ export type PedidoForm = {
 
   id_unidad?: number
   id_proveedor?: number
-
+  motivo_fecha?: string
   id_destinatario?: number
   id_supervisor?: number
   id_abastecedor: number
@@ -143,7 +144,16 @@ export default function OrdersForm({
   const { isDirty } = useFormState({ control })
 
   const [isPending, startTransition] = useTransition()
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
 
+  const toogleAlert = () => {
+    const fecha = rest.watch(`fecha_solicitud`)
+
+    if (fecha < new Date()) {
+      rest.resetField('fecha_solicitud')
+    }
+  }
   const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
   const supplierType = rest.watch('tipo_proveedor')
@@ -811,10 +821,6 @@ export default function OrdersForm({
               name={`fecha_solicitud`}
               rules={{
                 required: true,
-                validate: (value) => {
-                  if (value > new Date())
-                    return 'La fecha no puede ser mayor a la actual'
-                },
               }}
               render={({ field }) => (
                 <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
@@ -853,6 +859,100 @@ export default function OrdersForm({
                 </FormItem>
               )}
             />
+            {rest.watch('fecha_solicitud') < new Date() &&
+            isAuthorized === false ? (
+              <ModalForm
+                triggerName=" Parece que estás colocando una fecha anterior a la actual"
+                closeWarning={false}
+                open={rest.watch('fecha_solicitud') < new Date()}
+                customToogleModal={toogleAlert}
+                className="w-[550px]"
+              >
+                <div className="flex flex-col gap-4 p-8">
+                  <CardTitle>
+                    Estas colocando una fecha anterior a la fecha actual
+                  </CardTitle>
+                  <CardDescription>
+                    Para evitar inconsistencias de información, debes colocar el
+                    motivo de la fecha y colocar la contraseña de administrador.
+                  </CardDescription>
+                  <Input
+                    className="w-full"
+                    placeholder="Contraseña del administrador"
+                    type="password"
+                    onChange={(e) => {
+                      const value = e.target.value
+
+                      setAdminPassword(value)
+                    }}
+                  />
+                  <Button
+                    className="w-[200px]"
+                    variant={'default'}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      validateAdminPassword(adminPassword).then((res) => {
+                        if (!adminPassword) return
+                        if (res === true) {
+                          setIsAuthorized(true)
+                          toast({
+                            title: 'Fecha autorizada',
+                            description: 'La fecha ha sido autorizada',
+                            variant: 'success',
+                          })
+
+                          return
+                        }
+
+                        setAdminPassword('')
+                        toast({
+                          title: 'Permiso denegado',
+                          description: 'La contraseña es incorrecta',
+                          variant: 'destructive',
+                        })
+                      })
+                    }}
+                  >
+                    Listo
+                  </Button>
+                </div>
+              </ModalForm>
+            ) : null}
+            {rest.watch('fecha_solicitud') < new Date() &&
+            isAuthorized === true ? (
+              <FormField
+                control={control}
+                name="motivo_fecha"
+                rules={{
+                  required: 'Este campo es obligatorio',
+                  maxLength: {
+                    value: 200,
+                    message: 'Debe tener un máximo de 200 carácteres',
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem className="">
+                    <div className="flex flex-col gap-1">
+                      <FormLabel>
+                        Introduzca el motivo de por qué la fecha es anterior a
+                        la actual
+                      </FormLabel>
+                    </div>
+                    <FormControl>
+                      <textarea
+                        id="motivo"
+                        rows={3}
+                        className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...field}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <div className="border-b border-base-300" />
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">

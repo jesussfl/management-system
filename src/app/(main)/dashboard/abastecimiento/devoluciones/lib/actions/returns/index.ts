@@ -7,6 +7,7 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
+import { format } from 'date-fns'
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
     grado: true
@@ -122,10 +123,21 @@ export const createReturn = async (data: FormValues) => {
       estado: 'Devuelto',
     },
   })
-
   await registerAuditAction(
     'CREAR',
-    `Se creó una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${newReturn.id} `
+    `Se creó una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${
+      newReturn.id
+    }, ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            newReturn.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )}, la fecha de devolucion: ${format(
+            newReturn.fecha_devolucion,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    } `
   )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 
@@ -260,7 +272,19 @@ export const updateReturn = async (id: number, data: FormValues) => {
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizo una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${updatedReturn.id} `
+    `Se actualizo una devolución en abastecimiento con el siguiente motivo: ${motivo}. El ID de la devolución es: ${
+      updatedReturn.id
+    } ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            updatedReturn.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )}, la fecha de devolucion: ${format(
+            updatedReturn.fecha_devolucion,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }  `
   )
   revalidatePath('/dashboard/abastecimiento/devoluciones')
 

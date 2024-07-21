@@ -13,6 +13,7 @@ import { registerAuditAction } from '@/lib/actions/audit'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
+import { format } from 'date-fns'
 
 type DestinatarioWithRelations = Prisma.DestinatarioGetPayload<{
   include: {
@@ -144,7 +145,7 @@ export const createDispatch = async (data: FormValues) => {
       cedula_autorizador: data.cedula_autorizador,
       motivo,
       fecha_despacho,
-
+      motivo_fecha: data.motivo_fecha || undefined,
       renglones: {
         create: renglones.map((renglon) => ({
           manualSelection: renglon.manualSelection,
@@ -173,10 +174,21 @@ export const createDispatch = async (data: FormValues) => {
       estado: 'Despachado',
     },
   })
-
   await registerAuditAction(
     'CREAR',
-    `Se realizó un despacho en abastecimiento con el siguiente motivo: ${motivo}. El id del despacho es: ${dispatch.id}`
+    `Se realizó un despacho en abastecimiento con el siguiente motivo: ${motivo}. El id del despacho es: ${
+      dispatch.id
+    }  ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            dispatch.fecha_creacion,
+            'yyyy-MM-dd HH:mm'
+          )}, la fecha de despacho: ${format(
+            dispatch.fecha_despacho,
+            'yyyy-MM-dd HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
 
   revalidatePath('/dashboard/abastecimiento/despachos')
@@ -307,7 +319,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
     delete renglon.id
   })
 
-  await prisma.despacho.update({
+  const dispatch = await prisma.despacho.update({
     where: {
       id,
     },
@@ -318,7 +330,7 @@ export const updateDispatch = async (id: number, data: FormValues) => {
       cedula_autorizador: data.cedula_autorizador,
       motivo,
       fecha_despacho,
-
+      motivo_fecha: data.motivo_fecha || null,
       renglones: {
         deleteMany: {},
         create: renglones.map((renglon) => ({
@@ -362,7 +374,17 @@ export const updateDispatch = async (id: number, data: FormValues) => {
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el despacho en abastecimiento con el id ${id}`
+    `Se actualizó el despacho en abastecimiento con el id ${id} ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            dispatch.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )}, fecha de despacho: ${format(
+            dispatch.fecha_despacho,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
 
   revalidatePath('/dashboard/abastecimiento/despachos')

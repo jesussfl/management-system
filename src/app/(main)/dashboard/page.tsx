@@ -108,6 +108,7 @@ export default async function Page() {
                 // @ts-ignore
                 data={myRecentActivities}
                 isMultipleDeleteEnabled={false}
+                isStatusEnabled={false}
               />
             </CardContent>
           </Card>

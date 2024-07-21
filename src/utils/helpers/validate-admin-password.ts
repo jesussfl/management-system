@@ -14,8 +14,10 @@ export const validateAdminPassword = async (password: string) => {
       state: 'Activa',
     },
   })
-
+  console.log(adminPasswordDb)
   if (password !== adminPasswordDb?.password) {
     return 'Contraseña de administrador incorrecta'
   }
+
+  return true
 }

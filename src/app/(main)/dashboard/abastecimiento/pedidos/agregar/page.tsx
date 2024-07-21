@@ -35,7 +35,9 @@ export default async function Page() {
   const comboBoxReceivers = receivers.map((receiver) => {
     return {
       value: receiver.id,
-      label: `${receiver.tipo_cedula}-${receiver.cedula} ${receiver.nombres}`,
+      label: `${receiver.tipo_cedula}-${receiver.cedula} ${
+        receiver.grado?.abreviatura || ''
+      } ${receiver.nombres}`,
     }
   })
 
@@ -44,7 +46,9 @@ export default async function Page() {
   const comboBoxProfessionals = professionals.map((professional) => {
     return {
       value: professional.id,
-      label: `${professional.tipo_cedula}-${professional.cedula} ${professional.nombres}`,
+      label: `${professional.tipo_cedula}-${professional.cedula} ${
+        professional.grado?.abreviatura || ''
+      } ${professional.nombres}`,
     }
   })
   const units = await getAllUnits(true)

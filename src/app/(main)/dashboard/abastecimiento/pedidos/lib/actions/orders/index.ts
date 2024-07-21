@@ -9,6 +9,7 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { PedidoFormValues } from '../../../components/forms/orders-form'
 import { Estados_Pedidos } from '@prisma/client'
+import { format } from 'date-fns'
 
 export const getAllOrders = async () => {
   const session = await auth()
@@ -92,10 +93,21 @@ export const createOrder = async (data: PedidoFormValues) => {
       },
     },
   })
-
   await registerAuditAction(
     'CREAR',
-    `Se creó un nuevo pedido de abastecimiento con el siguient motivo: ${data.motivo}, para la fecha: ${data.fecha_solicitud} y su Id es: ${order.id}`
+    `Se creó un nuevo pedido de abastecimiento con el siguiente motivo: ${
+      data.motivo
+    }, el Id es: ${order.id} ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            order.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )} y la fecha de solicitud: ${format(
+            order.fecha_solicitud,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
 
@@ -153,7 +165,17 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el pedido de abastecimiento con el id: ${id}`
+    `Se actualizó el pedido de abastecimiento con el id: ${id}, ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            order.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )} y la fecha de solicitud: ${format(
+            order.fecha_solicitud,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
   revalidatePath('/dashboard/abastecimiento/pedidos')
 

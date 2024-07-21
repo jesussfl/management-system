@@ -21,8 +21,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { format } from 'date-fns'
-import { CheckIcon, Loader2, Plus, TrashIcon, X } from 'lucide-react'
+import { Loader2, Plus, TrashIcon } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -47,25 +46,14 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
 import Link from 'next/link'
-import { Input } from '@/modules/common/components/input/input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/modules/common/components/command/command'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
 import { Combobox } from '@/modules/common/components/combobox'
+import { subDays } from 'date-fns'
+import { Input } from '@/modules/common/components/input/input'
+import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -106,7 +94,7 @@ export default function ReceptionsForm({
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
-
+  const [dateReason, setDateReason] = useState('')
   const form = useForm<FormValues>({
     mode: 'onChange',
     defaultValues,
@@ -123,7 +111,16 @@ export default function ReceptionsForm({
   const [selectedRows, setSelectedRows] = useState<any>({})
   const [selectedRowsData, setSelectedRowsData] = useState<RenglonType[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [adminPassword, setAdminPassword] = useState('')
 
+  const toogleAlert = () => {
+    const fecha = form.watch(`fecha_recepcion`)
+
+    if (fecha < new Date()) {
+      form.resetField('fecha_recepcion')
+    }
+  }
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   useEffect(() => {
@@ -399,6 +396,7 @@ export default function ReceptionsForm({
               control={form.control}
               name="motivo"
               rules={{
+                required: 'Este campo es obligatorio',
                 maxLength: {
                   value: 200,
                   message: 'Debe tener un máximo de 200 carácteres',
@@ -461,8 +459,7 @@ export default function ReceptionsForm({
                         showTimeSelect
                         dateFormat="d MMMM, yyyy h:mm aa"
                         dropdownMode="select"
-                        minDate={new Date()}
-                        maxDate={new Date(2025, 12, 31)}
+                        maxDate={new Date()}
                       />
                       <Button
                         variant={'secondary'}
@@ -479,6 +476,100 @@ export default function ReceptionsForm({
                 </FormItem>
               )}
             />
+            {form.watch('fecha_recepcion') < new Date() &&
+            isAuthorized === false ? (
+              <ModalForm
+                triggerName=" Parece que estás colocando una fecha anterior a la actual"
+                closeWarning={false}
+                open={form.watch('fecha_recepcion') < new Date()}
+                customToogleModal={toogleAlert}
+                className="w-[550px]"
+              >
+                <div className="flex flex-col gap-4 p-8">
+                  <CardTitle>
+                    Estas colocando una fecha anterior a la fecha actual
+                  </CardTitle>
+                  <CardDescription>
+                    Para evitar inconsistencias de información, debes colocar el
+                    motivo de la fecha y colocar la contraseña de administrador.
+                  </CardDescription>
+                  <Input
+                    className="w-full"
+                    placeholder="Contraseña del administrador"
+                    type="password"
+                    onChange={(e) => {
+                      const value = e.target.value
+
+                      setAdminPassword(value)
+                    }}
+                  />
+                  <Button
+                    className="w-[200px]"
+                    variant={'default'}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      validateAdminPassword(adminPassword).then((res) => {
+                        if (!adminPassword) return
+                        if (res === true) {
+                          setIsAuthorized(true)
+                          toast({
+                            title: 'Fecha autorizada',
+                            description: 'La fecha ha sido autorizada',
+                            variant: 'success',
+                          })
+
+                          return
+                        }
+
+                        setAdminPassword('')
+                        toast({
+                          title: 'Permiso denegado',
+                          description: 'La contraseña es incorrecta',
+                          variant: 'destructive',
+                        })
+                      })
+                    }}
+                  >
+                    Listo
+                  </Button>
+                </div>
+              </ModalForm>
+            ) : null}
+            {form.watch('fecha_recepcion') < new Date() &&
+            isAuthorized === true ? (
+              <FormField
+                control={form.control}
+                name="motivo_fecha"
+                rules={{
+                  required: 'Este campo es obligatorio',
+                  maxLength: {
+                    value: 200,
+                    message: 'Debe tener un máximo de 200 carácteres',
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem className="">
+                    <div className="flex flex-col gap-1">
+                      <FormLabel>
+                        Introduzca el motivo de por qué la fecha es anterior a
+                        la actual
+                      </FormLabel>
+                    </div>
+                    <FormControl>
+                      <textarea
+                        id="motivo"
+                        rows={3}
+                        className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...field}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <div className="border-b border-base-300" />
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">

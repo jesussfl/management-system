@@ -1,7 +1,7 @@
 'use client'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { useEffect, useState } from 'react'
-import { deleteMultipleItems } from './lib/actions/items'
+import { deleteMultipleItems, showNotification } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 import { columns } from './columns'
 import ExportExcelButton from './components/items-export-button'
@@ -20,24 +20,26 @@ export const TableWithExport = ({
   const { toast } = useToast()
 
   useEffect(() => {
-    if (lowStockItems) {
-      const lowStockItemsNames = lowStockItems.map((item) => item.nombre)
-      if (lowStockItemsNames.length < 6) {
+    showNotification().then((res) => {
+      if (lowStockItems && res === true) {
+        const lowStockItemsNames = lowStockItems.map((item) => item.nombre)
+        if (lowStockItemsNames.length < 6) {
+          toast({
+            title: 'Hay renglones con stock bajo',
+            variant: 'info',
+            description: `Los siguientes renglones tienen stock bajo: ${lowStockItemsNames
+              .slice(0, 6)
+              .join(', ')}`,
+          })
+        }
         toast({
           title: 'Hay renglones con stock bajo',
-          variant: 'destructive',
-          description: `Los siguientes renglones tienen stock bajo: ${lowStockItemsNames
-            .slice(0, 6)
-            .join(', ')}`,
+          variant: 'info',
+          description: `Hay ${lowStockItems.length} renglones que están por debajo del stock minimo`,
         })
       }
-      toast({
-        title: 'Hay renglones con stock bajo',
-        variant: 'destructive',
-        description: `Hay ${lowStockItems.length} renglones que están por debajo del stock minimo`,
-      })
-    }
-  }, [])
+    })
+  }, [lowStockItems, toast])
   useEffect(() => {
     const formatData = () => {
       const rows = formatExcelData(rowsData)

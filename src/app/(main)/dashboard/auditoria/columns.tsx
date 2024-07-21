@@ -114,7 +114,7 @@ export const columns: ColumnDef<AuditoriaType>[] = [
     },
     cell: ({ row }) => {
       // max width 100
-      return <div className=" truncate">{row.getValue<string>('accion')}</div>
+      return <div className="text-wrap">{row.getValue<string>('accion')}</div>
     },
   },
 

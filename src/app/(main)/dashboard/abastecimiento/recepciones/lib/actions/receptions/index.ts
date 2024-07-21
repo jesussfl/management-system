@@ -13,6 +13,7 @@ import { validateUserPermissions } from '@/utils/helpers/validate-user-permissio
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import getGuideCode from '@/utils/helpers/get-guide-code'
+import { format } from 'date-fns'
 type SerialType = Omit<
   Serial,
   'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
@@ -173,7 +174,19 @@ export const createReception = async (data: FormValues) => {
 
   await registerAuditAction(
     'CREAR',
-    `Se creó una recepción de abastecimiento con motivo: ${data.motivo} y el id ${recepcion.id}`
+    `Se creó una recepción de abastecimiento con motivo: ${data.motivo} y id ${
+      recepcion.id
+    } ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            recepcion.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )}, la fecha de recepción: ${format(
+            recepcion.fecha_recepcion,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')
 
@@ -223,7 +236,7 @@ export const updateReception = async (id: number, data: FormValues) => {
     }
   }
 
-  await prisma.recepcion.update({
+  const recepcion = await prisma.recepcion.update({
     where: {
       id,
     },
@@ -269,10 +282,21 @@ export const updateReception = async (id: number, data: FormValues) => {
       },
     },
   })
-
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó una recepción de abastecimiento con motivo: ${data.motivo} y el id ${reception.id}`
+    `Se actualizó una recepción de abastecimiento con motivo: ${
+      data.motivo
+    } y el id ${reception.id}  ${
+      data.motivo_fecha
+        ? `, la fecha de creación fue: ${format(
+            reception.fecha_creacion,
+            'dd-MM-yyyy HH:mm'
+          )}, la fecha de recepción: ${format(
+            reception.fecha_recepcion,
+            'dd-MM-yyyy HH:mm'
+          )}, motivo de la fecha: ${data.motivo_fecha}`
+        : ''
+    }`
   )
   revalidatePath('/dashboard/abastecimiento/recepciones')
 
