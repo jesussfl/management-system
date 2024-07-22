@@ -12,7 +12,7 @@ export const getStatistics = async (
 
   const items = await prisma.renglon.count({
     where: {
-      servicio: 'Abastecimiento',
+      servicio,
       fecha_eliminacion: null,
     },
   })
