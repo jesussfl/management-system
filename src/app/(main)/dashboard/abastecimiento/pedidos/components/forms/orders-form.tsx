@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import { CheckIcon, Loader2, Plus, TrashIcon, X } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
@@ -150,7 +150,7 @@ export default function OrdersForm({
   const toogleAlert = () => {
     const fecha = rest.watch(`fecha_solicitud`)
 
-    if (fecha < new Date()) {
+    if (fecha < startOfDay(new Date())) {
       rest.resetField('fecha_solicitud')
     }
   }
@@ -848,7 +848,7 @@ export default function OrdersForm({
                         variant={'secondary'}
                         onClick={(e) => {
                           e.preventDefault()
-                          field.onChange(null)
+                          rest.resetField('fecha_solicitud')
                         }}
                       >
                         <TrashIcon className="h-5 w-5" />
@@ -859,12 +859,12 @@ export default function OrdersForm({
                 </FormItem>
               )}
             />
-            {rest.watch('fecha_solicitud') < new Date() &&
+            {rest.watch('fecha_solicitud') < startOfDay(new Date()) &&
             isAuthorized === false ? (
               <ModalForm
                 triggerName=" Parece que estás colocando una fecha anterior a la actual"
                 closeWarning={false}
-                open={rest.watch('fecha_solicitud') < new Date()}
+                open={rest.watch('fecha_solicitud') < startOfDay(new Date())}
                 customToogleModal={toogleAlert}
                 className="w-[550px]"
               >
@@ -1034,8 +1034,13 @@ export default function OrdersForm({
           </Card>
         )}
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          <Button disabled={isPending} variant="default" type={'submit'}>
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          <Button
+            disabled={isPending}
+            variant="default"
+            type={'submit'}
+            className="w-[200px]"
+          >
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

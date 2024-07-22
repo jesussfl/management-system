@@ -18,7 +18,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { RenglonWithAllRelations } from '@/types/types'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import {
   Popover,
   PopoverContent,
@@ -120,7 +120,7 @@ export default function ReturnsForm({
   const toogleAlert = () => {
     const fecha = form.watch(`fecha_devolucion`)
 
-    if (fecha < new Date()) {
+    if (fecha < startOfDay(new Date())) {
       form.resetField('fecha_devolucion')
     }
   }
@@ -664,7 +664,7 @@ export default function ReturnsForm({
                         variant={'secondary'}
                         onClick={(e) => {
                           e.preventDefault()
-                          field.onChange(null)
+                          form.resetField('fecha_devolucion')
                         }}
                       >
                         <TrashIcon className="h-5 w-5" />
@@ -675,12 +675,12 @@ export default function ReturnsForm({
                 </FormItem>
               )}
             />
-            {form.watch('fecha_devolucion') < new Date() &&
+            {form.watch('fecha_devolucion') < startOfDay(new Date()) &&
             isAuthorized === false ? (
               <ModalForm
                 triggerName=" Parece que estás colocando una fecha anterior a la actual"
                 closeWarning={false}
-                open={form.watch('fecha_devolucion') < new Date()}
+                open={form.watch('fecha_devolucion') < startOfDay(new Date())}
                 customToogleModal={toogleAlert}
                 className="w-[550px]"
               >

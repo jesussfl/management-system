@@ -51,7 +51,7 @@ import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
 import { Combobox } from '@/modules/common/components/combobox'
-import { subDays } from 'date-fns'
+import { startOfDay, subDays } from 'date-fns'
 import { Input } from '@/modules/common/components/input/input'
 import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
 type SerialType = Omit<
@@ -117,7 +117,7 @@ export default function ReceptionsForm({
   const toogleAlert = () => {
     const fecha = form.watch(`fecha_recepcion`)
 
-    if (fecha < new Date()) {
+    if (fecha < startOfDay(new Date())) {
       form.resetField('fecha_recepcion')
     }
   }
@@ -465,7 +465,7 @@ export default function ReceptionsForm({
                         variant={'secondary'}
                         onClick={(e) => {
                           e.preventDefault()
-                          field.onChange(null)
+                          form.resetField('fecha_recepcion')
                         }}
                       >
                         <TrashIcon className="h-5 w-5" />
@@ -476,7 +476,7 @@ export default function ReceptionsForm({
                 </FormItem>
               )}
             />
-            {form.watch('fecha_recepcion') < new Date() &&
+            {form.watch('fecha_recepcion') < startOfDay(new Date()) &&
             isAuthorized === false ? (
               <ModalForm
                 triggerName=" Parece que estás colocando una fecha anterior a la actual"
@@ -535,7 +535,7 @@ export default function ReceptionsForm({
                 </div>
               </ModalForm>
             ) : null}
-            {form.watch('fecha_recepcion') < new Date() &&
+            {form.watch('fecha_recepcion') < startOfDay(new Date()) &&
             isAuthorized === true ? (
               <FormField
                 control={form.control}

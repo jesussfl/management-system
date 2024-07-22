@@ -18,7 +18,7 @@ import {
 } from '@/modules/common/components/form'
 
 import { RenglonWithAllRelations } from '@/types/types'
-import { format } from 'date-fns'
+import { format, startOfDay } from 'date-fns'
 import {
   Popover,
   PopoverContent,
@@ -138,7 +138,7 @@ export default function DispatchesForm({
   const toogleAlert = () => {
     const fecha = form.watch(`fecha_despacho`)
 
-    if (fecha < new Date()) {
+    if (fecha < startOfDay(new Date())) {
       form.resetField('fecha_despacho')
     }
   }
@@ -683,7 +683,7 @@ export default function DispatchesForm({
                         variant={'secondary'}
                         onClick={(e) => {
                           e.preventDefault()
-                          field.onChange(null)
+                          form.resetField('fecha_despacho')
                         }}
                       >
                         <TrashIcon className="h-5 w-5" />
@@ -694,7 +694,7 @@ export default function DispatchesForm({
                 </FormItem>
               )}
             />
-            {form.watch('fecha_despacho') < new Date() &&
+            {form.watch('fecha_despacho') < startOfDay(new Date()) &&
             isAuthorized === false ? (
               <ModalForm
                 triggerName=" Parece que estás colocando una fecha anterior a la actual"
@@ -753,7 +753,7 @@ export default function DispatchesForm({
                 </div>
               </ModalForm>
             ) : null}
-            {form.watch('fecha_despacho') < new Date() &&
+            {form.watch('fecha_despacho') < startOfDay(new Date()) &&
             isAuthorized === true ? (
               <FormField
                 control={form.control}
