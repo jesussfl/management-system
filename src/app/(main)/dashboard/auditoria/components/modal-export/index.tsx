@@ -247,7 +247,7 @@ export default function ExportAuditReport({ users }: Props) {
                     <SelectItem value="CREAR">Crear</SelectItem>
                     <SelectItem value="ACTUALIZAR">Actualizar</SelectItem>
                     <SelectItem value="ELIMINAR">Eliminar</SelectItem>
-                    <SelectItem value="DESHABILITAR">Deshabilitar</SelectItem>
+                    {/* <SelectItem value="DESHABILITAR">Deshabilitar</SelectItem> */}
                     <SelectItem value="INICIAR_SESION">
                       Iniciar Sesión
                     </SelectItem>

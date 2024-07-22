@@ -59,7 +59,7 @@ export function CredentialsSignupForm() {
   const [isPending, startTransition] = useTransition()
   const [roles, setRoles] = useState<ComboboxData[]>([])
   useEffect(() => {
-    getAllRoles().then((rol) => {
+    getAllRoles(true).then((rol) => {
       const formattedRoles = rol.map((rol) => ({
         value: rol.id,
         label: rol.rol,

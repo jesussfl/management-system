@@ -28,16 +28,11 @@ import {
 } from '@/modules/common/components/command/command'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  createRol,
-  getAllRoles,
-  updateRol,
-} from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
+import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 
 import { ComboboxData } from '@/types/types'
 import { useRouter } from 'next/navigation'
-import { Prisma, Usuario } from '@prisma/client'
-import { Combobox } from '@/modules/common/components/combobox'
+import { Usuario } from '@prisma/client'
 import { updateUser } from '../../lib/actions/users'
 
 // type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
@@ -60,7 +55,7 @@ export default function UsersForm({ defaultValues }: Props) {
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
 
   React.useEffect(() => {
-    getAllRoles().then((rol) => {
+    getAllRoles(true).then((rol) => {
       const formattedRoles = rol.map((rol) => ({
         value: rol.id,
         label: rol.rol,

@@ -26,6 +26,8 @@ import { validateUserPermissionsArray } from '@/utils/helpers/validate-user-perm
 import getSectionInfo from '@/utils/helpers/get-path-info'
 
 interface TableActionProps {
+  disableEdit?: boolean
+  disableDelete?: boolean
   sectionName: SECTION_NAMES
   editConfig: {
     href: string
@@ -53,6 +55,8 @@ function ProtectedTableActions({
   editConfig,
   deleteConfig,
   children,
+  disableEdit,
+  disableDelete,
 }: TableActionProps) {
   const { data: session } = useSession()
   const permissions = session?.user.rol.permisos
@@ -89,7 +93,7 @@ function ProtectedTableActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {editAuthorization.success && (
+          {editAuthorization.success && !disableEdit && (
             <Link href={editConfig.href}>
               <DropdownMenuItem>
                 {editConfig.actionName || 'Editar'}
@@ -99,7 +103,7 @@ function ProtectedTableActions({
 
           {children}
 
-          {deleteAuthorization.success && (
+          {deleteAuthorization.success && !disableDelete && (
             <AlertDialogTrigger asChild>
               {typeof deleteConfig.isDeleted === 'boolean' ? (
                 <DropdownMenuItem>

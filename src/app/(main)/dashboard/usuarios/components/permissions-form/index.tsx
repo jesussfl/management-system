@@ -169,7 +169,7 @@ export default function PermissionsForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
+        className="flex-1 overflow-y-auto p-6 pb-20 gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
@@ -290,45 +290,6 @@ export default function PermissionsForm({ defaultValues }: Props) {
                           {section}
                         </SelectItem>
                       ))}
-                      {/* {getAllSectionIdentifiers().map((section) => {
-                        if (section.subSections) {
-                          const subsections = section.subSections.map(
-                            (subSection) => (
-                              <SelectItem
-                                key={subSection.subSection}
-                                value={subSection.subSection}
-                              >
-                                {`${subSection.subSection}`}
-                              </SelectItem>
-                            )
-                          )
-
-                          const mainSection = (
-                            <SelectItem
-                              key={section.section}
-                              value={section.section}
-                            >
-                              {section.section}
-                            </SelectItem>
-                          )
-
-                          return (
-                            <React.Fragment key={section.section}>
-                              {mainSection}
-                              {subsections}
-                            </React.Fragment>
-                          )
-                        }
-
-                        return (
-                          <SelectItem
-                            key={section.section}
-                            value={section.section}
-                          >
-                            {section.section}
-                          </SelectItem>
-                        )
-                      })} */}
                     </ScrollArea>
                   </SelectContent>
                 </Select>
@@ -342,7 +303,7 @@ export default function PermissionsForm({ defaultValues }: Props) {
           />
         </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
           <Button variant="default" type="submit">
             Guardar
           </Button>

@@ -52,67 +52,76 @@ export default async function Page() {
             Administra los usuarios registrados y sus roles
           </PageHeaderDescription>
         </HeaderLeftSide>
-        <HeaderRightSide>
-          <Link
-            href="/dashboard/usuarios/agregar-usuario"
-            className={buttonVariants({ variant: 'secondary' })}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Agregar Usuario
-          </Link>
-        </HeaderRightSide>
+        <HeaderRightSide></HeaderRightSide>
       </PageHeader>
       <Tabs defaultValue="users">
         <TabsList className="mx-5">
           <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="roles">Roles y Permisos</TabsTrigger>
+          <TabsTrigger value="roles">Roles</TabsTrigger>
+          <TabsTrigger value="permisos">Permisos</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <PageContent>
-            <DataTable
-              columns={columns}
-              data={usersData}
-              isStatusEnabled={false}
-            />
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle className="text-xl">Lista de usuarios</CardTitle>
+                <Link
+                  href="/dashboard/usuarios/agregar-usuario"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Usuario
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  columns={columns}
+                  data={usersData}
+                  isStatusEnabled={false}
+                />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
         <TabsContent value="roles">
           <PageContent>
-            <div className="flex w-full gap-8">
-              <Card>
-                <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">Lista de Permisos</CardTitle>
-                  <Link
-                    href="/dashboard/usuarios/permiso"
-                    className={buttonVariants({ variant: 'secondary' })}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Agregar Permiso
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    columns={permissionsColumns}
-                    data={permissionsData}
-                  />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row justify-between">
-                  <CardTitle className="text-xl">Lista de Roles</CardTitle>
-                  <Link
-                    href="/dashboard/usuarios/rol"
-                    className={buttonVariants({ variant: 'secondary' })}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Agregar Rol
-                  </Link>
-                </CardHeader>
-                <CardContent>
-                  <DataTable columns={rolesColumns} data={rolesData} />
-                </CardContent>
-              </Card>
-            </div>
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle className="text-xl">Lista de Roles</CardTitle>
+                <Link
+                  href="/dashboard/usuarios/rol"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Rol
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <DataTable columns={rolesColumns} data={rolesData} />
+              </CardContent>
+            </Card>
+          </PageContent>
+        </TabsContent>
+        <TabsContent value="permisos">
+          <PageContent>
+            <Card>
+              <CardHeader className="flex flex-row justify-between">
+                <CardTitle className="text-xl">Lista de Permisos</CardTitle>
+                <Link
+                  href="/dashboard/usuarios/permiso"
+                  className={buttonVariants({ variant: 'secondary' })}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Agregar Permiso
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <DataTable
+                  columns={permissionsColumns}
+                  data={permissionsData}
+                />
+              </CardContent>
+            </Card>
           </PageContent>
         </TabsContent>
       </Tabs>

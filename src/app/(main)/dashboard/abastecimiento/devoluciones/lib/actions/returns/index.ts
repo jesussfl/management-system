@@ -339,12 +339,15 @@ export const deleteReturn = async (id: number) => {
       serial: {
         in: exist.renglones
           .flatMap((renglon) => renglon.seriales)
-          .filter((serial) => serial.estado === 'Devuelto')
+          .filter(
+            (serial) =>
+              serial.estado === 'Devuelto' || serial.estado === 'Despachado'
+          )
           .map((serial) => serial.serial),
       },
     },
     data: {
-      estado: 'Disponible',
+      estado: 'Despachado',
     },
   })
 
@@ -408,7 +411,10 @@ export const recoverReturn = async (id: number) => {
       serial: {
         in: exist.renglones
           .flatMap((renglon) => renglon.seriales)
-          .filter((serial) => serial.estado === 'Disponible')
+          .filter(
+            (serial) =>
+              serial.estado === 'Despachado' || serial.estado === 'Devuelto'
+          )
           .map((serial) => serial.serial),
       },
     },

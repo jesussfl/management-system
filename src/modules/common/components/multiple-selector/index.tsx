@@ -16,6 +16,7 @@ import { cn } from '@/utils/utils'
 export interface Option {
   value: string
   label: string
+  description?: string
   disable?: boolean
   /** fixed option that can't be removed. */
   fixed?: boolean
@@ -435,7 +436,7 @@ const MultipleSelector = React.forwardRef<
         </div>
         <div className="relative mt-2">
           {open && (
-            <CommandList className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+            <CommandList className="absolute max-h-56 top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
               {isLoading ? (
                 <>{loadingIndicator}</>
               ) : (
@@ -478,7 +479,11 @@ const MultipleSelector = React.forwardRef<
                                   'cursor-default text-muted-foreground'
                               )}
                             >
-                              {option.label}
+                              {`${option.label} ${
+                                option.description
+                                  ? `- (${option.description})`
+                                  : ''
+                              }`}
                             </CommandItem>
                           )
                         })}

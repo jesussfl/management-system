@@ -142,12 +142,15 @@ export const recoverRol = async (id: number) => {
     error: false,
   }
 }
-export const getAllRoles = async () => {
+export const getAllRoles = async (isOnlyActive?: boolean) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const roles = await prisma.rol.findMany({
+    where: {
+      fecha_eliminacion: isOnlyActive ? null : undefined,
+    },
     include: {
       permisos: true,
     },

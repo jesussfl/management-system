@@ -22,11 +22,9 @@ import {
 
 import { Input } from '@/modules/common/components/input/input'
 import { getAllPermissions } from '../../lib/actions/permissions'
-import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import MultipleSelector, {
   Option,
 } from '@/modules/common/components/multiple-selector'
-import { RolesWithPermissionsArray } from '@/types/types'
 import { useRouter } from 'next/navigation'
 import { Rol } from '@prisma/client'
 
@@ -50,7 +48,8 @@ export default function RolesForm({ defaultValues }: Props) {
     getAllPermissions().then((permission) => {
       const formattedPermissions = permission.map((permiso) => ({
         value: permiso.key,
-        label: permiso.permiso,
+        label: `${permiso.permiso}`,
+        description: permiso.descripcion,
       }))
 
       setPermissions(formattedPermissions)
@@ -126,7 +125,7 @@ export default function RolesForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto px-8 gap-8 mb-36"
+        className="flex-1 overflow-y-auto px-24 gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
@@ -158,39 +157,6 @@ export default function RolesForm({ defaultValues }: Props) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="descripcion"
-          rules={{
-            required: 'Este campo es necesario',
-            minLength: {
-              value: 10,
-              message: 'Debe tener al menos 10 carácteres',
-            },
-            maxLength: {
-              value: 200,
-              message: 'Debe tener un máximo de 200 carácteres',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Descripción</FormLabel>
-              <FormControl>
-                <textarea
-                  id="description"
-                  rows={3}
-                  className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Describe el rol, incluyendo sus permisos, limitaciones y quién
-                puede ser asignado
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <div className="flex flex-col gap-4">
           <FormField
             control={form.control}
@@ -216,8 +182,41 @@ export default function RolesForm({ defaultValues }: Props) {
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="descripcion"
+          rules={{
+            required: 'Este campo es necesario',
+            minLength: {
+              value: 10,
+              message: 'Debe tener al menos 10 carácteres',
+            },
+            maxLength: {
+              value: 200,
+              message: 'Debe tener un máximo de 200 carácteres',
+            },
+          }}
+          render={({ field }) => (
+            <FormItem className="mb-36">
+              <FormLabel>Descripción</FormLabel>
+              <FormControl>
+                <textarea
+                  id="description"
+                  rows={3}
+                  className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Describe el rol, incluyendo sus permisos, limitaciones y quién
+                puede ser asignado
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
           <Button variant="default" type="submit">
             Guardar
           </Button>

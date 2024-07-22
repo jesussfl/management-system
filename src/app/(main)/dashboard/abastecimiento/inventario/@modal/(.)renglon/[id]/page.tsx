@@ -22,7 +22,7 @@ export default async function Page({
       >
         <DialogHeader className="p-5 mb-8 border-b border-border">
           <DialogTitle className="text-sm font-semibold text-foreground">
-            Editar renglón
+            Editar Renglón
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />

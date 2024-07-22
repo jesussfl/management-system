@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import RolesForm from '../../components/roles-form'
-import { getAllPermissions } from '../../lib/actions/permissions'
 
 export default async function Page() {
   return (
