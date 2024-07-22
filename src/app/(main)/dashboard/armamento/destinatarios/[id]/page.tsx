@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import DispatchesForm from '@/app/(main)/dashboard/armamento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -10,27 +11,22 @@ import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/act
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getReturnById } from '../lib/actions/returns'
-import ReturnsForm from '../components/form/returns-form'
-import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
+import { getReceiverById } from '../lib/actions/receivers'
+import ReceiversForm from '../agregar/form'
 
 export const metadata: Metadata = {
-  title: 'Devoluciones',
-  description: 'Desde aquí puedes administrar las devoluciones del inventario',
+  title: 'Destinatarios',
+  description: 'Los Destinatarios son las personas que reciben los despachos',
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems(true)
-  const devolution = await getReturnById(Number(params.id))
-  const receiver = await getAllReceiversToCombobox('Armamento')
-  const professionals = await getAllProfessionalsToCombobox(true)
+  const receiver = await getReceiverById(Number(params.id))
   return (
     <>
       <PageHeader className="mb-0">
         <HeaderLeftSide className="flex-row items-center gap-4">
           <Link
-            href="/dashboard/armamento/devoluciones"
+            href="/dashboard/armamento/destinatarios"
             className={buttonVariants({ variant: 'outline' })}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -39,22 +35,16 @@ export default async function Page({ params }: { params: { id: string } }) {
           <div>
             <PageHeaderTitle>
               <PackagePlus size={24} />
-              Editar Devolución
+              Editar destinatario
             </PageHeaderTitle>
             <PageHeaderDescription>
-              Las devoluciones serán agregadas al inventario
+              Los Destinatarios son las personas que reciben los despachos
             </PageHeaderDescription>
           </div>
         </HeaderLeftSide>
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
-        <ReturnsForm
-          renglonesData={itemsData}
-          // @ts-ignore
-          defaultValues={devolution}
-          receivers={receiver}
-          professionals={professionals}
-        />
+        <ReceiversForm defaultValues={receiver} />
       </PageContent>
     </>
   )

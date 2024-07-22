@@ -43,15 +43,15 @@ export const createReceiver = async (
   await prisma.destinatario.create({
     data: {
       ...data,
-      servicio: 'Abastecimiento',
+      servicio: 'Armamento',
     },
   })
 
   await registerAuditAction(
     'CREAR',
-    `Se creó un nuevo destinatario en abastecimiento con la cédula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
+    `Se creó un nuevo destinatario en armamento con la cédula: ${data.cedula} y nombre: ${data.nombres} ${data.apellidos}`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/armamento/destinatarios')
 
   return {
     success: 'El destinatario se ha creado correctamente',
@@ -69,7 +69,7 @@ export const getAllReceivers = async (
   }
   const receivers = await prisma.destinatario.findMany({
     where: {
-      servicio: servicio || 'Abastecimiento',
+      servicio: servicio || 'Armamento',
       fecha_eliminacion: onlyActives ? null : undefined,
     },
     include: {
@@ -83,7 +83,7 @@ export const getAllReceivers = async (
   return receivers
 }
 export const getAllReceiversToCombobox = async (
-  servicio: 'Abastecimiento' | 'Armamento'
+  servicio: 'Armamento' | 'Armamento'
 ): Promise<{ value: string; label: string }[]> => {
   const session = await auth()
   if (!session?.user) {
@@ -160,9 +160,9 @@ export const deleteReceiver = async (id: number) => {
 
   await registerAuditAction(
     'ELIMINAR',
-    `Se eliminó el destinatario en abastecimiento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
+    `Se eliminó el destinatario en armamento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/armamento/destinatarios')
 
   return {
     success: 'El destinatario se ha eliminado correctamente',
@@ -210,9 +210,9 @@ export const recoverReceiver = async (id: number) => {
 
   await registerAuditAction(
     'RECUPERAR',
-    `Se recuperó el destinatario en abastecimiento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
+    `Se recuperó el destinatario en armamento el siguiente documento de identidad: ${exists.cedula} y nombre: ${exists.nombres} ${exists.apellidos}`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/armamento/destinatarios')
 
   return {
     success: 'El destinatario se ha recuperado correctamente',
@@ -246,9 +246,9 @@ export const deleteMultipleReceivers = async (ids: number[]) => {
 
   await registerAuditAction(
     'ELIMINAR',
-    `Se han eliminado los destinatarios de abastecimiento con los siguientes ids: ${ids}`
+    `Se han eliminado los destinatarios de armamento con los siguientes ids: ${ids}`
   )
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/armamento/destinatarios')
 
   return {
     success: 'Se han eliminado los destinatarios correctamente',
@@ -297,10 +297,10 @@ export const updateReceiver = async (
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el destinatario de abastecimiento con la cedula: ${updatedReceiver.cedula} y nombre: ${updatedReceiver.nombres} ${updatedReceiver.apellidos}`
+    `Se actualizó el destinatario de armamento con la cedula: ${updatedReceiver.cedula} y nombre: ${updatedReceiver.nombres} ${updatedReceiver.apellidos}`
   )
 
-  revalidatePath('/dashboard/abastecimiento/destinatarios')
+  revalidatePath('/dashboard/armamento/destinatarios')
 
   return {
     success: 'Receiver updated successfully',

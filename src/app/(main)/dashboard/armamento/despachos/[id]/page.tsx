@@ -12,8 +12,8 @@ import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getDispatchById } from '@/app/(main)/dashboard/armamento/despachos/lib/actions/dispatches'
-import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
 
 export const metadata: Metadata = {
   title: 'Despachos',

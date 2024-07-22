@@ -11,8 +11,8 @@ import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/act
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import ReturnsForm from '../components/form/returns-form'
-import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
