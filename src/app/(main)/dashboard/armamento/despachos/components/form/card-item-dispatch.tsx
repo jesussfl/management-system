@@ -160,14 +160,19 @@ export const CardItemDispatch = ({
                 </FormLabel>
                 <div className="flex-1 w-full">
                   <FormControl>
-                    <Input
-                      type="number"
-                      {...field}
-                      onChange={(event) =>
-                        field.onChange(parseInt(event.target.value))
-                      }
-                      disabled={isEditEnabled}
-                    />
+                    <div className="flex flex-row gap-2 items-center">
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(event) =>
+                          field.onChange(parseInt(event.target.value))
+                        }
+                        disabled={isEditEnabled}
+                      />
+                      <p className="text-foreground text-sm">
+                        {`${item.unidad_empaque.nombre}(s)`}
+                      </p>{' '}
+                    </div>
                   </FormControl>
                   <FormDescription className="">
                     {isEditEnabled

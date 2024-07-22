@@ -87,13 +87,18 @@ export const CardItemOrder = ({
 
               <div className="flex-1 w-full">
                 <FormControl>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(event) => {
-                      field.onChange(parseInt(event.target.value))
-                    }}
-                  />
+                  <div className="flex flex-row gap-2 items-center">
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(event) => {
+                        field.onChange(parseInt(event.target.value))
+                      }}
+                    />
+                    <p className="text-foreground text-sm">
+                      {`${item.unidad_empaque.nombre}(s)`}
+                    </p>{' '}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </div>
