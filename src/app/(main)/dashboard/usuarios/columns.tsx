@@ -12,6 +12,7 @@ import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { updateUserState } from './lib/actions/users'
+import { formatLevel } from '../auditoria/components/modal-export'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
@@ -27,6 +28,42 @@ export const columns: ColumnDef<Usuario>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Nombre
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: 'nivel',
+    accessorFn: (row) => {
+      return formatLevel(row.nivel)
+    },
+
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nivel de usuario
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
+    accessorKey: 'rol_nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Rol
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -118,22 +155,7 @@ export const columns: ColumnDef<Usuario>[] = [
       )
     },
   },
-  {
-    accessorKey: 'rol_nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          size={'sm'}
-          className="text-xs"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Rol
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-  },
+
   {
     accessorKey: 'createdAt',
     filterFn: 'dateBetweenFilterFn',
@@ -167,12 +189,13 @@ export const columns: ColumnDef<Usuario>[] = [
           }}
           // @ts-expect-error
           deleteConfig={{
+            isDeleted: false,
             actionName: `${estado === 'Activo' ? 'Bloquear' : 'Desbloquear'}`,
             alertTitle: `¿Estás seguro de ${
               estado === 'Activo' ? 'bloquear' : 'desbloquear'
             } a este usuario?`,
             alertDescription: `Estas a punto de ${
-              estado === 'Bloqueado' ? 'bloquear' : 'desbloquear'
+              estado === 'Bloqueado' ? 'desbloquear' : 'bloquear'
             } este usuario.`,
             onConfirm: () => {
               return updateUserState(

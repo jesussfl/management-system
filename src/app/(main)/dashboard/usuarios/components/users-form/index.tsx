@@ -28,12 +28,23 @@ import {
 } from '@/modules/common/components/command/command'
 import { CheckIcon, Loader2 } from 'lucide-react'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
+import {
+  getAllRoles,
+  getRolesByLevel,
+} from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 
 import { ComboboxData } from '@/types/types'
 import { useRouter } from 'next/navigation'
-import { Usuario } from '@prisma/client'
+import { Niveles_Usuarios, Usuario } from '@prisma/client'
 import { updateUser } from '../../lib/actions/users'
+import { Combobox } from '@/modules/common/components/combobox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
 
 // type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
 type FormValues = Omit<Usuario, 'id'> & { rol: number }
@@ -48,24 +59,29 @@ export default function UsersForm({ defaultValues }: Props) {
   const router = useRouter()
   const isEditEnabled = !!defaultValues
   const [roles, setRoles] = React.useState<ComboboxData[]>([])
-
   const form = useForm<FormValues>({
     defaultValues,
   })
+  const level = form.watch('nivel')
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
 
   React.useEffect(() => {
-    getAllRoles(true).then((rol) => {
+    if (!level) {
+      return
+    }
+    getRolesByLevel(level).then((rol) => {
       const formattedRoles = rol.map((rol) => ({
         value: rol.id,
         label: rol.rol,
       }))
 
+      form.resetField('rol')
       setRoles(formattedRoles)
     })
-  }, [form])
+  }, [form, level])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    console.log('values', values)
     if (!isEditEnabled) {
       // createRol(formattedValues).then((data) => {
       //   if (data?.error) {
@@ -117,81 +133,67 @@ export default function UsersForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto px-8 gap-8 mb-36"
+        className="flex-1 overflow-y-auto px-24 gap-8 mb-36"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField
           control={form.control}
-          name="rol"
+          name="nivel"
+          rules={{
+            required: 'Tipo de documento es requerido',
+          }}
           render={({ field }) => (
-            <FormItem className="flex flex-1 justify-between gap-4 items-center">
-              <FormLabel>Rol:</FormLabel>
-              <div className="w-[70%]">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        className={cn(
-                          'w-full justify-between',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value
-                          ? roles.find((roles) => roles.value === field.value)
-                              ?.label
-                          : 'Seleccionar rol'}
-                        <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="PopoverContent">
-                    <Command>
-                      <CommandInput
-                        placeholder="Buscar rol..."
-                        className="h-9"
-                      />
-                      <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                      <CommandGroup>
-                        {!roles ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          roles.map((component) => (
-                            <CommandItem
-                              value={component.label}
-                              key={component.value}
-                              onSelect={() => {
-                                form.setValue('rol', component.value, {
-                                  shouldDirty: true,
-                                })
-                              }}
-                            >
-                              {component.label}
-                              <CheckIcon
-                                className={cn(
-                                  'ml-auto h-4 w-4',
-                                  component.value === field.value
-                                    ? 'opacity-100'
-                                    : 'opacity-0'
-                                )}
-                              />
-                            </CommandItem>
-                          ))
-                        )}
-                      </CommandGroup>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+            <FormItem>
+              <FormLabel>Seleccione el nivel de usuario para el rol:</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value || ''}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Jefe_de_departamento">
+                    Jefe Administrador
+                  </SelectItem>
+                  <SelectItem value="Encargado">Encargado</SelectItem>
+                  <SelectItem value="Personal_civil">
+                    Personal Civil Básico
+                  </SelectItem>
+                  <SelectItem value="Personal_militar">
+                    Personal Militar Básico
+                  </SelectItem>
+                </SelectContent>
+              </Select>
 
-                <FormMessage />
-              </div>
+              <FormMessage />
             </FormItem>
           )}
         />
+        {form.watch('nivel') && (
+          <FormField
+            control={form.control}
+            name="rol"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel>Rol:</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={roles}
+                  form={form}
+                  field={field}
+                />
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
-          <Button variant="default" type="submit">
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          <Button className="w-[200px]" variant="default" type="submit">
             Guardar
           </Button>
         </DialogFooter>

@@ -129,7 +129,7 @@ export function Combobox({
             disabled={disabled}
             aria-expanded={open}
             className={cn(
-              'justify-between',
+              'justify-between truncate',
               !field.value && 'text-muted-foreground'
             )}
           >

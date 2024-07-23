@@ -147,7 +147,8 @@ export default function ChangeUserPasswordForm({ id }: Props) {
                 />
               </FormControl>
               <FormDescription>
-                Pide a tu administrador una contraseña para poder registrarte.
+                Ingrese la contraseña de administrador para confirmar la
+                operación.
               </FormDescription>
               <FormMessage />
             </FormItem>

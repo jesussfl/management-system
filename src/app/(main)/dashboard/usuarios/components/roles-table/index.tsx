@@ -3,24 +3,18 @@
 import * as React from 'react'
 import { CaretSortIcon } from '@radix-ui/react-icons'
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
-import { Button } from '@/modules/common/components/button'
+import { Button, buttonVariants } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 
-import { Prisma } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { Niveles_Usuarios, Prisma } from '@prisma/client'
 import Link from 'next/link'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteRol, recoverRol } from '../../lib/actions/roles'
+import { cn } from '@/utils/utils'
+import { formatLevel } from '../../../auditoria/components/modal-export'
 type Rol = Prisma.RolGetPayload<{
   include: {
     permisos: true
@@ -66,19 +60,62 @@ export const columns: ColumnDef<Rol>[] = [
     cell: ({ row }) => <div>{row.getValue('rol')}</div>,
   },
   {
+    id: 'nivel',
+    accessorFn: (row) => formatLevel(row.nivel),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nivel de usuario
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
     accessorKey: 'descripcion',
-    header: () => <div className="text-left">Descripcion</div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Descripción
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
     cell: ({ row }) => <div>{row.getValue('descripcion')}</div>,
   },
   {
     accessorKey: 'permisos',
-    header: () => <div className="text-left">Permisos</div>,
-    cell: ({ row }) => {
-      const { permisos } = row.original
+    header: ({ column }) => {
       return (
-        <div className="">
-          {permisos.map((permiso) => permiso.permiso_key).join(', ')}
-        </div>
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Permisos
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/usuarios/rol-permisos/${row.original.id}`}
+        >
+          Ver permisos
+        </Link>
       )
     },
   },

@@ -37,11 +37,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { Tipos_Cedulas } from '@prisma/client'
+import { Niveles_Usuarios, Tipos_Cedulas } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { ComboboxData } from '@/types/types'
-import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
+import {
+  getAllRoles,
+  getRolesByLevel,
+} from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 import { Combobox } from '@/modules/common/components/combobox'
 import { NumericFormat } from 'react-number-format'
 type FormValues = {
@@ -51,6 +54,7 @@ type FormValues = {
   tipo_cedula: Tipos_Cedulas
   cedula: string
   rol: number
+  nivel: Niveles_Usuarios
   facial_pin: string
 }
 
@@ -64,8 +68,9 @@ export function FaceSignupForm() {
 
   const [isPending, startTransition] = useTransition()
   const [roles, setRoles] = useState<ComboboxData[]>([])
+  const selectedLevel = form.watch('nivel')
   useEffect(() => {
-    getAllRoles(true).then((rol) => {
+    getRolesByLevel(selectedLevel).then((rol) => {
       const formattedRoles = rol.map((rol) => ({
         value: rol.id,
         label: rol.rol,
@@ -73,7 +78,7 @@ export function FaceSignupForm() {
 
       setRoles(formattedRoles)
     })
-  }, [form])
+  }, [form, selectedLevel])
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const exists = await checkIfUserExists(values.cedula)
 
@@ -319,21 +324,59 @@ export function FaceSignupForm() {
         </div>
         <FormField
           control={form.control}
-          name="rol"
+          name="nivel"
+          rules={{
+            required: 'Tipo de documento es requerido',
+          }}
           render={({ field }) => (
-            <FormItem className="flex flex-col w-full">
-              <FormLabel>Rol:</FormLabel>
-              <Combobox
-                name={field.name}
-                data={roles}
-                form={form}
-                field={field}
-              />
+            <FormItem>
+              <FormLabel>Seleccione el nivel de usuario:</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value || ''}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Jefe_de_departamento">
+                    Jefe Administrador
+                  </SelectItem>
+                  <SelectItem value="Encargado">Encargado</SelectItem>
+                  <SelectItem value="Personal_civil">
+                    Personal Civil Básico
+                  </SelectItem>
+                  <SelectItem value="Personal_militar">
+                    Personal Militar Básico
+                  </SelectItem>
+                </SelectContent>
+              </Select>
 
               <FormMessage />
             </FormItem>
           )}
         />
+        {form.watch('nivel') && (
+          <FormField
+            control={form.control}
+            name="rol"
+            render={({ field }) => (
+              <FormItem className="flex flex-col w-full">
+                <FormLabel>Rol:</FormLabel>
+                <Combobox
+                  name={field.name}
+                  data={roles}
+                  form={form}
+                  field={field}
+                />
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="facial_pin"

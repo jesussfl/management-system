@@ -11,7 +11,7 @@ export default function Page() {
   return (
     <CardWrapper
       headerTitle="Inicia sesión"
-      headerLabel="Ingresa tus datos correspondientes para acceder al sistema. Solo tienes 6 intentos antes de que sea bloqueado."
+      headerLabel="Ingresa tus datos correspondientes para acceder al sistema. Solo tienes 3 intentos antes de que sea bloqueado."
       // backButtonLabel="No tengo una cuenta"
       backButtonHref="/auth/signup"
     >

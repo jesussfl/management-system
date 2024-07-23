@@ -1,7 +1,7 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { buttonVariants } from '@/modules/common/components/button'
-import { Plus, User2 } from 'lucide-react'
+import { Plus, ShieldEllipsis, User2 } from 'lucide-react'
 import { Metadata } from 'next'
 import {
   HeaderLeftSide,
@@ -26,10 +26,10 @@ import {
 
 import { getAllUsers } from '@/app/(main)/dashboard/usuarios/lib/actions/users'
 import { getAllRoles } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
-import { getAllPermissions } from '@/app/(main)/dashboard/usuarios/lib/actions/permissions'
 import Link from 'next/link'
-import { columns as permissionsColumns } from './components/permissions-table'
 import { columns as rolesColumns } from './components/roles-table'
+import ModalForm from '@/modules/common/components/modal-form'
+import ViewPermissionsForm from './components/roles-form/view-permissions-form'
 export const metadata: Metadata = {
   title: 'Usuarios',
   description: 'Administra los usuarios registrados y sus roles',
@@ -38,7 +38,6 @@ export const metadata: Metadata = {
 export default async function Page() {
   const usersData = await getAllUsers()
   const rolesData = await getAllRoles()
-  const permissionsData = await getAllPermissions()
 
   return (
     <>
@@ -52,13 +51,11 @@ export default async function Page() {
             Administra los usuarios registrados y sus roles
           </PageHeaderDescription>
         </HeaderLeftSide>
-        <HeaderRightSide></HeaderRightSide>
       </PageHeader>
       <Tabs defaultValue="users">
         <TabsList className="mx-5">
           <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="roles">Roles</TabsTrigger>
-          <TabsTrigger value="permisos">Permisos</TabsTrigger>
+          <TabsTrigger value="roles">Permisos y Roles</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <PageContent>
@@ -67,7 +64,7 @@ export default async function Page() {
                 <CardTitle className="text-xl">Lista de usuarios</CardTitle>
                 <Link
                   href="/dashboard/usuarios/agregar-usuario"
-                  className={buttonVariants({ variant: 'secondary' })}
+                  className={buttonVariants({ variant: 'default' })}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Agregar Usuario
@@ -88,38 +85,35 @@ export default async function Page() {
             <Card>
               <CardHeader className="flex flex-row justify-between">
                 <CardTitle className="text-xl">Lista de Roles</CardTitle>
-                <Link
-                  href="/dashboard/usuarios/rol"
-                  className={buttonVariants({ variant: 'secondary' })}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Agregar Rol
-                </Link>
+                <div className="flex gap-2">
+                  <ModalForm
+                    triggerIcon={<ShieldEllipsis className="h-4 w-4" />}
+                    triggerName="Permisos del sistema"
+                    closeWarning={false}
+                    triggerVariant="outline"
+                    triggerSize="sm"
+                  >
+                    <div>
+                      <p className="text-md font-bold m-8">
+                        Permisos del sistema
+                      </p>
+                      <ViewPermissionsForm />
+                    </div>
+                  </ModalForm>
+                  <Link
+                    href="/dashboard/usuarios/rol"
+                    className={buttonVariants({
+                      variant: 'default',
+                      size: 'sm',
+                    })}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Agregar Nuevo Rol
+                  </Link>
+                </div>
               </CardHeader>
               <CardContent>
                 <DataTable columns={rolesColumns} data={rolesData} />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
-        <TabsContent value="permisos">
-          <PageContent>
-            <Card>
-              <CardHeader className="flex flex-row justify-between">
-                <CardTitle className="text-xl">Lista de Permisos</CardTitle>
-                <Link
-                  href="/dashboard/usuarios/permiso"
-                  className={buttonVariants({ variant: 'secondary' })}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Agregar Permiso
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <DataTable
-                  columns={permissionsColumns}
-                  data={permissionsData}
-                />
               </CardContent>
             </Card>
           </PageContent>

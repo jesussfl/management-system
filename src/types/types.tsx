@@ -105,7 +105,7 @@ export type CreateGradosWithComponentes = Omit<
   'id'
 >
 export type CreateRolesWithPermissions = Omit<
-  Rol & { permisos: { permiso_key: string }[] },
+  Rol & { permisos: string[] },
   'id'
 >
 export type GradosWithComponentesAndIncludeComponente =

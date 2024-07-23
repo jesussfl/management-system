@@ -85,8 +85,12 @@ export const generateAuditReportData = async (
     fecha_final: format(dateRange.to || new Date(), 'dd-MM-yyyy'),
     auditItems: auditItems.map((auditItem) => ({
       ...auditItem,
+      usuario: {
+        ...auditItem?.usuario,
+        nombre: `${auditItem.usuario.tipo_cedula}-${auditItem.usuario.cedula} ${auditItem.usuario.nombre} ${auditItem.usuario.nivel}/${auditItem.usuario.rol_nombre}`,
+      },
       fecha_realizado: format(
-        auditItem?.fecha_realizado || new Date(),
+        auditItem?.fecha_realizado,
         'dd-MM-yyyy HH:mm:ss'
       ),
     })),

@@ -42,7 +42,11 @@ export async function login(
   }
 
   if (existingUser.estado === 'Bloqueado') {
-    return { error: 'Este usuario está bloqueado', field: null }
+    return {
+      error:
+        'Este usuario está bloqueado, por favor contacte al administrador o algún superior',
+      field: null,
+    }
   }
 
   const passwordMatch = await bcrypt.compare(password, existingUser.contrasena)
@@ -274,14 +278,14 @@ async function checkFailedAttempts(
       },
     })
     return {
-      error: `${errorMessage}, intenta de nuevo por favor`,
+      error: `${errorMessage}, intenta de nuevo por favor, quedan 2 intentos`,
       success: false,
 
       field: 'password',
     }
   }
 
-  if (attempts < 5) {
+  if (attempts < 2) {
     await prisma.usuario.update({
       where: {
         email: userEmail,
@@ -293,14 +297,14 @@ async function checkFailedAttempts(
 
     return {
       error: `${errorMessage}, intenta de nuevo, quedan ${
-        5 - attempts
+        2 - attempts
       } intentos`,
       success: false,
 
       field: 'password',
     }
   }
-  if (attempts >= 5) {
+  if (attempts >= 2) {
     await prisma.usuario.update({
       where: {
         email: userEmail,
@@ -311,7 +315,8 @@ async function checkFailedAttempts(
       },
     })
     return {
-      error: 'Este usuario está bloqueado',
+      error:
+        'Este usuario está bloqueado, por favor contacte al administrador o algún superior.',
       success: false,
       field: null,
     }

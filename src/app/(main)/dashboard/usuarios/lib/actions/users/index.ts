@@ -18,6 +18,9 @@ export const getAllUsers = async () => {
     orderBy: {
       updatedAt: 'desc',
     },
+    include: {
+      rol: true,
+    },
   })
   return users
 }
@@ -63,6 +66,7 @@ export const updateUser = async (
       id,
     },
     data: {
+      nivel: data.nivel,
       rol: {
         connect: {
           id: data.rol,
@@ -263,6 +267,7 @@ export const updateUserState = async (id: string, estado: Usuarios_Estados) => {
     },
     data: {
       estado,
+      intentos_fallidos: estado === 'Activo' ? 0 : 3,
     },
   })
 
