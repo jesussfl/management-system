@@ -156,12 +156,14 @@ export default function UsersForm({ defaultValues }: Props) {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="Jefe_de_departamento">
-                    Jefe de departamento
+                    Jefe Administrador
                   </SelectItem>
                   <SelectItem value="Encargado">Encargado</SelectItem>
-                  <SelectItem value="Personal_civil">Personal Civil</SelectItem>
+                  <SelectItem value="Personal_civil">
+                    Personal Civil Básico
+                  </SelectItem>
                   <SelectItem value="Personal_militar">
-                    Personal Militar
+                    Personal Militar Básico
                   </SelectItem>
                 </SelectContent>
               </Select>

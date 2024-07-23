@@ -338,7 +338,7 @@ export const recoverItem = async (id: number) => {
   })
 
   await registerAuditAction(
-    'ELIMINAR',
+    'RECUPERAR',
     `Se ha recuperado el renglon de abastecimiento con el id ${id} y el nombre ${exist?.nombre}`
   )
   revalidatePath('/dashboard/abastecimiento/inventario')
@@ -512,7 +512,7 @@ export const showNotification = async () => {
     return true
   }
 
-  if (differenceInMinutes(new Date(), user.ultima_notificacion) > 30) {
+  if (differenceInMinutes(new Date(), user.ultima_notificacion) > 1) {
     await prisma.usuario.update({
       where: {
         id: session.user.id,

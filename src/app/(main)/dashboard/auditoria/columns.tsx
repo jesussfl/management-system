@@ -8,6 +8,7 @@ import { Button } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 import { format } from 'date-fns'
+import { formatLevel } from './components/modal-export'
 type AuditoriaType = Prisma.AuditoriaGetPayload<{
   include: { usuario: true }
 }>
@@ -57,8 +58,8 @@ export const columns: ColumnDef<AuditoriaType>[] = [
   },
   {
     id: 'nivel',
-    accessorFn: (row) =>
-      row?.usuario?.nivel?.replaceAll('_', ' ') || 'Sin nivel',
+    accessorFn: (row) => formatLevel(row.usuario.nivel),
+
     header: ({ column }) => {
       return (
         <Button

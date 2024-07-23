@@ -10,13 +10,7 @@ import { registerAuditAction } from '@/lib/actions/audit'
 import mime from 'mime'
 import { join } from 'path'
 import { stat, mkdir, writeFile } from 'fs/promises' // Agregamos unlink
-import {
-  differenceInHours,
-  differenceInMinutes,
-  isAfter,
-  subHours,
-  subMinutes,
-} from 'date-fns'
+import { differenceInMinutes } from 'date-fns'
 export const createItem = async (
   data: Prisma.RenglonUncheckedCreateInput,
   image: FormData | null
@@ -301,7 +295,7 @@ export const deleteItem = async (id: number) => {
   })
 
   await registerAuditAction(
-    'ELIMINAR',
+    'RECUPERAR',
     `Se ha eliminado el renglon de armamento con el id ${id} y el nombre ${exist?.nombre}`
   )
   revalidatePath('/dashboard/armamento/inventario')

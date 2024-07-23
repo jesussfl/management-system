@@ -330,7 +330,7 @@ export function FaceSignupForm() {
           }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Seleccione el nivel de usuario para el rol:</FormLabel>
+              <FormLabel>Seleccione el nivel de usuario:</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value || ''}
@@ -342,12 +342,14 @@ export function FaceSignupForm() {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="Jefe_de_departamento">
-                    Jefe de departamento
+                    Jefe Administrador
                   </SelectItem>
                   <SelectItem value="Encargado">Encargado</SelectItem>
-                  <SelectItem value="Personal_civil">Personal Civil</SelectItem>
+                  <SelectItem value="Personal_civil">
+                    Personal Civil Básico
+                  </SelectItem>
                   <SelectItem value="Personal_militar">
-                    Personal Militar
+                    Personal Militar Básico
                   </SelectItem>
                 </SelectContent>
               </Select>

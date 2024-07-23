@@ -9,15 +9,6 @@ import {
 import { Section, SECTION_NAMES_FOR_ROLES } from './section-names'
 import { useFormContext } from 'react-hook-form'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { PermissionToggle } from './permissions-toggle-form'
-import {
-  DatabaseBackup,
-  EyeIcon,
-  FileEdit,
-  FileMinus,
-  FilePlus,
-  FileSearch2,
-} from 'lucide-react'
 interface GroupedSections {
   [key: string]: Section[]
 }
@@ -140,7 +131,4 @@ export const PermissionsTable = ({
       </Table>
     </>
   )
-}
-interface PermissionsListProps {
-  onCheckedChange: (key: string, value: boolean) => void
 }

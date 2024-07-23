@@ -12,6 +12,7 @@ import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { updateUserState } from './lib/actions/users'
+import { formatLevel } from '../auditoria/components/modal-export'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,
@@ -35,7 +36,7 @@ export const columns: ColumnDef<Usuario>[] = [
   {
     id: 'nivel',
     accessorFn: (row) => {
-      return row.nivel?.replaceAll('_', ' ') || 'Sin nivel'
+      return formatLevel(row.nivel)
     },
 
     header: ({ column }) => {

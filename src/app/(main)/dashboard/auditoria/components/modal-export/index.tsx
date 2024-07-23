@@ -14,7 +14,7 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
-import { Acciones_Cortas, Prisma } from '@prisma/client'
+import { Acciones_Cortas, Niveles_Usuarios, Prisma } from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { DateRange } from 'react-day-picker'
 import { Calendar } from '@/modules/common/components/calendar'
@@ -49,15 +49,38 @@ type FormValues = {
 interface Props {
   users: User[]
 }
+export const formatLevel = (level?: Niveles_Usuarios | null) => {
+  switch (level) {
+    case 'Jefe_de_departamento':
+      return 'Jefe Administrador'
+      break
 
+    case 'Encargado':
+      return 'Encargado'
+      break
+
+    case 'Personal_civil':
+      return 'Personal Civil Básico'
+      break
+
+    case 'Personal_militar':
+      return 'Personal Militar Básico'
+      break
+    default:
+      return 'Sin nivel'
+      break
+  }
+}
 export default function ExportAuditReport({ users }: Props) {
   const { toast } = useToast()
-  const comboboxUsers = users.map((user) => ({
-    value: user.id,
-    label: `${user.tipo_cedula}-${user.cedula} ${user.nombre} - ${
-      user.nivel?.replaceAll('_', ' ') || 'Sin Nivel'
-    }/${user.rol.rol}`,
-  }))
+  const comboboxUsers = users.map((user) => {
+    return {
+      value: user.id,
+      label: `${user.tipo_cedula}-${user.cedula} ${user.nombre} - ${formatLevel(
+        user.nivel
+      )}/${user.rol.rol}`,
+    }
+  })
   //   console.log('users', comboboxUsers)
   const form = useForm<FormValues>({})
   const [isPending, startTransition] = React.useTransition()

@@ -31,22 +31,24 @@ export const createRol = async (data: CreateRolesWithPermissions) => {
       rol,
       descripcion,
       nivel,
-      permisos: {
-        create: permisos.map((permiso) => ({
-          permiso: {
-            connectOrCreate: {
-              where: {
-                key: permiso,
+      permisos: permisos
+        ? {
+            create: permisos.map((permiso) => ({
+              permiso: {
+                connectOrCreate: {
+                  where: {
+                    key: permiso,
+                  },
+                  create: {
+                    permiso: permiso,
+                    descripcion: 'Permiso creado por: ' + session.user.name,
+                    key: permiso,
+                  },
+                },
               },
-              create: {
-                permiso: permiso,
-                descripcion: 'Permiso creado por: ' + session.user.name,
-                key: permiso,
-              },
-            },
-          },
-        })),
-      },
+            })),
+          }
+        : undefined,
     },
   })
   revalidatePath('/dashboard/abastecimiento/usuarios')

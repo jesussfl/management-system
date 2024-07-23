@@ -17,6 +17,7 @@ import {
   FileMinus,
   FilePlus,
   FileSearch2,
+  LucideShieldBan,
 } from 'lucide-react'
 interface GroupedSections {
   [key: string]: Section[]
@@ -156,7 +157,7 @@ export const PermissionsList = ({
   const form = useFormContext()
   const permisos = form.watch('permisos')
   return (
-    <>
+    <div className="mb-36">
       {Object.keys(groupedSections).map((group) =>
         group === 'Especiales' ? (
           <div key={group} className="mb-8">
@@ -265,6 +266,17 @@ export const PermissionsList = ({
                 </div>
               </div>
             ))}
+            <PermissionToggle
+              className="max-w-full"
+              isOnlyView={isOnlyView}
+              icon={<LucideShieldBan className="w-5 h-5" />}
+              title="Superusuario"
+              description="Al activar esta función, el usuario podrá tener todos los permisos."
+              checked={permisos?.includes(`TODAS:FULL`)}
+              onCheckedChange={(value) =>
+                onCheckedChange(`TODAS:FULL`, value as boolean)
+              }
+            />
           </div>
         ) : (
           <div key={group} className="mb-8">
@@ -272,6 +284,6 @@ export const PermissionsList = ({
           </div>
         )
       )}
-    </>
+    </div>
   )
 }

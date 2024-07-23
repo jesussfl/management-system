@@ -1,4 +1,5 @@
 import { Switch } from '@/modules/common/components/switch/switch'
+import { cn } from '@/utils/utils'
 
 type PermissionToogleProps = {
   icon: React.ReactNode
@@ -7,6 +8,7 @@ type PermissionToogleProps = {
   checked: boolean
   onCheckedChange: (value: boolean) => void
   isOnlyView?: boolean
+  className?: string
 }
 
 export const PermissionToggle = ({
@@ -15,10 +17,16 @@ export const PermissionToggle = ({
   description,
   checked,
   isOnlyView,
+  className,
   onCheckedChange,
 }: PermissionToogleProps) => {
   return (
-    <div className="flex flex-1 flex-row items-center justify-between rounded-lg border p-3 shadow-sm max-w-[250px]">
+    <div
+      className={cn(
+        'flex flex-1 flex-row items-center justify-between rounded-lg border p-3 shadow-sm max-w-[250px]',
+        className
+      )}
+    >
       <div className="flex flex-row items-center gap-4">
         <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-50">
           {icon}

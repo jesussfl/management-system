@@ -14,6 +14,7 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteRol, recoverRol } from '../../lib/actions/roles'
 import { cn } from '@/utils/utils'
+import { formatLevel } from '../../../auditoria/components/modal-export'
 type Rol = Prisma.RolGetPayload<{
   include: {
     permisos: true
@@ -60,14 +61,7 @@ export const columns: ColumnDef<Rol>[] = [
   },
   {
     id: 'nivel',
-    accessorFn: (row) => {
-      const nivel = row.nivel?.replaceAll(
-        '_',
-        ' '
-      ) as keyof typeof Niveles_Usuarios
-
-      return nivel || 'Sin nivel'
-    },
+    accessorFn: (row) => formatLevel(row.nivel),
     header: ({ column }) => {
       return (
         <Button
