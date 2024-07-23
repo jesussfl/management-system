@@ -15,10 +15,10 @@ import { deleteUnit, recoverUnit } from './lib/actions/units'
 
 export const columns: ColumnDef<UnidadesType>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'nombre',
     header: ({ column }) => {

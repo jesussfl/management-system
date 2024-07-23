@@ -62,10 +62,10 @@ export type RenglonColumns = {
 
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'nombre',
     header: ({ column }) => <HeaderCell column={column} value="Nombre" />,

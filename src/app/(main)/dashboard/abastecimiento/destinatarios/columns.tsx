@@ -15,10 +15,10 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { Badge } from '@/modules/common/components/badge'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'cedula',
     header: ({ column }) => {

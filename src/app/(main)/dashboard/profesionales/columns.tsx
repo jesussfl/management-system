@@ -26,10 +26,10 @@ import {
 } from './lib/actions/professionals'
 export const columns: ColumnDef<ProfesionalType>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'cedula',
     header: ({ column }) => {
