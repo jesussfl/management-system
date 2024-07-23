@@ -14,9 +14,7 @@ import {
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
-import { useRouter } from 'next/navigation'
-
-import { Acciones_Cortas, Usuario } from '@prisma/client'
+import { Acciones_Cortas, Prisma } from '@prisma/client'
 import { Combobox } from '@/modules/common/components/combobox'
 import { DateRange } from 'react-day-picker'
 import { Calendar } from '@/modules/common/components/calendar'
@@ -42,22 +40,23 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 
-// type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
+type User = Prisma.UsuarioGetPayload<{ include: { rol: true } }>
 type FormValues = {
   userId: string
   dateRange: DateRange
   shortAction: Acciones_Cortas
 }
 interface Props {
-  users: Usuario[]
+  users: User[]
 }
 
 export default function ExportAuditReport({ users }: Props) {
   const { toast } = useToast()
-  const router = useRouter()
   const comboboxUsers = users.map((user) => ({
     value: user.id,
-    label: `${user.tipo_cedula}-${user.cedula} ${user.nombre}`,
+    label: `${user.tipo_cedula}-${user.cedula} ${user.nombre} - ${
+      user.nivel?.replaceAll('_', ' ') || 'Sin Nivel'
+    }/${user.rol.rol}`,
   }))
   //   console.log('users', comboboxUsers)
   const form = useForm<FormValues>({})
@@ -85,7 +84,11 @@ export default function ExportAuditReport({ users }: Props) {
         },
         body: JSON.stringify(body),
       })
-
+      console.log(
+        'response',
+        response,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/reporte-auditoria-template.docx`
+      )
       if (!response.ok) {
         toast({
           title: 'Parece que hubo un problema',
@@ -141,7 +144,7 @@ export default function ExportAuditReport({ users }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto gap-8 pb-32"
+        className="flex-1 overflow-y-auto gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="flex flex-col gap-6">
@@ -262,7 +265,7 @@ export default function ExportAuditReport({ users }: Props) {
             disabled={loading}
             defaultValue="comfortable"
             onValueChange={(value) => setDocumentFormat(value)}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-4 mb-36"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="PDF" id="r1" />

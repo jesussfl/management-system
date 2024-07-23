@@ -6,13 +6,14 @@ import { revalidatePath } from 'next/cache'
 import { CreateRolesWithPermissions } from '@/types/types'
 
 import { registerAuditAction } from '@/lib/actions/audit'
+import { Niveles_Usuarios } from '@prisma/client'
 
 export const createRol = async (data: CreateRolesWithPermissions) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const { rol, descripcion, permisos } = data
+  const { rol, descripcion, permisos, nivel } = data
   const exist = await prisma.rol.findUnique({
     where: {
       rol,
@@ -29,11 +30,19 @@ export const createRol = async (data: CreateRolesWithPermissions) => {
     data: {
       rol,
       descripcion,
+      nivel,
       permisos: {
         create: permisos.map((permiso) => ({
           permiso: {
-            connect: {
-              key: permiso.permiso_key,
+            connectOrCreate: {
+              where: {
+                key: permiso,
+              },
+              create: {
+                permiso: permiso,
+                descripcion: 'Permiso creado por: ' + session.user.name,
+                key: permiso,
+              },
             },
           },
         })),
@@ -69,7 +78,7 @@ export const updateRol = async (
         deleteMany: {},
         create: data.permisos.map((permiso) => {
           return {
-            permiso_key: permiso.permiso_key,
+            permiso_key: permiso,
           }
         }),
       },
@@ -148,6 +157,9 @@ export const getAllRoles = async (isOnlyActive?: boolean) => {
     throw new Error('You must be signed in to perform this action')
   }
   const roles = await prisma.rol.findMany({
+    orderBy: {
+      ultima_actualizacion: 'desc',
+    },
     where: {
       fecha_eliminacion: isOnlyActive ? null : undefined,
     },
@@ -157,7 +169,22 @@ export const getAllRoles = async (isOnlyActive?: boolean) => {
   })
   return roles
 }
-
+export const getRolesByLevel = async (nivel: Niveles_Usuarios) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const roles = await prisma.rol.findMany({
+    where: {
+      nivel,
+      fecha_eliminacion: null,
+    },
+    include: {
+      permisos: true,
+    },
+  })
+  return roles
+}
 export const getRolById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
@@ -181,9 +208,6 @@ export const getRolById = async (id: number) => {
   }
   return {
     ...rol,
-    permisos: rol.permisos.map((permiso) => ({
-      value: permiso.permiso.key,
-      label: permiso.permiso.permiso,
-    })),
+    permisos: rol.permisos.map((permiso) => permiso.permiso_key),
   }
 }

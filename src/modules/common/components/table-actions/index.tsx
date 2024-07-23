@@ -107,7 +107,9 @@ function ProtectedTableActions({
             <AlertDialogTrigger asChild>
               {typeof deleteConfig.isDeleted === 'boolean' ? (
                 <DropdownMenuItem>
-                  {deleteConfig.isDeleted ? 'Recuperar' : 'Eliminar'}
+                  {deleteConfig.isDeleted
+                    ? 'Recuperar'
+                    : deleteConfig.actionName || 'Eliminar'}
                 </DropdownMenuItem>
               ) : null}
               {/* <DropdownMenuItem>

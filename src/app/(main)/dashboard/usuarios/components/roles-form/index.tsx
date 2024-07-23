@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 
-import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import {
   Form,
@@ -21,14 +21,25 @@ import {
 } from '@/app/(main)/dashboard/usuarios/lib/actions/roles'
 
 import { Input } from '@/modules/common/components/input/input'
-import { getAllPermissions } from '../../lib/actions/permissions'
-import MultipleSelector, {
-  Option,
-} from '@/modules/common/components/multiple-selector'
 import { useRouter } from 'next/navigation'
 import { Rol } from '@prisma/client'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/modules/common/components/card/card'
+import { Loader2, UserPlusIcon } from 'lucide-react'
+import { PermissionsList } from './permissions-table-form'
 
-type FormValues = Rol & { permisos: Option[] }
+type FormValues = Rol & { permisos: string[] }
 interface Props {
   defaultValues?: FormValues
 }
@@ -37,85 +48,71 @@ export default function RolesForm({ defaultValues }: Props) {
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues
-  const [permissions, setPermissions] = React.useState<Option[]>([])
-
   const form = useForm<FormValues>({
     defaultValues,
   })
-  const { isDirty, dirtyFields } = useFormState({ control: form.control })
+  const [isPending, startTransition] = React.useTransition()
 
-  React.useEffect(() => {
-    getAllPermissions().then((permission) => {
-      const formattedPermissions = permission.map((permiso) => ({
-        value: permiso.key,
-        label: `${permiso.permiso}`,
-        description: permiso.descripcion,
-      }))
+  const onCheckedChange = (key: string, value: boolean) => {
+    const currentPermissions = form.getValues('permisos')
+    if (value) {
+      if (!currentPermissions) {
+        form.setValue('permisos', [key])
 
-      setPermissions(formattedPermissions)
-    })
-  }, [])
+        return
+      }
+
+      if (!currentPermissions.includes(key)) {
+        form.setValue('permisos', [...currentPermissions, key])
+      }
+    }
+
+    if (!value) {
+      form.setValue(
+        'permisos',
+        currentPermissions?.filter((permiso) => permiso !== key)
+      )
+    }
+  }
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    const formattedValues = {
-      ...values,
-      permisos: values.permisos.map((permiso) => {
-        return {
-          permiso_key: permiso.value,
-        }
-      }),
-    }
-    if (values.permisos.length === 0) {
-      toast({
-        title: 'Seleccionar un permiso',
-        description: 'Debe seleccionar al menos un permiso',
-        variant: 'destructive',
+    if (!isEditEnabled) {
+      startTransition(() => {
+        createRol(values).then((data) => {
+          if (data?.error) {
+            form.setError(data.field as any, {
+              type: 'custom',
+              message: data.error,
+            })
+          }
+
+          if (data?.success) {
+            toast({
+              title: 'Rol creado',
+              description: 'El rol se ha creado correctamente',
+              variant: 'success',
+            })
+
+            router.back()
+          }
+        })
       })
+
       return
     }
 
-    if (!isEditEnabled) {
-      createRol(formattedValues).then((data) => {
-        if (data?.error) {
-          form.setError(data.field as any, {
-            type: 'custom',
-            message: data.error,
-          })
-        }
-
+    startTransition(() => {
+      updateRol(defaultValues.id, values).then((data) => {
         if (data?.success) {
           toast({
-            title: 'Rol creado',
-            description: 'El rol se ha creado correctamente',
+            title: 'Rol actualizado',
+            description: 'El rol se ha actualizado correctamente',
             variant: 'success',
           })
 
           router.back()
         }
       })
-
-      return
-    }
-
-    if (!isDirty) {
-      toast({
-        title: 'No se han detectado cambios',
-      })
-      return
-    }
-
-    // const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
-
-    updateRol(defaultValues.id, formattedValues).then((data) => {
-      if (data?.success) {
-        toast({
-          title: 'Rol actualizado',
-          description: 'El rol se ha actualizado correctamente',
-          variant: 'success',
-        })
-
-        router.back()
-      }
     })
   }
 
@@ -125,99 +122,129 @@ export default function RolesForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto px-24 gap-8"
+        className="relative flex flex-row overflow-y-auto px-8 gap-8"
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        <FormField
-          control={form.control}
-          name="rol"
-          rules={{
-            required: 'Este campo es necesario',
-            minLength: {
-              value: 3,
-              message: 'Debe tener al menos 3 caracteres',
-            },
-            maxLength: {
-              value: 70,
-              message: 'Debe tener un maximo de 70 caracteres',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="">
-              <FormLabel>Nombre</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormDescription>
-                Escoje un nombre que sea sencillo de identificar y asignar, ej.
-                Usuario Básico, Auditor.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex flex-col gap-4">
+        <div className="flex sticky top-24 left-0 flex-col gap-8 max-w-[400px]">
           <FormField
             control={form.control}
-            name={`permisos`}
+            name="nivel"
+            rules={{
+              required: 'Tipo de documento es requerido',
+            }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Permisos</FormLabel>
+                <FormLabel>
+                  Seleccione el nivel de usuario para el rol:
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value || ''}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Jefe_de_departamento">
+                      Jefe de departamento
+                    </SelectItem>
+                    <SelectItem value="Encargado">Encargado</SelectItem>
+                    <SelectItem value="Personal_civil">
+                      Personal Civil
+                    </SelectItem>
+                    <SelectItem value="Personal_militar">
+                      Personal Militar
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="rol"
+            rules={{
+              required: 'Este campo es necesario',
+              minLength: {
+                value: 3,
+                message: 'Debe tener al menos 3 caracteres',
+              },
+              maxLength: {
+                value: 70,
+                message: 'Debe tener un maximo de 70 caracteres',
+              },
+            }}
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Nombre</FormLabel>
                 <FormControl>
-                  <MultipleSelector
-                    value={field.value}
-                    onChange={field.onChange}
-                    options={permissions}
-                    placeholder="Selecciona los permisos relacionados"
-                    emptyIndicator={
-                      <p className="text-center leading-10 text-gray-600 dark:text-gray-400">
-                        No hay más permisos
-                      </p>
-                    }
+                  <Input {...field} />
+                </FormControl>
+                <FormDescription>
+                  Escoje un nombre que sea sencillo de identificar y asignar,
+                  ej. Usuario Básico, Auditor.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="descripcion"
+            rules={{
+              required: 'Este campo es necesario',
+              minLength: {
+                value: 10,
+                message: 'Debe tener al menos 10 carácteres',
+              },
+              maxLength: {
+                value: 200,
+                message: 'Debe tener un máximo de 200 carácteres',
+              },
+            }}
+            render={({ field }) => (
+              <FormItem className="mb-36">
+                <FormLabel>Descripción</FormLabel>
+                <FormControl>
+                  <textarea
+                    id="description"
+                    rows={3}
+                    className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    {...field}
                   />
                 </FormControl>
+                <FormDescription>
+                  Describe el rol, incluyendo sus permisos, limitaciones y quién
+                  puede ser asignado
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        <FormField
-          control={form.control}
-          name="descripcion"
-          rules={{
-            required: 'Este campo es necesario',
-            minLength: {
-              value: 10,
-              message: 'Debe tener al menos 10 carácteres',
-            },
-            maxLength: {
-              value: 200,
-              message: 'Debe tener un máximo de 200 carácteres',
-            },
-          }}
-          render={({ field }) => (
-            <FormItem className="mb-36">
-              <FormLabel>Descripción</FormLabel>
-              <FormControl>
-                <textarea
-                  id="description"
-                  rows={3}
-                  className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Describe el rol, incluyendo sus permisos, limitaciones y quién
-                puede ser asignado
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <Card className="flex-1">
+          <CardHeader>
+            <CardTitle className="text-md">
+              Seleccione los permisos del rol
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PermissionsList onCheckedChange={onCheckedChange} />
+          </CardContent>
+        </Card>
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
-          <Button variant="default" type="submit">
+          <Button disabled={isPending} variant="default" type="submit">
+            {isPending ? (
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+            ) : (
+              <UserPlusIcon className="mr-2 h-4 w-4" />
+            )}
             Guardar
           </Button>
         </DialogFooter>

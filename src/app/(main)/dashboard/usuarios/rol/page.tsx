@@ -4,7 +4,7 @@ import RolesForm from '../components/roles-form'
 
 export default async function Page() {
   return (
-    <PageForm title="Crear Permiso" backLink="/dashboard/usuarios">
+    <PageForm title="Crear Rol" backLink="/dashboard/usuarios">
       <RolesForm />
     </PageForm>
   )

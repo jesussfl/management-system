@@ -1,20 +1,12 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { format } from 'date-fns'
 type AuditoriaType = Prisma.AuditoriaGetPayload<{
   include: { usuario: true }
@@ -58,6 +50,24 @@ export const columns: ColumnDef<AuditoriaType>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           Usuario
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
+  {
+    id: 'nivel',
+    accessorFn: (row) =>
+      row?.usuario?.nivel?.replaceAll('_', ' ') || 'Sin nivel',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nivel
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
@@ -121,8 +131,6 @@ export const columns: ColumnDef<AuditoriaType>[] = [
   {
     id: 'acciones',
     cell: ({ row }) => {
-      const data = row.original
-
       return <></>
     },
   },

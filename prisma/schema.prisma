@@ -45,6 +45,13 @@ enum Usuarios_Estados {
   Bloqueado
 }
 
+enum Niveles_Usuarios {
+  Jefe_de_departamento
+  Encargado
+  Personal_civil
+  Personal_militar
+}
+
 model Usuario {
   id                  String            @id @default(cuid())
   nombre              String
@@ -62,6 +69,7 @@ model Usuario {
   rol_nombre          String            @default("Basico")
   accounts            Cuenta[]
   sessions            Session[]
+  nivel               Niveles_Usuarios?
   rol                 Rol               @relation(fields: [rol_nombre], references: [rol], onDelete: Cascade, onUpdate: Cascade)
   auditoria           Auditoria[]
   ultima_notificacion DateTime?
@@ -91,12 +99,15 @@ model PasswordResetToken {
 }
 
 model Rol {
-  id                Int              @id @default(autoincrement())
-  rol               String           @unique
-  descripcion       String
-  usuarios          Usuario[]
-  permisos          Roles_Permisos[]
-  fecha_eliminacion DateTime?
+  id          Int               @id @default(autoincrement())
+  rol         String            @unique
+  nivel       Niveles_Usuarios?
+  descripcion String
+  usuarios    Usuario[]
+
+  permisos             Roles_Permisos[]
+  fecha_eliminacion    DateTime?
+  ultima_actualizacion DateTime?        @updatedAt
 }
 
 model Roles_Permisos {

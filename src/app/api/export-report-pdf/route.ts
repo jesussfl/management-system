@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
         body: formData,
       }
     )
+    console.log(response, '🚀 ~ file: route.ts:response')
 
     if (!response.ok) {
       return NextResponse.json(
