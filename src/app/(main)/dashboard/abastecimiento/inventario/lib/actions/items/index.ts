@@ -10,13 +10,9 @@ import { registerAuditAction } from '@/lib/actions/audit'
 import mime from 'mime'
 import { join } from 'path'
 import { stat, mkdir, writeFile } from 'fs/promises' // Agregamos unlink
-import {
-  differenceInHours,
-  differenceInMinutes,
-  isAfter,
-  subHours,
-  subMinutes,
-} from 'date-fns'
+import { differenceInMinutes } from 'date-fns'
+
+export type ItemsWithAllRelations = Prisma.PromiseReturnType<typeof getAllItems>
 export const createItem = async (
   data: Prisma.RenglonUncheckedCreateInput,
   image: FormData | null
@@ -404,7 +400,7 @@ export const checkItemExistance = async (name: string) => {
   return !!exists
 }
 
-export const getAllItems = async (onlyActives?: boolean) => {
+export const getAllItems = async (onlyActives?: boolean, ids?: number[]) => {
   const sessionResponse = await validateUserSession()
   if (sessionResponse.error || !sessionResponse.session) {
     return []
@@ -417,6 +413,7 @@ export const getAllItems = async (onlyActives?: boolean) => {
     where: {
       servicio: 'Abastecimiento',
       fecha_eliminacion: onlyActives ? null : undefined,
+      id: ids ? { in: ids } : undefined,
     },
     include: {
       recepciones: {

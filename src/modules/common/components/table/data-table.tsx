@@ -108,17 +108,16 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onDataChange?: (data: any[]) => void
-  isColumnFilterEnabled?: boolean
+  // isColumnFilterEnabled?: boolean
   isStatusEnabled?: boolean
   selectedData?: any
   setSelectedData?: (data: any) => void
-  onSelectedRowsChange?: (lastSelectedRow: any) => void
+  onSelectedRowsChange?: (lastSelectedRow: TData[]) => void
 } & (MultipleDeleteProps | SingleDeleteProps)
 
 export function DataTable<TData extends { id: any }, TValue>({
   columns: tableColumns,
   data: tableData,
-  isColumnFilterEnabled = true,
   onSelectedRowsChange,
   selectedData,
   setSelectedData,
@@ -130,8 +129,8 @@ export function DataTable<TData extends { id: any }, TValue>({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [selectedRows, setSelectedRows] = useState<any[]>([])
+  const [selectedRows, setSelectedRows] = useState<RowSelectionState>({})
+  const [selectedRowsData, setSelectedRowsData] = useState<TData[]>([])
   const [filtering, setFiltering] = useState('')
 
   //Memoization
@@ -148,7 +147,7 @@ export function DataTable<TData extends { id: any }, TValue>({
 
   useEffect(() => {
     const handleSelectionState = (selections: RowSelectionState) => {
-      setSelectedRows((prev) =>
+      setSelectedRowsData((prev) =>
         Object.keys(selections).map(
           (key) =>
             table.getSelectedRowModel().rowsById[key]?.original ||
@@ -157,13 +156,13 @@ export function DataTable<TData extends { id: any }, TValue>({
       )
     }
 
-    handleSelectionState(selectedData || rowSelection)
-  }, [selectedData || rowSelection])
+    handleSelectionState(selectedData || selectedRows)
+  }, [selectedData || selectedRows])
 
   useEffect(() => {
     if (!onSelectedRowsChange) return
-    onSelectedRowsChange(selectedRows)
-  }, [selectedRows])
+    onSelectedRowsChange(selectedRowsData)
+  }, [selectedRowsData])
 
   const table = useReactTable({
     data,
@@ -179,7 +178,7 @@ export function DataTable<TData extends { id: any }, TValue>({
     getRowId: (row) => row.id,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setSelectedData || setRowSelection,
+    onRowSelectionChange: setSelectedData || setSelectedRows,
     onSortingChange: setSorting,
     globalFilterFn: fuzzyFilter,
     onGlobalFilterChange: setFiltering,
@@ -192,7 +191,7 @@ export function DataTable<TData extends { id: any }, TValue>({
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection: selectedData || rowSelection,
+      rowSelection: selectedData || selectedRows,
       globalFilter: filtering,
     },
   })
@@ -213,7 +212,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           setFiltering={setFiltering}
           isColumnFilterEnabled={isStatusEnabled}
           isMultipleDeleteEnabled={true}
-          selectedIds={selectedRows.map((row) => row.id)}
+          selectedIds={selectedRowsData.map((row) => row.id)}
           multipleDeleteAction={multipleDeleteAction}
         />
       ) : (

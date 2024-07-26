@@ -823,7 +823,6 @@ export default function DispatchesForm({
                     columns={selectItemColumns}
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
-                    isColumnFilterEnabled={false}
                     selectedData={selectedRowIdentifiers}
                     setSelectedData={setSelectedRowIdentifiers}
                     isStatusEnabled={false}

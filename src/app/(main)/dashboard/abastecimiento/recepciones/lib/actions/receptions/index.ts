@@ -2,29 +2,18 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import {
-  Prisma,
-  Recepcion,
-  Recepciones_Renglones,
-  Serial,
-} from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
-type SerialType = Omit<
-  Serial,
-  'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
->
+import {
+  Recepcion_RenglonesFormValues,
+  ReceptionFormValues,
+} from '../../types/types'
 
-type Detalles = Omit<
-  Recepciones_Renglones,
-  'id_recepcion' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  seriales: SerialType[]
-}
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {
@@ -78,14 +67,8 @@ export type RecepcionType = Prisma.RecepcionGetPayload<{
     }
   }
 }>
-type FormValues = Omit<
-  Recepcion,
-  'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  renglones: Detalles[]
-}
 
-const allSerialsAreValid = (renglones: Detalles[]) => {
+const allSerialsAreValid = (renglones: Recepcion_RenglonesFormValues[]) => {
   return renglones.some(
     (renglon, index) =>
       renglon.seriales.length === 0 ||
@@ -95,7 +78,7 @@ const allSerialsAreValid = (renglones: Detalles[]) => {
       )
   )
 }
-const getAffectedFields = (renglones: Detalles[]) => {
+const getAffectedFields = (renglones: Recepcion_RenglonesFormValues[]) => {
   const fields = renglones
     .filter(
       (renglon) =>
@@ -111,7 +94,7 @@ const getAffectedFields = (renglones: Detalles[]) => {
 
   return fields
 }
-export const createReception = async (data: FormValues) => {
+export const createReception = async (data: ReceptionFormValues) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -157,6 +140,20 @@ export const createReception = async (data: FormValues) => {
       renglones: {
         create: renglones.map((renglon) => ({
           ...renglon,
+          id_renglon: undefined,
+          codigo_solicitud: undefined,
+          pedido: renglon.codigo_solicitud
+            ? {
+                connect: {
+                  id: renglon.codigo_solicitud,
+                },
+              }
+            : undefined,
+          renglon: {
+            connect: {
+              id: renglon.id_renglon,
+            },
+          },
           seriales: {
             create: renglon.seriales.map((serial) => ({
               serial: serial.serial,
@@ -197,7 +194,10 @@ export const createReception = async (data: FormValues) => {
   }
 }
 
-export const updateReception = async (id: number, data: FormValues) => {
+export const updateReception = async (
+  id: number,
+  data: ReceptionFormValues
+) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -417,6 +417,7 @@ export const getReceptionById = async (id: number): Promise<RecepcionType> => {
           seriales: {
             select: {
               serial: true,
+              id_renglon: true,
             },
           },
         },

@@ -3,25 +3,12 @@ import { useCallback, useEffect, useState, useTransition } from 'react'
 
 import { columns } from './columns'
 import { cn } from '@/utils/utils'
-import {
-  useForm,
-  SubmitHandler,
-  useFieldArray,
-  useFormState,
-} from 'react-hook-form'
+import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/modules/common/components/form'
+import { Form, FormDescription } from '@/modules/common/components/form'
 
-import { Loader2, Plus, TrashIcon } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -32,13 +19,6 @@ import {
 } from '@/modules/common/components/card/card'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import {
-  Prisma,
-  Recepcion,
-  Recepciones_Renglones,
-  Serial,
-} from '@prisma/client'
-import {
-  RecepcionType,
   createReception,
   updateReception,
 } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
@@ -46,102 +26,70 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemSelected } from './card-item-selected'
 import Link from 'next/link'
-import DatePicker, { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-registerLocale('es', es)
-import 'react-datepicker/dist/react-datepicker.css'
-import { Combobox } from '@/modules/common/components/combobox'
-import { startOfDay, subDays } from 'date-fns'
-import { Input } from '@/modules/common/components/input/input'
-import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
-type SerialType = Omit<
-  Serial,
-  'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
->
 
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
-}>
-type Detalles = Omit<
-  Recepciones_Renglones,
-  'id_recepcion' | 'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  seriales: SerialType[]
-}
-
-export type FormValues = Omit<
-  Recepcion,
-  'id' | 'fecha_creacion' | 'ultima_actualizacion'
-> & {
-  renglones: Detalles[]
-}
+import { ItemsWithAllRelations } from '../../../inventario/lib/actions/items'
+import { ReceptionFormValues } from '../../lib/types/types'
+import { RowSelectionState } from '@tanstack/react-table'
+import { ReceptionPeopleFields } from './reception-people-fields'
+import { ReceptionDateFields } from './reception-date-fields'
 type ComboboxData = {
   value: string
   label: string
 }
 interface Props {
-  renglonesData: RenglonType[]
-  defaultValues?: RecepcionType
+  renglonesData: ItemsWithAllRelations
+  id?: number
+  defaultValues?: ReceptionFormValues
   professionals: ComboboxData[]
   receivers: ComboboxData[]
 }
+
 export default function ReceptionsForm({
   renglonesData,
   defaultValues,
   professionals,
   receivers,
+  id,
 }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
-  const [dateReason, setDateReason] = useState('')
-  const form = useForm<FormValues>({
+  const form = useForm<ReceptionFormValues>({
     mode: 'onChange',
     defaultValues,
   })
-  const { isDirty } = useFormState({ control: form.control })
 
-  const { fields, append, remove } = useFieldArray<FormValues>({
+  const { fields, append, remove } = useFieldArray<ReceptionFormValues>({
     control: form.control,
     name: `renglones`,
   })
   const [isPending, startTransition] = useTransition()
 
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-  const [selectedRows, setSelectedRows] = useState<any>({})
-  const [selectedRowsData, setSelectedRowsData] = useState<RenglonType[]>([])
+  const [selectedRows, setSelectedRows] = useState<RowSelectionState>({})
+  const [selectedRowsData, setSelectedRowsData] =
+    useState<ItemsWithAllRelations>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isAuthorized, setIsAuthorized] = useState(false)
-  const [adminPassword, setAdminPassword] = useState('')
 
-  const toogleAlert = () => {
-    const fecha = form.watch(`fecha_recepcion`)
-
-    if (fecha < startOfDay(new Date())) {
-      form.resetField('fecha_recepcion')
-    }
-  }
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 
   useEffect(() => {
     if (defaultValues) {
-      const items = defaultValues.renglones
-      const itemsData = items.map((item) => item.renglon)
-      const selectedItems = items.reduce(
+      const selectedItems = defaultValues.renglones.reduce(
         (acc, item) => {
           acc[item.id_renglon] = true
           return acc
         },
         {} as { [key: number]: boolean }
       )
-
+      const itemsData = renglonesData.filter((item) => selectedItems[item.id])
       setSelectedRows(selectedItems)
       setSelectedRowsData(itemsData)
     }
-  }, [defaultValues])
+  }, [defaultValues, renglonesData])
 
   const handleTableSelect = useCallback(
-    (selections: any[]) => {
+    (selections: ItemsWithAllRelations) => {
       if (!selections) return
 
       // Obtener los IDs de los elementos seleccionados
@@ -171,7 +119,6 @@ export default function ReceptionsForm({
             seriales: [],
             seriales_automaticos: false,
             observacion: null,
-            fecha_eliminacion: null,
           })
         }
       })
@@ -195,7 +142,7 @@ export default function ReceptionsForm({
     remove(index)
   }
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+  const onSubmit: SubmitHandler<ReceptionFormValues> = async (data) => {
     if (data.renglones.length === 0) {
       toast({
         title: 'Faltan campos',
@@ -214,7 +161,7 @@ export default function ReceptionsForm({
     }
 
     startTransition(() => {
-      if (!isEditEnabled) {
+      if (!id) {
         createReception(data).then((res) => {
           if (res?.error) {
             toast({
@@ -240,15 +187,7 @@ export default function ReceptionsForm({
         return
       }
 
-      if (!isDirty) {
-        toast({
-          title: 'No se han detectado cambios',
-        })
-
-        return
-      }
-
-      updateReception(defaultValues?.id, data).then((res) => {
+      updateReception(id, data).then((res) => {
         if (res?.error) {
           toast({
             title: 'Error',
@@ -283,293 +222,12 @@ export default function ReceptionsForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-8 pt-4">
-            <div className="flex gap-4">
-              <FormField
-                control={form.control}
-                name="cedula_destinatario"
-                rules={{ required: 'Este campo es obligatorio' }}
-                render={({ field }) => (
-                  <FormItem className="flex flex-col flex-1 ">
-                    <FormLabel>Persona que entrega:</FormLabel>
-                    <Combobox
-                      name={field.name}
-                      form={form}
-                      field={field}
-                      data={receivers}
-                      isValueString
-                    />
-
-                    <FormDescription>
-                      <Link
-                        href="/dashboard/abastecimiento/destinatarios/agregar"
-                        className={cn(
-                          buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
-                        )}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Crear Destinatario
-                      </Link>
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cedula_abastecedor"
-                rules={{ required: 'Este campo es obligatorio' }}
-                render={({ field }) => (
-                  <FormItem className=" flex flex-col flex-1">
-                    <FormLabel>Profesional que recibe:</FormLabel>
-                    <Combobox
-                      name={field.name}
-                      form={form}
-                      field={field}
-                      data={professionals}
-                      isValueString
-                    />
-
-                    <FormDescription>
-                      <Link
-                        href="/dashboard/profesionales/agregar"
-                        className={cn(
-                          buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
-                        )}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Crear Profesional
-                      </Link>
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex gap-4">
-              <FormField
-                control={form.control}
-                name="cedula_autorizador"
-                rules={{ required: 'Este campo es obligatorio' }}
-                render={({ field }) => (
-                  <FormItem className="flex flex-col flex-1">
-                    <FormLabel>
-                      Profesional que autorizará la recepción:
-                    </FormLabel>
-                    <Combobox
-                      name={field.name}
-                      form={form}
-                      field={field}
-                      data={professionals}
-                      isValueString
-                    />
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cedula_supervisor"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col flex-1">
-                    <FormLabel>
-                      Profesional que supervisa la recepción (opcional):
-                    </FormLabel>
-
-                    <Combobox
-                      name={field.name}
-                      form={form}
-                      field={field}
-                      data={professionals}
-                      isValueString
-                    />
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="border-b border-base-300" />
-            <FormField
-              control={form.control}
-              name="motivo"
-              rules={{
-                required: 'Este campo es obligatorio',
-                maxLength: {
-                  value: 200,
-                  message: 'Debe tener un máximo de 200 carácteres',
-                },
-              }}
-              render={({ field }) => (
-                <FormItem className="">
-                  <div className="flex flex-col gap-1">
-                    <FormLabel>Motivo</FormLabel>
-                    <FormDescription>
-                      Redacta el motivo por el cual se está recibiendo el
-                      material, renglones, etc...
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <textarea
-                      id="motivo"
-                      rows={3}
-                      className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...field}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
+            <ReceptionPeopleFields
+              receivers={receivers}
+              professionals={professionals}
             />
-
             <div className="border-b border-base-300" />
-            <FormField
-              control={form.control}
-              name={`fecha_recepcion`}
-              rules={{
-                required: true,
-                validate: (value) => {
-                  if (value > new Date())
-                    return 'La fecha no puede ser mayor a la actual'
-                },
-              }}
-              render={({ field }) => (
-                <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
-                  <div className="w-[20rem]">
-                    <FormLabel>Fecha de recepción</FormLabel>
-                    <FormDescription>
-                      Selecciona la fecha en la que se reciben los materiales o
-                      renglones{' '}
-                    </FormDescription>
-                  </div>
-                  <div>
-                    <div className="flex gap-2">
-                      <DatePicker
-                        placeholderText="Seleccionar fecha"
-                        onChange={(date) => field.onChange(date)}
-                        selected={field.value}
-                        locale={es}
-                        peekNextMonth
-                        showMonthDropdown
-                        showYearDropdown
-                        showTimeSelect
-                        dateFormat="d MMMM, yyyy h:mm aa"
-                        dropdownMode="select"
-                        maxDate={new Date()}
-                      />
-                      <Button
-                        variant={'secondary'}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          form.resetField('fecha_recepcion')
-                        }}
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            {form.watch('fecha_recepcion') < startOfDay(new Date()) &&
-            isAuthorized === false ? (
-              <ModalForm
-                triggerName=" Parece que estás colocando una fecha anterior a la actual"
-                closeWarning={false}
-                open={form.watch('fecha_recepcion') < new Date()}
-                customToogleModal={toogleAlert}
-                className="w-[550px]"
-              >
-                <div className="flex flex-col gap-4 p-8">
-                  <CardTitle>
-                    Estas colocando una fecha anterior a la fecha actual
-                  </CardTitle>
-                  <CardDescription>
-                    Para evitar inconsistencias de información, debes colocar el
-                    motivo de la fecha y colocar la contraseña de administrador.
-                  </CardDescription>
-                  <Input
-                    className="w-full"
-                    placeholder="Contraseña del administrador"
-                    type="password"
-                    onChange={(e) => {
-                      const value = e.target.value
-
-                      setAdminPassword(value)
-                    }}
-                  />
-                  <Button
-                    className="w-[200px]"
-                    variant={'default'}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      validateAdminPassword(adminPassword).then((res) => {
-                        if (!adminPassword) return
-                        if (res === true) {
-                          setIsAuthorized(true)
-                          toast({
-                            title: 'Fecha autorizada',
-                            description: 'La fecha ha sido autorizada',
-                            variant: 'success',
-                          })
-
-                          return
-                        }
-
-                        setAdminPassword('')
-                        toast({
-                          title: 'Permiso denegado',
-                          description: 'La contraseña es incorrecta',
-                          variant: 'destructive',
-                        })
-                      })
-                    }}
-                  >
-                    Listo
-                  </Button>
-                </div>
-              </ModalForm>
-            ) : null}
-            {form.watch('fecha_recepcion') < startOfDay(new Date()) &&
-            isAuthorized === true ? (
-              <FormField
-                control={form.control}
-                name="motivo_fecha"
-                rules={{
-                  required: 'Este campo es obligatorio',
-                  maxLength: {
-                    value: 200,
-                    message: 'Debe tener un máximo de 200 carácteres',
-                  },
-                }}
-                render={({ field }) => (
-                  <FormItem className="">
-                    <div className="flex flex-col gap-1">
-                      <FormLabel>
-                        Introduzca el motivo de por qué la fecha es anterior a
-                        la actual
-                      </FormLabel>
-                    </div>
-                    <FormControl>
-                      <textarea
-                        id="motivo"
-                        rows={3}
-                        className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        {...field}
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : null}
+            <ReceptionDateFields />
             <div className="border-b border-base-300" />
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">
@@ -605,7 +263,6 @@ export default function ReceptionsForm({
                     columns={columns}
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
-                    isColumnFilterEnabled={false}
                     selectedData={selectedRows}
                     isStatusEnabled={false}
                     setSelectedData={setSelectedRows}
@@ -658,7 +315,7 @@ export default function ReceptionsForm({
           </Card>
         )}
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
           <Button
             className="w-[200px]"
             disabled={isPending}

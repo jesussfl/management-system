@@ -1,16 +1,13 @@
 'use client'
-import { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import { MoreHorizontal, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
-}>
-export const columns: ColumnDef<RenglonType>[] = [
+import { ItemsWithAllRelations } from '../../../inventario/lib/actions/items'
+type Renglon = ItemsWithAllRelations[number]
+export const columns: ColumnDef<Renglon>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',

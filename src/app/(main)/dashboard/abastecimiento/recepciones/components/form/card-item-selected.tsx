@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-// import { RenglonType } from '@/types/types'
 import {
   Card,
   CardContent,
@@ -68,7 +67,7 @@ export const CardItemSelected = ({
 
   useEffect(() => {
     getAllOrdersByItemId(item.id).then((data) => {
-      const transformedData = data.map((order: any) => ({
+      const transformedData = data.map((order) => ({
         value: order.id,
         label: `Código: ${order.id}`,
       }))
@@ -374,7 +373,7 @@ export const CardItemSelected = ({
             <>
               <SerialsForm
                 index={index}
-                id={watch(`renglones.${index}.id`)}
+                id={watch(`renglones.${index}.id_renglon`)}
                 quantity={watch(`renglones.${index}.cantidad`)}
               />
               <Button

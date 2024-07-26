@@ -989,7 +989,6 @@ export default function OrdersForm({
                     columns={orderItemColumns}
                     data={items}
                     onSelectedRowsChange={handleTableSelect}
-                    isColumnFilterEnabled={false}
                     selectedData={selectedItems}
                     isStatusEnabled={false}
                     setSelectedData={setSelectedItems}

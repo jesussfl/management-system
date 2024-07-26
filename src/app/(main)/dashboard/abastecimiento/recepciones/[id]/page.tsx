@@ -14,15 +14,32 @@ import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/co
 import { getReceptionById } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import { ReceptionFormValues } from '../lib/types/types'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
   description: 'Desde aquí puedes administrar las entradas del inventario',
 }
 
+function formatReceptionDataToForm(
+  reception: Awaited<ReturnType<typeof getReceptionById>>
+): ReceptionFormValues {
+  return {
+    ...reception,
+
+    renglones: reception.renglones.map((renglon) => ({
+      ...renglon,
+      seriales: renglon.seriales.map((serial) => ({
+        serial: serial.serial,
+        id_renglon: renglon.id_renglon,
+      })),
+    })),
+  }
+}
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const reception = await getReceptionById(Number(params.id))
+
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
 
@@ -51,7 +68,8 @@ export default async function Page({ params }: { params: { id: string } }) {
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm
           renglonesData={itemsData}
-          defaultValues={reception}
+          id={Number(params.id)}
+          defaultValues={formatReceptionDataToForm(reception)}
           receivers={receivers}
           professionals={professionals}
         />

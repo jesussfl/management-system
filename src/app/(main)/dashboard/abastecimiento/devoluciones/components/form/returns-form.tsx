@@ -800,7 +800,6 @@ export default function ReturnsForm({
                       return false
                     })}
                     onSelectedRowsChange={handleTableSelect}
-                    isColumnFilterEnabled={false}
                     selectedData={selectedRowIdentifiers}
                     setSelectedData={setSelectedRowIdentifiers}
                     isStatusEnabled={false}

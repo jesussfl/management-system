@@ -77,7 +77,6 @@ export function SerialSelector({
           columns={selectSerialColumns}
           data={serials}
           onSelectedRowsChange={setSelectedData}
-          isColumnFilterEnabled={false}
           selectedData={selectedItems}
           setSelectedData={setSelectedItems}
           isStatusEnabled={false}

@@ -605,7 +605,6 @@ export default function ReceptionsForm({
                     columns={columns}
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
-                    isColumnFilterEnabled={false}
                     selectedData={selectedRows}
                     isStatusEnabled={false}
                     setSelectedData={setSelectedRows}

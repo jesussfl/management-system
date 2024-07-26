@@ -80,7 +80,6 @@ export function SerialsFormNew({
           columns={columns}
           data={serials}
           onSelectedRowsChange={setSelectedData}
-          isColumnFilterEnabled={false}
           selectedData={selectedItems}
           setSelectedData={setSelectedItems}
         />
