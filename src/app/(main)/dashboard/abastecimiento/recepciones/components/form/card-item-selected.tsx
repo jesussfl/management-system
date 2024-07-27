@@ -22,7 +22,6 @@ import {
 } from '@/modules/common/components/card/card'
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
-import { Pedido, Prisma } from '@prisma/client'
 import { getAllOrdersByItemId } from '../../lib/actions/receptions'
 import { ComboboxData } from '@/types/types'
 import {
@@ -43,9 +42,8 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
-}>
+import { ItemsWithAllRelations } from '../../../inventario/lib/actions/items'
+type Renglon = ItemsWithAllRelations[number]
 
 export const CardItemSelected = ({
   item,
@@ -54,13 +52,13 @@ export const CardItemSelected = ({
   isEmpty,
   setItemsWithoutSerials,
 }: {
-  item: RenglonType
+  item: Renglon
   isEmpty?: string | boolean
   index: number
   deleteItem: (index: number) => void
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
-  const { watch, control, setValue, trigger } = useFormContext()
+  const { watch, control, setValue } = useFormContext()
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)

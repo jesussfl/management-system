@@ -38,7 +38,6 @@ import DataTableFilters from './data-table-filters'
 import { DataTablePagination } from './data-table-pagination'
 import DataTableRowsCounter from './data-table-rows-counter'
 import dateBetweenFilterFn from './date-between-filter'
-import dayjs from 'dayjs'
 import { Input } from '../input/input'
 import { format } from 'date-fns'
 import { CalendarIcon } from '@radix-ui/react-icons'
@@ -52,7 +51,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
-import ExportExcelButton from '@/app/(main)/dashboard/abastecimiento/inventario/components/items-export-button'
 import { FilterIcon } from 'lucide-react'
 import { STATUS_COLUMN } from '@/modules/layout/components/status-column/indext'
 declare module '@tanstack/table-core' {
@@ -105,31 +103,31 @@ interface SingleDeleteProps {
   multipleDeleteAction?: null
 }
 type DataTableProps<TData, TValue> = {
-  columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  onDataChange?: (data: any[]) => void
-  // isColumnFilterEnabled?: boolean
+  columns: ColumnDef<TData, TValue>[]
+  defaultSelection?: RowSelectionState
   isStatusEnabled?: boolean
-  selectedData?: any
-  setSelectedData?: (data: any) => void
-  onSelectedRowsChange?: (lastSelectedRow: TData[]) => void
+  onSelectedRowsChange?: (
+    rows: TData[],
+    rowSelection: RowSelectionState
+  ) => void
 } & (MultipleDeleteProps | SingleDeleteProps)
 
 export function DataTable<TData extends { id: any }, TValue>({
   columns: tableColumns,
   data: tableData,
   onSelectedRowsChange,
-  selectedData,
-  setSelectedData,
+  defaultSelection,
   multipleDeleteAction,
-  onDataChange,
   isStatusEnabled = true,
   isMultipleDeleteEnabled,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [selectedRows, setSelectedRows] = useState<RowSelectionState>({})
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+    defaultSelection || {}
+  )
   const [selectedRowsData, setSelectedRowsData] = useState<TData[]>([])
   const [filtering, setFiltering] = useState('')
 
@@ -146,22 +144,18 @@ export function DataTable<TData extends { id: any }, TValue>({
   }, [tableColumns])
 
   useEffect(() => {
-    const handleSelectionState = (selections: RowSelectionState) => {
-      setSelectedRowsData((prev) =>
-        Object.keys(selections).map(
-          (key) =>
-            table.getSelectedRowModel().rowsById[key]?.original ||
-            prev.find((row) => row.id === key)
-        )
+    setSelectedRowsData((prev) =>
+      Object.keys(rowSelection).map(
+        (key) =>
+          table.getSelectedRowModel().rowsById[key]?.original ||
+          prev.find((row) => row.id === key)
       )
-    }
-
-    handleSelectionState(selectedData || selectedRows)
-  }, [selectedData || selectedRows])
+    )
+  }, [rowSelection])
 
   useEffect(() => {
     if (!onSelectedRowsChange) return
-    onSelectedRowsChange(selectedRowsData)
+    onSelectedRowsChange(selectedRowsData, rowSelection)
   }, [selectedRowsData])
 
   const table = useReactTable({
@@ -178,7 +172,7 @@ export function DataTable<TData extends { id: any }, TValue>({
     getRowId: (row) => row.id,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setSelectedData || setSelectedRows,
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     globalFilterFn: fuzzyFilter,
     onGlobalFilterChange: setFiltering,
@@ -191,17 +185,10 @@ export function DataTable<TData extends { id: any }, TValue>({
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection: selectedData || selectedRows,
+      rowSelection,
       globalFilter: filtering,
     },
   })
-
-  const { rows } = table.getGlobalFacetedRowModel()
-
-  useEffect(() => {
-    if (!onDataChange) return
-    onDataChange(rows)
-  }, [rows])
 
   return (
     <div className="flex flex-col px-2 gap-2">

@@ -823,8 +823,7 @@ export default function DispatchesForm({
                     columns={selectItemColumns}
                     data={renglonesData}
                     onSelectedRowsChange={handleTableSelect}
-                    selectedData={selectedRowIdentifiers}
-                    setSelectedData={setSelectedRowIdentifiers}
+                    defaultSelection={selectedRowIdentifiers}
                     isStatusEnabled={false}
                   />
                   <Button

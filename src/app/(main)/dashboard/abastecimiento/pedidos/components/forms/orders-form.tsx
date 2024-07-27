@@ -989,9 +989,8 @@ export default function OrdersForm({
                     columns={orderItemColumns}
                     data={items}
                     onSelectedRowsChange={handleTableSelect}
-                    selectedData={selectedItems}
+                    defaultSelection={selectedItems}
                     isStatusEnabled={false}
-                    setSelectedData={setSelectedItems}
                   />
                   <Button
                     variant={'default'}

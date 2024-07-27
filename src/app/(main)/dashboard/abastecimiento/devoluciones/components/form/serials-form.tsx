@@ -80,8 +80,7 @@ export function SerialsFormNew({
           columns={columns}
           data={serials}
           onSelectedRowsChange={setSelectedData}
-          selectedData={selectedItems}
-          setSelectedData={setSelectedItems}
+          defaultSelection={selectedItems}
         />
       </div>
     </div>

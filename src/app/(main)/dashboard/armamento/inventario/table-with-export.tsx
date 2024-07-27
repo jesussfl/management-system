@@ -57,9 +57,7 @@ export const TableWithExport = ({
         columns={columns}
         data={itemsData}
         isMultipleDeleteEnabled
-        onDataChange={(data: any) => {
-          setRowsData(data)
-        }}
+        onSelectedRowsChange={setRowsData}
         multipleDeleteAction={deleteMultipleItems}
       />
     </>

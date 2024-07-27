@@ -77,8 +77,7 @@ export function SerialSelector({
           columns={selectSerialColumns}
           data={serials}
           onSelectedRowsChange={setSelectedData}
-          selectedData={selectedItems}
-          setSelectedData={setSelectedItems}
+          defaultSelection={selectedItems}
           isStatusEnabled={false}
         />
       </div>

@@ -800,8 +800,7 @@ export default function ReturnsForm({
                       return false
                     })}
                     onSelectedRowsChange={handleTableSelect}
-                    selectedData={selectedRowIdentifiers}
-                    setSelectedData={setSelectedRowIdentifiers}
+                    defaultSelection={selectedRowIdentifiers}
                     isStatusEnabled={false}
                   />
                   <Button
