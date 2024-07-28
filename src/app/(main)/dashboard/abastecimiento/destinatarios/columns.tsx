@@ -12,7 +12,6 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteReceiver, recoverReceiver } from './lib/actions/receivers'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import { Badge } from '@/modules/common/components/badge'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
   // {

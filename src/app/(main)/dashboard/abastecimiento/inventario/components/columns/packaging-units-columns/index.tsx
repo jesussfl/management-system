@@ -17,25 +17,25 @@ import {
 export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todos"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Seleccionar fila"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
+    // header: ({ table }) => (
+    //   <Checkbox
+    //     checked={
+    //       table.getIsAllPageRowsSelected() ||
+    //       (table.getIsSomePageRowsSelected() && 'indeterminate')
+    //     }
+    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //     aria-label="Seleccionar todos"
+    //   />
+    // ),
+    // cell: ({ row }) => (
+    //   <Checkbox
+    //     checked={row.getIsSelected()}
+    //     onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //     aria-label="Seleccionar fila"
+    //   />
+    // ),
+    // enableSorting: false,
+    // enableHiding: false,
   },
   {
     accessorKey: 'nombre',

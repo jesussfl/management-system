@@ -6,26 +6,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
-import { MoreHorizontal } from 'lucide-react'
-import ModalForm from '@/modules/common/components/modal-form'
-import {
-  GradosWithComponentesAndIncludeComponente,
-  ZodiType,
-} from '@/types/types'
-import {
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
+import { ZodiType } from '@/types/types'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteZodi, recoverZodi } from '../../lib/actions/zodis'
@@ -33,25 +14,25 @@ import { deleteZodi, recoverZodi } from '../../lib/actions/zodis'
 export const columns: ColumnDef<ZodiType>[] = [
   {
     id: 'seleccionar',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todos"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Seleccionar fila"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
+    // header: ({ table }) => (
+    //   <Checkbox
+    //     checked={
+    //       table.getIsAllPageRowsSelected() ||
+    //       (table.getIsSomePageRowsSelected() && 'indeterminate')
+    //     }
+    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //     aria-label="Seleccionar todos"
+    //   />
+    // ),
+    // cell: ({ row }) => (
+    //   <Checkbox
+    //     checked={row.getIsSelected()}
+    //     onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //     aria-label="Seleccionar fila"
+    //   />
+    // ),
+    // enableSorting: false,
+    // enableHiding: false,
   },
   {
     accessorKey: 'nombre',

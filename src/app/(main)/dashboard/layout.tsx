@@ -4,18 +4,11 @@ import {
   SidebarProvider,
   useSidebarContext,
 } from '@/lib/context/sidebar-context'
-import { useEffect, useState, type FC, type PropsWithChildren } from 'react'
+import { type FC, type PropsWithChildren } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { DashboardNavbar } from './navbar'
 import { DashboardSidebar } from './sidebar'
 import { PageTemplate } from '@/modules/layout/templates/page'
-import {
-  createAttendance,
-  getAttendancesByUserId,
-} from './recursos-humanos/asistencias/lib/actions'
-import { auth } from '@/auth'
-import { isSameDay } from 'date-fns'
-import { useCurrentUser } from '@/lib/hooks/use-current-user'
 
 const DashboardLayout: FC<PropsWithChildren> = function ({ children }) {
   return (
@@ -61,7 +54,7 @@ const DashboardLayoutContent: FC<PropsWithChildren> = function ({ children }) {
         <div
           id="main-content"
           className={twMerge(
-            'relative w-full h-screen pt-16 rounded-sm overflow-hidden bg-dark dark:bg-gray-900',
+            'relative w-full h-screen pt-4  overflow-hidden bg-dark dark:bg-gray-900',
             isCollapsed ? 'lg:ml-[4rem]' : 'lg:ml-64'
           )}
         >

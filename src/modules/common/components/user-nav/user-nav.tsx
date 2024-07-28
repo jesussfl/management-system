@@ -2,26 +2,20 @@ import { Button } from '@/modules/common/components/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import { useSession, signOut } from 'next-auth/react'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/modules/common/components/avatar/avatar'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { validateSections } from '@/lib/data/validate-permissions'
-import { FileLock2, LogOut, LucideFileLock2 } from 'lucide-react'
+import { FileLock2, LogOut, UserCircle2 } from 'lucide-react'
+import { useSidebarContext } from '@/lib/context/sidebar-context'
 export default function UserNav() {
   const { data: session } = useSession()
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const { isCollapsed, setCollapsed: setSidebarCollapsed } = useSidebarContext()
 
   useEffect(() => {
     const validateKeys = async () => {
@@ -39,17 +33,20 @@ export default function UserNav() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
-          className="flex justify-start gap-2 hover:bg-dark-secondary"
+          variant="link"
+          className="flex w-full justify-start gap-2 text-white"
         >
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium text-white leading-none">
-              {session?.user?.nombre}
-            </p>
-            <p className="text-xs leading-none text-gray-200">
-              {`Rol: ${session?.user?.rol_nombre}`}
-            </p>
-          </div>
+          <UserCircle2 className="h-6 w-6" />
+          {!isCollapsed && (
+            <div className="flex flex-col text-left space-y-1">
+              <p className="text-sm font-medium text-white leading-none">
+                {session?.user?.nombre}
+              </p>
+              <p className="text-xs leading-none text-gray-200">
+                {`Rol: ${session?.user?.rol_nombre}`}
+              </p>
+            </div>
+          )}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
