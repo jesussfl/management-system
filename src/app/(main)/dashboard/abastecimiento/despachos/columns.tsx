@@ -281,8 +281,6 @@ export const columns: ColumnDef<DespachoType>[] = [
           editConfig={{
             href: `/dashboard/abastecimiento/despachos/${data.id}`,
           }}
-          // disableDelete
-          disableEdit
           deleteConfig={{
             isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este despacho?',

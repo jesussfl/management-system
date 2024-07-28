@@ -7,7 +7,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
-import { PackagePlus } from 'lucide-react'
+import { IterationCcw, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
@@ -30,7 +30,7 @@ export default async function Page() {
 
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <IterationCcw size={24} />
               Agrega una devolución
             </PageHeaderTitle>
             <PageHeaderDescription>

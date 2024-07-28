@@ -56,6 +56,7 @@ export default function ReceptionsForm({
 }: Props) {
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
+
   const router = useRouter()
   const form = useForm<ReceptionFormValues>({
     mode: 'onChange',
@@ -85,7 +86,7 @@ export default function ReceptionsForm({
       },
     })
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-
+  const isEditEnabled = defaultValues ? true : false
   const onSubmit: SubmitHandler<ReceptionFormValues> = async (data) => {
     if (data.renglones.length === 0) {
       toast({
@@ -190,7 +191,7 @@ export default function ReceptionsForm({
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han recibido
               </FormDescription>
-              <ItemSelector>
+              <ItemSelector disabled={isEditEnabled}>
                 <DataTable
                   columns={columns}
                   data={renglonesData}
@@ -218,6 +219,7 @@ export default function ReceptionsForm({
                   }
                   setItemsWithoutSerials={setItemsWithoutSerials}
                   servicio={servicio}
+                  isEditEnabled={isEditEnabled}
                 />
               )
             })}
@@ -225,6 +227,11 @@ export default function ReceptionsForm({
         )}
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
+          {isEditEnabled && (
+            <p className="text-sm text-foreground">
+              Algunos campos están deshabilitados para la edición
+            </p>
+          )}
           <Button
             className="w-[200px]"
             disabled={isPending}

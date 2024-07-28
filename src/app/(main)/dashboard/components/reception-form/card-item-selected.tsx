@@ -52,6 +52,7 @@ export const CardItemSelected = ({
   isEmpty,
   setItemsWithoutSerials,
   servicio,
+  isEditEnabled,
 }: {
   item: Renglon
   isEmpty?: string | boolean
@@ -59,6 +60,7 @@ export const CardItemSelected = ({
   deleteItem: (index: number) => void
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
   servicio: 'Abastecimiento' | 'Armamento'
+  isEditEnabled?: boolean
 }) => {
   const { watch, control, setValue } = useFormContext()
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
@@ -93,11 +95,16 @@ export const CardItemSelected = ({
             </CardDescription>
           </div>
         </div>
+        {!isEditEnabled ? (
+          <Trash
+            onClick={() => {
+              if (isEditEnabled) return
 
-        <Trash
-          onClick={() => deleteItem(index)}
-          className="h-5 w-5 text-red-800 cursor-pointer"
-        />
+              deleteItem(index)
+            }}
+            className="h-5 w-5 text-red-800 cursor-pointer"
+          />
+        ) : null}
       </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-end">
         <FormField
@@ -199,6 +206,7 @@ export const CardItemSelected = ({
                       className="flex-1"
                       type="number"
                       {...field}
+                      disabled={isEditEnabled}
                       onChange={(event) => {
                         field.onChange(parseInt(event.target.value))
                         setValue(`renglones.${index}.seriales`, [])
@@ -366,7 +374,7 @@ export const CardItemSelected = ({
             }`}
             closeWarning={false}
             className="max-h-[80vh]"
-            disabled={!watch(`renglones.${index}.cantidad`)}
+            disabled={!watch(`renglones.${index}.cantidad`) || isEditEnabled}
             open={isModalOpen}
             customToogleModal={toogleModal}
           >

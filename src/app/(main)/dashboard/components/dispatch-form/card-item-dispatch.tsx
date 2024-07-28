@@ -80,10 +80,16 @@ export const CardItemDispatch = ({
           </div>
         </div>
 
-        <Trash
-          onClick={() => deleteItem(index)}
-          className="h-5 w-5 text-red-800 cursor-pointer"
-        />
+        {!isEditEnabled ? (
+          <Trash
+            onClick={() => {
+              if (isEditEnabled) return
+
+              deleteItem(index)
+            }}
+            className="h-5 w-5 text-red-800 cursor-pointer"
+          />
+        ) : null}
       </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-start gap-4">
         <FormField
@@ -102,6 +108,7 @@ export const CardItemDispatch = ({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
+                  disabled={isEditEnabled}
                 />
               </FormControl>
             </FormItem>

@@ -8,7 +8,7 @@ import {
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, PackagePlus } from 'lucide-react'
+import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getReturnById } from '../../../lib/actions/return'
 import ReturnsForm from '../../../components/return-form/returns-form'
@@ -38,7 +38,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </Link>
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <IterationCcw size={24} />
               Editar Devolución
             </PageHeaderTitle>
             <PageHeaderDescription>

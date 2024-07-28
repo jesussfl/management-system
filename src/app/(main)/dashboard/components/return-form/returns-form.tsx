@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import { columns } from './columns'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
@@ -29,6 +29,8 @@ import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { Separator } from '@/modules/common/components/separator/separator'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
+import { Loader2 } from 'lucide-react'
+import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 
 type ComboboxData = {
   value: string
@@ -54,6 +56,7 @@ export default function ReturnsForm({
   const { toast } = useToast()
   const router = useRouter()
   const isEditEnabled = !!defaultValues
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<ReturnFormValues>({
     defaultValues,
@@ -163,6 +166,7 @@ export default function ReturnsForm({
             <Separator />
 
             <FormDateFields
+              isEditEnabled={isEditEnabled}
               config={{
                 dateName: 'fecha_devolucion',
                 dateLabel: 'Fecha de devolució́n',
@@ -176,7 +180,7 @@ export default function ReturnsForm({
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han devuelto
               </FormDescription>
-              <ItemSelector>
+              <ItemSelector disabled={isEditEnabled}>
                 <DataTable
                   columns={columns}
                   data={renglonesData.filter((item) => {
@@ -229,9 +233,25 @@ export default function ReturnsForm({
             </CardContent>
           </Card>
         )}
-        <Button variant="default" type={'submit'}>
-          Guardar Devolución
-        </Button>
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          {isEditEnabled && (
+            <p className="text-sm text-foreground">
+              Algunos campos están deshabilitados para la edición
+            </p>
+          )}
+          <Button
+            className="w-[200px]"
+            disabled={isPending}
+            variant="default"
+            type={'submit'}
+          >
+            {isPending ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              'Guardar'
+            )}
+          </Button>
+        </DialogFooter>
       </form>
     </Form>
   )

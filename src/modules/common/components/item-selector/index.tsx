@@ -11,7 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-export const ItemSelector = ({ children }: { children: React.ReactNode }) => {
+export const ItemSelector = ({
+  children,
+  disabled,
+}: {
+  children: React.ReactNode
+  disabled?: boolean
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const toogleModal = () => setIsModalOpen(!isModalOpen)
@@ -21,6 +27,7 @@ export const ItemSelector = ({ children }: { children: React.ReactNode }) => {
       closeWarning={false}
       open={isModalOpen}
       customToogleModal={toogleModal}
+      disabled={disabled}
     >
       <div className="flex flex-col gap-4 p-8">
         <CardTitle>Selecciona los Renglones</CardTitle>

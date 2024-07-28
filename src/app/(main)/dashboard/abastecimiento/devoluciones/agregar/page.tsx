@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
-import { PackagePlus } from 'lucide-react'
+import { IterationCcw, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import ReturnsForm from '../../../components/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: 'Desde aquí puedes administrar las devoluciones del inventario',
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page() {
   const itemsData = await getAllItems(true)
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox(true)
@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <IterationCcw size={24} />
               Agrega una devolución
             </PageHeaderTitle>
             <PageHeaderDescription>

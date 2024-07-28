@@ -1,6 +1,6 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Plus, PackagePlus } from 'lucide-react'
+import { Plus, PackagePlus, IterationCcw } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
@@ -28,7 +28,7 @@ export default async function Page() {
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackagePlus size={24} />
+            <IterationCcw size={24} />
             Devoluciones
           </PageHeaderTitle>
           <PageHeaderDescription>

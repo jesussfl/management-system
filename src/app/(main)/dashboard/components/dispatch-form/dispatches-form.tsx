@@ -175,6 +175,7 @@ export default function DispatchesForm({
             <Separator />
 
             <FormDateFields
+              isEditEnabled={isEditEnabled}
               config={{
                 dateName: 'fecha_despacho',
                 dateLabel: 'Fecha de despacho',
@@ -188,7 +189,7 @@ export default function DispatchesForm({
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han despachado
               </FormDescription>
-              <ItemSelector>
+              <ItemSelector disabled={isEditEnabled}>
                 <DataTable
                   columns={selectItemColumns}
                   data={renglonesData}
@@ -243,7 +244,6 @@ export default function DispatchesForm({
                     0
                   )
                   const currentDispatch = item.despachos.find((item) => {
-                    // @ts-ignore
                     return item.id_despacho === id
                   })
                   const totalStock = isEditEnabled
@@ -259,7 +259,6 @@ export default function DispatchesForm({
                       key={item.id}
                       item={item}
                       index={index}
-                      // @ts-ignore
                       totalStock={totalStock < 0 ? 0 : totalStock}
                       dispatchId={id}
                       deleteItem={deleteItem}
@@ -277,6 +276,11 @@ export default function DispatchesForm({
           </Card>
         )}
         <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+          {isEditEnabled && (
+            <p className="text-sm text-foreground">
+              Algunos campos están deshabilitados para la edición
+            </p>
+          )}
           <Button
             className="w-[200px]"
             disabled={isPending}

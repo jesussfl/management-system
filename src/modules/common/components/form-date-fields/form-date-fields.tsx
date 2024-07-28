@@ -28,13 +28,17 @@ import { useState } from 'react'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 interface FormDateFieldsProps {
+  isEditEnabled: boolean
   config: {
     dateLabel: string
     dateName: string
     dateDescription: string
   }
 }
-export const FormDateFields = ({ config }: FormDateFieldsProps) => {
+export const FormDateFields = ({
+  config,
+  isEditEnabled,
+}: FormDateFieldsProps) => {
   const form = useFormContext()
   const { toast } = useToast()
 
@@ -131,11 +135,15 @@ export const FormDateFields = ({ config }: FormDateFieldsProps) => {
         )}
       />
       {form.watch(config.dateName) < startOfDay(new Date()) &&
-      isAuthorized === false ? (
+      isAuthorized === false &&
+      !isEditEnabled ? (
         <ModalForm
           triggerName=" Parece que estás colocando una fecha anterior a la actual"
           closeWarning={false}
-          open={form.watch(config.dateName) < new Date()}
+          open={
+            !isEditEnabled &&
+            form.watch(config.dateName) < startOfDay(new Date())
+          }
           customToogleModal={toogleAlert}
           className="w-[550px]"
         >
@@ -190,7 +198,7 @@ export const FormDateFields = ({ config }: FormDateFieldsProps) => {
         </ModalForm>
       ) : null}
       {form.watch(config.dateName) < startOfDay(new Date()) &&
-      isAuthorized === true ? (
+      (isAuthorized === true || isEditEnabled) ? (
         <FormField
           control={form.control}
           name="motivo_fecha"

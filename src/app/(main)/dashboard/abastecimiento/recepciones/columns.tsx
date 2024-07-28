@@ -290,8 +290,6 @@ export const columns: ColumnDef<RecepcionType>[] = [
           editConfig={{
             href: `/dashboard/abastecimiento/recepciones/${data.id}`,
           }}
-          // disableDelete
-          disableEdit
           deleteConfig={{
             isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta recepción?',
