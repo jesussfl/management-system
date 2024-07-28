@@ -10,19 +10,19 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
 import {
   deleteMultiplePackagingUnits,
   getAllPackagingUnits,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/packaging-units'
+} from '@/app/(main)/dashboard/lib/actions/packaging-units'
 import {
   deleteMultipleClassifications,
   getAllClassifications,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/classifications'
+} from '@/app/(main)/dashboard/lib/actions/classifications'
 import {
   deleteMultipleCategories,
   getAllCategories,
-} from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
+} from '@/app/(main)/dashboard/lib/actions/categories'
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -31,11 +31,11 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/categories-columns'
-import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/classification-columns'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
-import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/subsystem-columns'
-import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/system-columns'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/classification-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/packaging-units-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/system-columns'
 import {
   Card,
   CardContent,
@@ -56,8 +56,8 @@ import Link from 'next/link'
 import {
   deleteMultipleSubsystems,
   getAllSubsystems,
-} from './lib/actions/subsystems'
-import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
+} from '../../lib/actions/subsystems'
+import { deleteMultipleSystems, getAllSystems } from '../../lib/actions/systems'
 import { TableWithExport } from './table-with-export'
 
 import { Badge } from '@/modules/common/components/badge'

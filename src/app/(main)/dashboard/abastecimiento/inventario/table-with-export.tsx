@@ -1,7 +1,7 @@
 'use client'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { useEffect, useState } from 'react'
-import { deleteMultipleItems, showNotification } from './lib/actions/items'
+import { deleteMultipleItems, showNotification } from '../../lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
 import { columns } from './columns'
 import ExportExcelButton from './components/items-export-button'

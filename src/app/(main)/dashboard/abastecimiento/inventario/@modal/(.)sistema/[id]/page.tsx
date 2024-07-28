@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import SystemForm from '../../../components/forms/system-form'
-import { getSystemById } from '../../../lib/actions/systems'
+import SystemForm from '../../../../../components/system-form'
+import { getSystemById } from '../../../../../lib/actions/systems'
 
 export default async function Page({
   params: { id },

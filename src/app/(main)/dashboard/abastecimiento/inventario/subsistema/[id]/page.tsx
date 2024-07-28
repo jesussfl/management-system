@@ -1,6 +1,6 @@
 import PageForm from '@/modules/layout/components/page-form'
-import SubsystemForm from '../../components/forms/subsystem-form'
-import { getSubsystemById } from '../../lib/actions/subsystems'
+import SubsystemForm from '../../../../components/subsystem-form'
+import { getSubsystemById } from '../../../../lib/actions/subsystems'
 
 export default async function Page({
   params: { id },

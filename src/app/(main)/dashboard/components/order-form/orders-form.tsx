@@ -64,7 +64,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
-import { ItemsWithAllRelations } from '../../abastecimiento/inventario/lib/actions/items'
+import { ItemsWithAllRelations } from '../../lib/actions/item'
 
 export type PedidoForm = {
   fecha_solicitud: Date

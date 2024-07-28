@@ -22,7 +22,7 @@ import { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { ItemsWithAllRelations } from '../../abastecimiento/inventario/lib/actions/items'
+import { ItemsWithAllRelations } from '../../lib/actions/item'
 import { ReturnFormValues } from '../../abastecimiento/devoluciones/lib/types/types'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'

@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import ItemsForm from '../components/forms/items-form'
+import ItemsForm from '../../../components/item-form'
 
 export default async function Page() {
   return (
@@ -7,7 +7,7 @@ export default async function Page() {
       title="Crear Renglón"
       backLink="/dashboard/abastecimiento/inventario"
     >
-      <ItemsForm />
+      <ItemsForm section="Abastecimiento" />
     </PageForm>
   )
 }

@@ -1,5 +1,5 @@
-import { getCategoryById } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/categories'
-import CategoriesForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/forms/categories-form'
+import { getCategoryById } from '@/app/(main)/dashboard/lib/actions/categories'
+import CategoriesForm from '@/app/(main)/dashboard/components/categories-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

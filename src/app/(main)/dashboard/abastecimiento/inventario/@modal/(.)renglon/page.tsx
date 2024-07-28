@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '../../components/forms/items-form'
+import ItemsForm from '../../../../components/item-form'
 
 export default async function Page() {
   return (
@@ -17,7 +17,7 @@ export default async function Page() {
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ItemsForm />
+        <ItemsForm section="Abastecimiento" />
       </DialogContent>
     </Dialog>
   )

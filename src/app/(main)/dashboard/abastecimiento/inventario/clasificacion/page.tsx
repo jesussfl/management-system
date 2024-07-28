@@ -1,4 +1,4 @@
-import ClassificationsForm from '@/app/(main)/dashboard/abastecimiento/inventario/components/forms/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/components/classification-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {
