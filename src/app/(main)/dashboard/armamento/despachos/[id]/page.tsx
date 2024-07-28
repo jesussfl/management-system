@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/armamento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -11,9 +10,10 @@ import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/act
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getDispatchById } from '@/app/(main)/dashboard/armamento/despachos/lib/actions/dispatches'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
+import DispatchesForm from '../../../components/dispatch-form/dispatches-form'
+import { getDispatchById } from '../../../lib/actions/dispatch'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -49,8 +49,8 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <DispatchesForm
+          servicio="Armamento"
           renglonesData={itemsData}
-          // @ts-ignore
           defaultValues={dispatch}
           receivers={receivers}
           professionals={professionals}

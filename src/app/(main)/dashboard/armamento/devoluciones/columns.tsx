@@ -9,11 +9,10 @@ import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 import Link from 'next/link'
 import { cn } from '@/utils/utils'
-import { deleteReturn, recoverReturn } from './lib/actions/returns'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { recoverDispatch } from '../despachos/lib/actions/dispatches'
+import { deleteReturn, recoverReturn } from '../../lib/actions/return'
 
 type ReturnType = Prisma.DevolucionGetPayload<{
   include: { renglones: { include: { renglon: true } } }
@@ -136,7 +135,7 @@ export const columns: ColumnDef<ReturnType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.DEVOLUCIONES_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.DESPACHOS_ARMAMENTO}
           // disableDelete
           disableEdit
           editConfig={{
@@ -147,10 +146,10 @@ export const columns: ColumnDef<ReturnType>[] = [
             alertTitle: '¿Estás seguro de eliminar esta devolución?',
             alertDescription: `Estas a punto de eliminar esta devolución. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverReturn(data.id)
+              return recoverReturn(data.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteReturn(data.id)
+              return deleteReturn(data.id, 'Armamento')
             },
           }}
         />

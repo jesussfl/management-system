@@ -10,10 +10,11 @@ import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/act
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getReturnById } from '../lib/actions/returns'
-import ReturnsForm from '../components/form/returns-form'
+
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
+import { getReturnById } from '../../../lib/actions/return'
+import ReturnsForm from '../../../components/return-form/returns-form'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -49,11 +50,12 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReturnsForm
+          servicio="Armamento"
           renglonesData={itemsData}
-          // @ts-ignore
           defaultValues={devolution}
           receivers={receiver}
           professionals={professionals}
+          id={devolution.id}
         />
       </PageContent>
     </>

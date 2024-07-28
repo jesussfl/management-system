@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import FormatSelector from '@/modules/common/components/format-selector'
-import { getReceptionForExportGuide } from '../../../lib/actions/receptions'
+import { getReceptionForExportGuide } from '../../../../../lib/actions/reception'
 
 export default async function Page({
   params: { id },

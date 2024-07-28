@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 
-import { getReceptionById } from '../../../lib/actions/receptions'
+import { getReceptionById } from '../../../../../lib/actions/reception'
 import {
   Card,
   CardContent,

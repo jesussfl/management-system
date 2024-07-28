@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
+import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -41,6 +41,7 @@ export default async function Page() {
       </PageHeader>
       <PageContent className="pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm
+          servicio="Abastecimiento"
           renglonesData={itemsData}
           receivers={receivers}
           professionals={professionals}

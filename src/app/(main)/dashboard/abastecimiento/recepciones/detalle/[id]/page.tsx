@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import { getReceptionById } from '../../lib/actions/receptions'
+import { getReceptionById } from '../../../../lib/actions/reception'
 import {
   Card,
   CardContent,

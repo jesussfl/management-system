@@ -10,8 +10,8 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getReturnById } from '../lib/actions/returns'
-import ReturnsForm from '../components/form/returns-form'
+import { getReturnById } from '../../../lib/actions/return'
+import ReturnsForm from '../../../components/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 
@@ -49,8 +49,8 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReturnsForm
+          servicio="Abastecimiento"
           renglonesData={itemsData}
-          // @ts-ignore
           defaultValues={devolution}
           receivers={receiver}
           professionals={professionals}

@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { getDispatchById } from '../../../lib/actions/dispatches'
+import { getDispatchById } from '../../../../../lib/actions/dispatch'
 export default async function Page({
   params: { id },
 }: {

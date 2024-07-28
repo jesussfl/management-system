@@ -10,10 +10,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import {
-  deleteMultipleDispatches,
-  getAllDispatches,
-} from '@/app/(main)/dashboard/armamento/despachos/lib/actions/dispatches'
+
 import { columns } from './columns'
 import Link from 'next/link'
 import {
@@ -22,13 +19,14 @@ import {
   CardHeader,
 } from '@/modules/common/components/card/card'
 import { Overview } from '@/modules/common/components/overview/overview'
+import { getAllDispatches } from '../../lib/actions/dispatch'
 
 export const metadata: Metadata = {
   title: 'Despachos',
   description: 'Desde aquí puedes administrar las salidas del inventario',
 }
 export default async function Page() {
-  const dispatchesData = await getAllDispatches()
+  const dispatchesData = await getAllDispatches('Armamento')
   return (
     <>
       <PageHeader>
@@ -58,12 +56,7 @@ export default async function Page() {
           <CardContent>
             <Overview servicio="Armamento" />
 
-            <DataTable
-              columns={columns}
-              data={dispatchesData}
-              isMultipleDeleteEnabled
-              multipleDeleteAction={deleteMultipleDispatches}
-            />
+            <DataTable columns={columns} data={dispatchesData} />
           </CardContent>
         </Card>
       </PageContent>

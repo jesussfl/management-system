@@ -1,9 +1,3 @@
-import { Serial } from '@prisma/client'
-
-type SerialType = Omit<
-  Serial,
-  'id' | 'id_recepcion' | 'fecha_creacion' | 'ultima_actualizacion'
->
 export interface ReceptionFormValues {
   fecha_recepcion: Date
   motivo?: string | null
