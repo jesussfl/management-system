@@ -8,12 +8,12 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 import { Prisma } from '@prisma/client'
 import Link from 'next/link'
-import { deleteDispatch, recoverDispatch } from './lib/actions/dispatches'
 import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
+import { deleteDispatch, recoverDispatch } from '../../lib/actions/dispatch'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: {
@@ -288,10 +288,10 @@ export const columns: ColumnDef<DespachoType>[] = [
             alertTitle: '¿Estás seguro de eliminar este despacho?',
             alertDescription: `Estas a punto de eliminar este despacho. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverDispatch(data.id)
+              return recoverDispatch(data.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteDispatch(data.id)
+              return deleteDispatch(data.id, 'Armamento')
             },
           }}
         >

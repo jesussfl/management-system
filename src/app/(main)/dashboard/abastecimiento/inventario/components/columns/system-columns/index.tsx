@@ -7,9 +7,12 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Sistema } from '@prisma/client'
-import { deleteSystem, recoverSystem } from '../../../lib/actions/systems'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
+import {
+  deleteSystem,
+  recoverSystem,
+} from '@/app/(main)/dashboard/lib/actions/systems'
 
 export const columns: ColumnDef<Sistema>[] = [
   {

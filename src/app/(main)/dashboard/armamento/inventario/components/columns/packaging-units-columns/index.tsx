@@ -7,12 +7,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { UnidadEmpaque } from '@prisma/client'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deletePackagingUnit,
   recoverPackagingUnit,
-} from '../../../lib/actions/packaging-units'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
+} from '@/app/(main)/dashboard/lib/actions/packaging-units'
 export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',
@@ -105,7 +106,7 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/armamento/inventario/unidad-empaque/${packagingUnit.id}`,
+            href: `/dashboard/abastecimiento/inventario/unidad-empaque/${packagingUnit.id}`,
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',

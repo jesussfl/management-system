@@ -10,7 +10,6 @@ import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import { deleteOrder, recoverOrder } from './lib/actions/orders'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
@@ -22,6 +21,7 @@ import {
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
 import { HoverCardContent } from '@radix-ui/react-hover-card'
+import { deleteOrder, recoverOrder } from '../../lib/actions/order'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))
@@ -366,10 +366,10 @@ export const columns: ColumnDef<PedidoType>[] = [
             alertDescription: `Estas a punto de eliminar este pedido. Pero puedes recuperar el registro más tarde.`,
 
             onRecover: () => {
-              return recoverOrder(data.id)
+              return recoverOrder(data.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteOrder(data.id)
+              return deleteOrder(data.id, 'Armamento')
             },
           }}
         >

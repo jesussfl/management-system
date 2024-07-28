@@ -6,14 +6,15 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, PackagePlus } from 'lucide-react'
+import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getReturnById } from '../lib/actions/returns'
-import ReturnsForm from '../components/form/returns-form'
+
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
+import { getReturnById } from '../../../lib/actions/return'
+import ReturnsForm from '../../../components/return-form/returns-form'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Armamento')
   const devolution = await getReturnById(Number(params.id))
   const receiver = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox(true)
@@ -38,7 +39,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </Link>
           <div>
             <PageHeaderTitle>
-              <PackagePlus size={24} />
+              <IterationCcw size={24} />
               Editar Devolución
             </PageHeaderTitle>
             <PageHeaderDescription>
@@ -49,11 +50,12 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReturnsForm
+          servicio="Armamento"
           renglonesData={itemsData}
-          // @ts-ignore
           defaultValues={devolution}
           receivers={receiver}
           professionals={professionals}
+          id={devolution.id}
         />
       </PageContent>
     </>

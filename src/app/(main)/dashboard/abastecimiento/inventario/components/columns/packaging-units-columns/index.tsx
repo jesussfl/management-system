@@ -7,12 +7,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { UnidadEmpaque } from '@prisma/client'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deletePackagingUnit,
   recoverPackagingUnit,
-} from '../../../lib/actions/packaging-units'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
+} from '@/app/(main)/dashboard/lib/actions/packaging-units'
 export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',

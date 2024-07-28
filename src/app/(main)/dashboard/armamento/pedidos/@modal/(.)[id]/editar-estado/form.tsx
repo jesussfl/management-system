@@ -16,7 +16,6 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { useRouter } from 'next/navigation'
 import { Estados_Pedidos } from '@prisma/client'
-import { updateOrderStatus } from '../../../lib/actions/orders'
 import {
   Select,
   SelectContent,
@@ -24,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
+import { updateOrderStatus } from '@/app/(main)/dashboard/lib/actions/order'
 type FormValues = {
   estado: Estados_Pedidos | undefined | null
 }
@@ -43,7 +43,7 @@ export default function OrderStatusForm({ orderId, estado }: Props) {
   })
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
-    updateOrderStatus(orderId, values).then((data) => {
+    updateOrderStatus(orderId, values, 'Armamento').then((data) => {
       if (data?.success) {
         toast({
           title: 'Estado de pedido actualizada',

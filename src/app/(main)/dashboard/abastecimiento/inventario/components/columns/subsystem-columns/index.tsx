@@ -7,12 +7,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Subsistema } from '@prisma/client'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deleteSubsystem,
   recoverSubsystem,
-} from '../../../lib/actions/subsystems'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
+} from '@/app/(main)/dashboard/lib/actions/subsystems'
 export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',

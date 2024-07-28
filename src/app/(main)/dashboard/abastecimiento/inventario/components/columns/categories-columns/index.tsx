@@ -7,12 +7,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Categoria } from '@prisma/client'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deleteCategory,
   recoverCategory,
-} from '../../../lib/actions/categories'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
+} from '@/app/(main)/dashboard/lib/actions/categories'
 export const columns: ColumnDef<Categoria>[] = [
   {
     id: 'seleccionar',

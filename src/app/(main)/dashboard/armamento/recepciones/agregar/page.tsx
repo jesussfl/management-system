@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/app/(main)/dashboard/armamento/recepciones/components/form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,11 +6,12 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import ReceptionsForm from '../../../components/reception-form/receptions-form'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Armamento')
   const receivers = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox(true)
   return (
@@ -41,6 +41,7 @@ export default async function Page() {
       </PageHeader>
       <PageContent className="pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm
+          servicio="Armamento"
           renglonesData={itemsData}
           receivers={receivers}
           professionals={professionals}

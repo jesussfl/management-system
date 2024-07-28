@@ -6,14 +6,14 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import ReceptionsForm from '@/app/(main)/dashboard/armamento/recepciones/components/form/receptions-form'
-import { getReceptionById } from '@/app/(main)/dashboard/armamento/recepciones/lib/actions/receptions'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import ReceptionsForm from '../../../components/reception-form/receptions-form'
+import { getReceptionById } from '../../../lib/actions/reception'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Armamento')
   const reception = await getReceptionById(Number(params.id))
   const receivers = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox()
@@ -50,10 +50,12 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm
+          servicio="Armamento"
           renglonesData={itemsData}
           defaultValues={reception}
           receivers={receivers}
           professionals={professionals}
+          id={reception?.id}
         />
       </PageContent>
     </>

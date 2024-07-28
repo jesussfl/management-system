@@ -11,13 +11,13 @@ import { Prisma } from '@prisma/client'
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
 import { cn } from '@/utils/utils'
-import { deleteReception, recoverReception } from './lib/actions/receptions'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
 import 'dayjs/plugin/duration'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import { deleteReception, recoverReception } from '../../lib/actions/reception'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))
@@ -286,7 +286,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.RECEPCIONES_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.RECEPCIONES_ARMAMENTO}
           editConfig={{
             href: `/dashboard/armamento/recepciones/${data.id}`,
           }}
@@ -297,10 +297,10 @@ export const columns: ColumnDef<RecepcionType>[] = [
             alertTitle: '¿Estás seguro de eliminar esta recepción?',
             alertDescription: `Estas a punto de eliminar esta recepción. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverReception(data.id)
+              return recoverReception(data.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteReception(data.id)
+              return deleteReception(data.id, 'Armamento')
             },
           }}
         >

@@ -1,3 +1,4 @@
+import { getReceptionForExportGuide } from '@/app/(main)/dashboard/lib/actions/reception'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -6,7 +7,6 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 import FormatSelector from '@/modules/common/components/format-selector'
-import { getReceptionForExportGuide } from '../../../lib/actions/receptions'
 
 export default async function Page({
   params: { id },

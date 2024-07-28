@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/armamento/despachos/components/form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,13 +6,14 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getDispatchById } from '@/app/(main)/dashboard/armamento/despachos/lib/actions/dispatches'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
+import DispatchesForm from '../../../components/dispatch-form/dispatches-form'
+import { getDispatchById } from '../../../lib/actions/dispatch'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Armamento')
   const dispatch = await getDispatchById(Number(params.id))
   const receivers = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox()
@@ -49,8 +49,8 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <DispatchesForm
+          servicio="Armamento"
           renglonesData={itemsData}
-          // @ts-ignore
           defaultValues={dispatch}
           receivers={receivers}
           professionals={professionals}

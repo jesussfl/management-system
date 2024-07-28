@@ -1,6 +1,6 @@
 import { columns } from './columns'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { Plus, PackagePlus } from 'lucide-react'
+import { Plus, PackagePlus, IterationCcw } from 'lucide-react'
 import { Metadata } from 'next'
 
 import {
@@ -14,7 +14,7 @@ import {
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
-import { getAllReturns } from './lib/actions/returns'
+import { getAllReturns } from '../../lib/actions/return'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -22,13 +22,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const returnsData = await getAllReturns()
+  const returnsData = await getAllReturns('Abastecimiento')
   return (
     <>
       <PageHeader>
         <HeaderLeftSide>
           <PageHeaderTitle>
-            <PackagePlus size={24} />
+            <IterationCcw size={24} />
             Devoluciones
           </PageHeaderTitle>
           <PageHeaderDescription>

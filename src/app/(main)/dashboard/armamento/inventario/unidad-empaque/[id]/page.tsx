@@ -1,5 +1,5 @@
-import { getPackagingUnitById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
-import PackagingUnitsForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/packaging-units-form'
+import PackagingUnitsForm from '@/app/(main)/dashboard/components/packaging-units-form'
+import { getPackagingUnitById } from '@/app/(main)/dashboard/lib/actions/packaging-units'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

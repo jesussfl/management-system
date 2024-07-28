@@ -1,5 +1,5 @@
-import PackagingUnitsForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/packaging-units-form'
 import PageForm from '@/modules/layout/components/page-form'
+import PackagingUnitsForm from '../../../components/packaging-units-form'
 
 export default async function Page() {
   return (

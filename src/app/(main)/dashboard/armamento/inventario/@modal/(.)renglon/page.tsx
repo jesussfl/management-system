@@ -1,3 +1,4 @@
+import ItemsForm from '@/app/(main)/dashboard/components/item-form'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '../../components/forms/items-form'
 
 export default async function Page() {
   return (
@@ -17,7 +17,7 @@ export default async function Page() {
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ItemsForm />
+        <ItemsForm section="Armamento" />
       </DialogContent>
     </Dialog>
   )

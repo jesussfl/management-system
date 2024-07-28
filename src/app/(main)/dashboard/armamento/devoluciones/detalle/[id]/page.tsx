@@ -1,6 +1,5 @@
+import { getReturnById } from '@/app/(main)/dashboard/lib/actions/return'
 import PageForm from '@/modules/layout/components/page-form'
-
-import { getReturnById } from '../../lib/actions/returns'
 
 export default async function Page({
   params: { id },
@@ -22,7 +21,7 @@ export default async function Page({
           <p>Cantidad: {`${renglon.seriales.length}`}</p>
           <p>Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}</p>
           <p>Clasificación: {renglon.renglon.clasificacion.nombre}</p>
-          <p>Categoría: {renglon.renglon.categoria.nombre}</p>
+          {/* <p>Categoría: {renglon.renglon?.categoria?.nombre}</p> */}
         </div>
       ))}
     </PageForm>

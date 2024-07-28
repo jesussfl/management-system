@@ -1,12 +1,12 @@
 'use client'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { useEffect, useState } from 'react'
-import { deleteMultipleItems, showNotification } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 import { columns } from './columns'
 import ExportExcelButton from './components/items-export-button'
 import { formatExcelData } from './format-function'
 import { useToast } from '@/modules/common/components/toast/use-toast'
+import { showNotification } from '../../lib/actions/item'
 
 export const TableWithExport = ({
   itemsData,
@@ -56,11 +56,7 @@ export const TableWithExport = ({
       <DataTable
         columns={columns}
         data={itemsData}
-        isMultipleDeleteEnabled
-        onDataChange={(data: any) => {
-          setRowsData(data)
-        }}
-        multipleDeleteAction={deleteMultipleItems}
+        onSelectedRowsChange={setRowsData}
       />
     </>
   )

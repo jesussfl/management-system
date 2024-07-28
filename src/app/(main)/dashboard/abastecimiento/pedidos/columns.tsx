@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import { deleteOrder, recoverOrder } from './lib/actions/orders'
+import { deleteOrder, recoverOrder } from '../../lib/actions/order'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
@@ -366,10 +366,10 @@ export const columns: ColumnDef<PedidoType>[] = [
             alertDescription: `Estas a punto de eliminar este pedido. Pero puedes recuperar el registro más tarde.`,
 
             onRecover: () => {
-              return recoverOrder(data.id)
+              return recoverOrder(data.id, 'Abastecimiento')
             },
             onConfirm: () => {
-              return deleteOrder(data.id)
+              return deleteOrder(data.id, 'Abastecimiento')
             },
           }}
         >

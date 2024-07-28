@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import SubsystemForm from '../components/forms/subsystem-form'
+import SubsystemForm from '../../../components/subsystem-form'
 
 export default async function Page() {
   return (

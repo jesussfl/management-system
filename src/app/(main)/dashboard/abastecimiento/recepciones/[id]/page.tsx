@@ -6,23 +6,40 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import ReceptionsForm from '@/app/(main)/dashboard/abastecimiento/recepciones/components/form/receptions-form'
-import { getReceptionById } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/actions/receptions'
+import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/receptions-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
+import { ReceptionFormValues } from '../lib/types/types'
+import { getReceptionById } from '../../../lib/actions/reception'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
   description: 'Desde aquí puedes administrar las entradas del inventario',
 }
 
+function formatReceptionDataToForm(
+  reception: Awaited<ReturnType<typeof getReceptionById>>
+): ReceptionFormValues {
+  return {
+    ...reception,
+
+    renglones: reception.renglones.map((renglon) => ({
+      ...renglon,
+      seriales: renglon.seriales.map((serial) => ({
+        serial: serial.serial,
+        id_renglon: renglon.id_renglon,
+      })),
+    })),
+  }
+}
 export default async function Page({ params }: { params: { id: string } }) {
   const itemsData = await getAllItems()
   const reception = await getReceptionById(Number(params.id))
+
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
 
@@ -50,8 +67,10 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <ReceptionsForm
+          servicio="Abastecimiento"
           renglonesData={itemsData}
-          defaultValues={reception}
+          id={Number(params.id)}
+          defaultValues={formatReceptionDataToForm(reception)}
           receivers={receivers}
           professionals={professionals}
         />

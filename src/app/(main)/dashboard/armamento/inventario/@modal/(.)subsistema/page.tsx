@@ -1,3 +1,4 @@
+import SubsystemForm from '@/app/(main)/dashboard/components/subsystem-form'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import SubsystemForm from '../../components/forms/subsystem-form'
 
 export default async function Page() {
   return (

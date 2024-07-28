@@ -1,3 +1,4 @@
+import PackagingUnitsForm from '@/app/(main)/dashboard/components/packaging-units-form'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import PackagingUnitsForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/packaging-units-form'
 
 export default async function Page() {
   return (

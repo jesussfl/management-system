@@ -1,5 +1,5 @@
-import { getClassificationById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
-import ClassificationsForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/components/classification-form'
+import { getClassificationById } from '@/app/(main)/dashboard/lib/actions/classifications'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

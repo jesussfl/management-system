@@ -13,7 +13,7 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deleteClassification,
   recoverClassification,
-} from '../../../lib/actions/classifications'
+} from '@/app/(main)/dashboard/lib/actions/classifications'
 
 export const columns: ColumnDef<Clasificacion>[] = [
   {
@@ -76,7 +76,7 @@ export const columns: ColumnDef<Clasificacion>[] = [
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/armamento/inventario/clasificacion/${classification.id}`,
+            href: `/dashboard/abastecimiento/inventario/clasificacion/${classification.id}`,
           }}
           deleteConfig={{
             isDeleted: classification.fecha_eliminacion ? true : false,

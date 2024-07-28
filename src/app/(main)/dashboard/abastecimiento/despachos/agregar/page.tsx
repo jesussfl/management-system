@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/abastecimiento/despachos/components/form/dispatches-form'
+import DispatchesForm from '@/app/(main)/dashboard/components/dispatch-form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -7,7 +7,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/lib/actions/items'
+import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
 import { PackageMinus, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
@@ -41,6 +41,7 @@ export default async function Page() {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <DispatchesForm
+          servicio="Abastecimiento"
           renglonesData={itemsData}
           receivers={receivers}
           professionals={professionals}
