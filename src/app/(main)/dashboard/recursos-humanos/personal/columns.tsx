@@ -14,10 +14,10 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deletePersonnel, recoverPersonnel } from '../guardias/lib/actions'
 export const columns: ColumnDef<PersonalType>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'cedula',
     header: ({ column }) => {
