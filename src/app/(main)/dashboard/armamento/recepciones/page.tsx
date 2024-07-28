@@ -11,13 +11,11 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import {
-  deleteMultipleReceptions,
-  getAllReceptions,
-} from '@/app/(main)/dashboard/armamento/recepciones/lib/actions/receptions'
+
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
+import { getAllReceptions } from '../../lib/actions/reception'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
@@ -25,7 +23,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const receptionsData = await getAllReceptions()
+  const receptionsData = await getAllReceptions(false, 'Armamento')
   return (
     <>
       <PageHeader>
@@ -49,12 +47,7 @@ export default async function Page() {
         </HeaderRightSide>
       </PageHeader>
       <PageContent>
-        <DataTable
-          columns={columns}
-          data={receptionsData}
-          isMultipleDeleteEnabled
-          multipleDeleteAction={deleteMultipleReceptions}
-        />
+        <DataTable columns={columns} data={receptionsData} />
       </PageContent>
     </>
   )

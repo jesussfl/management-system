@@ -531,6 +531,9 @@ export const getAllDispatches = async (
     throw new Error('You must be signed in to perform this action')
   }
   const dispatch = await prisma.despacho.findMany({
+    orderBy: {
+      ultima_actualizacion: 'desc',
+    },
     where: {
       servicio,
     },

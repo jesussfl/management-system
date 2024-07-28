@@ -327,7 +327,7 @@ export const getAllReceptions = async (
   }
   const recepciones = await prisma.recepcion.findMany({
     orderBy: {
-      fecha_recepcion: 'desc',
+      ultima_actualizacion: 'desc',
     },
     where: {
       servicio,

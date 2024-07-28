@@ -6,13 +6,13 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 
-import { getReceptionById } from '../../../../../lib/actions/reception'
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
+import { getReceptionById } from '@/app/(main)/dashboard/lib/actions/reception'
 
 export default async function Page({
   params: { id },

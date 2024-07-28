@@ -15,14 +15,33 @@ export const columns: ColumnDef<Renglon>[] = [
   },
 
   {
-    accessorKey: 'stock',
-    cell: ({ row }) => {
-      const stock = row.original.recepciones.reduce(
-        (total, item) => total + item.cantidad,
-        0
+    id: 'stock',
+    accessorFn: (row) => {
+      const activeReceptions = row.recepciones.filter(
+        (reception) => reception.recepcion.fecha_eliminacion === null
       )
 
-      return <div>{stock}</div>
+      return activeReceptions.reduce((total, item) => {
+        const serials = item.seriales.filter(
+          (serial) =>
+            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
+        ).length
+
+        return total + serials
+      }, 0)
+    },
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
     },
   },
   {

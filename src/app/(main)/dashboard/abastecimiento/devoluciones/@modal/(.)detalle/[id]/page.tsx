@@ -55,14 +55,11 @@ export default async function Page({
                 <p className="text-sm text-foreground">
                   Clasificación: {renglon.renglon.clasificacion.nombre}
                 </p>
-                <p className="text-sm text-foreground">
-                  Categoría: {renglon.renglon.categoria.nombre}
-                </p>
+
                 <p className="text-sm text-foreground">
                   Seriales devueltos:
                   <ul className="list-disc ml-4">
                     {renglon.seriales.map((serial, index) => (
-                      // @ts-ignore
                       <li key={index}>{serial}</li>
                     ))}
                   </ul>

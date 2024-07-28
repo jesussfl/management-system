@@ -22,7 +22,6 @@ export default async function Page({
           <p>Cantidad: {`${renglon.seriales.length}`}</p>
           <p>Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}</p>
           <p>Clasificación: {renglon.renglon.clasificacion.nombre}</p>
-          <p>Categoría: {renglon.renglon.categoria.nombre}</p>
         </div>
       ))}
     </PageForm>

@@ -120,7 +120,7 @@ export default function DispatchesForm({
             description: 'Los despachos se han creado correctamente',
             variant: 'success',
           })
-          router.replace(`/dashboard/${servicio.toLowerCase()}despachos`)
+          router.replace(`/dashboard/${servicio.toLowerCase()}/despachos`)
         })
       })
 
@@ -142,7 +142,7 @@ export default function DispatchesForm({
           description: 'Los despachos se han actualizado correctamente',
           variant: 'success',
         })
-        router.replace(`/dashboard/${servicio.toLowerCase()}despachos`)
+        router.replace(`/dashboard/${servicio.toLowerCase()}/despachos`)
       })
     })
   }
@@ -182,6 +182,8 @@ export default function DispatchesForm({
                   'Seleccione la fecha en la que se realiza el despacho',
               }}
             />
+            <Separator />
+
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han despachado

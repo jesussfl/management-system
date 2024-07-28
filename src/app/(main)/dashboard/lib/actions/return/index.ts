@@ -434,9 +434,11 @@ export const getAllReturns = async (
     throw new Error('You must be signed in to perform this action')
   }
   const devolution = await prisma.devolucion.findMany({
+    orderBy: {
+      ultima_actualizacion: 'desc',
+    },
     where: {
       servicio,
-      fecha_eliminacion: null,
     },
     include: {
       renglones: {

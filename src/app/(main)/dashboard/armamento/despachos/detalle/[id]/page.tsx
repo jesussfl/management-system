@@ -1,5 +1,5 @@
+import { getDispatchById } from '@/app/(main)/dashboard/lib/actions/dispatch'
 import PageForm from '@/modules/layout/components/page-form'
-import { getDispatchById } from '../../lib/actions/dispatches'
 
 export default async function Page({
   params: { id },

@@ -1,5 +1,4 @@
 import PageForm from '@/modules/layout/components/page-form'
-import { getReceptionById } from '../../lib/actions/receptions'
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { format } from 'date-fns'
+import { getReceptionById } from '@/app/(main)/dashboard/lib/actions/reception'
 export default async function Page({
   params: { id },
 }: {
