@@ -9,7 +9,7 @@ import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import OrderStatusForm from '../../@modal/(.)[id]/editar-estado/form'
-import { getOrderById } from '../../lib/actions/orders'
+import { getOrderById } from '@/app/(main)/dashboard/lib/actions/order'
 
 export const metadata: Metadata = {
   title: 'Editar Estado del Pedido',

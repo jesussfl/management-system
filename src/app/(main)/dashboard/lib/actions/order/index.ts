@@ -7,18 +7,20 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
-import { PedidoFormValues } from '../../../components/forms/orders-form'
+import { PedidoFormValues } from '../../../components/order-form/orders-form'
 import { Estados_Pedidos } from '@prisma/client'
 import { format } from 'date-fns'
 
-export const getAllOrders = async () => {
+export const getAllOrders = async (
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
   const pedidos = await prisma.pedido.findMany({
     where: {
-      servicio: 'Abastecimiento',
+      servicio,
     },
     include: {
       renglones: {
@@ -64,7 +66,10 @@ export const getAllOrders = async () => {
   })
   return pedidos
 }
-export const createOrder = async (data: PedidoFormValues) => {
+export const createOrder = async (
+  data: PedidoFormValues,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -72,7 +77,10 @@ export const createOrder = async (data: PedidoFormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    sectionName:
+      servicio === 'Abastecimiento'
+        ? SECTION_NAMES.PEDIDOS_ABASTECIMIENTO
+        : SECTION_NAMES.PEDIDOS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -84,7 +92,7 @@ export const createOrder = async (data: PedidoFormValues) => {
   const order = await prisma.pedido.create({
     data: {
       ...data,
-      servicio: 'Abastecimiento',
+      servicio,
       estado: data.estado || 'Pendiente',
       renglones: {
         create: data.renglones.map((renglon) => ({
@@ -118,7 +126,11 @@ export const createOrder = async (data: PedidoFormValues) => {
   }
 }
 
-export const updateOrder = async (id: number, data: PedidoFormValues) => {
+export const updateOrder = async (
+  id: number,
+  data: PedidoFormValues,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -126,7 +138,10 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    sectionName:
+      servicio === 'Abastecimiento'
+        ? SECTION_NAMES.PEDIDOS_ABASTECIMIENTO
+        : SECTION_NAMES.PEDIDOS_ARMAMENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -165,7 +180,7 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el pedido de abastecimiento con el id: ${id}, ${
+    `Se actualizó el pedido de ${servicio.toLowerCase()} con el id: ${id}, ${
       data.motivo_fecha
         ? `, la fecha de creación fue: ${format(
             order.fecha_creacion,
@@ -177,7 +192,7 @@ export const updateOrder = async (id: number, data: PedidoFormValues) => {
         : ''
     }`
   )
-  revalidatePath('/dashboard/abastecimiento/pedidos')
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/pedidos`)
 
   return {
     success: 'Recepcion actualizada exitosamente',
@@ -189,7 +204,8 @@ export const updateOrderStatus = async (
   id: number,
   data: {
     estado: Estados_Pedidos | null | undefined
-  }
+  },
+  servicio: 'Abastecimiento' | 'Armamento'
 ) => {
   const sessionResponse = await validateUserSession()
 
@@ -198,7 +214,10 @@ export const updateOrderStatus = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    sectionName:
+      servicio === 'Abastecimiento'
+        ? SECTION_NAMES.PEDIDOS_ABASTECIMIENTO
+        : SECTION_NAMES.PEDIDOS_ARMAMENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -231,10 +250,12 @@ export const updateOrderStatus = async (
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el estado del pedido de abastecimiento con el id: ${id} a: ${data.estado}`
+    `Se actualizó el estado del pedido de ${servicio.toLowerCase()} con el id: ${id} a: ${
+      data.estado
+    }`
   )
 
-  revalidatePath('/dashboard/abastecimiento/pedidos')
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/pedidos`)
 
   return {
     success: 'Recepcion actualizada exitosamente',
@@ -267,7 +288,7 @@ export const getOrderById = async (id: number): Promise<PedidoFormValues> => {
   })
 
   if (!order) {
-    throw new Error('Recepcion no existe')
+    throw new Error('Solicitud no existe')
   }
 
   return {
@@ -289,7 +310,10 @@ export const getOrderById = async (id: number): Promise<PedidoFormValues> => {
   }
 }
 
-export const deleteOrder = async (id: number) => {
+export const deleteOrder = async (
+  id: number,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -297,7 +321,10 @@ export const deleteOrder = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    sectionName:
+      servicio === 'Abastecimiento'
+        ? SECTION_NAMES.PEDIDOS_ABASTECIMIENTO
+        : SECTION_NAMES.PEDIDOS_ARMAMENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -327,9 +354,9 @@ export const deleteOrder = async (id: number) => {
 
   await registerAuditAction(
     'ELIMINAR',
-    `Se eliminó un pedido de abastecimiento que tenía el motivo: ${exist?.motivo} con el id: ${id}`
+    `Se eliminó un pedido de ${servicio.toLowerCase()} que tenía el motivo: ${exist?.motivo} con el id: ${id}`
   )
-  revalidatePath('/dashboard/abastecimiento/pedidos')
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/pedidos`)
 
   return {
     error: null,
@@ -337,7 +364,10 @@ export const deleteOrder = async (id: number) => {
   }
 }
 
-export const recoverOrder = async (id: number) => {
+export const recoverOrder = async (
+  id: number,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -345,7 +375,10 @@ export const recoverOrder = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    sectionName:
+      servicio === 'Abastecimiento'
+        ? SECTION_NAMES.PEDIDOS_ABASTECIMIENTO
+        : SECTION_NAMES.PEDIDOS_ARMAMENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -378,9 +411,9 @@ export const recoverOrder = async (id: number) => {
 
   await registerAuditAction(
     'RECUPERAR',
-    `Se recuperó el pedido de abastecimiento que tenía el motivo: ${exist?.motivo} con el id: ${id}`
+    `Se recuperó el pedido de ${servicio.toLowerCase()} que tenía el motivo: ${exist?.motivo} con el id: ${id}`
   )
-  revalidatePath('/dashboard/abastecimiento/pedidos')
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/pedidos`)
 
   return {
     error: null,

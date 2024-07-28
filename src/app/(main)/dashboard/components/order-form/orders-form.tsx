@@ -1,9 +1,14 @@
 'use client'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useTransition } from 'react'
 
-import { orderItemColumns } from '../columns/order-item-columns'
+import { orderItemColumns } from './order-item-columns'
 import { cn } from '@/utils/utils'
-import { useForm, SubmitHandler, useFormState } from 'react-hook-form'
+import {
+  useForm,
+  SubmitHandler,
+  useFormState,
+  useFieldArray,
+} from 'react-hook-form'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
 import {
@@ -16,8 +21,7 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { format, startOfDay } from 'date-fns'
-import { CheckIcon, Loader2, Plus, TrashIcon, X } from 'lucide-react'
+import { CheckIcon, Loader2, Plus, X } from 'lucide-react'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import {
   Card,
@@ -27,17 +31,10 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import {
-  Estados_Pedidos,
-  Pedidos_Renglones,
-  Prisma,
-  Tipos_Proveedores,
-} from '@prisma/client'
-import ModalForm from '@/modules/common/components/modal-form'
+import { Estados_Pedidos, Tipos_Proveedores } from '@prisma/client'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { CardItemOrder } from './card-item-order'
 import Link from 'next/link'
-import { Input } from '@/modules/common/components/input/input'
 import {
   Popover,
   PopoverContent,
@@ -51,7 +48,7 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-import { createOrder, updateOrder } from '../../lib/actions/orders'
+import { createOrder, updateOrder } from '../../lib/actions/order'
 import { ComboboxData } from '@/types/types'
 import {
   Select,
@@ -60,20 +57,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { useHandleTableSelect } from '../../lib/hooks/use-handle-table-select'
-import DatePicker, { registerLocale } from 'react-datepicker'
+import { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { validateAdminPassword } from '@/utils/helpers/validate-admin-password'
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: {
-    unidad_empaque: true
-    recepciones: {
-      include: { recepcion: true; seriales: true }
-    }
-  }
-}>
+import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
+import { ItemSelector } from '@/modules/common/components/item-selector'
+import { useItemSelector } from '@/lib/hooks/use-item-selector'
+import { ItemsWithAllRelations } from '../../abastecimiento/inventario/lib/actions/items'
+
 export type PedidoForm = {
   fecha_solicitud: Date
 
@@ -98,7 +90,7 @@ export type PedidoForm = {
 }
 export type PedidoFormValues = PedidoForm
 interface Props {
-  items: RenglonType[]
+  items: ItemsWithAllRelations
   professionals: ComboboxData[]
   receivers: ComboboxData[]
   suppliers: ComboboxData[]
@@ -108,6 +100,7 @@ interface Props {
   }[]
   defaultValues?: PedidoFormValues
   orderId?: number
+  servicio: 'Abastecimiento' | 'Armamento'
 }
 
 export default function OrdersForm({
@@ -118,6 +111,7 @@ export default function OrdersForm({
   units,
   defaultValues,
   orderId,
+  servicio,
 }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
@@ -127,35 +121,24 @@ export default function OrdersForm({
     mode: 'onChange',
     defaultValues,
   })
-
-  const {
-    unselectItem,
-    selectedItemsData,
-    selectedItems,
-    handleTableSelect,
-    setSelectedItems,
-  } = useHandleTableSelect(
+  const { fields, append, remove } = useFieldArray<PedidoFormValues>({
     control,
-    isEditEnabled,
-    defaultValues?.renglones,
-    items
-  )
+    name: `renglones`,
+  })
+  const { handleTableSelect, rowSelection, selectedRowsData, deleteItem } =
+    useItemSelector({
+      itemsData: items,
+      fields: fields,
+      defaultItems: defaultValues?.renglones,
+      remove,
+      append,
+      appendObject: { cantidad: 0, observacion: null },
+    })
 
   const { isDirty } = useFormState({ control })
 
   const [isPending, startTransition] = useTransition()
-  const [isAuthorized, setIsAuthorized] = useState(false)
-  const [adminPassword, setAdminPassword] = useState('')
 
-  const toogleAlert = () => {
-    const fecha = rest.watch(`fecha_solicitud`)
-
-    if (fecha < startOfDay(new Date())) {
-      rest.resetField('fecha_solicitud')
-    }
-  }
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const toogleModal = () => setIsModalOpen(!isModalOpen)
   const supplierType = rest.watch('tipo_proveedor')
   useEffect(() => {
     if (supplierType === 'Empresa') {
@@ -201,7 +184,7 @@ export default function OrdersForm({
 
     startTransition(() => {
       if (!isEditEnabled) {
-        createOrder(data).then((res) => {
+        createOrder(data, servicio).then((res) => {
           if (res?.error) {
             toast({
               title: 'Error',
@@ -217,7 +200,7 @@ export default function OrdersForm({
             description: 'El pedido se ha creado correctamente',
             variant: 'success',
           })
-          router.replace('/dashboard/armamento/pedidos')
+          router.replace(`/dashboard/${servicio.toLowerCase()}/pedidos`)
         })
         return
       }
@@ -231,7 +214,7 @@ export default function OrdersForm({
       }
 
       if (orderId)
-        updateOrder(orderId, data).then((res) => {
+        updateOrder(orderId, data, servicio).then((res) => {
           if (res?.error) {
             toast({
               title: 'Error',
@@ -245,7 +228,7 @@ export default function OrdersForm({
             description: 'El pedido se ha actualizado correctamente',
             variant: 'success',
           })
-          router.replace('/dashboard/armamento/pedidos')
+          router.replace(`/dashboard/${servicio.toLowerCase()}/pedidos`)
         })
     })
   }
@@ -364,7 +347,7 @@ export default function OrdersForm({
 
                     <FormDescription>
                       <Link
-                        href="/dashboard/armamento/destinatarios/agregar"
+                        href="/dashboard/abastecimiento/destinatarios/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
                           'text-sm h-[30px]'
@@ -446,7 +429,7 @@ export default function OrdersForm({
 
                     <FormDescription>
                       <Link
-                        href="/dashboard/armamento/destinatarios/agregar"
+                        href="/dashboard/abastecimiento/destinatarios/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
                           'text-sm h-[30px]'
@@ -527,7 +510,7 @@ export default function OrdersForm({
 
                     <FormDescription>
                       <Link
-                        href="/dashboard/armamento/pedidos/proveedor/nuevo"
+                        href="/dashboard/abastecimiento/pedidos/proveedor/nuevo"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
                           'text-sm h-[30px]'
@@ -780,232 +763,35 @@ export default function OrdersForm({
                 )}
               />
             </div>
-            <div className="border-b border-base-300" />
-            <FormField
-              control={control}
-              name="motivo"
-              rules={{
-                required: 'Este campo es obligatorio',
-                maxLength: {
-                  value: 200,
-                  message: 'Debe tener un máximo de 200 carácteres',
-                },
+
+            <FormDateFields
+              isEditEnabled={isEditEnabled}
+              config={{
+                dateLabel: 'Fecha de pedido',
+                dateName: 'fecha_solicitud',
+                dateDescription:
+                  'Selecciona la fecha en la que se solicita el material',
               }}
-              render={({ field }) => (
-                <FormItem className="">
-                  <div className="flex flex-col gap-1">
-                    <FormLabel>Motivo</FormLabel>
-                    <FormDescription>
-                      Redacta el motivo por el cual se realiza este pedido. 200
-                      carácteres max.
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <textarea
-                      id="motivo"
-                      rows={3}
-                      className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      {...field}
-                      value={field.value || ''}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
             />
-
-            <div className="border-b border-base-300" />
-            <FormField
-              control={control}
-              name={`fecha_solicitud`}
-              rules={{
-                required: true,
-              }}
-              render={({ field }) => (
-                <FormItem className="flex flex-row flex-1 justify-between items-center gap-5 ">
-                  <div className="w-[20rem]">
-                    <FormLabel>Fecha de pedido</FormLabel>
-                    <FormDescription>
-                      Selecciona la fecha en la que se realiza esta solicitud
-                    </FormDescription>
-                  </div>
-                  <div>
-                    <div className="flex gap-2">
-                      <DatePicker
-                        placeholderText="Seleccionar fecha"
-                        onChange={(date) => field.onChange(date)}
-                        selected={field.value}
-                        locale={es}
-                        peekNextMonth
-                        showMonthDropdown
-                        showYearDropdown
-                        showTimeSelect
-                        dateFormat="d MMMM, yyyy h:mm aa"
-                        dropdownMode="select"
-                      />
-                      <Button
-                        variant={'secondary'}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          rest.resetField('fecha_solicitud')
-                        }}
-                      >
-                        <TrashIcon className="h-5 w-5" />
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-            {rest.watch('fecha_solicitud') < startOfDay(new Date()) &&
-            isAuthorized === false ? (
-              <ModalForm
-                triggerName=" Parece que estás colocando una fecha anterior a la actual"
-                closeWarning={false}
-                open={rest.watch('fecha_solicitud') < startOfDay(new Date())}
-                customToogleModal={toogleAlert}
-                className="w-[550px]"
-              >
-                <div className="flex flex-col gap-4 p-8">
-                  <CardTitle>
-                    Estas colocando una fecha anterior a la fecha actual
-                  </CardTitle>
-                  <CardDescription>
-                    Para evitar inconsistencias de información, debes colocar el
-                    motivo de la fecha y colocar la contraseña de administrador.
-                  </CardDescription>
-                  <Input
-                    className="w-full"
-                    placeholder="Contraseña del administrador"
-                    type="password"
-                    onChange={(e) => {
-                      const value = e.target.value
-
-                      setAdminPassword(value)
-                    }}
-                  />
-                  <Button
-                    className="w-[200px]"
-                    variant={'default'}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      validateAdminPassword(adminPassword).then((res) => {
-                        if (!adminPassword) return
-                        if (res === true) {
-                          setIsAuthorized(true)
-                          toast({
-                            title: 'Fecha autorizada',
-                            description: 'La fecha ha sido autorizada',
-                            variant: 'success',
-                          })
-
-                          return
-                        }
-
-                        setAdminPassword('')
-                        toast({
-                          title: 'Permiso denegado',
-                          description: 'La contraseña es incorrecta',
-                          variant: 'destructive',
-                        })
-                      })
-                    }}
-                  >
-                    Listo
-                  </Button>
-                </div>
-              </ModalForm>
-            ) : null}
-            {rest.watch('fecha_solicitud') < new Date() &&
-            isAuthorized === true ? (
-              <FormField
-                control={control}
-                name="motivo_fecha"
-                rules={{
-                  required: 'Este campo es obligatorio',
-                  maxLength: {
-                    value: 200,
-                    message: 'Debe tener un máximo de 200 carácteres',
-                  },
-                }}
-                render={({ field }) => (
-                  <FormItem className="">
-                    <div className="flex flex-col gap-1">
-                      <FormLabel>
-                        Introduzca el motivo de por qué la fecha es anterior a
-                        la actual
-                      </FormLabel>
-                    </div>
-                    <FormControl>
-                      <textarea
-                        id="motivo"
-                        rows={3}
-                        className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        {...field}
-                        value={field.value || ''}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            ) : null}
-            <div className="border-b border-base-300" />
 
             <div className="flex flex-1 flex-row gap-8 items-center justify-between">
               <FormDescription className="w-[20rem]">
                 Selecciona el material que deseas solicitar
               </FormDescription>
-              <ModalForm
-                triggerName="Seleccionar renglones"
-                closeWarning={false}
-                open={isModalOpen}
-                customToogleModal={toogleModal}
-              >
-                <div className="flex flex-col gap-4 p-8">
-                  <CardTitle>Selecciona el material a solicitar</CardTitle>
-                  <CardDescription className="text-center">
-                    Encuentra y elige los renglones que deseas solicitar en el
-                    CESERLODAI. Si no lo encuentras, puedes crear uno nuevo.
-                    <Link
-                      href="/dashboard/armamento/inventario/renglon"
-                      className={cn(
-                        buttonVariants({ variant: 'link' }),
-                        'h-[3px]'
-                      )}
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Crear Renglón
-                    </Link>
-                  </CardDescription>
-                  <div className="flex flex-row gap-4 items-center justify-center">
-                    <p className="text-md font-semibold">{`Renglones seleccionados: ${selectedItemsData.length}`}</p>
-                  </div>
-
-                  <DataTable
-                    columns={orderItemColumns}
-                    data={items}
-                    onSelectedRowsChange={handleTableSelect}
-                    defaultSelection={selectedItems}
-                    isStatusEnabled={false}
-                    setSelectedData={setSelectedItems}
-                  />
-                  <Button
-                    variant={'default'}
-                    onClick={() => setIsModalOpen(false)}
-                  >
-                    Listo
-                  </Button>
-                </div>
-              </ModalForm>
+              <ItemSelector disabled={isEditEnabled}>
+                <DataTable
+                  columns={orderItemColumns}
+                  data={items}
+                  onSelectedRowsChange={handleTableSelect}
+                  defaultSelection={rowSelection}
+                  isStatusEnabled={false}
+                />
+              </ItemSelector>
             </div>
           </CardContent>
         </Card>
 
-        {selectedItemsData.length > 0 && (
+        {selectedRowsData.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -1018,13 +804,13 @@ export default function OrdersForm({
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid lg:grid-cols-2 gap-4">
-                {selectedItemsData.map((item, index) => {
+                {selectedRowsData.map((item, index) => {
                   return (
                     <CardItemOrder
                       key={item.id}
                       item={item}
                       index={index}
-                      deleteItem={unselectItem}
+                      deleteItem={deleteItem}
                     />
                   )
                 })}

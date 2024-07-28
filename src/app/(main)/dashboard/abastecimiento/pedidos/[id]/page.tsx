@@ -10,11 +10,11 @@ import { getAllItems } from '@/app/(main)/dashboard/abastecimiento/inventario/li
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import OrdersForm from '../components/forms/orders-form'
+import OrdersForm from '../../../components/order-form/orders-form'
 import { getAllUnits } from '../../../unidades/lib/actions/units'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceivers } from '../../destinatarios/lib/actions/receivers'
-import { getOrderById } from '../lib/actions/orders'
+import { getOrderById } from '../../../lib/actions/order'
 import { getAllSuppliers } from '../lib/actions/suppliers'
 
 export const metadata: Metadata = {
@@ -86,6 +86,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </PageHeader>
       <PageContent className=" pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <OrdersForm
+          servicio="Abastecimiento"
           defaultValues={order}
           suppliers={comboBoxSuppliers}
           items={itemsData}

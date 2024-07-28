@@ -11,7 +11,7 @@ import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceivers } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionals } from '../../../profesionales/lib/actions/professionals'
-import OrdersForm from '../components/forms/orders-form'
+import OrdersForm from '../../../components/order-form/orders-form'
 import { getAllUnits } from '../../../unidades/lib/actions/units'
 import { getAllSuppliers } from '../lib/actions/suppliers'
 
@@ -79,6 +79,7 @@ export default async function Page() {
       </PageHeader>
       <PageContent className="pt-5 space-y-4 md:px-[20px] xl:px-[100px] 2xl:px-[250px]">
         <OrdersForm
+          servicio="Abastecimiento"
           suppliers={comboBoxSuppliers}
           items={itemsData}
           units={comboBoxUnits}

@@ -10,7 +10,7 @@ import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getSupplierById } from '../../lib/actions/suppliers'
-import SuppliersForm from '../../components/forms/suppliers-form'
+import SuppliersForm from '@/app/(main)/dashboard/abastecimiento/pedidos/components/forms/suppliers-form'
 
 export const metadata: Metadata = {
   title: 'Editar Proveedor',

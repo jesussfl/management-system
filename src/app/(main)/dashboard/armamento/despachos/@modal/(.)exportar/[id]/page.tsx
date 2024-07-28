@@ -1,3 +1,4 @@
+import { getDispatchForExportGuide } from '@/app/(main)/dashboard/lib/actions/dispatch'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getDispatchForExportGuide } from '../../../lib/actions/dispatches'
 import FormatSelector from '@/modules/common/components/format-selector'
 
 export default async function Page({

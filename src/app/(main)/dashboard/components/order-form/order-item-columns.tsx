@@ -5,16 +5,10 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: {
-    unidad_empaque: true
-    recepciones: {
-      include: { recepcion: true; seriales: true }
-    }
-  }
-}>
-export const orderItemColumns: ColumnDef<RenglonType>[] = [
+import { ItemsWithAllRelations } from '../../abastecimiento/inventario/lib/actions/items'
+type Renglon = ItemsWithAllRelations[number]
+
+export const orderItemColumns: ColumnDef<Renglon>[] = [
   SELECT_COLUMN,
   {
     accessorKey: 'id',

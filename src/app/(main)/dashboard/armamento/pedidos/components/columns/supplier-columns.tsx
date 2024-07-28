@@ -13,8 +13,7 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { format } from 'date-fns'
 import { Proveedor } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import { deleteSupplier } from '../../lib/actions/suppliers'
-import { recoverOrder } from '../../lib/actions/orders'
+import { deleteSupplier, recoverSupplier } from '../../lib/actions/suppliers'
 export const supplierColumns: ColumnDef<Proveedor>[] = [
   SELECT_COLUMN,
   {
@@ -174,7 +173,7 @@ export const supplierColumns: ColumnDef<Proveedor>[] = [
             alertTitle: '¿Estás seguro de eliminar este proveedor?',
             alertDescription: `Estas a punto de eliminar este proveedor. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverOrder(supplier.id)
+              return recoverSupplier(supplier.id)
             },
             onConfirm: () => {
               return deleteSupplier(supplier.id)

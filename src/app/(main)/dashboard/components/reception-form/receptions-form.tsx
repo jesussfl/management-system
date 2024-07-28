@@ -127,7 +127,7 @@ export default function ReceptionsForm({
             description: 'La recepción se ha creado correctamente',
             variant: 'success',
           })
-          router.replace('/dashboard/abastecimiento/recepciones')
+          router.replace(`/dashboard/${servicio.toLowerCase()}/recepciones`)
         })
         return
       }
@@ -146,7 +146,7 @@ export default function ReceptionsForm({
           description: 'La recepción se ha actualizado correctamente',
           variant: 'success',
         })
-        router.replace('/dashboard/abastecimiento/recepciones')
+        router.replace(`/dashboard/${servicio.toLowerCase()}/recepciones`)
       })
     })
   }
@@ -178,6 +178,7 @@ export default function ReceptionsForm({
             />
             <Separator />
             <FormDateFields
+              isEditEnabled={isEditEnabled}
               config={{
                 dateName: 'fecha_recepcion',
                 dateLabel: 'Fecha de recepción',
@@ -215,7 +216,7 @@ export default function ReceptionsForm({
                   index={index}
                   deleteItem={deleteItem}
                   isEmpty={
-                    isEmpty ? 'Este renglon no tiene seriales asociados' : false
+                    isEmpty ? 'Este renglón no tiene seriales asociados' : false
                   }
                   setItemsWithoutSerials={setItemsWithoutSerials}
                   servicio={servicio}

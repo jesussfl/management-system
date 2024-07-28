@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getOrderById } from '../../../lib/actions/orders'
 import OrderStatusForm from './form'
+import { getOrderById } from '@/app/(main)/dashboard/lib/actions/order'
 
 export default async function Page({
   params: { id },

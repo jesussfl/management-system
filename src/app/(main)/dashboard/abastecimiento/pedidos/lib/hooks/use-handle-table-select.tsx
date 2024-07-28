@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useFieldArray } from 'react-hook-form'
-import { PedidoFormValues } from '../../components/forms/orders-form'
+import { PedidoFormValues } from '../../../../components/order-form/orders-form'
 import { Prisma } from '@prisma/client'
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }

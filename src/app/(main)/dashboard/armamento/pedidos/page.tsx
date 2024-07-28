@@ -24,9 +24,9 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { buttonVariants } from '@/modules/common/components/button'
-import { getAllOrders } from './lib/actions/orders'
 import { supplierColumns } from './components/columns/supplier-columns'
 import { getAllSuppliers } from './lib/actions/suppliers'
+import { getAllOrders } from '../../lib/actions/order'
 
 export const metadata: Metadata = {
   title: 'Pedidos',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const orders = await getAllOrders()
+  const orders = await getAllOrders('Armamento')
   const suppliers = await getAllSuppliers()
   return (
     <>

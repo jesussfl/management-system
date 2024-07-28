@@ -8,7 +8,7 @@ import {
 } from '@/modules/layout/templates/page'
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
-import SuppliersForm from '../../components/forms/suppliers-form'
+import SuppliersForm from '@/app/(main)/dashboard/abastecimiento/pedidos/components/forms/suppliers-form'
 
 export const metadata: Metadata = {
   title: 'Agregar proveedor',
