@@ -1,7 +1,7 @@
 'use server'
 import { RenglonWithAllRelations } from '@/types/types'
 import { Serial } from '@prisma/client'
-import { RenglonColumns } from '../../app/(main)/dashboard/abastecimiento/inventario/columns'
+import { RenglonColumns } from '../../app/(main)/dashboard/abastecimiento/inventario/(tabs)/columns'
 
 export const formatExcelData = (rowsData: any) => {
   const rows = rowsData.map((row: any) => {
