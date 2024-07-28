@@ -31,11 +31,11 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 
-import { columns as categoriesColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/categories-columns'
-import { columns as classificationsColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/classification-columns'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/packaging-units-columns'
-import { columns as subsystemColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/subsystem-columns'
-import { columns as systemColumns } from '@/app/(main)/dashboard/components/inventory-columns/columns/system-columns'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/classification-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/system-columns'
 import {
   Card,
   CardContent,

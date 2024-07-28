@@ -1,3 +1,5 @@
+import SystemForm from '@/app/(main)/dashboard/components/system-form'
+import { getSystemById } from '@/app/(main)/dashboard/lib/actions/systems'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,8 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import SystemForm from '../../../components/forms/system-form'
-import { getSystemById } from '../../../lib/actions/systems'
 
 export default async function Page({
   params: { id },

@@ -10,19 +10,6 @@ import {
   TabsTrigger,
 } from '@/modules/common/components/tabs/tabs'
 
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
-import {
-  deleteMultiplePackagingUnits,
-  getAllPackagingUnits,
-} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/packaging-units'
-import {
-  deleteMultipleClassifications,
-  getAllClassifications,
-} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/classifications'
-import {
-  deleteMultipleCategories,
-  getAllCategories,
-} from '@/app/(main)/dashboard/armamento/inventario/lib/actions/categories'
 import {
   HeaderLeftSide,
   HeaderRightSide,
@@ -33,7 +20,7 @@ import {
 
 import { columns as categoriesColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/categories-columns'
 import { columns as classificationsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/classification-columns'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/packaging-units-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/armamento/inventario/components//columns/packaging-units-columns'
 import { columns as subsystemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/subsystem-columns'
 import { columns as systemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/system-columns'
 import {
@@ -53,17 +40,19 @@ import {
 } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
-import {
-  deleteMultipleSubsystems,
-  getAllSubsystems,
-} from './lib/actions/subsystems'
-import { deleteMultipleSystems, getAllSystems } from './lib/actions/systems'
+
 import { TableWithExport } from './table-with-export'
 
 import { Badge } from '@/modules/common/components/badge'
 import { getStatistics } from '../../lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
+import { getAllItems } from '../../lib/actions/item'
+import { getAllClassifications } from '../../lib/actions/classifications'
+import { getAllCategories } from '../../lib/actions/categories'
+import { getAllPackagingUnits } from '../../lib/actions/packaging-units'
+import { getAllSystems } from '../../lib/actions/systems'
+import { getAllSubsystems } from '../../lib/actions/subsystems'
 
 export const metadata: Metadata = {
   title: 'Inventario',
@@ -71,7 +60,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(false, 'Armamento')
   const classificationsData = await getAllClassifications()
   const categoriesData = await getAllCategories()
   const packagingUnitsData = await getAllPackagingUnits()
@@ -186,8 +175,6 @@ export default async function Page() {
                   <DataTable
                     columns={classificationsColumns}
                     data={classificationsData}
-                    isMultipleDeleteEnabled
-                    multipleDeleteAction={deleteMultipleClassifications}
                   />
                 </CardContent>
               </Card>
@@ -205,9 +192,7 @@ export default async function Page() {
                 <CardContent>
                   <DataTable
                     columns={categoriesColumns}
-                    isMultipleDeleteEnabled
                     data={categoriesData}
-                    multipleDeleteAction={deleteMultipleCategories}
                   />
                 </CardContent>
               </Card>
@@ -233,9 +218,7 @@ export default async function Page() {
               <CardContent>
                 <DataTable
                   columns={packagingUnitsColumns}
-                  isMultipleDeleteEnabled
                   data={packagingUnitsData}
-                  multipleDeleteAction={deleteMultiplePackagingUnits}
                 />
               </CardContent>
             </Card>
@@ -256,12 +239,7 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable
-                    columns={systemColumns}
-                    isMultipleDeleteEnabled
-                    data={systemsData}
-                    multipleDeleteAction={deleteMultipleSystems}
-                  />
+                  <DataTable columns={systemColumns} data={systemsData} />
                 </CardContent>
               </Card>
               <Card>
@@ -278,12 +256,7 @@ export default async function Page() {
                   </Link>
                 </CardHeader>
                 <CardContent>
-                  <DataTable
-                    columns={subsystemColumns}
-                    isMultipleDeleteEnabled
-                    data={subsystemsData}
-                    multipleDeleteAction={deleteMultipleSubsystems}
-                  />
+                  <DataTable columns={subsystemColumns} data={subsystemsData} />
                 </CardContent>
               </Card>
             </div>

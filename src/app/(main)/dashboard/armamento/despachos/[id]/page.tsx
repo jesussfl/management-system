@@ -6,7 +6,6 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
@@ -14,6 +13,7 @@ import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/action
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
 import DispatchesForm from '../../../components/dispatch-form/dispatches-form'
 import { getDispatchById } from '../../../lib/actions/dispatch'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Armamento')
   const dispatch = await getDispatchById(Number(params.id))
   const receivers = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox()

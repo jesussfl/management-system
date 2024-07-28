@@ -6,7 +6,6 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceivers } from '../../destinatarios/lib/actions/receivers'
@@ -14,6 +13,7 @@ import { getAllProfessionals } from '../../../profesionales/lib/actions/professi
 import { getAllUnits } from '../../../unidades/lib/actions/units'
 import { getAllSuppliers } from '../lib/actions/suppliers'
 import OrdersForm from '../../../components/order-form/orders-form'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Agregar Pedido',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Armamento')
   const receivers = await getAllReceivers(true)
   const suppliers = await getAllSuppliers(true)
 

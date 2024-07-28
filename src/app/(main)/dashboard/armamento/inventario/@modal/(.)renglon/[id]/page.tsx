@@ -1,4 +1,5 @@
-import { getItemById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
+import ItemsForm from '@/app/(main)/dashboard/components/item-form'
+import { getItemById } from '@/app/(main)/dashboard/lib/actions/item'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -6,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '../../../components/forms/items-form'
 
 export default async function Page({
   params: { id },
@@ -26,7 +26,7 @@ export default async function Page({
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ItemsForm defaultValues={itemData} />
+        <ItemsForm section="Armamento" defaultValues={itemData} />
       </DialogContent>
     </Dialog>
   )

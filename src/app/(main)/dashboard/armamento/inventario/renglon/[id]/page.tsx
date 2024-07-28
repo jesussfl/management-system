@@ -1,7 +1,6 @@
-import { getItemById } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
-
+import ItemsForm from '@/app/(main)/dashboard/components/item-form'
+import { getItemById } from '@/app/(main)/dashboard/lib/actions/item'
 import PageForm from '@/modules/layout/components/page-form'
-import ItemsForm from '../../components/forms/items-form'
 
 export default async function Page({
   params: { id },
@@ -11,7 +10,7 @@ export default async function Page({
   const itemData = await getItemById(Number(id))
   return (
     <PageForm title="Editar Renglón" backLink="/dashboard/armamento/inventario">
-      <ItemsForm defaultValues={itemData} />
+      <ItemsForm section="Armamento" defaultValues={itemData} />
     </PageForm>
   )
 }

@@ -6,14 +6,15 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Categoria } from '@prisma/client'
-import {
-  deleteCategory,
-  recoverCategory,
-} from '../../../../lib/actions/categories'
+import { Sistema } from '@prisma/client'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-export const columns: ColumnDef<Categoria>[] = [
+import {
+  deleteSystem,
+  recoverSystem,
+} from '@/app/(main)/dashboard/lib/actions/systems'
+
+export const columns: ColumnDef<Sistema>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -64,42 +65,27 @@ export const columns: ColumnDef<Categoria>[] = [
       )
     },
   },
-
-  {
-    accessorKey: 'clasificacion.nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Clasificación
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
   {
     id: 'acciones',
-
+    enableHiding: false,
     cell: ({ row }) => {
-      const category = row.original
+      const system = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/categoria/${category.id}`,
+            href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
           }}
           deleteConfig={{
-            isDeleted: category.fecha_eliminacion ? true : false,
-            alertTitle: '¿Estás seguro de eliminar esta categoria?',
-            alertDescription: `Estas a punto de eliminar esta categoria. Pero puedes recuperar el registro más tarde.`,
+            isDeleted: system.fecha_eliminacion ? true : false,
+            alertTitle: '¿Estás seguro de eliminar este sistema?',
+            alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverCategory(category.id)
+              return recoverSystem(system.id)
             },
             onConfirm: () => {
-              return deleteCategory(category.id)
+              return deleteSystem(system.id)
             },
           }}
         />

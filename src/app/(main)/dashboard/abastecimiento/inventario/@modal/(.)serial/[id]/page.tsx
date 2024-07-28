@@ -7,7 +7,7 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import { getAllSerialsByItemId } from '@/lib/actions/serials'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { columns } from '../../../../../components/inventory-columns/columns/serial-columns'
+import { columns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/serial-columns'
 export default async function Page({
   params: { id },
 }: {

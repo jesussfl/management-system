@@ -6,7 +6,6 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/armamento/inventario/lib/actions/items'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
@@ -15,6 +14,7 @@ import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/action
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
 import { getReturnById } from '../../../lib/actions/return'
 import ReturnsForm from '../../../components/return-form/returns-form'
+import { getAllItems } from '../../../lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Armamento')
   const devolution = await getReturnById(Number(params.id))
   const receiver = await getAllReceiversToCombobox('Armamento')
   const professionals = await getAllProfessionalsToCombobox(true)

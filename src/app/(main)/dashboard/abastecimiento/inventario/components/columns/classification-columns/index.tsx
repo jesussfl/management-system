@@ -6,14 +6,16 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { UnidadEmpaque } from '@prisma/client'
-import {
-  deletePackagingUnit,
-  recoverPackagingUnit,
-} from '../../../../lib/actions/packaging-units'
+import { Clasificacion } from '@prisma/client'
+
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-export const columns: ColumnDef<UnidadEmpaque>[] = [
+import {
+  deleteClassification,
+  recoverClassification,
+} from '@/app/(main)/dashboard/lib/actions/classifications'
+
+export const columns: ColumnDef<Clasificacion>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -50,36 +52,6 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
-
-  {
-    accessorKey: 'tipo_medida',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Tipo de medida
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'peso',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Peso Fijo
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-  },
   {
     accessorKey: 'descripcion',
     header: ({ column }) => {
@@ -94,27 +66,27 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
       )
     },
   },
-
   {
     id: 'acciones',
     enableHiding: false,
     cell: ({ row }) => {
-      const packagingUnit = row.original
+      const classification = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/unidad-empaque/${packagingUnit.id}`,
+            href: `/dashboard/abastecimiento/inventario/clasificacion/${classification.id}`,
           }}
           deleteConfig={{
-            alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',
-            alertDescription: `Estas a punto de eliminar esta unidad de empaque. Pero puedes recuperar el registro más tarde.`,
+            isDeleted: classification.fecha_eliminacion ? true : false,
+            alertTitle: '¿Estás seguro de eliminar esta clasificación?',
+            alertDescription: `Estas a punto de eliminar esta clasificación. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverPackagingUnit(packagingUnit.id)
+              return recoverClassification(classification.id)
             },
             onConfirm: () => {
-              return deletePackagingUnit(packagingUnit.id)
+              return deleteClassification(classification.id)
             },
           }}
         />

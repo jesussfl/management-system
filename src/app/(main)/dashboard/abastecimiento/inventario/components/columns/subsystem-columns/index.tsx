@@ -6,16 +6,15 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Clasificacion } from '@prisma/client'
+import { Subsistema } from '@prisma/client'
 
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
-  deleteClassification,
-  recoverClassification,
-} from '../../../../lib/actions/classifications'
-
-export const columns: ColumnDef<Clasificacion>[] = [
+  deleteSubsystem,
+  recoverSubsystem,
+} from '@/app/(main)/dashboard/lib/actions/subsystems'
+export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -66,27 +65,42 @@ export const columns: ColumnDef<Clasificacion>[] = [
       )
     },
   },
+
+  {
+    accessorKey: 'sistema.nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Sistema
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
   {
     id: 'acciones',
-    enableHiding: false,
+
     cell: ({ row }) => {
-      const classification = row.original
+      const subsystem = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/clasificacion/${classification.id}`,
+            href: `/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`,
           }}
           deleteConfig={{
-            isDeleted: classification.fecha_eliminacion ? true : false,
-            alertTitle: '¿Estás seguro de eliminar esta clasificación?',
-            alertDescription: `Estas a punto de eliminar esta clasificación. Pero puedes recuperar el registro más tarde.`,
+            isDeleted: subsystem.fecha_eliminacion ? true : false,
+            alertTitle: '¿Estás seguro de eliminar este subsistema?',
+            alertDescription: `Estas a punto de eliminar este subsistema. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverClassification(classification.id)
+              return recoverSubsystem(subsystem.id)
             },
             onConfirm: () => {
-              return deleteClassification(classification.id)
+              return deleteSubsystem(subsystem.id)
             },
           }}
         />

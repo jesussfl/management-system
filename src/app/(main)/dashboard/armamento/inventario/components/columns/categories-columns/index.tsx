@@ -7,12 +7,13 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Categoria } from '@prisma/client'
+
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deleteCategory,
   recoverCategory,
-} from '../../../lib/actions/categories'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
+} from '@/app/(main)/dashboard/lib/actions/categories'
 export const columns: ColumnDef<Categoria>[] = [
   {
     id: 'seleccionar',
@@ -89,7 +90,7 @@ export const columns: ColumnDef<Categoria>[] = [
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/armamento/inventario/categoria/${category.id}`,
+            href: `/dashboard/abastecimiento/inventario/categoria/${category.id}`,
           }}
           deleteConfig={{
             isDeleted: category.fecha_eliminacion ? true : false,

@@ -1,3 +1,4 @@
+import ClassificationsForm from '@/app/(main)/dashboard/components/classification-form'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ClassificationsForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/classification-form'
 
 export default async function Page() {
   return (

@@ -8,7 +8,6 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
 import Link from 'next/link'
-import { deleteItem, recoverItem } from './lib/actions/items'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
@@ -30,6 +29,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
+import { deleteItem, recoverItem } from '../../lib/actions/item'
 
 export type RenglonColumns = {
   id: number
@@ -314,10 +314,10 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
             alertTitle: '¿Estás seguro de eliminar este renglon?',
             alertDescription: `Estas a punto de eliminar este renglon. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverItem(renglon.id)
+              return recoverItem(renglon.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteItem(renglon.id)
+              return deleteItem(renglon.id, 'Armamento')
             },
           }}
         />

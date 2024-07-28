@@ -1,5 +1,5 @@
-import CategoriesForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/categories-form'
 import PageForm from '@/modules/layout/components/page-form'
+import CategoriesForm from '../../../components/categories-form'
 
 export default async function Page() {
   return (

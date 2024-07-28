@@ -6,12 +6,15 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Sistema } from '@prisma/client'
-import { deleteSystem, recoverSystem } from '../../../../lib/actions/systems'
+import { UnidadEmpaque } from '@prisma/client'
+
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-
-export const columns: ColumnDef<Sistema>[] = [
+import {
+  deletePackagingUnit,
+  recoverPackagingUnit,
+} from '@/app/(main)/dashboard/lib/actions/packaging-units'
+export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',
     header: ({ table }) => (
@@ -48,6 +51,36 @@ export const columns: ColumnDef<Sistema>[] = [
       )
     },
   },
+
+  {
+    accessorKey: 'tipo_medida',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Tipo de medida
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+
+  {
+    accessorKey: 'peso',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Peso Fijo
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
   {
     accessorKey: 'descripcion',
     header: ({ column }) => {
@@ -62,27 +95,27 @@ export const columns: ColumnDef<Sistema>[] = [
       )
     },
   },
+
   {
     id: 'acciones',
     enableHiding: false,
     cell: ({ row }) => {
-      const system = row.original
+      const packagingUnit = row.original
 
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
+            href: `/dashboard/abastecimiento/inventario/unidad-empaque/${packagingUnit.id}`,
           }}
           deleteConfig={{
-            isDeleted: system.fecha_eliminacion ? true : false,
-            alertTitle: '¿Estás seguro de eliminar este sistema?',
-            alertDescription: `Estas a punto de eliminar este sistema. Pero puedes recuperar el registro más tarde.`,
+            alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',
+            alertDescription: `Estas a punto de eliminar esta unidad de empaque. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverSystem(system.id)
+              return recoverPackagingUnit(packagingUnit.id)
             },
             onConfirm: () => {
-              return deleteSystem(system.id)
+              return deletePackagingUnit(packagingUnit.id)
             },
           }}
         />

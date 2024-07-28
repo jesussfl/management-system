@@ -1,3 +1,4 @@
+import CategoriesForm from '@/app/(main)/dashboard/components/categories-form'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import CategoriesForm from '@/app/(main)/dashboard/armamento/inventario/components/forms/categories-form'
 
 export default async function Page() {
   return (

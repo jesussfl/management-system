@@ -1,3 +1,5 @@
+import SubsystemForm from '@/app/(main)/dashboard/components/subsystem-form'
+import { getSubsystemById } from '@/app/(main)/dashboard/lib/actions/subsystems'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,
@@ -5,8 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getSubsystemById } from '../../../lib/actions/subsystems'
-import SubsystemForm from '../../../components/forms/subsystem-form'
 
 export default async function Page({
   params: { id },
