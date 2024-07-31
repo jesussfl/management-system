@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getPermissionById } from '../../../lib/actions/permissions'
-import PermissionsForm from '../../../components/permissions-form'
+import { getPermissionById } from '../../../../lib/actions/permissions'
+import PermissionsForm from '../../../../components/permissions-form'
 
 export default async function Page({
   params: { id },

@@ -6,8 +6,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ViewPermissionsForm from '../../../components/roles-form/view-permissions-form'
-import { getRolById } from '../../../lib/actions/roles'
+import ViewPermissionsForm from '../../../../components/roles-form/view-permissions-form'
+import { getRolById } from '../../../../lib/actions/roles'
 
 export default async function Page({
   params: { id },

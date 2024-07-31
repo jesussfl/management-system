@@ -15,7 +15,7 @@ import { getAllUnits } from '../../../../unidades/lib/actions/units'
 import { getAllProfessionals } from '../../../../profesionales/lib/actions/professionals'
 import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
 import { getOrderById } from '../../../../lib/actions/order'
-import { getAllSuppliers } from '../lib/actions/suppliers'
+import { getAllSuppliers } from '../../(tabs)/lib/actions/suppliers'
 
 export const metadata: Metadata = {
   title: 'Editar Pedido',

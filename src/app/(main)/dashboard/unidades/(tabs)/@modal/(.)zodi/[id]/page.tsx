@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getZodiById } from '../../../lib/actions/zodis'
-import ZodisForm from '../../../components/forms/zodi-form'
+import { getZodiById } from '../../../../lib/actions/zodis'
+import ZodisForm from '../../../../components/forms/zodi-form'
 
 export default async function Page({
   params: { id },

@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getUnitById } from '../../../lib/actions/units'
-import UnitsForm from '../../../components/forms/unit-form'
+import { getUnitById } from '../../../../lib/actions/units'
+import UnitsForm from '../../../../components/forms/unit-form'
 
 export default async function Page({
   params: { id },

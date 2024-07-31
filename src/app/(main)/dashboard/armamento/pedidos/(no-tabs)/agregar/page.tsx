@@ -13,7 +13,7 @@ import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
 import { getAllProfessionals } from '../../../../profesionales/lib/actions/professionals'
 import OrdersForm from '../../../../components/order-form/orders-form'
 import { getAllUnits } from '../../../../unidades/lib/actions/units'
-import { getAllSuppliers } from '../lib/actions/suppliers'
+import { getAllSuppliers } from '../../(tabs)/lib/actions/suppliers'
 
 export const metadata: Metadata = {
   title: 'Agregar Pedido',

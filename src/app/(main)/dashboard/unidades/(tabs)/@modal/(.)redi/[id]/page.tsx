@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getRediById } from '../../../lib/actions/redis'
-import RedisForm from '../../../components/forms/redi-form'
+import { getRediById } from '../../../../lib/actions/redis'
+import RedisForm from '../../../../components/forms/redi-form'
 
 export default async function Page({
   params: { id },

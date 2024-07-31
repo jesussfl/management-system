@@ -5,8 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import UnitsForm from '../../components/forms/unit-form'
-import RedisForm from '../../components/forms/redi-form'
+import RedisForm from '../../../components/forms/redi-form'
 
 export default async function Page() {
   return (

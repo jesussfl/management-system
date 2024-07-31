@@ -10,7 +10,7 @@ import { createReport } from 'docx-templates'
 import { Prisma, Recepciones_Renglones } from '@prisma/client'
 
 type Profesional_ArmamentoWithRelations =
-  Prisma.Profesional_ArmamentoGetPayload<{
+  Prisma.Profesional_AbastecimientoGetPayload<{
     include: {
       grado: true
       categoria: true

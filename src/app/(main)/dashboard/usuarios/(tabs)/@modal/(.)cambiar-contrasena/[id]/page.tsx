@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ChangeUserPasswordForm from '../../../components/users-form/change-password-form'
+import ChangeUserPasswordForm from '../../../../components/users-form/change-password-form'
 
 export default async function Page({
   params: { id },

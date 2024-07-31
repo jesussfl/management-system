@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import UnitsForm from '../../components/forms/unit-form'
+import UnitsForm from '../../../components/forms/unit-form'
 
 export default async function Page() {
   return (
