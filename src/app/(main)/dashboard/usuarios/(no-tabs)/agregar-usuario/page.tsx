@@ -5,7 +5,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/modules/common/components/tabs/tabs'
+} from '@/modules/common/components/tabs/basic-tabs'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {

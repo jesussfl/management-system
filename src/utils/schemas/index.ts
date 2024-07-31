@@ -30,6 +30,7 @@ export const RegisterSchema = z.object({
   name: z.string().min(1, {
     message: 'Username is required',
   }),
+  nivel: z.any(),
   cedula: z.string().min(1, {
     message: 'Cedula is required',
   }),

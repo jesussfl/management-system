@@ -8,7 +8,7 @@ import { getUserByEmail } from '@/lib/data/get-user-byEmail'
 
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { Tipos_Cedulas } from '@prisma/client'
+import { Niveles_Usuarios, Tipos_Cedulas } from '@prisma/client'
 import { registerAuditActionWithoutSession } from '@/lib/actions/audit'
 
 export const signup = async (values: z.infer<typeof RegisterSchema>) => {
@@ -123,7 +123,7 @@ export const signupByAdmin = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: 'Invalid fields!' }
   }
 
-  const { email, password, name, rol: _rol } = validatedFields.data
+  const { email, password, name, rol: _rol, nivel } = validatedFields.data
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -186,6 +186,7 @@ export const signupByAdmin = async (values: z.infer<typeof RegisterSchema>) => {
           email,
           contrasena: hashedPassword,
           estado: 'Activo',
+          nivel,
           rol: {
             connect: {
               id: _rol,
@@ -217,6 +218,7 @@ type SignupByFacialID = {
   name: string
   cedula: string
   tipo_cedula: Tipos_Cedulas
+  nivel: Niveles_Usuarios
 }
 export const signupByFacialID = async ({
   email,
@@ -323,6 +325,7 @@ export const signupByFacialIDByAdmin = async ({
   name,
   cedula,
   tipo_cedula,
+  nivel,
 }: SignupByFacialID) => {
   const existingUser = await getUserByEmail(email)
   const eixstingUserByFacialID = await prisma.usuario.findUnique({
@@ -392,6 +395,8 @@ export const signupByFacialIDByAdmin = async ({
           email,
           facialID,
           estado: 'Activo',
+          nivel,
+
           rol: {
             connect: {
               id: _rol,

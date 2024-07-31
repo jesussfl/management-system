@@ -91,7 +91,7 @@ export function FaceSignupForm() {
       return
     }
 
-    const { email, name, cedula, rol, tipo_cedula } = values
+    const { email, name, cedula, rol, tipo_cedula, nivel } = values
 
     try {
       let response = await faceio
@@ -125,6 +125,9 @@ export function FaceSignupForm() {
           })
         })
 
+      if (!response) {
+        return
+      }
       startTransition(() => {
         signupByFacialIDByAdmin({
           email,
@@ -133,6 +136,7 @@ export function FaceSignupForm() {
           name,
           cedula,
           tipo_cedula,
+          nivel,
         }).then(async (data) => {
           if (data?.error) {
             form.setError(data.field as any, {

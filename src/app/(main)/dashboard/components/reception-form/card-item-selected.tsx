@@ -250,6 +250,7 @@ export const CardItemSelected = ({
                   showMonthDropdown
                   showYearDropdown
                   dropdownMode="select"
+                  maxDate={new Date()}
                 />
 
                 <FormMessage />
@@ -279,6 +280,7 @@ export const CardItemSelected = ({
                   showMonthDropdown
                   showYearDropdown
                   dropdownMode="select"
+                  minDate={watch(`renglones.${index}.fecha_fabricacion`)}
                 />
 
                 <FormMessage />
