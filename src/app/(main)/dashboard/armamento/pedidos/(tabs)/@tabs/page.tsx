@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/modules/common/components/card/card'
 import { buttonVariants } from '@/modules/common/components/button'
-import { getAllOrders } from '../../../../lib/actions/order'
+import { getAllOrders } from '../../../../../../../lib/actions/order'
 
 export const metadata: Metadata = {
   title: 'Pedidos',

@@ -7,13 +7,13 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackageMinus } from 'lucide-react'
 import Link from 'next/link'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import { getDispatchById } from '../../../lib/actions/dispatch'
+import { getDispatchById } from '../../../../../../lib/actions/dispatch'
 
 export const metadata: Metadata = {
   title: 'Despachos',

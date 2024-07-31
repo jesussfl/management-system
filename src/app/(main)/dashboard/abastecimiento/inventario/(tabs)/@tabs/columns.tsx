@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@/modules/common/components/button'
 import { SELECT_COLUMN } from '@/utils/constants/columns'
 
 import Link from 'next/link'
-import { deleteItem, recoverItem } from '../../../../lib/actions/item'
+import { deleteItem, recoverItem } from '../../../../../../../lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'

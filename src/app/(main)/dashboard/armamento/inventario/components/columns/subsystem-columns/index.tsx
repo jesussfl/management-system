@@ -10,10 +10,7 @@ import { Subsistema } from '@prisma/client'
 
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import {
-  deleteSubsystem,
-  recoverSubsystem,
-} from '@/app/(main)/dashboard/lib/actions/subsystems'
+import { deleteSubsystem, recoverSubsystem } from '@/lib/actions/subsystems'
 export const columns: ColumnDef<Subsistema>[] = [
   {
     id: 'seleccionar',

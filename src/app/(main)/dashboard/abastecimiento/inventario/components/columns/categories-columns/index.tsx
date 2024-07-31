@@ -10,10 +10,7 @@ import { Categoria } from '@prisma/client'
 
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import {
-  deleteCategory,
-  recoverCategory,
-} from '@/app/(main)/dashboard/lib/actions/categories'
+import { deleteCategory, recoverCategory } from '@/lib/actions/categories'
 export const columns: ColumnDef<Categoria>[] = [
   {
     id: 'seleccionar',

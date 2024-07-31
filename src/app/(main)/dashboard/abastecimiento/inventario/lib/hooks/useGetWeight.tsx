@@ -1,4 +1,4 @@
-import { getPackagingUnitById } from '@/app/(main)/dashboard/lib/actions/packaging-units'
+import { getPackagingUnitById } from '@/lib/actions/packaging-units'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 

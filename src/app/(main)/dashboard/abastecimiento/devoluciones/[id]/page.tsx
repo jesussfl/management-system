@@ -6,11 +6,11 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import { getReturnById } from '../../../lib/actions/return'
+import { getReturnById } from '../../../../../../lib/actions/return'
 import ReturnsForm from '../../../components/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'

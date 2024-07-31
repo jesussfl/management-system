@@ -13,7 +13,10 @@ import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import { deleteDispatch, recoverDispatch } from '../../lib/actions/dispatch'
+import {
+  deleteDispatch,
+  recoverDispatch,
+} from '../../../../../lib/actions/dispatch'
 export type DespachoType = Prisma.DespachoGetPayload<{
   include: {
     destinatario: {

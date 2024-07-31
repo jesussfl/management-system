@@ -15,8 +15,8 @@ import {
 import { Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
-import { getAllSystems } from '@/app/(main)/dashboard/lib/actions/systems'
-import { getAllSubsystems } from '@/app/(main)/dashboard/lib/actions/subsystems'
+import { getAllSystems } from '@/lib/actions/systems'
+import { getAllSubsystems } from '@/lib/actions/subsystems'
 
 export const metadata: Metadata = {
   title: 'Inventario',

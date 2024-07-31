@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import { ItemsWithAllRelations } from '../../app/(main)/dashboard/lib/actions/item'
+import { ItemsWithAllRelations } from '../actions/item'
 import { RowSelectionState } from '@tanstack/react-table'
 
 export const useItemSelector = ({

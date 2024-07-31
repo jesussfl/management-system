@@ -25,12 +25,15 @@ registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { DispatchFormValues } from '../../abastecimiento/despachos/lib/types/types'
-import { ItemsWithAllRelations } from '../../lib/actions/item'
+import { ItemsWithAllRelations } from '../../../../../lib/actions/item'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
-import { createDispatch, updateDispatch } from '../../lib/actions/dispatch'
+import {
+  createDispatch,
+  updateDispatch,
+} from '../../../../../lib/actions/dispatch'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 
 type ComboboxData = {

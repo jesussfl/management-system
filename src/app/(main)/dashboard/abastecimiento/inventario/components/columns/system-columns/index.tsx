@@ -9,10 +9,7 @@ import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Sistema } from '@prisma/client'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
-import {
-  deleteSystem,
-  recoverSystem,
-} from '@/app/(main)/dashboard/lib/actions/systems'
+import { deleteSystem, recoverSystem } from '@/lib/actions/systems'
 
 export const columns: ColumnDef<Sistema>[] = [
   {

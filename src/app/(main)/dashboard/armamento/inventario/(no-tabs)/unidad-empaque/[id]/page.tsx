@@ -1,4 +1,4 @@
-import { getPackagingUnitById } from '@/app/(main)/dashboard/lib/actions/packaging-units'
+import { getPackagingUnitById } from '@/lib/actions/packaging-units'
 import PackagingUnitsForm from '@/app/(main)/dashboard/components/packaging-units-form'
 import PageForm from '@/modules/layout/components/page-form'
 

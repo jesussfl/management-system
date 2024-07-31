@@ -14,7 +14,7 @@ import {
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
-import { getAllReturns } from '../../lib/actions/return'
+import { getAllReturns } from '../../../../../lib/actions/return'
 
 export const metadata: Metadata = {
   title: 'Devoluciones',

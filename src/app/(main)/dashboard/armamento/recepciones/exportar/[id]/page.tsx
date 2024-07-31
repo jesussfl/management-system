@@ -1,7 +1,7 @@
 import PageForm from '@/modules/layout/components/page-form'
 
 import FormatSelector from '@/modules/common/components/format-selector'
-import { getReceptionForExportGuide } from '@/app/(main)/dashboard/lib/actions/reception'
+import { getReceptionForExportGuide } from '@/lib/actions/reception'
 
 export default async function Page({
   params: { id },

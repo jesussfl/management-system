@@ -12,7 +12,7 @@ import { format } from 'date-fns'
 import {
   Recepcion_RenglonesFormValues,
   ReceptionFormValues,
-} from '../../../abastecimiento/recepciones/lib/types/types'
+} from '../../../app/(main)/dashboard/abastecimiento/recepciones/lib/types/types'
 
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {

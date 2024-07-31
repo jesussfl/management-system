@@ -107,6 +107,7 @@ type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[]
   defaultSelection?: RowSelectionState
   isStatusEnabled?: boolean
+  onDataChange?: (data: any[]) => void
   onSelectedRowsChange?: (
     rows: TData[],
     rowSelection: RowSelectionState
@@ -121,6 +122,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   multipleDeleteAction,
   isStatusEnabled = true,
   isMultipleDeleteEnabled,
+  onDataChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -189,6 +191,12 @@ export function DataTable<TData extends { id: any }, TValue>({
       globalFilter: filtering,
     },
   })
+
+  const { rows } = table.getFilteredRowModel()
+  useEffect(() => {
+    if (!onDataChange) return
+    onDataChange(rows)
+  }, [rows])
 
   return (
     <div className="flex flex-col px-2 gap-2">

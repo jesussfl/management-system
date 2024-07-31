@@ -1,4 +1,4 @@
-import { getDispatchForExportGuide } from '@/app/(main)/dashboard/lib/actions/dispatch'
+import { getDispatchForExportGuide } from '@/lib/actions/dispatch'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

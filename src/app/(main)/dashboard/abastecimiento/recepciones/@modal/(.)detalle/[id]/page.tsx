@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { getReceptionById } from '@/app/(main)/dashboard/lib/actions/reception'
+import { getReceptionById } from '@/lib/actions/reception'
 
 export default async function Page({
   params: { id },

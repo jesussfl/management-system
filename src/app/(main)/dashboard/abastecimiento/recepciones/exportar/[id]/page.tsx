@@ -1,6 +1,6 @@
 import PageForm from '@/modules/layout/components/page-form'
 
-import { getReceptionForExportGuide } from '../../../../lib/actions/reception'
+import { getReceptionForExportGuide } from '../../../../../../../lib/actions/reception'
 import FormatSelector from '@/modules/common/components/format-selector'
 
 export default async function Page({

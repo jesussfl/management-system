@@ -6,7 +6,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
@@ -14,7 +14,7 @@ import OrdersForm from '../../../../components/order-form/orders-form'
 import { getAllUnits } from '../../../../unidades/lib/actions/units'
 import { getAllProfessionals } from '../../../../profesionales/lib/actions/professionals'
 import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
-import { getOrderById } from '../../../../lib/actions/order'
+import { getOrderById } from '../../../../../../../lib/actions/order'
 import { getAllSuppliers } from '../../(tabs)/lib/actions/suppliers'
 
 export const metadata: Metadata = {

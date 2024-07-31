@@ -7,11 +7,11 @@ import { PageContent } from '@/modules/layout/templates/page'
 import {
   deleteMultipleClassifications,
   getAllClassifications,
-} from '@/app/(main)/dashboard/lib/actions/classifications'
+} from '@/lib/actions/classifications'
 import {
   deleteMultipleCategories,
   getAllCategories,
-} from '@/app/(main)/dashboard/lib/actions/categories'
+} from '@/lib/actions/categories'
 
 import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/categories-columns'
 import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/classification-columns'

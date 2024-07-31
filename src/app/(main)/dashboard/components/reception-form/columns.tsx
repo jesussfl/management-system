@@ -5,7 +5,7 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { ItemsWithAllRelations } from '../../lib/actions/item'
+import { ItemsWithAllRelations } from '../../../../../lib/actions/item'
 type Renglon = ItemsWithAllRelations[number]
 export const columns: ColumnDef<Renglon>[] = [
   SELECT_COLUMN,

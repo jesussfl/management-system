@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 import { PageContent } from '@/modules/layout/templates/page'
 
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 
 import {
   Card,
@@ -10,9 +10,9 @@ import {
   CardHeader,
 } from '@/modules/common/components/card/card'
 import { Box, PackageCheck, PackageMinus } from 'lucide-react'
-import { TableWithExport } from './table-with-export'
+import { TableWithExport } from '../../../../components/inventory-table/inventory-table'
 
-import { getStatistics } from '../../../../lib/actions/statistics'
+import { getStatistics } from '@/lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(false, 'Armamento')
 
   const lowStockItems = getLowStockItems(itemsData)
   const statistics = await getStatistics('Armamento')

@@ -1,4 +1,4 @@
-import { getReceptionForExportGuide } from '@/app/(main)/dashboard/lib/actions/reception'
+import { getReceptionForExportGuide } from '@/lib/actions/reception'
 import CloseButtonDialog from '@/modules/common/components/dialog-close'
 import {
   Dialog,

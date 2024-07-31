@@ -10,7 +10,10 @@ import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import { deleteOrder, recoverOrder } from '../../../../lib/actions/order'
+import {
+  deleteOrder,
+  recoverOrder,
+} from '../../../../../../../lib/actions/order'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'

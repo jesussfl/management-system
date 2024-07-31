@@ -1,6 +1,6 @@
 import { RenglonWithAllRelations } from '@/types/types'
 import { Serial } from '@prisma/client'
-import { RenglonColumns } from './columns'
+import { RenglonColumns } from '../../app/(main)/dashboard/armamento/inventario/(tabs)/@tabs/columns'
 
 export const formatExcelData = (rowsData: any) => {
   const rows = rowsData.map((row: any) => {

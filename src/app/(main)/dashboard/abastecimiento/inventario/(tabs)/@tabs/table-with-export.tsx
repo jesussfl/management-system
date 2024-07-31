@@ -1,7 +1,7 @@
 'use client'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { useEffect, useState } from 'react'
-import { showNotification } from '../../../../lib/actions/item'
+import { showNotification } from '../../../../../../../lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
 import { columns } from './columns'
 import ExportExcelButton from '../../components/items-export-button'
@@ -67,7 +67,6 @@ export const TableWithExport = ({
               checked={isLowStockEnabled}
               onCheckedChange={(value) => {
                 setIsLowStockEnabled(value)
-                setDataToShow(value ? lowStockItems : itemsData)
               }}
             />
           </div>
@@ -76,8 +75,8 @@ export const TableWithExport = ({
       </div>
       <DataTable
         columns={columns}
-        data={dataToShow}
-        onSelectedRowsChange={setRowsData}
+        data={isLowStockEnabled ? lowStockItems : itemsData}
+        onDataChange={setRowsData}
       />
     </>
   )

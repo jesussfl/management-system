@@ -6,7 +6,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
@@ -14,7 +14,7 @@ import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/rec
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { ReceptionFormValues } from '../lib/types/types'
-import { getReceptionById } from '../../../lib/actions/reception'
+import { getReceptionById } from '../../../../../../lib/actions/reception'
 
 export const metadata: Metadata = {
   title: 'Recepciones',

@@ -14,7 +14,7 @@ import { format } from 'date-fns'
 import { Proveedor } from '@prisma/client'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { deleteSupplier, recoverSupplier } from '../../lib/actions/suppliers'
-import { recoverOrder } from '../../../../../lib/actions/order'
+import { recoverOrder } from '../../../../../../../../lib/actions/order'
 export const supplierColumns: ColumnDef<Proveedor>[] = [
   SELECT_COLUMN,
   {

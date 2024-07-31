@@ -6,11 +6,7 @@ import { Button } from '@/modules/common/components/button'
 import { Form } from '@/modules/common/components/form'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { Renglon } from '@prisma/client'
-import {
-  createItem,
-  updateItem,
-  checkItemExistance,
-} from '@/app/(main)/dashboard/lib/actions/item'
+import { createItem, updateItem, checkItemExistance } from '@/lib/actions/item'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { Step1 } from './step-1'

@@ -13,7 +13,7 @@ import {
 import { Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
-import { getAllPackagingUnits } from '@/app/(main)/dashboard/lib/actions/packaging-units'
+import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
 import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
 
 export const metadata: Metadata = {

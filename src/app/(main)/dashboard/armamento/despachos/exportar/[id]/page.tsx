@@ -1,6 +1,6 @@
 import PageForm from '@/modules/layout/components/page-form'
 import FormatSelector from '@/modules/common/components/format-selector'
-import { getDispatchForExportGuide } from '@/app/(main)/dashboard/lib/actions/dispatch'
+import { getDispatchForExportGuide } from '@/lib/actions/dispatch'
 
 export default async function Page({
   params: { id },

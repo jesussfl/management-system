@@ -20,8 +20,11 @@ import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
-import { getAllSystems } from '../../lib/actions/systems'
-import { createSubsystem, updateSubsystem } from '../../lib/actions/subsystems'
+import { getAllSystems } from '../../../../../lib/actions/systems'
+import {
+  createSubsystem,
+  updateSubsystem,
+} from '../../../../../lib/actions/subsystems'
 
 interface Props {
   defaultValues?: Subsistema

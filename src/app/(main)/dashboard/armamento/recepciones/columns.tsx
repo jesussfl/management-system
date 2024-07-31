@@ -17,7 +17,10 @@ import 'dayjs/plugin/utc'
 import 'dayjs/plugin/duration'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteReception, recoverReception } from '../../lib/actions/reception'
+import {
+  deleteReception,
+  recoverReception,
+} from '../../../../../lib/actions/reception'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))

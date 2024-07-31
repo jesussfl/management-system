@@ -1,4 +1,4 @@
-import { getClassificationById } from '@/app/(main)/dashboard/lib/actions/classifications'
+import { getClassificationById } from '@/lib/actions/classifications'
 import ClassificationsForm from '@/app/(main)/dashboard/components/classification-form'
 import PageForm from '@/modules/layout/components/page-form'
 

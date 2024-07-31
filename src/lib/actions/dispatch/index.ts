@@ -8,7 +8,7 @@ import { validateUserPermissions } from '@/utils/helpers/validate-user-permissio
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
-import { DispatchFormValues } from '../../../abastecimiento/despachos/lib/types/types'
+import { DispatchFormValues } from '../../../app/(main)/dashboard/abastecimiento/despachos/lib/types/types'
 
 export const createDispatch = async (
   data: DispatchFormValues,

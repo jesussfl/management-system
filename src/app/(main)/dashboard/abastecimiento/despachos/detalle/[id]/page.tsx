@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import { getDispatchById } from '../../../../lib/actions/dispatch'
+import { getDispatchById } from '../../../../../../../lib/actions/dispatch'
 
 export default async function Page({
   params: { id },

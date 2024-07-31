@@ -1,4 +1,4 @@
-import { getItemById } from '@/app/(main)/dashboard/lib/actions/item'
+import { getItemById } from '@/lib/actions/item'
 
 import PageForm from '@/modules/layout/components/page-form'
 import ItemsForm from '../../../../../components/item-form'

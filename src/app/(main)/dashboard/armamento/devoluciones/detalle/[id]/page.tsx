@@ -1,4 +1,4 @@
-import { getReturnById } from '@/app/(main)/dashboard/lib/actions/return'
+import { getReturnById } from '@/lib/actions/return'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

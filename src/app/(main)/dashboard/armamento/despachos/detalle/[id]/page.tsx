@@ -1,4 +1,4 @@
-import { getDispatchById } from '@/app/(main)/dashboard/lib/actions/dispatch'
+import { getDispatchById } from '@/lib/actions/dispatch'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

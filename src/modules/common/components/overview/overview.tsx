@@ -14,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/common/components/popover/popover'
-import { getDispatchesStats } from '@/app/(main)/dashboard/lib/actions/statistics'
+import { getDispatchesStats } from '@/lib/actions/statistics'
 import { Card, CardContent, CardHeader, CardTitle } from '../card/card'
 const months = [
   'Ene',

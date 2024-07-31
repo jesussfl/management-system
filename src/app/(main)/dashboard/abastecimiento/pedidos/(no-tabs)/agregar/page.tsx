@@ -6,7 +6,7 @@ import {
   PageHeaderDescription,
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
-import { getAllItems } from '@/app/(main)/dashboard/lib/actions/item'
+import { getAllItems } from '@/lib/actions/item'
 import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'

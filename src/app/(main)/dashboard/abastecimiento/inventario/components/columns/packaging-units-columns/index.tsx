@@ -13,7 +13,7 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   deletePackagingUnit,
   recoverPackagingUnit,
-} from '@/app/(main)/dashboard/lib/actions/packaging-units'
+} from '@/lib/actions/packaging-units'
 export const columns: ColumnDef<UnidadEmpaque>[] = [
   {
     id: 'seleccionar',
