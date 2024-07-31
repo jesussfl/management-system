@@ -11,8 +11,8 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { updateUserState } from './lib/actions/users'
-import { formatLevel } from '../auditoria/components/modal-export'
+import { updateUserState } from '../../lib/actions/users'
+import { formatLevel } from '../../../auditoria/components/modal-export'
 
 export const columns: ColumnDef<Usuario>[] = [
   SELECT_COLUMN,

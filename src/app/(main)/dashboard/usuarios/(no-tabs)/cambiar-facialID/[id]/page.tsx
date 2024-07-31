@@ -1,8 +1,8 @@
 import PageForm from '@/modules/layout/components/page-form'
 
-import ChangeUserFacialIDForm from '../../components/users-form/change-facialID-form'
+import ChangeUserFacialIDForm from '../../../components/users-form/change-facialID-form'
 import { prisma } from '@/lib/prisma'
-import { getUserById } from '../../lib/actions/users'
+import { getUserById } from '../../../lib/actions/users'
 
 export default async function Page({
   params: { id },

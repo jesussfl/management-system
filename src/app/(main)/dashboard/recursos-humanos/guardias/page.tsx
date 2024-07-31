@@ -13,7 +13,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/modules/common/components/tabs/tabs'
+} from '@/modules/common/components/tabs/basic-tabs'
 import {
   Card,
   CardContent,
