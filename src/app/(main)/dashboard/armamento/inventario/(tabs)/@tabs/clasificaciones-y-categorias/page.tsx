@@ -13,8 +13,8 @@ import {
   getAllCategories,
 } from '@/app/(main)/dashboard/lib/actions/categories'
 
-import { columns as categoriesColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/categories-columns'
-import { columns as classificationsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/classification-columns'
+import { columns as categoriesColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/categories-columns'
+import { columns as classificationsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/classification-columns'
 
 import {
   Card,
@@ -42,7 +42,7 @@ export default async function Page() {
           <CardHeader className="flex flex-row justify-between">
             <CardTitle className="text-xl">Lista de Clasificaciones</CardTitle>
             <Link
-              href="/dashboard/abastecimiento/inventario/clasificacion"
+              href="/dashboard/armamento/inventario/clasificacion"
               className={buttonVariants({ variant: 'secondary' })}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -62,7 +62,7 @@ export default async function Page() {
           <CardHeader className="flex flex-row justify-between">
             <CardTitle className="text-xl">Lista de Categorías</CardTitle>
             <Link
-              href="/dashboard/abastecimiento/inventario/categoria"
+              href="/dashboard/armamento/inventario/categoria"
               className={buttonVariants({ variant: 'secondary' })}
             >
               <Plus className="mr-2 h-4 w-4" />

@@ -271,7 +271,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       return (
         <Link
           className={cn(buttonVariants({ variant: 'outline' }))}
-          href={`/dashboard/abastecimiento/inventario/serial/${row.original.id}`}
+          href={`/dashboard/armamento/inventario/serial/${row.original.id}`}
         >
           Ver seriales
         </Link>
@@ -305,19 +305,19 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/renglon/${renglon.id}`,
+            href: `/dashboard/armamento/inventario/renglon/${renglon.id}`,
           }}
           deleteConfig={{
             isDeleted: renglon.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este renglon?',
             alertDescription: `Estas a punto de eliminar este renglon. Pero puedes recuperar el registro más tarde.`,
             onRecover: () => {
-              return recoverItem(renglon.id, 'Abastecimiento')
+              return recoverItem(renglon.id, 'Armamento')
             },
             onConfirm: () => {
-              return deleteItem(renglon.id, 'Abastecimiento')
+              return deleteItem(renglon.id, 'Armamento')
             },
           }}
         />

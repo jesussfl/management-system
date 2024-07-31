@@ -104,9 +104,9 @@ export const columns: ColumnDef<UnidadEmpaque>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/unidad-empaque/${packagingUnit.id}`,
+            href: `/dashboard/armamento/inventario/unidad-empaque/${packagingUnit.id}`,
           }}
           deleteConfig={{
             alertTitle: '¿Estás seguro de eliminar esta unidad de empaque?',

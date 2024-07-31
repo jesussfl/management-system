@@ -5,7 +5,7 @@ export default async function Page() {
   return (
     <PageForm
       title="Agregar Clasificación"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <ClassificationsForm />
     </PageForm>

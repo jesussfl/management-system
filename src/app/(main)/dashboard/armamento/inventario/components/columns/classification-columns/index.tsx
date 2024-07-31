@@ -74,9 +74,9 @@ export const columns: ColumnDef<Clasificacion>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/clasificacion/${classification.id}`,
+            href: `/dashboard/armamento/inventario/clasificacion/${classification.id}`,
           }}
           deleteConfig={{
             isDeleted: classification.fecha_eliminacion ? true : false,

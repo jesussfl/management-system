@@ -26,7 +26,7 @@ export default async function Page({
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ItemsForm section="Abastecimiento" defaultValues={itemData} />
+        <ItemsForm section="Armamento" defaultValues={itemData} />
       </DialogContent>
     </Dialog>
   )

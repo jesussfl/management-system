@@ -73,9 +73,9 @@ export const columns: ColumnDef<Sistema>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/sistema/${system.id}`,
+            href: `/dashboard/armamento/inventario/sistema/${system.id}`,
           }}
           deleteConfig={{
             isDeleted: system.fecha_eliminacion ? true : false,

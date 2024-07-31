@@ -88,9 +88,9 @@ export const columns: ColumnDef<Subsistema>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/subsistema/${subsystem.id}`,
+            href: `/dashboard/armamento/inventario/subsistema/${subsystem.id}`,
           }}
           deleteConfig={{
             isDeleted: subsystem.fecha_eliminacion ? true : false,

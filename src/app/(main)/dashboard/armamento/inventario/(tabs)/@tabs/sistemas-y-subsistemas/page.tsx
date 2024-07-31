@@ -4,8 +4,8 @@ import { Metadata } from 'next'
 
 import { PageContent } from '@/modules/layout/templates/page'
 
-import { columns as subsystemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/subsystem-columns'
-import { columns as systemColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/system-columns'
+import { columns as subsystemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/subsystem-columns'
+import { columns as systemColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/system-columns'
 import {
   Card,
   CardContent,
@@ -33,7 +33,7 @@ export default async function Page() {
           <CardHeader className="flex flex-row justify-between">
             <CardTitle className="text-xl">Lista de Sistemas</CardTitle>
             <Link
-              href="/dashboard/abastecimiento/inventario/sistema"
+              href="/dashboard/armamento/inventario/sistema"
               className={buttonVariants({ variant: 'secondary' })}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -48,7 +48,7 @@ export default async function Page() {
           <CardHeader className="flex flex-row justify-between">
             <CardTitle className="text-xl">Lista de Subsistemas</CardTitle>
             <Link
-              href="/dashboard/abastecimiento/inventario/subsistema"
+              href="/dashboard/armamento/inventario/subsistema"
               className={buttonVariants({ variant: 'secondary' })}
             >
               <Plus className="mr-2 h-4 w-4" />

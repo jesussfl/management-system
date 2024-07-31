@@ -14,7 +14,7 @@ import { Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 import { getAllPackagingUnits } from '@/app/(main)/dashboard/lib/actions/packaging-units'
-import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
+import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/armamento/inventario/components/columns/packaging-units-columns'
 
 export const metadata: Metadata = {
   title: 'Unidades de empaque',
@@ -33,7 +33,7 @@ export default async function Page() {
           </CardTitle>
 
           <Link
-            href="/dashboard/abastecimiento/inventario/unidad-empaque"
+            href="/dashboard/armamento/inventario/unidad-empaque"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <Plus className="mr-2 h-4 w-4" />

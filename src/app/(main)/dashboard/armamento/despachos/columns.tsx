@@ -277,7 +277,7 @@ export const columns: ColumnDef<DespachoType>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.DESPACHOS_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.DESPACHOS_ARMAMENTO}
           editConfig={{
             href: `/dashboard/armamento/despachos/${data.id}`,
           }}

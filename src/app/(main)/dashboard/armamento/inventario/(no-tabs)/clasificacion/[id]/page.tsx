@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Clasificación"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <ClassificationsForm defaultValues={classificationData} />
     </PageForm>

@@ -104,14 +104,16 @@ export default function Layout({
           </Link>
         </HeaderRightSide>
       </PageHeader>
-      <Tabs defaultValue="items" defaultSection={'inventario'}>
+      <Tabs defaultValue="renglones" defaultSection={'inventario'}>
         <TabsList className="mx-5">
-          <TabsTrigger value="items">Renglones</TabsTrigger>
-          <TabsTrigger value="classifications-and-categories">
+          <TabsTrigger value="renglones">Renglones</TabsTrigger>
+          <TabsTrigger value="clasificaciones-y-categorias">
             Clasificaciones y Categorías{' '}
           </TabsTrigger>
-          <TabsTrigger value="packaging-units">Unidades de empaque</TabsTrigger>
-          <TabsTrigger value="systems-and-subsystems">
+          <TabsTrigger value="unidades-de-empaque">
+            Unidades de empaque
+          </TabsTrigger>
+          <TabsTrigger value="sistemas-y-subsistemas">
             Sistemas y Subsistemas
           </TabsTrigger>
         </TabsList>

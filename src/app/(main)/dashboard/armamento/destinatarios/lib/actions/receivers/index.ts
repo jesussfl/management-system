@@ -18,7 +18,7 @@ export const createReceiver = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -130,7 +130,7 @@ export const deleteReceiver = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -177,7 +177,7 @@ export const recoverReceiver = async (id: number) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -227,7 +227,7 @@ export const deleteMultipleReceivers = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -267,7 +267,7 @@ export const updateReceiver = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })

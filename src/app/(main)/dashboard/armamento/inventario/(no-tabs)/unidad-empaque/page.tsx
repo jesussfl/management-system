@@ -5,7 +5,7 @@ export default async function Page() {
   return (
     <PageForm
       title="Agregar Unidad de Empaque"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <PackagingUnitsForm />
     </PageForm>

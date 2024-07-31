@@ -11,7 +11,7 @@ export default async function Page({
   return (
     <PageForm
       title="Editar Unidad de Empaque"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <PackagingUnitsForm defaultValues={packagingUnit} />
     </PageForm>

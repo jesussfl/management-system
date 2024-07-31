@@ -5,7 +5,7 @@ export default async function Page() {
   return (
     <PageForm
       title="Crear Subsistema"
-      backLink="/dashboard/abastecimiento/inventario"
+      backLink="/dashboard/armamento/inventario"
     >
       <SubsystemForm />
     </PageForm>

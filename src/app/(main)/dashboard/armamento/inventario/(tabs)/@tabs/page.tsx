@@ -25,7 +25,7 @@ export default async function Page() {
   const itemsData = await getAllItems()
 
   const lowStockItems = getLowStockItems(itemsData)
-  const statistics = await getStatistics('Abastecimiento')
+  const statistics = await getStatistics('Armamento')
   return (
     <PageContent>
       <Card>

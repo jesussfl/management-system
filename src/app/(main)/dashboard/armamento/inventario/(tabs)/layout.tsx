@@ -42,10 +42,7 @@ export default function Layout({
     const validateKeys = async () => {
       setIsLoading(true)
       const isAuthorized = await validateSections({
-        sections: [
-          SECTION_NAMES.INVENTARIO_ABASTECIMIENTO,
-          SECTION_NAMES.ABASTECIMIENTO,
-        ],
+        sections: [SECTION_NAMES.INVENTARIO_ARMAMENTO, SECTION_NAMES.ARMAMENTO],
       })
 
       setIsAuthorized(isAuthorized)
@@ -80,7 +77,7 @@ export default function Layout({
         </HeaderLeftSide>
         <HeaderRightSide>
           <Link
-            href="/dashboard/abastecimiento/recepciones/agregar"
+            href="/dashboard/armamento/recepciones/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackagePlus className="mr-2 h-4 w-4" />
@@ -88,14 +85,14 @@ export default function Layout({
           </Link>
 
           <Link
-            href="/dashboard/abastecimiento/despachos/agregar"
+            href="/dashboard/armamento/despachos/agregar"
             className={buttonVariants({ variant: 'secondary' })}
           >
             <PackageMinus className="mr-2 h-4 w-4" />
             Agregar Despacho
           </Link>
           <Link
-            href="/dashboard/abastecimiento/inventario/renglon"
+            href="/dashboard/armamento/inventario/renglon"
             className={buttonVariants({ variant: 'default' })}
             scroll={false}
           >
@@ -104,14 +101,16 @@ export default function Layout({
           </Link>
         </HeaderRightSide>
       </PageHeader>
-      <Tabs defaultValue="items" defaultSection={'inventario'}>
+      <Tabs defaultValue="renglones" defaultSection={'inventario'}>
         <TabsList className="mx-5">
-          <TabsTrigger value="items">Renglones</TabsTrigger>
-          <TabsTrigger value="classifications-and-categories">
+          <TabsTrigger value="renglones">Renglones</TabsTrigger>
+          <TabsTrigger value="clasificaciones-y-categorias">
             Clasificaciones y Categorías{' '}
           </TabsTrigger>
-          <TabsTrigger value="packaging-units">Unidades de empaque</TabsTrigger>
-          <TabsTrigger value="systems-and-subsystems">
+          <TabsTrigger value="unidades-de-empaque">
+            Unidades de empaque
+          </TabsTrigger>
+          <TabsTrigger value="sistemas-y-subsistemas">
             Sistemas y Subsistemas
           </TabsTrigger>
         </TabsList>

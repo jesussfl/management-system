@@ -17,7 +17,7 @@ export default async function Page() {
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <ItemsForm section="Abastecimiento" />
+        <ItemsForm section="Armamento" />
       </DialogContent>
     </Dialog>
   )

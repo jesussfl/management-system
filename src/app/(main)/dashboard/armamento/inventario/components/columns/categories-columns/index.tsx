@@ -88,9 +88,9 @@ export const columns: ColumnDef<Categoria>[] = [
 
       return (
         <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
+          sectionName={SECTION_NAMES.INVENTARIO_ARMAMENTO}
           editConfig={{
-            href: `/dashboard/abastecimiento/inventario/categoria/${category.id}`,
+            href: `/dashboard/armamento/inventario/categoria/${category.id}`,
           }}
           deleteConfig={{
             isDeleted: category.fecha_eliminacion ? true : false,

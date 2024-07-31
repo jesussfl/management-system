@@ -10,11 +10,8 @@ export default async function Page({
 }) {
   const itemData = await getItemById(Number(id))
   return (
-    <PageForm
-      title="Editar Renglón"
-      backLink="/dashboard/abastecimiento/inventario"
-    >
-      <ItemsForm section="Abastecimiento" defaultValues={itemData} />
+    <PageForm title="Editar Renglón" backLink="/dashboard/armamento/inventario">
+      <ItemsForm section="Armamento" defaultValues={itemData} />
     </PageForm>
   )
 }
