@@ -1,5 +1,5 @@
-import { getRediById } from '../../lib/actions/redis'
-import RedisForm from '../../components/forms/redi-form'
+import { getRediById } from '../../../lib/actions/redis'
+import RedisForm from '../../../components/forms/redi-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page({

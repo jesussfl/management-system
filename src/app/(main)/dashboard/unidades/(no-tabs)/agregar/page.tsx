@@ -1,4 +1,4 @@
-import UnitsForm from '../components/forms/unit-form'
+import UnitsForm from '../../components/forms/unit-form'
 import PageForm from '@/modules/layout/components/page-form'
 
 export default async function Page() {

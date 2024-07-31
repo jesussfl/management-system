@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import ZodisForm from '../components/forms/zodi-form'
+import ZodisForm from '../../components/forms/zodi-form'
 
 export default async function Page() {
   return (

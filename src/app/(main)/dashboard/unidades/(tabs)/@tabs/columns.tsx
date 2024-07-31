@@ -11,7 +11,7 @@ import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteUnit, recoverUnit } from './lib/actions/units'
+import { deleteUnit, recoverUnit } from '../../lib/actions/units'
 
 export const columns: ColumnDef<UnidadesType>[] = [
   SELECT_COLUMN,
