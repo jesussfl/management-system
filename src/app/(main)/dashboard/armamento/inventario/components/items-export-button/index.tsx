@@ -6,11 +6,7 @@ import { DownloadIcon } from 'lucide-react'
 
 function ExportExcelButton({ data }: { data: any }) {
   return (
-    <Button
-      variant={'outline'}
-      className="mt-4"
-      onClick={() => generateExcelData(data)}
-    >
+    <Button variant={'outline'} onClick={() => generateExcelData(data)}>
       Descargar Excel
       <DownloadIcon className="ml-2 h-4 w-4" />
     </Button>

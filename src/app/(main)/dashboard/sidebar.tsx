@@ -202,7 +202,7 @@ export const DashboardSidebar: FC = function () {
         </span>
         {/* </Navbar.Brand> */}
       </div>
-      <Separator className="my-4" />
+      <Separator className="my-4 border-gray-200 bg-[#49494b]" />
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           {menuItems.map((item, idx) => {
