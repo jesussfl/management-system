@@ -20,6 +20,7 @@ import {
   IterationCcw,
   PackageCheck,
   DatabaseBackup,
+  Shield,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -306,10 +307,11 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
     title: 'Rangos',
     identifier: SECTION_NAMES.RANGOS,
     path: '/dashboard/rangos',
-    icon: Contact2,
+    icon: Shield,
     requiredPermissions: [
       SECTION_NAMES.TODAS,
       SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,
+      SECTION_NAMES.DESTINATARIOS_ARMAMENTO,
       SECTION_NAMES.PROFESIONALES,
       SECTION_NAMES.RANGOS,
       SECTION_NAMES.ABASTECIMIENTO,
