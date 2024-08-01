@@ -44,5 +44,6 @@ next-env.d.ts
 .contentlayer
 
 
-#backups
+# backups
 /public/backups
+/public/archived
