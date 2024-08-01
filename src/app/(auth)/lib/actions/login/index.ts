@@ -21,6 +21,66 @@ export async function login(
 ) {
   const validatedFields = LoginSchema.safeParse(values)
 
+  const registeredUsers = await prisma.usuario.count()
+
+  if (registeredUsers === 0) {
+    await prisma.$transaction(async (prisma) => {
+      const rolData = {
+        rol: 'Administrador',
+        descripcion: 'Permitir acceso a todas las funcionalidades',
+      }
+
+      // Parte 2: Crear o Conectar Rol
+      const rol = await prisma.rol.upsert({
+        where: { rol: rolData.rol },
+        update: {},
+        create: rolData,
+      })
+
+      // Si es el primer usuario, crear o conectar permiso
+      let permiso = await prisma.permiso.upsert({
+        where: { key: 'TODAS:FULL' },
+        update: {},
+        create: {
+          permiso: 'Acceso de superusuario',
+          key: 'TODAS:FULL',
+          descripcion:
+            'Este permiso otorga acceso total del sistema al rol que lo posee',
+        },
+      })
+      const password = await bcrypt.hash(
+        `${process.env.SUPERUSER_PASSWORD}`,
+        10
+      )
+      await prisma.roles_Permisos.create({
+        data: {
+          rol_nombre: rol.rol,
+          permiso_key: permiso.key,
+          active: true,
+        },
+      })
+
+      // Parte 4: Asignar Rol y Permiso al Usuario
+      await prisma.usuario.create({
+        data: {
+          cedula: '0000000000',
+          tipo_cedula: 'V',
+          nombre: 'Superusuario',
+          email: `${process.env.SUPERUSER_EMAIL}`,
+          contrasena: password,
+          estado: 'Activo',
+          rol: {
+            connect: {
+              id: rol.id,
+            },
+          },
+        },
+      })
+    })
+
+    return { error: 'Se acaba de crear el primer usuario vuelva a intentarlo' }
+  }
+
   if (!validatedFields.success) {
     return { error: 'The email or password is invalid' }
   }
