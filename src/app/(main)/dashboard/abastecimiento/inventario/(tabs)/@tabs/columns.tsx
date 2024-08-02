@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import { AlertCircle, ArrowUpDown, MapPin, Package } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
@@ -62,56 +62,65 @@ export type RenglonColumns = {
 
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   SELECT_COLUMN,
+
   // {
   //   accessorKey: 'id',
   //   header: 'ID',
   // },
   {
     accessorKey: 'nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Nombre" />,
-  },
-  {
-    accessorKey: 'descripcion',
-    header: ({ column }) => <HeaderCell column={column} value="Descripción" />,
-  },
-  {
-    accessorKey: 'imagen',
-    header: ({ column }) => <HeaderCell column={column} value="Imagen" />,
+    header: ({ column }) => <HeaderCell column={column} value="Renglón" />,
     cell: ({ row }) => {
+      const description = row.original?.descripcion
       const image = row.original.imagen
-
-      if (!image) return 'Sin imágen'
-
       return (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Image
-              src={row.original.imagen || ''}
-              alt={row.original.imagen || ''}
-              width={50}
-              height={50}
-            />
-          </AlertDialogTrigger>
-          <AlertDialogContent className="max-h-[90vh]">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Imágen del Renglón</AlertDialogTitle>
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <div className="flex items-center">
+              {!image ? (
+                <Package className="w-8 h-8" />
+              ) : (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Image
+                      src={row.original.imagen || ''}
+                      alt={row.original.imagen || ''}
+                      width={50}
+                      height={50}
+                    />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-h-[90vh]">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Imágen del Renglón</AlertDialogTitle>
 
-              <Image
-                src={row.original.imagen || ''}
-                alt={row.original.imagen || ''}
-                width={500}
-                height={500}
-              />
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cerrar</AlertDialogCancel>
-              {/* <AlertDialogAction>Continue</AlertDialogAction> */}
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                      <Image
+                        src={row.original.imagen || ''}
+                        alt={row.original.imagen || ''}
+                        width={500}
+                        height={500}
+                      />
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cerrar</AlertDialogCancel>
+                      {/* <AlertDialogAction>Continue</AlertDialogAction> */}
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              <Button variant="link" className="mr-4">
+                {row.getValue<string>('nombre')}
+              </Button>
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <p className="text-sm">{description}</p>
+          </HoverCardContent>
+        </HoverCard>
       )
     },
   },
+
   {
     id: 'stock',
     accessorFn: (row) => {
@@ -129,6 +138,32 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       }, 0)
     },
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
+    cell: ({ row }) => {
+      const minimumStock = row.original.stock_minimo
+      const maximumStock = row.original.stock_maximo
+      const stock = row.getValue<number>('stock')
+
+      return (
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button
+              variant={'link'}
+              className={cn(
+                'flex items-center',
+                stock < minimumStock ? 'text-red-500' : 'text-green-500'
+              )}
+            >
+              <AlertCircle className="w-4 h-4 mr-2" />
+              {stock}
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <p className="text-sm">Stock Minimo: {minimumStock}</p>
+            <p className="text-sm">Stock Maximo: {maximumStock}</p>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
   },
   {
     id: 'peso_total',
@@ -149,9 +184,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       }, 0)
       return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
     },
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Peso/Unidades Totales" />
-    ),
+    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
   {
     id: 'peso',
@@ -160,65 +193,10 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
     },
     header: ({ column }) => (
-      <HeaderCell column={column} value="Peso del Renglón" />
+      <HeaderCell column={column} value="Peso Unitario" />
     ),
-
-    // cell: ({ row }) => {
-    //   return (
-    //     <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
-    //   )
-    // },
   },
-  {
-    id: 'ubicacion',
-    accessorFn: (row) => {
-      const referencia = row.referencia
-      const peldano = row.peldano
-      const pasillo = row.pasillo
-      const estante = row.estante
 
-      return `${referencia} - ${peldano} - ${pasillo} - ${estante}`
-    },
-
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="text-xs"
-          size={'sm'}
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Ubicación
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const referencia = row.original.referencia || 'Sin definir'
-      const peldano = row.original.peldano || 'Sin definir'
-      const pasillo = row.original.pasillo || 'Sin definir'
-      const estante = row.original.estante || 'Sin definir'
-      return (
-        <HoverCard>
-          <HoverCardTrigger asChild>
-            <Button variant="link">Ver ubicación</Button>
-          </HoverCardTrigger>
-          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
-            <div className="space-y-1">
-              <div>
-                <div className="text-sm font-semibold">Pasillo: {pasillo}</div>
-                <div className="text-sm font-semibold">Estante: {estante}</div>
-                <div className="text-sm font-semibold">Peldaño: {peldano}</div>
-                <div className="text-sm font-semibold">
-                  Punto de Referencia: {referencia}
-                </div>
-              </div>
-            </div>
-          </HoverCardContent>
-        </HoverCard>
-      )
-    },
-  },
   {
     accessorKey: 'clasificacion.nombre',
     header: ({ column }) => (
@@ -246,10 +224,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     accessorFn: (row) => row.subsistema?.nombre || 'Sin subsistema',
     header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
   },
-  {
-    accessorKey: 'almacen.nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
-  },
+
   {
     accessorKey: 'numero_parte',
     header: ({ column }) => (
@@ -257,12 +232,60 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     ),
   },
   {
-    accessorKey: 'stock_minimo',
-    header: ({ column }) => <HeaderCell column={column} value="Stock Mínimo" />,
-  },
-  {
-    accessorKey: 'stock_maximo',
-    header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
+    id: 'ubicacion',
+    accessorFn: (row) => {
+      const referencia = row.referencia
+      const peldano = row.peldano
+      const pasillo = row.pasillo
+      const estante = row.estante
+      const almacen = row.almacen?.nombre
+      return `${referencia} - ${peldano} - ${pasillo} - ${estante} - ${
+        almacen || ''
+      }`
+    },
+
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="text-xs"
+          size={'sm'}
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Ubicación
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const referencia = row.original.referencia || 'Sin definir'
+      const peldano = row.original.peldano || 'Sin definir'
+      const pasillo = row.original.pasillo || 'Sin definir'
+      const estante = row.original.estante || 'Sin definir'
+      const almacen = row.original.almacen?.nombre || 'Sin definir'
+      return (
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button variant="link">
+              <MapPin className="w-4 h-4 mr-2" /> Ver ubicación
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <div className="space-y-1">
+              <div>
+                <div className="text-sm font-semibold">Almacén: {almacen}</div>
+                <div className="text-sm font-semibold">Pasillo: {pasillo}</div>
+                <div className="text-sm font-semibold">Estante: {estante}</div>
+                <div className="text-sm font-semibold">Peldaño: {peldano}</div>
+                <div className="text-sm font-semibold">
+                  Punto de Referencia: {referencia}
+                </div>
+              </div>
+            </div>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
   },
   {
     id: 'seriales',

@@ -195,7 +195,7 @@ export default function WarehousesForm({ defaultValues }: Props) {
           />
         </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
           <Button variant="default" type="submit" disabled={isPending}>
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />

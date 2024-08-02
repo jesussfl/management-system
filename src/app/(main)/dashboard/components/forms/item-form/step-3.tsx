@@ -34,12 +34,14 @@ export const Step3 = ({
   setImage: (image: FormData | null) => void
 }) => {
   const form = useFormContext()
-  const { weight } = useGetWeight()
+  const { weight, abreviation } = useGetWeight()
+  const packageUnit = form.watch('unidadEmpaqueId')
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
   const [warehouses, setWarehouses] = useState<ComboboxData[]>([])
   const [hasSubsystem, setHasSubsystem] = useState(false)
   const [isSubsystemLoading, setIsSubsystemLoading] = useState(false)
   const [isWarehouseLoading, setIsWarehouseLoading] = useState(false)
+  const isLiquid = abreviation === 'LTS' || abreviation === 'ML'
   useEffect(() => {
     setIsSubsystemLoading(true)
     setIsWarehouseLoading(true)
@@ -336,49 +338,42 @@ export const Step3 = ({
 
         <ImageUpload setFile={setImage} />
       </div>
-
-      {
+      {!isLiquid ? (
         <FormField
           control={form.control}
           name="peso"
           rules={{
             required: false,
           }}
-          // disabled={weight > 0 ? true : false}
           render={({ field: { value, onChange, ref, ...rest } }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Peso por unidad (Opcional): </FormLabel>
-              <FormDescription>
-                {' '}
-                {`No se puede modificar este campo porque el renglón ya tiene una unidad de empaque con un peso establecido.`}{' '}
-              </FormDescription>
+              <FormLabel>Peso por Unidad (Opcional): </FormLabel>
+
               <FormControl>
-                <NumericFormat
-                  className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  allowNegative={false}
-                  thousandSeparator=""
-                  decimalSeparator="."
-                  prefix=""
-                  decimalScale={2}
-                  getInputRef={ref}
-                  value={weight || 0}
-                  //disable this numericformat using keyDown
-                  onKeyDown={(e) => {
-                    if (weight > 0) {
-                      e.preventDefault()
-                    }
-                  }}
-                  onValueChange={({ floatValue }) => {
-                    onChange(floatValue)
-                  }}
-                  {...rest}
-                />
+                <div className="flex items-center gap-2">
+                  <NumericFormat
+                    className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    allowNegative={false}
+                    thousandSeparator=""
+                    decimalSeparator="."
+                    prefix=""
+                    decimalScale={2}
+                    getInputRef={ref}
+                    value={weight || ''}
+                    onValueChange={({ floatValue }) => {
+                      onChange(floatValue)
+                    }}
+                    {...rest}
+                    disabled={weight > 0 ? true : false}
+                  />
+                  <p className="text-sm text-foreground">{abreviation}</p>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-      }
+      ) : null}
     </div>
   )
 }

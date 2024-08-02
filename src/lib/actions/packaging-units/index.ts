@@ -214,14 +214,18 @@ export const deleteMultiplePackagingUnits = async (ids: number[]) => {
     error: false,
   }
 }
-export const getAllPackagingUnits = async () => {
+export const getAllPackagingUnits = async (isOnlyActive?: boolean) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
     return []
   }
 
-  const packagingUnits = await prisma.unidadEmpaque.findMany()
+  const packagingUnits = await prisma.unidadEmpaque.findMany({
+    where: {
+      fecha_eliminacion: isOnlyActive ? null : undefined,
+    },
+  })
 
   return packagingUnits
 }
@@ -245,18 +249,18 @@ export const getPackagingUnitById = async (id: number) => {
   return packagingUnit
 }
 
-export const getPackagingUnitsByCategoryId = async (id: number) => {
-  const sessionResponse = await validateUserSession()
+// export const getPackagingUnitsByCategoryId = async (id: number) => {
+//   const sessionResponse = await validateUserSession()
 
-  if (sessionResponse.error || !sessionResponse.session) {
-    return []
-  }
+//   if (sessionResponse.error || !sessionResponse.session) {
+//     return []
+//   }
 
-  const packagingUnits = await prisma.unidadEmpaque.findMany({
-    where: {
-      id_categoria: id,
-      fecha_eliminacion: null,
-    },
-  })
-  return packagingUnits
-}
+//   const packagingUnits = await prisma.unidadEmpaque.findMany({
+//     where: {
+//       id_categoria: id,
+//       fecha_eliminacion: null,
+//     },
+//   })
+//   return packagingUnits
+// }

@@ -149,25 +149,6 @@ export default function PackagingUnitsForm({ defaultValues }: Props) {
         <div className="px-24">
           <FormField
             control={form.control}
-            name="id_categoria"
-            rules={{
-              required: 'Es necesario seleccionar una categoría',
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
-                <FormLabel>¿A qué categoría pertenece?</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={categories}
-                  form={form}
-                  field={field}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="nombre"
             rules={{
               required: 'Este campo es necesario',

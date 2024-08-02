@@ -121,10 +121,7 @@ export default function ItemsForm({
         break
 
       case 2:
-        await validateAndProceed(
-          ['clasificacionId', 'unidadEmpaqueId', 'categoriaId'],
-          2
-        )
+        await validateAndProceed(['clasificacionId', 'categoriaId'], 2)
         break
 
       case 3:

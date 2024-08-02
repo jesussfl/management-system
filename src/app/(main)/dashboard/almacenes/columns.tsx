@@ -1,26 +1,12 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Almacen, Prisma } from '@prisma/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import Link from 'next/link'
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-} from '@/modules/common/components/alert-dialog'
-import { DeleteDialog } from '@/modules/common/components/delete-dialog'
+import { Almacen } from '@prisma/client'
 import { deleteWarehouse, recoverWarehouse } from './lib/actions/warehouse'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { format } from 'date-fns'
@@ -28,10 +14,10 @@ import ProtectedTableActions from '@/modules/common/components/table-actions'
 
 export const columns: ColumnDef<Almacen>[] = [
   SELECT_COLUMN,
-  {
-    accessorKey: 'id',
-    header: 'ID',
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: 'ID',
+  // },
   {
     accessorKey: 'nombre',
     header: ({ column }) => {

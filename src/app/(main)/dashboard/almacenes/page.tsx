@@ -60,20 +60,13 @@ export default async function Page() {
           </Link>
         </HeaderRightSide>
       </PageHeader>
-      <Tabs defaultValue="almacenes">
-        <TabsList className="mx-5">
-          <TabsTrigger value="almacenes">Almacenes</TabsTrigger>
-        </TabsList>
-        <TabsContent value="almacenes">
-          <PageContent>
-            <Card>
-              <CardContent>
-                <DataTable columns={columns} data={warehousesData} />
-              </CardContent>
-            </Card>
-          </PageContent>
-        </TabsContent>
-      </Tabs>
+      <PageContent>
+        <Card>
+          <CardContent>
+            <DataTable columns={columns} data={warehousesData} />
+          </CardContent>
+        </Card>
+      </PageContent>
     </>
   )
 }
