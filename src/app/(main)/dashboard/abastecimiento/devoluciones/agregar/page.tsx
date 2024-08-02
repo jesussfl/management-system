@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/receptions-form'
+import ReceptionsForm from '@/app/(main)/dashboard/components/forms/reception-form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -10,7 +10,7 @@ import {
 import { getAllItems } from '@/lib/actions/item'
 import { IterationCcw, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
-import ReturnsForm from '../../../components/return-form/returns-form'
+import ReturnsForm from '../../../components/forms/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 

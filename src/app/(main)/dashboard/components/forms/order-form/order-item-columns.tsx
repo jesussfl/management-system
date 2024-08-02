@@ -4,7 +4,7 @@ import { ArrowUpDown } from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
-import { ItemsWithAllRelations } from '../../../../../lib/actions/item'
+import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 type Renglon = ItemsWithAllRelations[number]
 

@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ClassificationsForm from '@/app/(main)/dashboard/components/classification-form'
+import ClassificationsForm from '@/app/(main)/dashboard/components/forms/classification-form'
 
 export default async function Page() {
   return (

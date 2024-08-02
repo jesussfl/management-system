@@ -17,8 +17,8 @@ import { getAllPackagingUnits } from '@/lib/actions/packaging-units'
 import { columns as packagingUnitsColumns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/packaging-units-columns'
 
 export const metadata: Metadata = {
-  title: 'Inventario',
-  description: 'Desde aquí puedes ver todos tus renglones',
+  title: 'Unidades de Empaque',
+  description: 'Desde aquí puedes ver todas las unidades de empaque',
 }
 
 export default async function Page() {

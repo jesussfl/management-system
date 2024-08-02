@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/receptions-form'
+import ReceptionsForm from '@/app/(main)/dashboard/components/forms/reception-form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,

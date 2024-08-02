@@ -11,7 +11,7 @@ import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getReturnById } from '../../../../../../lib/actions/return'
-import ReturnsForm from '../../../components/return-form/returns-form'
+import ReturnsForm from '../../../components/forms/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 

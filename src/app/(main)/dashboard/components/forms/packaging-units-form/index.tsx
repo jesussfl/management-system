@@ -23,24 +23,21 @@ import {
 import { Combobox } from '@/modules/common/components/combobox'
 import { getAllCategories } from '@/lib/actions/categories'
 import { useRouter } from 'next/navigation'
-import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
 
 import { NumericFormat } from 'react-number-format'
 
 interface Props {
   defaultValues?: UnidadEmpaque
-  close?: () => void
 }
 const MEDIDAS = [
-  { label: 'LITROS', value: 'LITROS' },
-  { label: 'UNIDADES', value: 'UNIDADES' },
-  { label: 'MILILITROS', value: 'MILILITROS' },
-  { label: 'KILOGRAMOS', value: 'KILOGRAMOS' },
-  { label: 'GRAMOS', value: 'GRAMOS' },
-  { label: 'ONZAS', value: 'ONZAS' },
-  { label: 'TONELADAS', value: 'TONELADAS' },
-  { label: 'LIBRAS', value: 'LIBRAS' },
+  { label: 'LITROS', value: 'LITROS', abreviation: 'LTS' },
+  { label: 'MILILITROS', value: 'MILILITROS', abreviation: 'ML' },
+  { label: 'KILOGRAMOS', value: 'KILOGRAMOS', abreviation: 'KG' },
+  { label: 'GRAMOS', value: 'GRAMOS', abreviation: 'G' },
+  { label: 'ONZAS', value: 'ONZAS', abreviation: 'ONZ' },
+  { label: 'TONELADAS', value: 'TONELADAS', abreviation: 'TON' },
+  { label: 'LIBRAS', value: 'LIBRAS', abreviation: 'LB' },
 ]
 type ComboboxData = {
   value: number
@@ -48,7 +45,7 @@ type ComboboxData = {
 }
 type FormValues = Omit<UnidadEmpaque, 'id'>
 
-export default function PackagingUnitsForm({ defaultValues, close }: Props) {
+export default function PackagingUnitsForm({ defaultValues }: Props) {
   const { toast } = useToast()
   const isEditEnabled = !!defaultValues
   const router = useRouter()
@@ -62,10 +59,10 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
 
   React.useEffect(() => {
     startTransition(() => {
-      getAllCategories().then((data) => {
-        const transformedData = data.map((categorie) => ({
-          value: categorie.id,
-          label: categorie.nombre,
+      getAllCategories(true).then((data) => {
+        const transformedData = data.map((category) => ({
+          value: category.id,
+          label: category.nombre,
         }))
 
         setCategories(transformedData)
@@ -74,8 +71,12 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
   }, [])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    const measureType = form.watch('tipo_medida')
+    const abreviation = MEDIDAS.find((m) => m.value === measureType)
+      ?.abreviation
     const parsedValues = {
       ...values,
+      abreviacion: abreviation,
       peso: Number(values.peso) || null,
     }
 
@@ -114,12 +115,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
         return
       }
 
-      const dirtyValues = getDirtyValues(
-        dirtyFields,
-        parsedValues
-      ) as FormValues
-
-      updatePackagingUnit(defaultValues.id, dirtyValues).then((data) => {
+      updatePackagingUnit(defaultValues.id, parsedValues).then((data) => {
         if (data?.error) {
           toast({
             title: 'Parece que hubo un problema',
@@ -223,7 +219,7 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
               },
             }}
             render={({ field }) => (
-              <FormItem className="">
+              <FormItem className="mb-8">
                 <FormLabel>Descripción</FormLabel>
                 <FormControl>
                   <textarea
@@ -248,100 +244,68 @@ export default function PackagingUnitsForm({ defaultValues, close }: Props) {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="tipo_medida"
-            rules={{
-              required: 'Este campo es requerido',
-            }}
-            render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
-                <FormLabel>Tipo de peso</FormLabel>
-                <Combobox
-                  name={field.name}
-                  data={MEDIDAS}
-                  form={form}
-                  field={field}
-                  isValueString={true}
-                />
-                <FormDescription>
-                  Selecciona en qué tipo de medida se maneja el empaque, Ej. Una
-                  botella se maneja en litros.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="abreviacion"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 1,
-                message: 'Debe tener al menos 1 caracter',
-              },
-              maxLength: {
-                value: 10,
-                message: 'Debe tener un maximo de 10 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Abreviacion del peso</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ? field.value.toUpperCase() : ''}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value, {
-                        shouldDirty: true,
-                      })
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Este campo es util para identificar la unidad de medida del
-                  peso, Ej. Una botella de 1.5 LTS
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={'peso'}
-            render={({ field: { ref, ...rest } }) => (
-              <FormItem className="flex flex-col w-full">
-                <FormLabel>{'Peso de la unidad (Opcional)'} </FormLabel>
-                <FormDescription>
-                  Este campo es util si la unidad de empaque tiene un peso fijo.
-                  Si el empaque no tendrá el mismo peso, debe dejar este campo
-                  en blanco.
-                </FormDescription>
-                <FormControl>
-                  <NumericFormat
-                    className="w-full rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    allowNegative={false}
-                    thousandSeparator=""
-                    decimalSeparator="."
-                    prefix=""
-                    decimalScale={2}
-                    getInputRef={ref}
-                    {...rest}
-                  />
-                </FormControl>
+          <div className="flex flex-row gap-8">
+            <FormField
+              control={form.control}
+              name="tipo_medida"
+              rules={{
+                required: 'Este campo es requerido',
+              }}
+              render={({ field }) => (
+                <FormItem className="flex-1 flex flex-col">
+                  <FormLabel className="mb-[8px]">Unidad de Medida</FormLabel>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <Combobox
+                    name={field.name}
+                    data={MEDIDAS}
+                    form={form}
+                    field={field}
+                    isValueString={true}
+                  />
+                  <FormDescription>
+                    Selecciona en qué tipo de medida se maneja el empaque, Ej.
+                    Una botella se maneja en litros.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name={'peso'}
+              render={({ field: { ref, ...rest } }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>
+                    {'Peso estandar del empaque (Opcional)'}{' '}
+                  </FormLabel>
+
+                  <FormControl>
+                    <NumericFormat
+                      className="w-[200px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      allowNegative={false}
+                      thousandSeparator=""
+                      decimalSeparator="."
+                      prefix=""
+                      decimalScale={2}
+                      getInputRef={ref}
+                      {...rest}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Este campo es util si la unidad de empaque tiene un peso
+                    estandar. Si el empaque no tendrá el mismo peso, debe dejar
+                    este campo en blanco.
+                  </FormDescription>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
           {form.formState.errors.descripcion && (
             <p className="text-sm font-medium text-destructive">
               Corrige los campos en rojo

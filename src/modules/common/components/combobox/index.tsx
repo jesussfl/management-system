@@ -118,7 +118,6 @@ export function Combobox({
   isValueString = false,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false)
-
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>

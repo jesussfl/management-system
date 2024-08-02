@@ -8,7 +8,7 @@ import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 type Renglon = ItemsWithAllRelations[number]
 
-export const selectItemColumns: ColumnDef<Renglon>[] = [
+export const columns: ColumnDef<Renglon>[] = [
   {
     id: 'select',
     header: ({ table }: { table: any }) => (
@@ -33,24 +33,6 @@ export const selectItemColumns: ColumnDef<Renglon>[] = [
     header: 'ID',
   },
 
-  {
-    id: 'stock',
-    accessorFn: (row) => {
-      const activeReceptions = row.recepciones.filter(
-        (reception) => reception.recepcion.fecha_eliminacion === null
-      )
-
-      return activeReceptions.reduce((total, item) => {
-        const serials = item.seriales.filter(
-          (serial) =>
-            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
-        ).length
-
-        return total + serials
-      }, 0)
-    },
-    header: ({ column }) => <HeaderCell column={column} value="Stock" />,
-  },
   {
     accessorKey: 'nombre',
     header: ({ column }) => {
@@ -150,15 +132,3 @@ export const selectItemColumns: ColumnDef<Renglon>[] = [
     },
   },
 ]
-
-const HeaderCell = ({ column, value }: { column: any; value: any }) => (
-  <Button
-    variant="ghost"
-    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-    size={'sm'}
-    className="text-xs"
-  >
-    {value}
-    <ArrowUpDown className="ml-2 h-3 w-3" />
-  </Button>
-)

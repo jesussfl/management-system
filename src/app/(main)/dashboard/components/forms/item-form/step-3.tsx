@@ -23,8 +23,8 @@ import { NumericFormat } from 'react-number-format'
 import { Combobox } from '@/modules/common/components/combobox'
 
 import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
-import useGetWeight from '../../abastecimiento/inventario/lib/hooks/useGetWeight'
-import { getAllSubsystems } from '../../../../../lib/actions/subsystems'
+import useGetWeight from '../../../abastecimiento/inventario/lib/hooks/useGetWeight'
+import { getAllSubsystems } from '../../../../../../lib/actions/subsystems'
 
 export const Step3 = ({
   image,

@@ -11,7 +11,7 @@ import { ArrowLeft, PackageMinus, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
-import DispatchesForm from '../../../components/dispatch-form/dispatches-form'
+import DispatchesForm from '../../../components/forms/dispatch-form/dispatches-form'
 import { getDispatchById } from '../../../../../../lib/actions/dispatch'
 import { getAllItems } from '../../../../../../lib/actions/item'
 

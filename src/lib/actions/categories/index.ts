@@ -265,7 +265,7 @@ export const getCategoryById = async (id: number) => {
 
   return category
 }
-export const getAllCategories = async () => {
+export const getAllCategories = async (isOnlyActive?: boolean) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -273,6 +273,9 @@ export const getAllCategories = async () => {
   }
 
   const categories = await prisma.categoria.findMany({
+    where: {
+      fecha_eliminacion: isOnlyActive ? null : undefined,
+    },
     include: {
       clasificacion: true,
     },

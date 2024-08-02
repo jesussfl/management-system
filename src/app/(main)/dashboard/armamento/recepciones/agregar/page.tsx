@@ -10,7 +10,7 @@ import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import ReceptionsForm from '../../../components/reception-form/receptions-form'
+import ReceptionsForm from '../../../components/forms/reception-form/receptions-form'
 import { getAllItems } from '../../../../../../lib/actions/item'
 
 export const metadata: Metadata = {

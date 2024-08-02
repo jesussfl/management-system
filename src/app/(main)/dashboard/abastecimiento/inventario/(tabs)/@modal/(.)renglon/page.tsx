@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import ItemsForm from '../../../../../components/item-form'
+import ItemsForm from '../../../../../components/forms/item-form'
 
 export default async function Page() {
   return (

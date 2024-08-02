@@ -18,13 +18,12 @@ export const TableWithExport = ({
 }) => {
   const [filteredData, setFilteredData] = useState<any[]>([])
   const [isLowStockEnabled, setIsLowStockEnabled] = useState(false)
-  const [dataToShow, setDataToShow] = useState<any[]>(itemsData)
   const [rowsData, setRowsData] = useState<any[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
     showNotification().then((res) => {
-      if (lowStockItems && res === true) {
+      if (lowStockItems.length > 0 && res === true) {
         const lowStockItemsNames = lowStockItems.map((item) => item.nombre)
         if (lowStockItemsNames.length < 6) {
           toast({

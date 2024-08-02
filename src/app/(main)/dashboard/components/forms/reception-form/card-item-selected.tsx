@@ -22,7 +22,7 @@ import {
 } from '@/modules/common/components/card/card'
 import ModalForm from '@/modules/common/components/modal-form'
 import { SerialsForm } from './serials-form'
-import { getAllOrdersByItemId } from '../../../../../lib/actions/reception'
+import { getAllOrdersByItemId } from '../../../../../../lib/actions/reception'
 import { ComboboxData } from '@/types/types'
 import {
   Popover,
@@ -42,7 +42,7 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { ItemsWithAllRelations } from '../../../../../lib/actions/item'
+import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
 type Renglon = ItemsWithAllRelations[number]
 
 export const CardItemSelected = ({

@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
 import { getReturnById } from '../../../../../../lib/actions/return'
-import ReturnsForm from '../../../components/return-form/returns-form'
+import ReturnsForm from '../../../components/forms/return-form/returns-form'
 import { getAllItems } from '../../../../../../lib/actions/item'
 
 export const metadata: Metadata = {
