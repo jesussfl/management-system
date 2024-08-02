@@ -31,7 +31,22 @@ export const columns: ColumnDef<Renglon>[] = [
     accessorKey: 'id',
     header: 'ID',
   },
-
+  {
+    accessorKey: 'nombre',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nombre
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+  },
   {
     id: 'stock',
     accessorFn: (row) => {
@@ -63,7 +78,11 @@ export const columns: ColumnDef<Renglon>[] = [
     },
   },
   {
-    accessorKey: 'nombre',
+    id: 'peso',
+    accessorFn: (row) => {
+      if (!row.peso) return 'Sin definir'
+      return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
+    },
     header: ({ column }) => {
       return (
         <Button
@@ -72,12 +91,13 @@ export const columns: ColumnDef<Renglon>[] = [
           className="text-xs"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Nombre
+          Peso Unitario
           <ArrowUpDown className="ml-2 h-3 w-3" />
         </Button>
       )
     },
   },
+
   {
     accessorKey: 'descripcion',
     header: ({ column }) => {

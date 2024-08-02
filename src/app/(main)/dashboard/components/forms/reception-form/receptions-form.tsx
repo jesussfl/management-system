@@ -13,11 +13,10 @@ import { DataTable } from '@/modules/common/components/table/data-table'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
-import { CardItemSelected } from './card-item-selected'
 
-import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
+import { ItemsWithAllRelations } from '@/lib/actions/item'
 import { ReceptionFormValues } from '../../../abastecimiento/recepciones/lib/types/types'
-import { FormDateFields } from '../../../../../../modules/common/components/form-date-fields/form-date-fields'
+import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
 import {
   Card,
@@ -32,10 +31,9 @@ import {
 } from '@/modules/common/components/item-selector'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
-import {
-  createReception,
-  updateReception,
-} from '../../../../../../lib/actions/reception'
+import { createReception, updateReception } from '@/lib/actions/reception'
+import { SelectedItemCardProvider } from './card-context/card-context'
+import { SelectedItemCard } from './selected-item-card'
 type ComboboxData = {
   value: string
   label: string
@@ -89,7 +87,7 @@ export default function ReceptionsForm({
       },
     })
   const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-  const isEditEnabled = defaultValues ? true : false
+  const isEditing = defaultValues ? true : false
   const onSubmit: SubmitHandler<ReceptionFormValues> = async (data) => {
     if (data.renglones.length === 0) {
       toast({
@@ -118,8 +116,7 @@ export default function ReceptionsForm({
               variant: 'destructive',
             })
 
-            //@ts-ignore
-            res.fields?.map((field) => {
+            res.fields.map((field) => {
               setItemsWithoutSerials((prev) => [...prev, field])
             })
             return
@@ -175,13 +172,13 @@ export default function ReceptionsForm({
               professionals={professionals}
               config={{
                 destinatario_label: 'Persona que entrega:',
-                abastecedor_label: 'Persona que recibe:',
+                abastecedor_label: 'Profesional que recibe:',
                 servicio,
               }}
             />
             <Separator />
             <FormDateFields
-              isEditEnabled={isEditEnabled}
+              isEditEnabled={isEditing}
               config={{
                 dateName: 'fecha_recepcion',
                 dateLabel: 'Fecha de recepción',
@@ -195,7 +192,7 @@ export default function ReceptionsForm({
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han recibido
               </FormDescription>
-              <ItemSelector disabled={isEditEnabled}>
+              <ItemSelector disabled={isEditing}>
                 <DataTable
                   columns={columns}
                   data={renglonesData}
@@ -212,26 +209,29 @@ export default function ReceptionsForm({
           <SelectedItemsContainer>
             {selectedRowsData.map((item, index) => {
               const isEmpty = itemsWithoutSerials.includes(item.id)
+                ? 'Este renglón no tiene seriales asociados'
+                : false
+
               return (
-                <CardItemSelected
+                <SelectedItemCardProvider
                   key={item.id}
-                  item={item}
+                  itemData={item}
                   index={index}
-                  deleteItem={deleteItem}
-                  isEmpty={
-                    isEmpty ? 'Este renglón no tiene seriales asociados' : false
-                  }
+                  removeCard={() => deleteItem(index)}
+                  isError={isEmpty}
                   setItemsWithoutSerials={setItemsWithoutSerials}
-                  servicio={servicio}
-                  isEditEnabled={isEditEnabled}
-                />
+                  isEditing={isEditing}
+                  section={servicio}
+                >
+                  <SelectedItemCard />
+                </SelectedItemCardProvider>
               )
             })}
           </SelectedItemsContainer>
         )}
 
         <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
-          {isEditEnabled && (
+          {isEditing && (
             <p className="text-sm text-foreground">
               Algunos campos están deshabilitados para la edición
             </p>

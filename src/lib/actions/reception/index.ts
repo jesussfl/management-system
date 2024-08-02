@@ -14,6 +14,12 @@ import {
   ReceptionFormValues,
 } from '../../../app/(main)/dashboard/abastecimiento/recepciones/lib/types/types'
 
+export type ServerActionResponse = {
+  success: boolean | string
+  error: boolean | string
+  session?: any
+  fields: any[]
+}
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {
@@ -68,17 +74,9 @@ export type RecepcionType = Prisma.RecepcionGetPayload<{
   }
 }>
 
-const allSerialsAreValid = (renglones: Recepcion_RenglonesFormValues[]) => {
-  return renglones.some(
-    (renglon, index) =>
-      renglon.seriales.length === 0 ||
-      renglon.seriales.some(
-        (serial) =>
-          !serial.serial || serial.serial === '' || serial.serial === undefined
-      )
-  )
-}
-const getAffectedFields = (renglones: Recepcion_RenglonesFormValues[]) => {
+const getItemsWithEmptySerials = (
+  renglones: Recepcion_RenglonesFormValues[]
+) => {
   const fields = renglones
     .filter(
       (renglon) =>
@@ -90,7 +88,7 @@ const getAffectedFields = (renglones: Recepcion_RenglonesFormValues[]) => {
             serial.serial === undefined
         )
     )
-    .map((renglon, index) => renglon.id_renglon)
+    .map((renglon) => renglon.id_renglon)
 
   return fields
 }
@@ -101,7 +99,10 @@ export const createReception = async (
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    return {
+      ...sessionResponse,
+      fields: [],
+    }
   }
 
   const permissionsResponse = validateUserPermissions({
@@ -114,7 +115,10 @@ export const createReception = async (
   })
 
   if (!permissionsResponse.success) {
-    return permissionsResponse
+    return {
+      ...sessionResponse,
+      fields: [],
+    }
   }
 
   const { motivo, fecha_recepcion, renglones } = data
@@ -127,12 +131,11 @@ export const createReception = async (
     }
   }
 
-  if (allSerialsAreValid(renglones)) {
-    const fields = getAffectedFields(renglones)
-
+  const itemsWithEmptySerials = getItemsWithEmptySerials(renglones)
+  if (itemsWithEmptySerials.length > 0) {
     return {
       error: 'Hay algunos renglones sin seriales',
-      fields: fields,
+      fields: itemsWithEmptySerials,
       success: false,
     }
   }
@@ -236,13 +239,13 @@ export const updateReception = async (
       success: false,
     }
   }
-  if (allSerialsAreValid(data.renglones)) {
-    const fields = getAffectedFields(data.renglones)
 
+  const itemsWithEmptySerials = getItemsWithEmptySerials(data.renglones)
+  if (itemsWithEmptySerials.length > 0) {
     return {
       error: 'Hay algunos renglones sin seriales',
       success: false,
-      fields: fields,
+      fields: itemsWithEmptySerials,
     }
   }
 
