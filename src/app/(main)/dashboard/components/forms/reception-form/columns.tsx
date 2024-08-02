@@ -160,4 +160,10 @@ export const columns: ColumnDef<Renglon>[] = [
       )
     },
   },
+  {
+    id: 'test',
+    header: ({ column }) => {
+      return <></>
+    },
+  },
 ]

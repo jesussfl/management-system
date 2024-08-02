@@ -61,8 +61,6 @@ export type RenglonColumns = {
 }
 
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
-  SELECT_COLUMN,
-
   // {
   //   accessorKey: 'id',
   //   header: 'ID',
@@ -78,7 +76,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
           <HoverCardTrigger asChild>
             <div className="flex items-center">
               {!image ? (
-                <Package className="w-8 h-8" />
+                <Package className="w-12 h-8" />
               ) : (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -102,13 +100,12 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cerrar</AlertDialogCancel>
-                      {/* <AlertDialogAction>Continue</AlertDialogAction> */}
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
               )}
 
-              <Button variant="link" className="mr-4">
+              <Button variant="ghost" className="mr-4">
                 {row.getValue<string>('nombre')}
               </Button>
             </div>
@@ -182,7 +179,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
         ).length
         return total + serials
       }, 0)
-      return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
+      return `${stock * Number(row.peso)} ${row.unidad_empaque.abreviacion}`
     },
     header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
@@ -215,9 +212,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   {
     id: 'unidad_empaque',
     accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin unidad de empaque',
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Unidad de empaque" />
-    ),
+    header: ({ column }) => <HeaderCell column={column} value="Empaque" />,
   },
   {
     id: 'subsistema',
