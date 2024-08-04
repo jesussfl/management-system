@@ -9,43 +9,39 @@ import {
 } from '@/modules/common/components/form'
 
 import { Card, CardContent } from '@/modules/common/components/card/card'
-import { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-registerLocale('es', es)
-import 'react-datepicker/dist/react-datepicker.css'
+
 import { Switch } from '@/modules/common/components/switch/switch'
 import { ReceptionFieldsByQuantity } from './card-quantity-fields'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
 import { useSelectedItemCardContext } from './context/card-context'
-import { SerialSelector, SerialSelectorTrigger } from './serial-selector'
+import { SerialSelectorTrigger } from './serial-selector'
 
-export const SelectedItemCard = ({ isLiquid }: { isLiquid: boolean }) => {
+export const SelectedItemCard = () => {
   const { itemData, isEditing, index, isError } = useSelectedItemCardContext()
   const { watch, control, resetField } = useFormContext()
+  const isPackageForLiquids =
+    itemData.unidad_empaque?.tipo_medida === 'LITROS' ||
+    itemData.unidad_empaque?.tipo_medida === 'MILILITROS'
 
   const isFillingEnabled: boolean = watch(
     `renglones.${index}.is_filling_enabled`
   )
-  // console.log(watch(`renglones.${index}`))
   return (
     <Card className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}>
       <SelectedItemCardHeader />
 
       <CardContent className="flex flex-col flex-1 justify-end">
-        {isLiquid && (
+        {isPackageForLiquids && (
           <FormField
             control={control}
             name={`renglones.${index}.is_filling_enabled`}
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mb-4">
                 <div className="space-y-0.5">
-                  <FormLabel>
-                    Llenado de {itemData.unidad_empaque.tipo_medida}
-                  </FormLabel>
+                  <FormLabel>Sumar {itemData.tipo_medida_unidad}</FormLabel>
                   <FormDescription className="text-sm text-muted-foreground w-[80%]">
-                    Esta opcion te permitirá cargar la cantidad en{' '}
-                    {itemData.unidad_empaque.tipo_medida} que deseas llenar del
-                    stock existente
+                    Si marcas esta opción podrás añadir cantidad en{' '}
+                    {itemData.tipo_medida_unidad} en vez del stock
                   </FormDescription>
                 </div>
                 <FormControl>

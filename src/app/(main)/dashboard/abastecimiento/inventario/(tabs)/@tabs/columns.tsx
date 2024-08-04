@@ -29,40 +29,7 @@ import {
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
 
-export type RenglonColumns = {
-  id: number
-  nombre: string
-  descripcion: string
-  imagen?: string | null
-
-  stock_minimo: number
-  stock_maximo?: number
-  stock: number
-  seriales?: string
-
-  numero_parte?: string
-  peso_total: number
-
-  estado: string
-
-  unidad_empaque: string
-  clasificacion: string
-  categoria: string
-  tipo?: string
-
-  almacen: string
-
-  subsistema?: string
-  ubicacion?: string
-  creado: Date
-  editado: Date
-}
-
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
-  // {
-  //   accessorKey: 'id',
-  //   header: 'ID',
-  // },
   {
     accessorKey: 'nombre',
     header: ({ column }) => <HeaderCell column={column} value="Renglón" />,
@@ -167,9 +134,9 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     id: 'peso_total',
-    // accessorKey: 'peso_total',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
+
       const activeReceptions = row.recepciones.filter(
         (reception) => reception.recepcion.fecha_eliminacion === null
       )
@@ -182,7 +149,9 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
         ).length
         return total + serials
       }, 0)
-      return `${stock * Number(row.peso)} ${row.unidad_empaque.abreviacion}`
+      return `${
+        stock * Number(row.peso)
+      } ${row.tipo_medida_unidad.toLowerCase()}`
     },
     header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
@@ -190,7 +159,8 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     id: 'peso',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
-      return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
+
+      return `${row.peso || 0} ${row.tipo_medida_unidad.toLowerCase()}`
     },
     header: ({ column }) => (
       <HeaderCell column={column} value="Peso Unitario" />
@@ -198,13 +168,15 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
 
   {
-    accessorKey: 'clasificacion.nombre',
+    id: 'clasificacion',
+    accessorFn: (row) => row.clasificacion.nombre,
     header: ({ column }) => (
       <HeaderCell column={column} value="Clasificación" />
     ),
   },
   {
-    accessorKey: 'categoria.nombre',
+    id: 'categoria',
+    accessorFn: (row) => row.categoria.nombre,
     header: ({ column }) => <HeaderCell column={column} value="Categoría" />,
   },
   {
@@ -214,7 +186,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     id: 'unidad_empaque',
-    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin unidad de empaque',
+    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin empaque',
     header: ({ column }) => <HeaderCell column={column} value="Empaque" />,
   },
   {

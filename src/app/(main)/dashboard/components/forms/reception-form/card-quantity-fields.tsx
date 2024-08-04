@@ -95,7 +95,11 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                     }}
                   />
                   <p className="text-foreground text-sm">
-                    {`${itemData.unidad_empaque.nombre}(s)`}
+                    {`${
+                      itemData.unidad_empaque?.nombre
+                        ? itemData.unidad_empaque?.nombre + '(s)'
+                        : 'Unidades'
+                    }`}
                   </p>{' '}
                 </div>
               </FormControl>

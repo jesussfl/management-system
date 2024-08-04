@@ -30,7 +30,7 @@ import { NumericFormat } from 'react-number-format'
 interface Props {
   defaultValues?: UnidadEmpaque
 }
-const MEDIDAS = [
+export const MEDIDAS = [
   { label: 'LITROS', value: 'LITROS', abreviation: 'LTS' },
   { label: 'MILILITROS', value: 'MILILITROS', abreviation: 'ML' },
   { label: 'KILOGRAMOS', value: 'KILOGRAMOS', abreviation: 'KG' },
@@ -55,20 +55,6 @@ export default function PackagingUnitsForm({ defaultValues }: Props) {
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
 
   const [isPending, startTransition] = React.useTransition()
-  const [categories, setCategories] = React.useState<ComboboxData[]>([])
-
-  React.useEffect(() => {
-    startTransition(() => {
-      getAllCategories(true).then((data) => {
-        const transformedData = data.map((category) => ({
-          value: category.id,
-          label: category.nombre,
-        }))
-
-        setCategories(transformedData)
-      })
-    })
-  }, [])
 
   const onSubmit: SubmitHandler<FormValues> = async (values) => {
     const measureType = form.watch('tipo_medida')
@@ -255,11 +241,19 @@ export default function PackagingUnitsForm({ defaultValues }: Props) {
             <FormField
               control={form.control}
               name={'peso'}
+              rules={{
+                validate: (value) => {
+                  const measureType = form.watch('tipo_medida')
+                  const isMeasureTypeForLiquids =
+                    measureType === 'LITROS' || measureType === 'MILILITROS'
+
+                  if (isMeasureTypeForLiquids && !value)
+                    return 'El empaque debe tener un peso'
+                },
+              }}
               render={({ field: { ref, ...rest } }) => (
                 <FormItem className="flex-1">
-                  <FormLabel>
-                    {'Peso estandar del empaque (Opcional)'}{' '}
-                  </FormLabel>
+                  <FormLabel>{'Peso estandar del empaque'} </FormLabel>
 
                   <FormControl>
                     <NumericFormat

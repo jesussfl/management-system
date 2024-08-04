@@ -15,8 +15,6 @@ export const checkIfShowCredentialsEnabled = async () => {
   return record?.show_credentials
 }
 export const checkInTime = async (user: Usuario) => {
-  // console.log('checkAttendance')
-
   if (!user || !user.id) {
     return {
       error: 'No se pudo encontrar el usuario',

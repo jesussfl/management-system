@@ -1,7 +1,6 @@
 'use client'
 import { Input } from '@/modules/common/components/input/input'
 import { useFormContext } from 'react-hook-form'
-import { Box, Trash } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -11,14 +10,9 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
+import { Card, CardContent } from '@/modules/common/components/card/card'
 import { Prisma } from '@prisma/client'
+import { SelectedItemCardHeader } from '../../selected-item-card-header'
 
 type RenglonType = Prisma.RenglonGetPayload<{
   include: { unidad_empaque: true; recepciones: true }
@@ -41,26 +35,7 @@ export const CardItemOrder = ({
       key={item.id}
       className={`flex flex-col gap-4 ${isEmpty ? 'border-red-400' : ''}`}
     >
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex flex-row gap-4 items-center">
-          <Box className="h-6 w-6 " />
-          <div>
-            <CardTitle className="text-md font-medium text-foreground">
-              {item.nombre}
-            </CardTitle>
-            <CardDescription>
-              {`${item.descripcion} - Peso: ${
-                item.peso ? item.peso : 'Sin definir'
-              } ${item.peso ? item.unidad_empaque.abreviacion : ''} `}
-            </CardDescription>
-          </div>
-        </div>
-
-        <Trash
-          onClick={() => deleteItem(index)}
-          className="h-5 w-5 text-red-800 cursor-pointer"
-        />
-      </CardHeader>
+      <SelectedItemCardHeader />
       <CardContent className="flex flex-col flex-1 justify-end">
         <FormField
           control={control}
@@ -96,8 +71,12 @@ export const CardItemOrder = ({
                       }}
                     />
                     <p className="text-foreground text-sm">
-                      {`${item.unidad_empaque.nombre}(s)`}
-                    </p>{' '}
+                      {`${
+                        item.unidad_empaque?.nombre
+                          ? item.unidad_empaque?.nombre + '(s)'
+                          : 'Unidades'
+                      }`}
+                    </p>
                   </div>
                 </FormControl>
                 <FormMessage />

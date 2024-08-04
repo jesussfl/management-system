@@ -172,7 +172,7 @@ export const SerialSelector = ({
                 <CardTitle className="text-md font-medium text-foreground">
                   {`Serial: ${serial.serial}`}
                 </CardTitle>
-                <CardDescription>{`Peso Actual: (Max. ${itemData.peso} ${itemData.unidad_empaque.abreviacion})`}</CardDescription>
+                <CardDescription>{`Peso Actual:  (Max. ${itemData.peso} ${itemData.tipo_medida_unidad})`}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <FormField
@@ -204,7 +204,7 @@ export const SerialSelector = ({
                             />
                           </FormControl>
                           <p className="text-sm text-foreground">
-                            {itemData.unidad_empaque.abreviacion}
+                            {itemData.tipo_medida_unidad.toLowerCase()}
                           </p>
                         </div>
                       </FormItem>

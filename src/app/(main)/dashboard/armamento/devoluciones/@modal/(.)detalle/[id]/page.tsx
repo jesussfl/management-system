@@ -49,7 +49,9 @@ export default async function Page({
                   Cantidad: {`${renglon.seriales.length}`}
                 </p>
                 <p className="text-sm text-foreground">
-                  Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}
+                  Unidad de empaque:{' '}
+                  {renglon.renglon.unidad_empaque?.nombre ||
+                    'Sin unidad de empaque'}
                 </p>
 
                 <p className="text-sm text-foreground">

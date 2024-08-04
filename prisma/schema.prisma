@@ -144,35 +144,41 @@ model Renglon {
 
   servicio Servicios?
 
-  tipo                 String?
-  stock_minimo         Int                      @default(1)
+  tipo         String?
+  stock_minimo Int     @default(1)
+  peso         Float   @default(0)
+
   stock_maximo         Int?
   numero_parte         String?
-  peso                 Float                    @default(1)
-  estado               RenglonStates?           @default(ACTIVO)
-  fecha_creacion       DateTime                 @default(now())
-  ultima_actualizacion DateTime                 @updatedAt
+  estado               RenglonStates? @default(ACTIVO)
+  fecha_creacion       DateTime       @default(now())
+  ultima_actualizacion DateTime       @updatedAt
   imagen               String?
-  unidadEmpaqueId      Int?
-  unidad_empaque       UnidadEmpaque?           @relation(fields: [unidadEmpaqueId], references: [id], onDelete: Cascade)
-  clasificacionId      Int
-  clasificacion        Clasificacion            @relation(fields: [clasificacionId], references: [id])
-  categoriaId          Int
-  categoria            Categoria                @relation(fields: [categoriaId], references: [id])
-  id_subsistema        Int?
-  subsistema           Subsistema?              @relation(fields: [id_subsistema], references: [id])
-  id_almacen           Int?
-  almacen              Almacen?                 @relation(fields: [id_almacen], references: [id])
-  estante              String?
-  pasillo              String?
-  peldano              String?
-  referencia           String?
-  despachos            Despachos_Renglones[]
-  recepciones          Recepciones_Renglones[]
-  devoluciones         Devoluciones_Renglones[]
-  seriales             Serial[]
-  pedidos              Pedidos_Renglones[]
-  fecha_eliminacion    DateTime?
+
+  unidadEmpaqueId Int?
+  unidad_empaque  UnidadEmpaque? @relation(fields: [unidadEmpaqueId], references: [id], onDelete: Cascade)
+  clasificacionId Int
+  clasificacion   Clasificacion  @relation(fields: [clasificacionId], references: [id])
+  categoriaId     Int
+  categoria       Categoria      @relation(fields: [categoriaId], references: [id])
+  id_subsistema   Int?
+  subsistema      Subsistema?    @relation(fields: [id_subsistema], references: [id])
+  id_almacen      Int?
+  almacen         Almacen?       @relation(fields: [id_almacen], references: [id])
+
+  estante    String?
+  pasillo    String?
+  peldano    String?
+  referencia String?
+
+  fecha_eliminacion  DateTime?
+  tipo_medida_unidad Medidas   @default(KILOGRAMOS)
+
+  despachos    Despachos_Renglones[]
+  recepciones  Recepciones_Renglones[]
+  devoluciones Devoluciones_Renglones[]
+  seriales     Serial[]
+  pedidos      Pedidos_Renglones[]
 }
 
 enum Medidas {

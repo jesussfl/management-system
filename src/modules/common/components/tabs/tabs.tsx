@@ -122,7 +122,7 @@ export function TabsContent(props: {
   href?: string
 }) {
   const context = useContext()
-  console.log(context, props.value)
+  // console.log(context, props.value)
   if (
     context.selected !== props.value &&
     context.defaultSection !== props.value

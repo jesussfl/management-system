@@ -81,7 +81,7 @@ export const columns: ColumnDef<Renglon>[] = [
     id: 'peso',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
-      return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
+      return `${row.peso || 0} ${row.tipo_medida_unidad?.toLowerCase() || ''}`
     },
     header: ({ column }) => {
       return (

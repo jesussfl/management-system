@@ -58,7 +58,9 @@ export default async function Page({
                   Cantidad: {`${renglon.cantidad}`}
                 </p>
                 <p className="text-sm text-foreground">
-                  Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}
+                  Unidad de empaque:{' '}
+                  {renglon.renglon.unidad_empaque?.nombre ||
+                    'Sin unidad de empaque'}
                 </p>
                 <p className="text-sm text-foreground">
                   Precio en Bs: {renglon.precio} Bs

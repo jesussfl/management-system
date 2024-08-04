@@ -23,6 +23,7 @@ import { Box, Trash } from 'lucide-react'
 import { useFormContext } from 'react-hook-form'
 import { SerialSelector } from './serial-selector'
 import { Button } from '@/modules/common/components/button'
+import { SelectedItemCardHeader } from '../../selected-item-card-header'
 
 export const CardItemDispatch = ({
   item,
@@ -65,32 +66,8 @@ export const CardItemDispatch = ({
         isEmpty || isError ? 'border-red-400' : ''
       }`}
     >
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex flex-row gap-4 items-center">
-          <Box className="h-6 w-6 " />
-          <div>
-            <CardTitle className="text-md font-medium text-foreground">
-              {item.nombre}
-            </CardTitle>
-            <CardDescription>
-              {`${item.descripcion} - ${item.unidad_empaque.nombre} - Peso: ${
-                item.peso || 'Sin definir'
-              } ${item.peso ? item.unidad_empaque.abreviacion : ''} `}
-            </CardDescription>
-          </div>
-        </div>
+      <SelectedItemCardHeader />
 
-        {!isEditEnabled ? (
-          <Trash
-            onClick={() => {
-              if (isEditEnabled) return
-
-              deleteItem(index)
-            }}
-            className="h-5 w-5 text-red-800 cursor-pointer"
-          />
-        ) : null}
-      </CardHeader>
       <CardContent className="flex flex-col flex-1 justify-start gap-4">
         <FormField
           control={control}
@@ -177,7 +154,11 @@ export const CardItemDispatch = ({
                         disabled={isEditEnabled}
                       />
                       <p className="text-foreground text-sm">
-                        {`${item.unidad_empaque.nombre}(s)`}
+                        {`${
+                          item.unidad_empaque?.nombre
+                            ? item.unidad_empaque?.nombre + '(s)'
+                            : 'Unidades'
+                        }`}
                       </p>{' '}
                     </div>
                   </FormControl>

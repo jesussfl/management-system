@@ -222,12 +222,7 @@ export default function ReceptionsForm({
                   isEditing={isEditing}
                   section={servicio}
                 >
-                  <SelectedItemCard
-                    isLiquid={
-                      item.unidad_empaque.tipo_medida === 'LITROS' ||
-                      item.unidad_empaque.tipo_medida === 'MILILITROS'
-                    }
-                  />
+                  <SelectedItemCard />
                 </SelectedItemCardProvider>
               )
             })}

@@ -20,7 +20,7 @@ export default async function Page({
   params: { id: string }
 }) {
   const devolution = await getReturnById(Number(id))
-  const renglones = devolution.renglones
+  const devolutionDetails = devolution.renglones
   return (
     <Dialog open={true}>
       <DialogContent
@@ -34,7 +34,7 @@ export default async function Page({
         </DialogHeader>
         <CloseButtonDialog />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {renglones.map((renglon, index) => (
+          {devolutionDetails.map((detail, index) => (
             <Card key={index} className="min-w-[300px]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground">
@@ -43,23 +43,24 @@ export default async function Page({
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground">
-                  Descripción: {renglon.renglon.descripcion}
+                  Descripción: {detail.renglon.descripcion}
                 </p>
                 <p className="text-sm text-foreground">
-                  Cantidad: {`${renglon.seriales.length}`}
+                  Cantidad: {`${detail.seriales.length}`}
                 </p>
                 <p className="text-sm text-foreground">
-                  Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}
+                  Unidad de empaque:{' '}
+                  {detail?.renglon.unidad_empaque?.nombre || 'Sin Empaque'}
                 </p>
 
                 <p className="text-sm text-foreground">
-                  Clasificación: {renglon.renglon.clasificacion.nombre}
+                  Clasificación: {detail.renglon.clasificacion.nombre}
                 </p>
 
                 <p className="text-sm text-foreground">
                   Seriales devueltos:
                   <ul className="list-disc ml-4">
-                    {renglon.seriales.map((serial, index) => (
+                    {detail.seriales.map((serial, index) => (
                       <li key={index}>{serial}</li>
                     ))}
                   </ul>

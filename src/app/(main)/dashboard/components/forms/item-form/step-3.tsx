@@ -11,7 +11,7 @@ import {
   FormDescription,
 } from '@/modules/common/components/form'
 import { Input } from '@/modules/common/components/input/input'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { cn } from '@/utils/utils'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ComboboxData } from '@/types/types'
@@ -24,7 +24,8 @@ import { Combobox } from '@/modules/common/components/combobox'
 
 import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
 import useGetWeight from '../../../abastecimiento/inventario/lib/hooks/useGetWeight'
-import { getAllSubsystems } from '../../../../../../lib/actions/subsystems'
+import { getAllSubsystems } from '@/lib/actions/subsystems'
+import { MEDIDAS } from '../packaging-units-form'
 
 export const Step3 = ({
   image,
@@ -34,17 +35,15 @@ export const Step3 = ({
   setImage: (image: FormData | null) => void
 }) => {
   const form = useFormContext()
-  const { weight, abreviation } = useGetWeight()
-  const packageUnit = form.watch('unidadEmpaqueId')
+  const subsystemId = form.watch('id_subsistema')
+  const { weight, measureType } = useGetWeight()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
   const [warehouses, setWarehouses] = useState<ComboboxData[]>([])
-  const [hasSubsystem, setHasSubsystem] = useState(false)
-  const [isSubsystemLoading, setIsSubsystemLoading] = useState(false)
-  const [isWarehouseLoading, setIsWarehouseLoading] = useState(false)
-  const isLiquid = abreviation === 'LTS' || abreviation === 'ML'
+  const [hasSubsystem, setHasSubsystem] = useState(subsystemId ? true : false)
+
+  const isPackageForLiquids =
+    measureType === 'LITROS' || measureType === 'MILILITROS'
   useEffect(() => {
-    setIsSubsystemLoading(true)
-    setIsWarehouseLoading(true)
     getAllSubsystems(true).then((data) => {
       const transformedData = data.map((subsystem) => ({
         value: subsystem.id,
@@ -60,15 +59,7 @@ export const Step3 = ({
       }))
       setWarehouses(transformedData)
     })
-    setIsWarehouseLoading(false)
-    setIsSubsystemLoading(false)
   }, [])
-
-  const subsystemId = form.watch('id_subsistema')
-
-  useEffect(() => {
-    setHasSubsystem(!!subsystemId)
-  }, [subsystemId])
 
   return (
     <div className="flex flex-col gap-8 mb-8">
@@ -156,7 +147,6 @@ export const Step3 = ({
           />
         </>
       )}
-
       <FormField
         control={form.control}
         name="numero_parte"
@@ -182,7 +172,7 @@ export const Step3 = ({
           name="pasillo"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Pasillo (Opcional)</FormLabel>
+              <FormLabel>Pasillo</FormLabel>
 
               <FormControl>
                 <Input
@@ -202,7 +192,7 @@ export const Step3 = ({
           name="estante"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Estante (Opcional)</FormLabel>
+              <FormLabel>Estante</FormLabel>
 
               <FormControl>
                 <Input
@@ -222,7 +212,7 @@ export const Step3 = ({
           name="peldano"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Peldaño (Opcional)</FormLabel>
+              <FormLabel>Peldaño</FormLabel>
 
               <FormControl>
                 <Input type="text" {...field} value={field.value || ''} />
@@ -338,41 +328,68 @@ export const Step3 = ({
 
         <ImageUpload setFile={setImage} />
       </div>
-      {!isLiquid ? (
-        <FormField
-          control={form.control}
-          name="peso"
-          rules={{
-            required: false,
-          }}
-          render={({ field: { value, onChange, ref, ...rest } }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Peso por Unidad (Opcional): </FormLabel>
 
-              <FormControl>
-                <div className="flex items-center gap-2">
-                  <NumericFormat
-                    className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    allowNegative={false}
-                    thousandSeparator=""
-                    decimalSeparator="."
-                    prefix=""
-                    decimalScale={2}
-                    getInputRef={ref}
-                    value={weight || ''}
-                    onValueChange={({ floatValue }) => {
-                      onChange(floatValue)
-                    }}
-                    {...rest}
-                    disabled={weight > 0 ? true : false}
-                  />
-                  <p className="text-sm text-foreground">{abreviation}</p>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {!isPackageForLiquids ? (
+        <div className="flex gap-4 items-start">
+          <FormField
+            control={form.control}
+            name="tipo_medida_unidad"
+            rules={{
+              required: 'Este campo es requerido',
+            }}
+            render={({ field }) => (
+              <FormItem className="flex-1 flex flex-col gap-2">
+                <FormLabel>Unidad de Medida</FormLabel>
+
+                <Combobox
+                  name={field.name}
+                  data={MEDIDAS}
+                  form={form}
+                  field={field}
+                  isValueString={true}
+                />
+                <FormDescription>
+                  Selecciona en qué tipo de medida se maneja el renglón, Ej. Una
+                  botella se maneja en litros.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="peso"
+            rules={{
+              required: false,
+            }}
+            render={({ field: { value, onChange, ref, ...rest } }) => (
+              <FormItem className="flex-1">
+                <FormLabel>Peso por Unidad (Opcional): </FormLabel>
+
+                <FormControl>
+                  <div className="flex items-center gap-2">
+                    <NumericFormat
+                      className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      allowNegative={false}
+                      thousandSeparator=""
+                      decimalSeparator="."
+                      prefix=""
+                      decimalScale={2}
+                      getInputRef={ref}
+                      value={weight || ''}
+                      onValueChange={({ floatValue }) => {
+                        onChange(floatValue)
+                      }}
+                      {...rest}
+                      disabled={weight > 0 ? true : false}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
       ) : null}
     </div>
   )

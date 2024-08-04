@@ -56,7 +56,7 @@ export const lowStockItemsColumns: ColumnDef<RenglonWithAllRelations>[] = [
       return (
         <div>
           {`${stock * Number(row.original.peso)} 
-            ${row.original.unidad_empaque.abreviacion}
+            ${row.original.tipo_medida_unidad}
           `}
         </div>
       )
@@ -70,7 +70,7 @@ export const lowStockItemsColumns: ColumnDef<RenglonWithAllRelations>[] = [
 
     cell: ({ row }) => {
       return (
-        <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
+        <div>{`${row.original.peso} ${row.original.tipo_medida_unidad}`}</div>
       )
     },
   },

@@ -7,10 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-registerLocale('es', es)
-import 'react-datepicker/dist/react-datepicker.css'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,8 +20,10 @@ import {
 } from '@/modules/common/components/alert-dialog'
 import { AlertDialogImage } from '@/modules/common/components/alert-dialog/alert-dialog-image'
 import { useSelectedItemCardContext } from '../forms/reception-form/context/card-context'
-export const SelectedItemCardHeader = ({}: {}) => {
+
+export const SelectedItemCardHeader = () => {
   const { itemData, removeCard, isEditing } = useSelectedItemCardContext()
+  const description = `Descripción: ${itemData?.descripcion} `
   return (
     <CardHeader className="flex flex-row items-center justify-between">
       <div className="flex items-center gap-4">
@@ -38,9 +36,7 @@ export const SelectedItemCardHeader = ({}: {}) => {
           <CardTitle className="text-md font-medium text-foreground">
             {itemData.nombre}
           </CardTitle>
-          <CardDescription>
-            {`${itemData.descripcion} - Peso: ${itemData.peso} (${itemData.unidad_empaque.abreviacion}) `}
-          </CardDescription>
+          <CardDescription>{description}</CardDescription>
         </div>
       </div>
 

@@ -19,7 +19,10 @@ export default async function Page({
           <h2>Renglón {index + 1}</h2>
           <p>Descripción: {renglon.renglon.descripcion}</p>
           <p>Cantidad: {`${renglon.seriales.length}`}</p>
-          <p>Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}</p>
+          <p>
+            Unidad de empaque:{' '}
+            {renglon.renglon.unidad_empaque?.nombre || 'Sin unidad de empaque'}
+          </p>
           <p>Clasificación: {renglon.renglon.clasificacion.nombre}</p>
           {/* <p>Categoría: {renglon.renglon?.categoria?.nombre}</p> */}
         </div>

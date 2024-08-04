@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Box, Trash } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -11,18 +10,13 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
+import { Card, CardContent } from '@/modules/common/components/card/card'
 import ModalForm from '@/modules/common/components/modal-form'
 import { RenglonWithAllRelations } from '@/types/types'
 import { SerialsFormNew } from './serials-form'
 import { Input } from '@/modules/common/components/input/input'
 import { Button } from '@/modules/common/components/button'
+import { SelectedItemCardHeader } from '../../selected-item-card-header'
 
 export const SelectedItemCard = ({
   item,
@@ -63,30 +57,7 @@ export const SelectedItemCard = ({
         isEmpty || isError ? 'border-red-400' : ''
       }`}
     >
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div className="flex flex-row gap-4 items-center">
-          <Box className="h-6 w-6 " />
-          <div>
-            <CardTitle className="text-md font-medium text-foreground">
-              {item.nombre}
-            </CardTitle>
-            <CardDescription>
-              {`${item.descripcion} - ${item.unidad_empaque.nombre} - Peso: ${item.peso} (${item.unidad_empaque.abreviacion}) `}
-            </CardDescription>
-          </div>
-        </div>
-
-        {!isEditEnabled ? (
-          <Trash
-            onClick={() => {
-              if (isEditEnabled) return
-
-              deleteItem(index)
-            }}
-            className="h-5 w-5 text-red-800 cursor-pointer"
-          />
-        ) : null}
-      </CardHeader>
+      <SelectedItemCardHeader />
       <CardContent className="flex flex-col flex-1 justify-start gap-4">
         <FormField
           control={control}
