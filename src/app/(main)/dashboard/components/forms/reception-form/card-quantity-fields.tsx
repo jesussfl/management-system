@@ -17,7 +17,7 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { useSelectedItemCardContext } from './context/card-context'
+import { useSelectedItemCardContext } from '../../../../../../lib/context/selected-item-card-context'
 import { SerialsFormTrigger } from './serials-form'
 import { Combobox } from '@/modules/common/components/combobox'
 

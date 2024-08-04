@@ -1,19 +1,11 @@
 'use client'
-
 import { ColumnDef } from '@tanstack/react-table'
 import { AlertCircle, ArrowUpDown, MapPin, Package } from 'lucide-react'
 
-import { Button, buttonVariants } from '@/modules/common/components/button'
-
-import Link from 'next/link'
-import { deleteItem, recoverItem } from '../../../../../../../lib/actions/item'
-import { RenglonWithAllRelations } from '@/types/types'
+import { Button } from '@/modules/common/components/button'
 
 import { cn } from '@/utils/utils'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import Image from 'next/image'
-import { format } from 'date-fns'
-import ProtectedTableActions from '@/modules/common/components/table-actions'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -28,8 +20,30 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
-
-export const columns: ColumnDef<RenglonWithAllRelations>[] = [
+import { ItemsWithAllRelations } from '@/lib/actions/item'
+import { HeaderCell } from '../../abastecimiento/inventario/(tabs)/@tabs/columns'
+import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
+type Renglon = ItemsWithAllRelations[number]
+export const itemSelectorColumns: ColumnDef<Renglon>[] = [
+  {
+    id: 'select',
+    header: ({ table }: { table: any }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }: { row: any }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: 'nombre',
     header: ({ column }) => <HeaderCell column={column} value="Renglón" />,
@@ -258,75 +272,9 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
     },
   },
   {
-    id: 'seriales',
-    header: ({ column }) => <HeaderCell column={column} value="Seriales" />,
-    cell: ({ row }) => {
-      return (
-        <Link
-          className={cn(buttonVariants({ variant: 'outline' }))}
-          href={`/dashboard/abastecimiento/inventario/serial/${row.original.id}`}
-        >
-          Ver seriales
-        </Link>
-      )
-    },
-  },
-
-  {
-    accessorKey: 'fecha_creacion',
-    filterFn: 'dateBetweenFilterFn',
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="text-xs"
-        size={'sm'}
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-      >
-        Fecha de creación
-        <ArrowUpDown className="ml-2 h-3 w-3" />
-      </Button>
-    ),
-    cell: ({ row }) =>
-      format(new Date(row.original?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
-  },
-  {
-    id: 'acciones',
-
-    cell: ({ row }) => {
-      const data = row.original
-      const renglon = (({ recepciones, ...rest }) => rest)(data)
-
-      return (
-        <ProtectedTableActions
-          sectionName={SECTION_NAMES.INVENTARIO_ABASTECIMIENTO}
-          editConfig={{
-            href: `/dashboard/abastecimiento/inventario/renglon/${renglon.id}`,
-          }}
-          deleteConfig={{
-            isDeleted: renglon.fecha_eliminacion ? true : false,
-            alertTitle: '¿Estás seguro de eliminar este renglon?',
-            alertDescription: `Estas a punto de eliminar este renglon. Pero puedes recuperar el registro más tarde.`,
-            onRecover: () => {
-              return recoverItem(renglon.id, 'Abastecimiento')
-            },
-            onConfirm: () => {
-              return deleteItem(renglon.id, 'Abastecimiento')
-            },
-          }}
-        />
-      )
+    id: 'test',
+    header: ({ column }) => {
+      return <></>
     },
   },
 ]
-
-export const HeaderCell = ({ column, value }: { column: any; value: any }) => (
-  <Button
-    variant="ghost"
-    onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-    size={'sm'}
-    className="text-xs"
-  >
-    {value}
-    <ArrowUpDown className="ml-2 h-3 w-3" />
-  </Button>
-)

@@ -16,7 +16,7 @@ import {
 } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { nanoid } from 'nanoid'
-import { useSelectedItemCardContext } from './context/card-context'
+import { useSelectedItemCardContext } from '../../../../../../lib/context/selected-item-card-context'
 import ModalForm from '@/modules/common/components/modal-form'
 import { useState } from 'react'
 import { Eye, Plus } from 'lucide-react'

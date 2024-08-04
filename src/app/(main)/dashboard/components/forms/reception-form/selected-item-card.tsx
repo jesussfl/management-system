@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { ReceptionFieldsByQuantity } from './card-quantity-fields'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
-import { useSelectedItemCardContext } from './context/card-context'
+import { useSelectedItemCardContext } from '../../../../../../lib/context/selected-item-card-context'
 import { SerialSelectorTrigger } from './serial-selector'
 
 export const SelectedItemCard = () => {

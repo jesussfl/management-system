@@ -6,8 +6,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
-import { Prisma, Serial } from '@prisma/client'
-import { format } from 'date-fns'
+import { Prisma } from '@prisma/client'
 
 export const receptionSerialColumns: ColumnDef<
   Prisma.SerialGetPayload<{ include: { renglon: true } }>
@@ -61,9 +60,6 @@ export const receptionSerialColumns: ColumnDef<
   {
     id: 'actions',
     header: ({ column }) => {
-      return <></>
-    },
-    cell: ({ row }) => {
       return <></>
     },
   },

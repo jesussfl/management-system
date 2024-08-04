@@ -1,7 +1,7 @@
 'use client'
 import { useState, useTransition } from 'react'
 
-import { columns } from './columns'
+import { itemSelectorColumns } from '../../columns/item-selector-columns'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
@@ -32,7 +32,7 @@ import {
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { createReception, updateReception } from '@/lib/actions/reception'
-import { SelectedItemCardProvider } from './context/card-context'
+import { SelectedItemCardProvider } from '../../../../../../lib/context/selected-item-card-context'
 import { SelectedItemCard } from './selected-item-card'
 type ComboboxData = {
   value: string
@@ -193,7 +193,7 @@ export default function ReceptionsForm({
               </FormDescription>
               <ItemSelector disabled={isEditing}>
                 <DataTable
-                  columns={columns}
+                  columns={itemSelectorColumns}
                   data={renglonesData}
                   onSelectedRowsChange={handleTableSelect}
                   defaultSelection={rowSelection}
