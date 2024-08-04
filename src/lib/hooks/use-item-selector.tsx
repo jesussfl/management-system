@@ -85,3 +85,87 @@ export const useItemSelector = ({
     deleteItem,
   }
 }
+
+export const useSelector = ({
+  data,
+  fields,
+  defaultData,
+  remove,
+  append,
+  appendObject,
+}: {
+  data: any[]
+  fields: any
+  defaultData: any
+  remove: (index: number) => void
+  append: (item: any) => void
+  appendObject: {
+    [key: string]: any
+  }
+}) => {
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [selectedRowsData, setSelectedRowsData] = useState<any[]>([])
+  useEffect(() => {
+    if (defaultData) {
+      const selections = defaultData.reduce(
+        (acc: any, item: any) => {
+          acc[item.id_renglon] = true
+          return acc
+        },
+        {} as { [key: number]: boolean }
+      )
+      const filteredItems = selections.filter(
+        (item: any) => selections[item.id]
+      )
+      setRowSelection(selections)
+      setSelectedRowsData(filteredItems)
+    }
+  }, [defaultData, data])
+
+  const handleTableSelect = useCallback(
+    (rowsData: any[], rowSelection: RowSelectionState) => {
+      if (!rowsData) return
+
+      const ids = rowsData.map((row) => row.id)
+
+      fields.forEach((field: any, index: number) => {
+        if (ids.length === 0) return
+
+        if (!ids.includes(field.id)) {
+          remove(index)
+        }
+      })
+
+      rowsData.forEach((row) => {
+        const exists = fields.some((field: any) => field.id === row.id)
+        if (!exists) {
+          append({ ...appendObject, id: row.id })
+        }
+      })
+
+      setSelectedRowsData(rowsData)
+      setRowSelection(rowSelection)
+    },
+    [fields, remove, append, appendObject]
+  )
+
+  const removeSelection = (index: number) => {
+    setSelectedRowsData((prev) => {
+      return prev.filter((selection) => {
+        const nuevoObjeto = { ...rowSelection }
+        if (selection.id === selectedRowsData[index].id) {
+          delete nuevoObjeto[selection.id]
+          setRowSelection(nuevoObjeto)
+        }
+        return selection.id !== selectedRowsData[index].id
+      })
+    })
+    remove(index)
+  }
+  return {
+    rowSelection,
+    selectedRowsData,
+    handleTableSelect,
+    removeSelection,
+  }
+}

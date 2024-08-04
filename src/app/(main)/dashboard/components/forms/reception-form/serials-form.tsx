@@ -16,7 +16,7 @@ import {
 } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { nanoid } from 'nanoid'
-import { useSelectedItemCardContext } from './card-context/card-context'
+import { useSelectedItemCardContext } from './context/card-context'
 import ModalForm from '@/modules/common/components/modal-form'
 import { useState } from 'react'
 import { Eye, Plus } from 'lucide-react'
@@ -143,7 +143,8 @@ export const SerialsFormTrigger = () => {
   const { itemData, isError, setItemsWithoutSerials, index, isEditing } =
     useSelectedItemCardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const registeredSerials: number = watch(`renglones.${index}.seriales`).length
+  const registeredSerials: number =
+    watch(`renglones.${index}.seriales`)?.length || 0
   const quantity = watch(`renglones.${index}.cantidad`)
   const triggerVariant = registeredSerials > 0 ? 'outline' : 'default'
   const triggerIcon =
@@ -152,7 +153,8 @@ export const SerialsFormTrigger = () => {
     ) : (
       <Plus className="h-4 w-4" />
     )
-  const triggerName = registeredSerials > 0 ? 'Ver Serials' : 'Asociar Serials'
+  const triggerName =
+    registeredSerials > 0 ? 'Ver Seriales' : 'Asociar Seriales'
 
   const toogleModal = () => setIsModalOpen(!isModalOpen)
   return (

@@ -32,7 +32,7 @@ import {
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { createReception, updateReception } from '@/lib/actions/reception'
-import { SelectedItemCardProvider } from './card-context/card-context'
+import { SelectedItemCardProvider } from './context/card-context'
 import { SelectedItemCard } from './selected-item-card'
 type ComboboxData = {
   value: string
@@ -57,7 +57,6 @@ export default function ReceptionsForm({
 }: Props) {
   const { toast } = useToast()
   const [isPending, startTransition] = useTransition()
-
   const router = useRouter()
   const form = useForm<ReceptionFormValues>({
     mode: 'onChange',
@@ -223,7 +222,12 @@ export default function ReceptionsForm({
                   isEditing={isEditing}
                   section={servicio}
                 >
-                  <SelectedItemCard />
+                  <SelectedItemCard
+                    isLiquid={
+                      item.unidad_empaque.tipo_medida === 'LITROS' ||
+                      item.unidad_empaque.tipo_medida === 'MILILITROS'
+                    }
+                  />
                 </SelectedItemCardProvider>
               )
             })}

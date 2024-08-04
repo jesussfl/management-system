@@ -14,16 +14,7 @@ export const receptionSerialColumns: ColumnDef<
 >[] = [
   {
     id: 'seleccionar',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todos"
-      />
-    ),
+
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -35,19 +26,10 @@ export const receptionSerialColumns: ColumnDef<
     enableHiding: false,
   },
   {
-    accessorKey: 'renglon.nombre',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Nombre
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
+    accessorKey: 'id',
+    header: 'ID',
   },
+
   {
     accessorKey: 'serial',
     header: ({ column }) => {
@@ -77,19 +59,12 @@ export const receptionSerialColumns: ColumnDef<
     },
   },
   {
-    id: 'fecha_creacion',
-    accessorFn: (row) =>
-      format(new Date(row?.fecha_creacion), 'dd/MM/yyyy HH:mm'),
+    id: 'actions',
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Fecha de Registro
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
+      return <></>
+    },
+    cell: ({ row }) => {
+      return <></>
     },
   },
 ]

@@ -110,7 +110,8 @@ type DataTableProps<TData, TValue> = {
   onDataChange?: (data: any[]) => void
   onSelectedRowsChange?: (
     rows: TData[],
-    rowSelection: RowSelectionState
+    rowSelection: RowSelectionState,
+    loading: boolean
   ) => void
 } & (MultipleDeleteProps | SingleDeleteProps)
 
@@ -132,10 +133,17 @@ export function DataTable<TData extends { id: any }, TValue>({
   )
   const [selectedRowsData, setSelectedRowsData] = useState<TData[]>([])
   const [filtering, setFiltering] = useState('')
+  const [loading, setLoading] = useState<boolean>(true) // Initial loading state is true
 
-  //Memoization
+  // Memoization
   const data = useMemo(() => tableData, [tableData])
 
+  // Update loading state when data changes
+  useEffect(() => {
+    if (data.length > 0) {
+      setLoading(false) // Data has loaded
+    }
+  }, [data])
   const columns = useMemo(() => {
     if (!isStatusEnabled) return tableColumns
     // Crear una copia de tableColumns
@@ -144,22 +152,6 @@ export function DataTable<TData extends { id: any }, TValue>({
     columnsCopy.splice(columnsCopy.length - 1, 0, STATUS_COLUMN)
     return columnsCopy
   }, [tableColumns])
-
-  useEffect(() => {
-    setSelectedRowsData((prev) =>
-      Object.keys(rowSelection).map(
-        (key) =>
-          table.getSelectedRowModel().rowsById[key]?.original ||
-          prev.find((row) => row.id === key)
-      )
-    )
-  }, [rowSelection])
-
-  useEffect(() => {
-    if (!onSelectedRowsChange) return
-    onSelectedRowsChange(selectedRowsData, rowSelection)
-  }, [selectedRowsData])
-
   const table = useReactTable({
     data,
     columns,
@@ -191,8 +183,22 @@ export function DataTable<TData extends { id: any }, TValue>({
       globalFilter: filtering,
     },
   })
-
+  useEffect(() => {
+    setSelectedRowsData((prev) =>
+      Object.keys(rowSelection).map(
+        (key) =>
+          table.getSelectedRowModel().rowsById[key]?.original ||
+          prev.find((row) => row.id === key)
+      )
+    )
+  }, [rowSelection])
   const { rows } = table.getFilteredRowModel()
+
+  useEffect(() => {
+    if (!onSelectedRowsChange) return
+    onSelectedRowsChange(selectedRowsData, rowSelection, loading)
+  }, [selectedRowsData])
+
   useEffect(() => {
     if (!onDataChange) return
     onDataChange(rows)

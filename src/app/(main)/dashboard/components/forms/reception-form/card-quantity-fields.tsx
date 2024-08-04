@@ -2,8 +2,6 @@
 import { Input } from '@/modules/common/components/input/input'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Button } from '@/modules/common/components/button'
-import { CheckIcon } from 'lucide-react'
 import {
   FormControl,
   FormDescription,
@@ -13,42 +11,20 @@ import {
   FormMessage,
 } from '@/modules/common/components/form'
 
-import { getAllOrdersByItemId } from '../../../../../../lib/actions/reception'
+import { getAllOrdersByItemId } from '@/lib/actions/reception'
 import { ComboboxData } from '@/types/types'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/modules/common/components/popover/popover'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/modules/common/components/command/command'
-import { cn } from '@/utils/utils'
 import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
-import { useSelectedItemCardContext } from './card-context/card-context'
-type Renglon = ItemsWithAllRelations[number]
+import { useSelectedItemCardContext } from './context/card-context'
+import { SerialsFormTrigger } from './serials-form'
+import { Combobox } from '@/modules/common/components/combobox'
 
 export const ReceptionFieldsByQuantity = ({}: {}) => {
   const { control, setValue, watch } = useFormContext()
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
-  const {
-    itemData,
-    removeCard,
-    setItemsWithoutSerials,
-    index,
-    isEditing,
-    isError,
-    section,
-  } = useSelectedItemCardContext()
+  const { itemData, index, isEditing, section } = useSelectedItemCardContext()
   const itemId = itemData.id
   useEffect(() => {
     getAllOrdersByItemId(itemId, section).then((data) => {
@@ -67,66 +43,15 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
         control={control}
         name={`renglones.${index}.codigo_solicitud`}
         render={({ field }) => (
-          <FormItem className="flex-1 ">
-            <FormLabel>Código de Solicitud:</FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                      'w-full justify-between',
-                      !field.value && 'text-muted-foreground'
-                    )}
-                  >
-                    {field.value
-                      ? pedidos.find((pedido) => pedido.value === field.value)
-                          ?.label
-                      : 'Seleccionar código'}
-                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="PopoverContent">
-                <Command>
-                  <CommandInput
-                    placeholder="Buscar código..."
-                    className="h-9"
-                  />
-                  <CommandEmpty>No se encontaron resultados.</CommandEmpty>
-                  <CommandGroup>
-                    {pedidos.map((pedido) => (
-                      <CommandItem
-                        value={pedido.label}
-                        key={pedido.value}
-                        onSelect={() => {
-                          setValue(
-                            `renglones.${index}.codigo_solicitud`,
-                            pedido.value,
-                            {
-                              shouldDirty: true,
-                            }
-                          )
-                        }}
-                      >
-                        {pedido.label}
-                        <CheckIcon
-                          className={cn(
-                            'ml-auto h-4 w-4',
-                            pedido.value === field.value
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+          <FormItem className="flex justify-between items-center">
+            <FormLabel>Código de Solicitud (opcional):</FormLabel>
+            <Combobox
+              name={field.name}
+              form={control}
+              field={field}
+              data={pedidos}
+            />
 
-            <FormDescription>Este campo es opcional</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -163,6 +88,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                     type="number"
                     {...field}
                     disabled={isEditing}
+                    value={field.value}
                     onChange={(event) => {
                       field.onChange(parseInt(event.target.value))
                       setValue(`renglones.${index}.seriales`, [])
@@ -253,7 +179,12 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
 
             <div className="flex-1 w-full">
               <FormControl>
-                <Input type="text" {...field} />
+                <Input
+                  type="text"
+                  {...field}
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </div>
@@ -275,6 +206,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                   type="number"
                   // pattern="[0-9]*[.,]?[0-9]*"
                   {...field}
+                  value={field.value}
                   onChange={(event) =>
                     field.onChange(parseFloat(event.target.value))
                   }
@@ -300,7 +232,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
 
             <div className="flex-1 w-full">
               <FormControl>
-                <Input type="text" {...field} />
+                <Input type="text" {...field} value={field.value || ''} />
               </FormControl>
               <FormDescription>
                 {`La observación no puede superar los 125 caracteres`}
@@ -310,6 +242,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
           </FormItem>
         )}
       />
+      <SerialsFormTrigger />
     </>
   )
 }

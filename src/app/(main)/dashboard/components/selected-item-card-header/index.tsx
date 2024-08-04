@@ -23,7 +23,7 @@ import {
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { AlertDialogImage } from '@/modules/common/components/alert-dialog/alert-dialog-image'
-import { useSelectedItemCardContext } from '../forms/reception-form/card-context/card-context'
+import { useSelectedItemCardContext } from '../forms/reception-form/context/card-context'
 export const SelectedItemCardHeader = ({}: {}) => {
   const { itemData, removeCard, isEditing } = useSelectedItemCardContext()
   return (

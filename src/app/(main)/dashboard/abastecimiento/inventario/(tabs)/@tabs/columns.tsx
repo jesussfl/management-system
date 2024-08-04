@@ -5,8 +5,6 @@ import { AlertCircle, ArrowUpDown, MapPin, Package } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
-import { SELECT_COLUMN } from '@/utils/constants/columns'
-
 import Link from 'next/link'
 import { deleteItem, recoverItem } from '../../../../../../../lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
@@ -147,10 +145,15 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
               variant={'link'}
               className={cn(
                 'flex items-center',
-                stock < minimumStock ? 'text-red-500' : 'text-green-500'
+                stock < minimumStock ? 'text-red-500' : ''
               )}
             >
-              <AlertCircle className="w-4 h-4 mr-2" />
+              {stock < minimumStock ? (
+                <AlertCircle className="w-4 h-4 mr-2" />
+              ) : (
+                <div className="w-4 h-4 mr-2" />
+              )}
+
               {stock}
             </Button>
           </HoverCardTrigger>

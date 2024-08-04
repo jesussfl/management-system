@@ -153,8 +153,8 @@ model Renglon {
   fecha_creacion       DateTime                 @default(now())
   ultima_actualizacion DateTime                 @updatedAt
   imagen               String?
-  unidadEmpaqueId      Int
-  unidad_empaque       UnidadEmpaque            @relation(fields: [unidadEmpaqueId], references: [id], onDelete: Cascade)
+  unidadEmpaqueId      Int?
+  unidad_empaque       UnidadEmpaque?           @relation(fields: [unidadEmpaqueId], references: [id], onDelete: Cascade)
   clasificacionId      Int
   clasificacion        Clasificacion            @relation(fields: [clasificacionId], references: [id])
   categoriaId          Int
