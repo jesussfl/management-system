@@ -501,6 +501,7 @@ export const getReceptionById = async (id: number) => {
               peso_recibido: serial.peso_recibido,
               serial: serial.serial.serial,
               id_renglon: renglon.id_renglon,
+              condicion: undefined,
             }
           })
         : renglon.seriales.map((serial) => {
@@ -509,6 +510,7 @@ export const getReceptionById = async (id: number) => {
               condicion: serial.condicion,
               serial: serial.serial,
               id_renglon: renglon.id_renglon,
+              peso_recibido: undefined,
             }
           }),
     })),
