@@ -2,9 +2,11 @@
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from '@/modules/common/components/form'
 
 import {
@@ -25,23 +27,25 @@ import { receptionSerialColumns } from '../../../columns/serial-selector-columns
 import { NumericFormat } from 'react-number-format'
 import { getSerialsByItemEnabled } from '@/lib/actions/serials'
 import { Separator } from '@/modules/common/components/separator/separator'
+import { useToast } from '@/modules/common/components/toast/use-toast'
 
 export type SelectedSerial = {
   id: number
   serial: string
   id_renglon: number
   peso_recibido: number
+  peso_actual: number
   condicion?: undefined
 }
 
 export const SerialSelectorTrigger = () => {
   const { itemData, index: itemIndex, isEditing } = useSelectedItemCardContext()
   const [isPending, startTransition] = useTransition()
-  const { watch } = useFormContext()
+  const { watch, ...form } = useFormContext()
+  const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [serials, setSerials] = useState<SerialWithRenglon[]>([])
-
   const itemId = itemData.id
   const selectedSerials: SelectedSerial[] = watch(
     `renglones.${itemIndex}.seriales`
@@ -106,7 +110,32 @@ export const SerialSelectorTrigger = () => {
             <Button
               className="w-[200px] sticky bottom-8 left-8"
               variant={'default'}
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                const isSomeFieldEmpty = selectedSerials.some(
+                  (selectedSerial, index) => {
+                    const max = itemData.peso - selectedSerial.peso_actual
+                    if (selectedSerial.peso_recibido > max) {
+                      form.trigger(
+                        `renglones.${itemIndex}.seriales.${index}.peso_recibido`
+                      )
+
+                      return true
+                    }
+
+                    return !selectedSerial.peso_recibido
+                  }
+                )
+
+                if (isSomeFieldEmpty) {
+                  toast({
+                    title:
+                      'Hay campos vacios o incorrectos, por favor revisa los datos',
+                    variant: 'destructive',
+                  })
+                  return
+                }
+                toogleModal()
+              }}
             >
               Listo
             </Button>
@@ -124,7 +153,8 @@ export const SerialSelector = ({
   serials: SerialWithRenglon[]
   selectedSerials: SelectedSerial[]
 }) => {
-  const { control, setValue } = useFormContext()
+  const { control, setValue, ...form } = useFormContext()
+
   const { itemData, index: itemIndex } = useSelectedItemCardContext()
   const [isLoading, setIsLoading] = useState(false)
   const [displaySerials, setDisplaySerials] =
@@ -153,6 +183,7 @@ export const SerialSelector = ({
               serial: nonExistingSerial?.serial,
               id_renglon: itemId,
               peso_recibido: 0,
+              peso_actual: nonExistingSerial?.peso_actual,
             },
           ]
         : existingSerials
@@ -207,41 +238,53 @@ export const SerialSelector = ({
                 <CardTitle className="text-md font-medium text-foreground">
                   {`Serial: ${serial.serial}`}
                 </CardTitle>
-                <CardDescription>{`Peso Actual:  (Max. ${itemData.peso} ${itemData.tipo_medida_unidad})`}</CardDescription>
+                <CardDescription>{`Peso Actual: ${
+                  serial.peso_actual + ' ' + itemData.tipo_medida_unidad
+                }`}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <FormField
                   control={control}
                   name={`renglones.${itemIndex}.seriales.${index}.peso_recibido`}
-                  render={({ field: { value, onChange, ref, ...rest } }) => {
+                  rules={{
+                    required: 'Peso requerido',
+                    max: {
+                      value: itemData.peso - serial.peso_actual,
+                      message: `Maximo ${
+                        itemData.peso - serial.peso_actual
+                      } ${itemData.tipo_medida_unidad.toLowerCase()}`,
+                    },
+                  }}
+                  render={({ field: { value, onChange, ref, ...field } }) => {
                     return (
                       <FormItem className="flex flex-col rounded-lg border p-3 shadow-sm mb-4">
                         <div className="space-y-0.5">
                           <FormLabel className="text-sm text-foreground">
                             Peso a registrar
                           </FormLabel>
+                          <FormDescription>
+                            {` (Máximo. ${
+                              itemData.peso - serial.peso_actual
+                            } ${itemData.tipo_medida_unidad.toLowerCase()})`}
+                          </FormDescription>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <FormControl>
-                            <NumericFormat
-                              className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                              allowNegative={false}
-                              thousandSeparator=""
-                              decimalSeparator="."
-                              prefix=""
-                              decimalScale={2}
-                              getInputRef={ref}
-                              value={value || ''}
-                              onValueChange={({ floatValue }) => {
-                                onChange(floatValue)
-                              }}
-                              {...rest}
-                            />
-                          </FormControl>
-                          <p className="text-sm text-foreground">
-                            {itemData.tipo_medida_unidad.toLowerCase()}
-                          </p>
-                        </div>
+                        <FormControl>
+                          <NumericFormat
+                            className="rounded-md border-1 border-border text-foreground bg-background  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            {...field}
+                            allowNegative={false}
+                            thousandSeparator=""
+                            suffix={` ${itemData.tipo_medida_unidad.toLowerCase()}`}
+                            decimalScale={2}
+                            getInputRef={ref}
+                            value={value}
+                            onValueChange={({ floatValue }) => {
+                              onChange(floatValue || '')
+                              form.clearErrors(field.name)
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )
                   }}

@@ -30,7 +30,7 @@ export const SelectedItemCard = () => {
     <Card className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}>
       <SelectedItemCardHeader />
 
-      <CardContent className="flex flex-col flex-1 justify-end">
+      <CardContent className="flex flex-col flex-1 justify-start">
         {isPackageForLiquids && (
           <FormField
             control={control}
