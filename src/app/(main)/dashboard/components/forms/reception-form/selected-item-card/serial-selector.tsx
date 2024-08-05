@@ -21,7 +21,7 @@ import { Button } from '@/modules/common/components/button'
 import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialWithRenglon } from '@/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { receptionSerialColumns } from '../../columns/serial-selector-columns'
+import { receptionSerialColumns } from '../../../columns/serial-selector-columns'
 import { NumericFormat } from 'react-number-format'
 import { getSerialsByItemEnabled } from '@/lib/actions/serials'
 import { Separator } from '@/modules/common/components/separator/separator'
@@ -130,6 +130,7 @@ export const SerialSelector = ({
   const [displaySerials, setDisplaySerials] =
     useState<SelectedSerial[]>(selectedSerials)
   const [isTimerActive, setIsTimerActive] = useState(false)
+  const itemId = itemData.id
 
   const handleTableSelect = useCallback(
     (data: SerialWithRenglon[]) => {
@@ -150,7 +151,7 @@ export const SerialSelector = ({
             {
               id: nonExistingSerial?.id,
               serial: nonExistingSerial?.serial,
-              id_renglon: itemData.id,
+              id_renglon: itemId,
               peso_recibido: 0,
             },
           ]
@@ -159,7 +160,7 @@ export const SerialSelector = ({
       setValue(`renglones.${itemIndex}.seriales`, updatedSelectedSerials)
       setIsLoading(false)
     },
-    [itemIndex, setValue, selectedSerials]
+    [itemIndex, setValue, selectedSerials, itemId]
   )
 
   useEffect(() => {

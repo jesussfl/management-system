@@ -118,6 +118,7 @@ export const FormDateFields = ({
                   dateFormat="d MMMM, yyyy h:mm aa"
                   dropdownMode="select"
                   maxDate={new Date()}
+                  className="rounded-md border-1 border-border text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
               <FormMessage />

@@ -1,4 +1,4 @@
-import { SelectedSerial } from '@/app/(main)/dashboard/components/forms/reception-form/serial-selector'
+import { SelectedSerial } from '@/app/(main)/dashboard/components/forms/reception-form/selected-item-card/serial-selector'
 
 export interface ReceptionFormValues {
   fecha_recepcion: Date

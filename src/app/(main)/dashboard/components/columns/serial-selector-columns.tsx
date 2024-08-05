@@ -58,6 +58,24 @@ export const receptionSerialColumns: ColumnDef<
     },
   },
   {
+    accessorKey: 'peso_actual',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Peso actual
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const measureType = row.original.renglon.tipo_medida_unidad
+      return <div>{row.getValue('peso_actual') + ' ' + measureType}</div>
+    },
+  },
+  {
     id: 'actions',
     header: ({ column }) => {
       return <></>

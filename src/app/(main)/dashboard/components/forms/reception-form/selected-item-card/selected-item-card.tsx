@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/modules/common/components/card/card'
 
 import { Switch } from '@/modules/common/components/switch/switch'
 import { ReceptionFieldsByQuantity } from './card-quantity-fields'
-import { SelectedItemCardHeader } from '../../selected-item-card-header'
+import { SelectedItemCardHeader } from '../../../selected-item-card-header'
 import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialSelectorTrigger } from './serial-selector'
 
@@ -22,7 +22,6 @@ export const SelectedItemCard = () => {
   const isPackageForLiquids =
     itemData.unidad_empaque?.tipo_medida === 'LITROS' ||
     itemData.unidad_empaque?.tipo_medida === 'MILILITROS'
-  console.log(watch(`renglones.${index}`), 'renglon')
   const isFillingEnabled: boolean = watch(
     `renglones.${index}.es_recepcion_liquidos`
   )
@@ -39,7 +38,9 @@ export const SelectedItemCard = () => {
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mb-4">
                 <div className="space-y-0.5">
-                  <FormLabel>Sumar {itemData.tipo_medida_unidad}</FormLabel>
+                  <FormLabel>
+                    Agregar por {itemData.tipo_medida_unidad.toLowerCase()}
+                  </FormLabel>
                   <FormDescription className="text-sm text-muted-foreground w-[80%]">
                     Si marcas esta opción podrás añadir cantidad en{' '}
                     {itemData.tipo_medida_unidad} en vez del stock
