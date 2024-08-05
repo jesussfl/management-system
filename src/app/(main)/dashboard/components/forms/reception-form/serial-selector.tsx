@@ -18,27 +18,35 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { Loader2, MousePointerClickIcon } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
-import { useSelectedItemCardContext } from '../../../../../../lib/context/selected-item-card-context'
+import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialWithRenglon } from '@/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { receptionSerialColumns } from '../../columns/serial-selector-columns'
 import { NumericFormat } from 'react-number-format'
 import { getSerialsByItemEnabled } from '@/lib/actions/serials'
+import { Separator } from '@/modules/common/components/separator/separator'
 
-type SelectedSerial = {
+export type SelectedSerial = {
   id: number
   serial: string
-  peso_restante: number
+  id_renglon: number
+  peso_recibido: number
+  condicion?: undefined
 }
 
 export const SerialSelectorTrigger = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const { itemData, index: itemIndex } = useSelectedItemCardContext()
-  const { watch } = useFormContext()
+  const { itemData, index: itemIndex, isEditing } = useSelectedItemCardContext()
   const [isPending, startTransition] = useTransition()
+  const { watch } = useFormContext()
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [serials, setSerials] = useState<SerialWithRenglon[]>([])
+
   const itemId = itemData.id
-  const selectedSerials = watch(`renglones.${itemIndex}.seriales`)
+  const selectedSerials: SelectedSerial[] = watch(
+    `renglones.${itemIndex}.seriales`
+  )
+
   const toogleModal = () => setIsModalOpen(!isModalOpen)
   useEffect(() => {
     startTransition(() => {
@@ -49,38 +57,63 @@ export const SerialSelectorTrigger = () => {
   }, [itemId])
 
   return (
-    <ModalForm
-      triggerName={`Seleccionar seriales`}
-      triggerVariant={'default'}
-      triggerIcon={<MousePointerClickIcon className="h-4 w-4" />}
-      closeWarning={false}
-      className="max-h-[80vh] min-w-[80vw]"
-      open={isModalOpen}
-      customToogleModal={toogleModal}
-    >
-      <div className="p-24">
-        <p className="text-xl text-foreground font-semibold">
-          Selecciona los seriales de {itemData.nombre}
-        </p>
-        <p className="text-sm text-foreground">
-          Seleccionados: {selectedSerials?.length}
-        </p>
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-foreground font-semibold">
+        Seleccionados: {selectedSerials?.length}
+      </p>
+      {selectedSerials?.map((serial, index) => (
+        <div key={serial.id} className="flex flex-col gap-2">
+          <div className="flex flex-row justify-between gap-1 flex-1">
+            <p className="text-sm text-foreground font-semibold">
+              Serial: {serial.serial}
+            </p>
+            <p className="text-sm text-foreground font-semibold">
+              Peso agregado: {serial.peso_recibido}{' '}
+              {itemData.unidad_empaque?.tipo_medida}
+            </p>
+          </div>
+          <Separator />
+        </div>
+      ))}
 
-        {isPending ? (
-          <Loader2 className="h-8 w-8 animate-spin" />
-        ) : (
-          <SerialSelector serials={serials} selectedSerials={selectedSerials} />
-        )}
-
-        <Button
-          className="w-[200px] sticky bottom-8 left-8"
-          variant={'default'}
-          onClick={() => setIsModalOpen(false)}
+      {!isEditing && (
+        <ModalForm
+          triggerName={`Seleccionar seriales`}
+          triggerVariant={'default'}
+          triggerIcon={<MousePointerClickIcon className="h-4 w-4" />}
+          closeWarning={false}
+          className="max-h-[80vh] min-w-[80vw]"
+          open={isModalOpen}
+          customToogleModal={toogleModal}
         >
-          Listo
-        </Button>
-      </div>
-    </ModalForm>
+          <div className="p-24">
+            <p className="text-xl text-foreground font-semibold">
+              Selecciona los seriales de {itemData.nombre}
+            </p>
+            <p className="text-sm text-foreground">
+              Seleccionados: {selectedSerials?.length}
+            </p>
+
+            {isPending ? (
+              <Loader2 className="h-8 w-8 animate-spin" />
+            ) : (
+              <SerialSelector
+                serials={serials}
+                selectedSerials={selectedSerials}
+              />
+            )}
+
+            <Button
+              className="w-[200px] sticky bottom-8 left-8"
+              variant={'default'}
+              onClick={() => setIsModalOpen(false)}
+            >
+              Listo
+            </Button>
+          </div>
+        </ModalForm>
+      )}
+    </div>
   )
 }
 
@@ -117,7 +150,8 @@ export const SerialSelector = ({
             {
               id: nonExistingSerial?.id,
               serial: nonExistingSerial?.serial,
-              peso_restante: 0,
+              id_renglon: itemData.id,
+              peso_recibido: 0,
             },
           ]
         : existingSerials
@@ -177,7 +211,7 @@ export const SerialSelector = ({
               <CardContent className="flex flex-col gap-4">
                 <FormField
                   control={control}
-                  name={`renglones.${itemIndex}.seriales.${index}.peso_restante`}
+                  name={`renglones.${itemIndex}.seriales.${index}.peso_recibido`}
                   render={({ field: { value, onChange, ref, ...rest } }) => {
                     return (
                       <FormItem className="flex flex-col rounded-lg border p-3 shadow-sm mb-4">

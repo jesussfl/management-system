@@ -193,15 +193,14 @@ enum Medidas {
 }
 
 model UnidadEmpaque {
-  id                   Int       @id @default(autoincrement())
-  nombre               String    @unique
-  descripcion          String
-  abreviacion          String?
-  tipo_medida          Medidas
-  peso                 Float?
-  renglones            Renglon[]
-  // categoria            Categoria @relation(fields: [id_categoria], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  // id_categoria         Int
+  id          Int       @id @default(autoincrement())
+  nombre      String    @unique
+  descripcion String
+  abreviacion String?
+  tipo_medida Medidas
+  peso        Float?
+  renglones   Renglon[]
+
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
   fecha_eliminacion    DateTime?
@@ -214,7 +213,6 @@ model Categoria {
   id_clasificacion Int
 
   renglones            Renglon[]
-  // unidades_empaque     UnidadEmpaque[]
   clasificacion        Clasificacion @relation(fields: [id_clasificacion], references: [id], onDelete: Cascade, onUpdate: Cascade)
   fecha_creacion       DateTime      @default(now())
   ultima_actualizacion DateTime      @updatedAt
@@ -302,18 +300,19 @@ model Recepcion {
 }
 
 model Recepciones_Renglones {
-  id                   Int       @id @default(autoincrement())
-  recepcion            Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_recepcion         Int
-  renglon              Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_renglon           Int
-  cantidad             Int
-  seriales_automaticos Boolean
-  seriales             Serial[]
-  fabricante           String?
-  precio               Float?
-  codigo_solicitud     Int?
-  pedido               Pedido?   @relation(fields: [codigo_solicitud], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                    Int     @id @default(autoincrement())
+  cantidad              Int     @default(0)
+  seriales_automaticos  Boolean @default(false)
+  es_recepcion_liquidos Boolean @default(false)
+  fabricante            String?
+  precio                Float?
+
+  id_recepcion     Int
+  id_renglon       Int
+  codigo_solicitud Int?
+  recepcion        Recepcion @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  renglon          Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pedido           Pedido?   @relation(fields: [codigo_solicitud], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   observacion String? @default("s/o")
 
@@ -322,25 +321,43 @@ model Recepciones_Renglones {
   fecha_fabricacion    DateTime?
   fecha_vencimiento    DateTime?
   fecha_eliminacion    DateTime?
+
+  seriales             Serial[]
+  recepciones_Seriales Recepciones_Seriales[]
 }
 
 //#endregion
+model Recepciones_Seriales {
+  id                    Int                   @id @default(autoincrement())
+  id_serial             Int
+  serial                Serial                @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_recepcion Int
+  detalles_recepcion    Recepciones_Renglones @relation(fields: [id_detalles_recepcion], references: [id])
+  peso_recibido         Float
+  fecha_creacion        DateTime              @default(now())
+}
+
 model Serial {
-  id            Int                     @id @default(autoincrement())
-  serial        String                  @unique
+  id          Int     @id @default(autoincrement())
+  serial      String  @unique
+  estado      String? @default("Disponible")
+  condicion   String  @default("Nuevo")
+  peso_actual Float?  @default(0)
+
   id_renglon    Int
-  renglon       Renglon                 @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_recepcion  Int
-  recepcion     Recepciones_Renglones   @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  estado        String?                 @default("Disponible")
   id_despacho   Int?
-  despacho      Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onUpdate: Cascade)
-  devolucion    Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
+  id_recepcion  Int
   id_devolucion Int?
 
-  fecha_creacion       DateTime  @default(now())
-  ultima_actualizacion DateTime  @updatedAt
+  renglon    Renglon                 @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  recepcion  Recepciones_Renglones   @relation(fields: [id_recepcion], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho   Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onUpdate: Cascade)
+  devolucion Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
+
+  fecha_creacion       DateTime               @default(now())
+  ultima_actualizacion DateTime               @updatedAt
   fecha_eliminacion    DateTime?
+  recepciones_Seriales Recepciones_Seriales[]
 }
 
 model Devolucion {

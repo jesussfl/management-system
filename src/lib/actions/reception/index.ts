@@ -140,60 +140,97 @@ export const createReception = async (
     }
   }
 
-  const recepcion = await prisma.recepcion.create({
-    data: {
-      ...data,
-      motivo,
-      servicio,
-      fecha_recepcion,
-      renglones: {
-        create: renglones.map((renglon) => ({
-          ...renglon,
-          id_renglon: undefined,
-          codigo_solicitud: undefined,
-          pedido: renglon.codigo_solicitud
-            ? {
-                connect: {
-                  id: renglon.codigo_solicitud,
+  await prisma.$transaction(async (prisma) => {
+    const recepcion = await prisma.recepcion.create({
+      data: {
+        ...data,
+        motivo,
+        servicio,
+        fecha_recepcion,
+        renglones: {
+          create: data.renglones.map((renglon) => ({
+            ...renglon,
+            id_renglon: undefined,
+            codigo_solicitud: undefined,
+            pedido: renglon.codigo_solicitud
+              ? {
+                  connect: {
+                    id: renglon.codigo_solicitud,
+                  },
+                }
+              : undefined,
+            renglon: {
+              connect: {
+                id: renglon.id_renglon,
+              },
+            },
+            recepciones_Seriales: renglon.es_recepcion_liquidos
+              ? {
+                  create: renglon.seriales.map((serial) => ({
+                    peso_recibido: serial.peso_recibido as number,
+                    serial: {
+                      connect: {
+                        id: serial.id,
+                      },
+                    },
+                  })),
+                }
+              : undefined,
+            seriales: renglon.es_recepcion_liquidos
+              ? undefined
+              : {
+                  create: renglon.seriales.map((serial) => ({
+                    serial: serial.serial,
+                    condicion: serial.condicion || undefined,
+                    renglon: {
+                      connect: {
+                        id: serial.id_renglon,
+                      },
+                    },
+                  })),
                 },
-              }
-            : undefined,
-          renglon: {
-            connect: {
-              id: renglon.id_renglon,
+          })),
+        },
+      },
+    })
+
+    data.renglones.forEach(async (renglon) => {
+      if (!renglon.es_recepcion_liquidos) return
+
+      const serials = renglon.seriales
+
+      serials.forEach(async (serial) => {
+        await prisma.serial.update({
+          where: {
+            id: serial.id,
+          },
+          data: {
+            peso_actual: {
+              increment: serial.peso_recibido,
             },
           },
-          seriales: {
-            create: renglon.seriales.map((serial) => ({
-              serial: serial.serial,
-              renglon: {
-                connect: {
-                  id: renglon.id_renglon,
-                },
-              },
-            })),
-          },
-        })),
-      },
-    },
+        })
+      })
+    })
+
+    await registerAuditAction(
+      'CREAR',
+      `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
+        data.motivo
+      } y id ${recepcion.id} ${
+        data.motivo_fecha
+          ? `, la fecha de creación fue: ${format(
+              recepcion.fecha_creacion,
+              'dd-MM-yyyy HH:mm'
+            )}, la fecha de recepción: ${format(
+              recepcion.fecha_recepcion,
+              'dd-MM-yyyy HH:mm'
+            )}, motivo de la fecha: ${data.motivo_fecha}`
+          : ''
+      }`
+    )
   })
 
-  await registerAuditAction(
-    'CREAR',
-    `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
-      data.motivo
-    } y id ${recepcion.id} ${
-      data.motivo_fecha
-        ? `, la fecha de creación fue: ${format(
-            recepcion.fecha_creacion,
-            'dd-MM-yyyy HH:mm'
-          )}, la fecha de recepción: ${format(
-            recepcion.fecha_recepcion,
-            'dd-MM-yyyy HH:mm'
-          )}, motivo de la fecha: ${data.motivo_fecha}`
-        : ''
-    }`
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/recepciones`)
 
   return {
@@ -423,6 +460,11 @@ export const getReceptionById = async (id: number) => {
       },
       renglones: {
         include: {
+          recepciones_Seriales: {
+            include: {
+              serial: true,
+            },
+          },
           renglon: {
             include: {
               recepciones: true,
@@ -435,6 +477,7 @@ export const getReceptionById = async (id: number) => {
             select: {
               serial: true,
               id_renglon: true,
+              condicion: true,
             },
           },
         },
@@ -446,7 +489,30 @@ export const getReceptionById = async (id: number) => {
     throw new Error('Recepcion no existe')
   }
 
-  return reception
+  return {
+    ...reception,
+    renglones: reception.renglones.map((renglon) => ({
+      ...renglon,
+      recepciones_Seriales: undefined,
+      seriales: renglon.es_recepcion_liquidos
+        ? renglon.recepciones_Seriales.map((serial) => {
+            return {
+              id: serial.serial.id,
+              peso_recibido: serial.peso_recibido,
+              serial: serial.serial.serial,
+              id_renglon: renglon.id_renglon,
+            }
+          })
+        : renglon.seriales.map((serial) => {
+            return {
+              id: undefined,
+              condicion: serial.condicion,
+              serial: serial.serial,
+              id_renglon: renglon.id_renglon,
+            }
+          }),
+    })),
+  }
 }
 
 export const deleteReception = async (id: number, servicio: string) => {

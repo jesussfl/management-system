@@ -119,15 +119,6 @@ export const FormDateFields = ({
                   dropdownMode="select"
                   maxDate={new Date()}
                 />
-                <Button
-                  variant={'secondary'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    form.resetField(config.dateName)
-                  }}
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </Button>
               </div>
               <FormMessage />
             </div>

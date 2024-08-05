@@ -136,6 +136,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
+                dateFormat="d MMMM, yyyy"
                 maxDate={new Date()}
               />
 
@@ -166,6 +167,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
+                dateFormat="d MMMM, yyyy"
                 minDate={watch(`renglones.${index}.fecha_fabricacion`)}
               />
 
@@ -246,7 +248,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
           </FormItem>
         )}
       />
-      <SerialsFormTrigger />
+      {!isEditing && <SerialsFormTrigger />}
     </>
   )
 }

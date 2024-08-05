@@ -13,19 +13,20 @@ import { Card, CardContent } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { ReceptionFieldsByQuantity } from './card-quantity-fields'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
-import { useSelectedItemCardContext } from '../../../../../../lib/context/selected-item-card-context'
+import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialSelectorTrigger } from './serial-selector'
 
 export const SelectedItemCard = () => {
   const { itemData, isEditing, index, isError } = useSelectedItemCardContext()
-  const { watch, control, resetField } = useFormContext()
+  const { watch, control, resetField, setValue } = useFormContext()
   const isPackageForLiquids =
     itemData.unidad_empaque?.tipo_medida === 'LITROS' ||
     itemData.unidad_empaque?.tipo_medida === 'MILILITROS'
-
+  console.log(watch(`renglones.${index}`), 'renglon')
   const isFillingEnabled: boolean = watch(
-    `renglones.${index}.is_filling_enabled`
+    `renglones.${index}.es_recepcion_liquidos`
   )
+
   return (
     <Card className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}>
       <SelectedItemCardHeader />
@@ -34,7 +35,7 @@ export const SelectedItemCard = () => {
         {isPackageForLiquids && (
           <FormField
             control={control}
-            name={`renglones.${index}.is_filling_enabled`}
+            name={`renglones.${index}.es_recepcion_liquidos`}
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm mb-4">
                 <div className="space-y-0.5">
@@ -49,7 +50,8 @@ export const SelectedItemCard = () => {
                     checked={field.value}
                     onCheckedChange={(value) => {
                       resetField(`renglones.${index}`)
-                      field.onChange(value)
+                      setValue(`renglones.${index}.id_renglon`, itemData.id),
+                        field.onChange(value)
                     }}
                     disabled={isEditing}
                   />
