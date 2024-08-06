@@ -12,7 +12,7 @@ import { format } from 'date-fns'
 import {
   Recepcion_RenglonesFormValues,
   ReceptionFormValues,
-} from '../../../app/(main)/dashboard/abastecimiento/recepciones/lib/types/types'
+} from '../../types/reception-types'
 
 export type ServerActionResponse = {
   success: boolean | string
@@ -148,6 +148,7 @@ export const createReception = async (
         servicio,
         fecha_recepcion,
         renglones: {
+          // @ts-ignore TODO: types need to be fixed
           create: data.renglones.map((renglon) => ({
             ...renglon,
             id_renglon: undefined,
@@ -202,11 +203,11 @@ export const createReception = async (
       serials.forEach(async (serial) => {
         await prisma.serial.update({
           where: {
-            id: serial.id,
+            id: serial.id as number,
           },
           data: {
             peso_actual: {
-              increment: serial.peso_recibido,
+              increment: serial.peso_recibido as number,
             },
           },
         })
@@ -478,6 +479,7 @@ export const getReceptionById = async (id: number) => {
               serial: true,
               id_renglon: true,
               condicion: true,
+              peso_actual: true,
             },
           },
         },
@@ -501,16 +503,20 @@ export const getReceptionById = async (id: number) => {
               peso_recibido: serial.peso_recibido,
               serial: serial.serial.serial,
               id_renglon: renglon.id_renglon,
-              condicion: undefined,
+              condicion: '',
+              peso_actual: renglon.seriales.find(
+                (s) => s.serial === serial.serial.serial
+              )?.peso_actual,
             }
           })
         : renglon.seriales.map((serial) => {
             return {
-              id: undefined,
-              condicion: serial.condicion,
               serial: serial.serial,
               id_renglon: renglon.id_renglon,
+              condicion: serial.condicion,
+              id: undefined,
               peso_recibido: undefined,
+              peso_actual: undefined,
             }
           }),
     })),

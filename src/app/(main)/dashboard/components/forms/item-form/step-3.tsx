@@ -23,7 +23,7 @@ import { NumericFormat } from 'react-number-format'
 import { Combobox } from '@/modules/common/components/combobox'
 
 import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
-import useGetWeight from '../../../abastecimiento/inventario/lib/hooks/useGetWeight'
+import usePackageInfo from '../../../../../../lib/hooks/use-package-info'
 import { getAllSubsystems } from '@/lib/actions/subsystems'
 import { MEDIDAS } from '../packaging-units-form'
 
@@ -36,7 +36,7 @@ export const Step3 = ({
 }) => {
   const form = useFormContext()
   const subsystemId = form.watch('id_subsistema')
-  const { weight, measureType } = useGetWeight()
+  const { weight, measureType } = usePackageInfo()
   const [subsystems, setSubsystems] = useState<ComboboxData[]>([])
   const [warehouses, setWarehouses] = useState<ComboboxData[]>([])
   const [hasSubsystem, setHasSubsystem] = useState(subsystemId ? true : false)

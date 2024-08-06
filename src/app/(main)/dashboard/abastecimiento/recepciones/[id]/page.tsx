@@ -13,7 +13,6 @@ import Link from 'next/link'
 import ReceptionsForm from '@/app/(main)/dashboard/components/forms/reception-form/receptions-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import { ReceptionFormValues } from '../lib/types/types'
 import { getReceptionById } from '@/lib/actions/reception'
 
 export const metadata: Metadata = {
@@ -22,10 +21,10 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Abastecimiento')
+  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const reception = await getReceptionById(Number(params.id))
 
-  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
 
   return (

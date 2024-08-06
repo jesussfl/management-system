@@ -15,7 +15,7 @@ import {
 import Link from 'next/link'
 
 import { buttonVariants } from '@/modules/common/components/button'
-import { getAllReceptions } from '../../../../../lib/actions/reception'
+import { getAllReceptions } from '@/lib/actions/reception'
 
 export const metadata: Metadata = {
   title: 'Recepciones',

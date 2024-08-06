@@ -15,7 +15,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 
 import { ItemsWithAllRelations } from '@/lib/actions/item'
-import { ReceptionFormValues } from '../../../abastecimiento/recepciones/lib/types/types'
+import { ReceptionFormValues } from '../../../../../../lib/types/reception-types'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
 import {
@@ -32,7 +32,7 @@ import {
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { createReception, updateReception } from '@/lib/actions/reception'
-import { SelectedItemCardProvider } from '../../../../../../lib/context/selected-item-card-context'
+import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
 import { SelectedItemCard } from './selected-item-card/selected-item-card'
 type ComboboxData = {
   value: string

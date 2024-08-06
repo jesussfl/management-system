@@ -15,7 +15,7 @@ import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
 
-import useItemCreationData from '../../../abastecimiento/inventario/lib/hooks/useItemCreationData'
+import useItemCreationData from '../../../../../../lib/hooks/useItemCreationData'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { useEffect, useState } from 'react'
 

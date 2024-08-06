@@ -16,7 +16,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { useRouter } from 'next/navigation'
 import { Estados_Pedidos } from '@prisma/client'
-import { updateOrderStatus } from '../../../../../../../../../lib/actions/order'
+import { updateOrderStatus } from '@/lib/actions/order'
 import {
   Select,
   SelectContent,

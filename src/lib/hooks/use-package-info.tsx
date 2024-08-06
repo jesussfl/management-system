@@ -3,19 +3,12 @@ import { Medidas } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-const useGetWeight = () => {
+const usePackageInfo = () => {
   const { watch, setValue } = useFormContext()
   const [weight, setWeight] = useState(0)
   const [abreviation, setAbreviation] = useState('')
   const [measureType, setMeasureType] = useState<Medidas | null>(null)
   const packagingUnitId = watch('unidadEmpaqueId')
-
-  // useEffect(() => {
-  //   const subscription = watch((value, { name, type }) =>
-  //     console.log(value, name, type)
-  //   )
-  //   return () => subscription.unsubscribe()
-  // }, [watch])
 
   useEffect(() => {
     if (!packagingUnitId) return
@@ -33,4 +26,4 @@ const useGetWeight = () => {
   return { weight, abreviation, measureType }
 }
 
-export default useGetWeight
+export default usePackageInfo

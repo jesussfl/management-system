@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react'
 import { showNotification } from '../../../../../lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
 import { columns } from '../../armamento/inventario/(tabs)/@tabs/columns'
-import ExportExcelButton from '../../armamento/inventario/components/items-export-button'
 import { formatExcelData } from '../../../../../utils/helpers/format-inventory-data-to-excel'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Switch } from '@/modules/common/components/switch/switch'
+import ExportExcelButton from '../items-export-button'
 
 export const TableWithExport = ({
   itemsData,

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const itemsData = await getAllItems(true, 'Abastecimiento')
-  const receivers = await getAllReceivers(true)
+  const receivers = await getAllReceivers(true, 'Abastecimiento')
   const suppliers = await getAllSuppliers(true)
 
   const comboBoxSuppliers = suppliers.map((supplier) => {
