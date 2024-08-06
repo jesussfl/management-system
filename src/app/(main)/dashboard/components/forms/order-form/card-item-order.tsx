@@ -11,29 +11,16 @@ import {
 } from '@/modules/common/components/form'
 
 import { Card, CardContent } from '@/modules/common/components/card/card'
-import { Prisma } from '@prisma/client'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
+import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 
-type RenglonType = Prisma.RenglonGetPayload<{
-  include: { unidad_empaque: true; recepciones: true }
-}>
-export const CardItemOrder = ({
-  item,
-  index,
-  deleteItem,
-  isEmpty,
-}: {
-  item: RenglonType
-  isEmpty?: string | boolean
-  index: number
-  deleteItem: (index: number) => void
-}) => {
+export const CardItemOrder = ({}: {}) => {
   const { control } = useFormContext()
-
+  const { itemData, isError, index } = useSelectedItemCardContext()
   return (
     <Card
-      key={item.id}
-      className={`flex flex-col gap-4 ${isEmpty ? 'border-red-400' : ''}`}
+      key={itemData.id}
+      className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}
     >
       <SelectedItemCardHeader />
       <CardContent className="flex flex-col flex-1 justify-end">
@@ -48,8 +35,8 @@ export const CardItemOrder = ({
             },
             max: {
               value:
-                (item.stock_maximo || 999) -
-                item.recepciones.reduce(
+                (itemData.stock_maximo || 999) -
+                itemData.recepciones.reduce(
                   (total, item) => total + item.cantidad,
                   0
                 ),
@@ -72,8 +59,8 @@ export const CardItemOrder = ({
                     />
                     <p className="text-foreground text-sm">
                       {`${
-                        item.unidad_empaque?.nombre
-                          ? item.unidad_empaque?.nombre + '(s)'
+                        itemData.unidad_empaque?.nombre
+                          ? itemData.unidad_empaque?.nombre + '(s)'
                           : 'Unidades'
                       }`}
                     </p>
@@ -111,8 +98,8 @@ export const CardItemOrder = ({
           )}
         />
 
-        <FormDescription className={`${isEmpty ? 'text-red-500' : ''}`}>
-          {isEmpty}
+        <FormDescription className={`${isError ? 'text-red-500' : ''}`}>
+          {isError}
         </FormDescription>
       </CardContent>
     </Card>

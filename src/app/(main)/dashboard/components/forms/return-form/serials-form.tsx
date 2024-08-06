@@ -3,25 +3,20 @@
 import { useFormContext } from 'react-hook-form'
 
 import { CardTitle } from '@/modules/common/components/card/card'
-import { useCallback, useEffect, useState, useTransition } from 'react'
-import {
-  getDispatchedSerialsByItemId,
-  getSerialsByItemId,
-} from '@/lib/actions/serials'
+import { useEffect, useState, useTransition } from 'react'
+import { getDispatchedSerialsByItemId } from '@/lib/actions/serials'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { SerialWithRenglon } from '@/types/types'
-import { columns } from './serial-columns'
+import { serialSelectorColumns } from '../../columns/serial-selector-columns'
 
 export function SerialsFormNew({
   index: indexForm,
   id,
   isEditEnabled = false,
-  returnId,
 }: {
   index: number
   id: number
   isEditEnabled?: boolean
-  returnId?: number
 }) {
   const { setValue, watch } = useFormContext()
   const [isPending, startTransition] = useTransition()
@@ -66,7 +61,7 @@ export function SerialsFormNew({
         shouldDirty: true,
       }
     )
-  }, [selectedData, setValue])
+  }, [selectedData, setValue, indexForm])
 
   if (isPending) {
     return <div>Loading...</div>
@@ -77,7 +72,7 @@ export function SerialsFormNew({
         <CardTitle>Selecciona los seriales</CardTitle>
 
         <DataTable
-          columns={columns}
+          columns={serialSelectorColumns}
           data={serials}
           onSelectedRowsChange={setSelectedData}
           defaultSelection={selectedItems}

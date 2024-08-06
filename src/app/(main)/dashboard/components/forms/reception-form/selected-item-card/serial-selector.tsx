@@ -23,7 +23,7 @@ import { Button } from '@/modules/common/components/button'
 import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialWithRenglon } from '@/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { receptionSerialColumns } from '../../../columns/serial-selector-columns'
+import { serialSelectorColumns } from '../../../columns/serial-selector-columns'
 import { NumericFormat } from 'react-number-format'
 import { getSerialsByItemEnabled } from '@/lib/actions/serials'
 import { Separator } from '@/modules/common/components/separator/separator'
@@ -209,7 +209,7 @@ export const SerialSelector = ({
     <div className="flex gap-12 ">
       <div className="max-h-[600px] flex-1 overflow-x-auto">
         <DataTable
-          columns={receptionSerialColumns}
+          columns={serialSelectorColumns}
           data={serials}
           isStatusEnabled={false}
           onSelectedRowsChange={(rows, selection, loading) => {

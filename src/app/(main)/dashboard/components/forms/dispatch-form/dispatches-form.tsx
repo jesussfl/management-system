@@ -1,7 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
 
-import { selectItemColumns } from './columns/select-item-columns'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
@@ -19,22 +18,18 @@ import {
 import { useToast } from '@/modules/common/components/toast/use-toast'
 
 import { CardItemDispatch } from './card-item-dispatch'
-import { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-registerLocale('es', es)
-import 'react-datepicker/dist/react-datepicker.css'
+
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 import { DispatchFormValues } from '../../../abastecimiento/despachos/lib/types/types'
-import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
+import { ItemsWithAllRelations } from '@/lib/actions/item'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
-import {
-  createDispatch,
-  updateDispatch,
-} from '../../../../../../lib/actions/dispatch'
+import { createDispatch, updateDispatch } from '@/lib/actions/dispatch'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
+import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
+import { itemSelectorColumns } from '../../columns/item-selector-columns'
 
 type ComboboxData = {
   value: string
@@ -194,7 +189,7 @@ export default function DispatchesForm({
               </FormDescription>
               <ItemSelector disabled={isEditEnabled}>
                 <DataTable
-                  columns={selectItemColumns}
+                  columns={itemSelectorColumns}
                   data={renglonesData}
                   defaultSelection={rowSelection}
                   onSelectedRowsChange={handleTableSelect}
@@ -258,20 +253,21 @@ export default function DispatchesForm({
                   const isEmpty = totalStock <= 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
-                    <CardItemDispatch
+                    <SelectedItemCardProvider
                       key={item.id}
-                      item={item}
+                      itemData={item}
                       index={index}
-                      totalStock={totalStock < 0 ? 0 : totalStock}
-                      dispatchId={id}
-                      deleteItem={deleteItem}
-                      isEmpty={isEmpty ? 'Este renglon no tiene stock' : false}
-                      isError={
-                        isError ? 'Este renglon no tiene seriales' : false
-                      }
+                      removeCard={() => deleteItem(index)}
+                      isError={isError || isEmpty}
                       setItemsWithoutSerials={setItemsWithoutSerials}
-                      isEditEnabled={isEditEnabled}
-                    />
+                      isEditing={isEditEnabled}
+                      section={servicio}
+                    >
+                      <CardItemDispatch
+                        totalStock={totalStock < 0 ? 0 : totalStock}
+                        dispatchId={id}
+                      />
+                    </SelectedItemCardProvider>
                   )
                 })}
               </div>

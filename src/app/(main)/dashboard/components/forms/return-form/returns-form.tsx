@@ -31,6 +31,8 @@ import { Separator } from '@/modules/common/components/separator/separator'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { Loader2 } from 'lucide-react'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
+import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
+import { itemSelectorColumns } from '../../columns/item-selector-columns'
 
 type ComboboxData = {
   value: string
@@ -182,7 +184,7 @@ export default function ReturnsForm({
               </FormDescription>
               <ItemSelector disabled={isEditEnabled}>
                 <DataTable
-                  columns={columns}
+                  columns={itemSelectorColumns}
                   data={renglonesData.filter((item) => {
                     if (item.despachos.length > 0) {
                       return true
@@ -215,18 +217,18 @@ export default function ReturnsForm({
                 {selectedRowsData.map((item, index) => {
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
-                    <SelectedItemCard
+                    <SelectedItemCardProvider
                       key={item.id}
-                      item={item}
+                      section={servicio}
+                      isEditing={isEditEnabled}
+                      removeCard={() => deleteItem(index)}
+                      itemData={item}
+                      isError={isError}
                       index={index}
-                      deleteItem={deleteItem}
-                      isError={
-                        isError ? 'Este renglon no tiene seriales' : false
-                      }
-                      isEditEnabled={isEditEnabled}
-                      returnId={id}
                       setItemsWithoutSerials={setItemsWithoutSerials}
-                    />
+                    >
+                      <SelectedItemCard />
+                    </SelectedItemCardProvider>
                   )
                 })}
               </div>

@@ -24,47 +24,41 @@ import { useFormContext } from 'react-hook-form'
 import { SerialSelector } from './serial-selector'
 import { Button } from '@/modules/common/components/button'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
+import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 
 export const CardItemDispatch = ({
-  item,
-  index,
-  deleteItem,
-  isEmpty,
-  isError,
   dispatchId,
-  setItemsWithoutSerials,
-  isEditEnabled = false,
   totalStock,
 }: {
-  item: RenglonWithAllRelations
-  isEmpty?: string | boolean
-  index: number
-  deleteItem: (index: number) => void
-  isError?: string | boolean
-  isEditEnabled?: boolean
+  // item: RenglonWithAllRelations
+  // isEmpty?: string | boolean
+  // index: number
+  // deleteItem: (index: number) => void
+  // isError?: string | boolean
+  // isEditEnabled?: boolean
   dispatchId?: number
   totalStock: number
-  setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
+  // setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
 
+  const { itemData, isEditing, isError, index, setItemsWithoutSerials } =
+    useSelectedItemCardContext()
   const serialsLength = watch(`renglones.${index}.seriales`).length
   const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
   useEffect(() => {
     if (serialsLength > 0) {
       setItemsWithoutSerials((prev) => {
-        return prev.filter((id) => id !== item.id)
+        return prev.filter((id) => id !== itemData.id)
       })
     }
-  }, [serialsLength, setItemsWithoutSerials, item.id])
+  }, [serialsLength, setItemsWithoutSerials, itemData.id])
 
   return (
     <Card
-      key={item.id}
-      className={`flex flex-col gap-4 ${
-        isEmpty || isError ? 'border-red-400' : ''
-      }`}
+      key={itemData.id}
+      className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}
     >
       <SelectedItemCardHeader />
 
@@ -85,7 +79,7 @@ export const CardItemDispatch = ({
                 <Switch
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  disabled={isEditEnabled}
+                  disabled={isEditing}
                 />
               </FormControl>
             </FormItem>
@@ -151,19 +145,19 @@ export const CardItemDispatch = ({
                         onChange={(event) =>
                           field.onChange(parseInt(event.target.value))
                         }
-                        disabled={isEditEnabled}
+                        disabled={isEditing}
                       />
                       <p className="text-foreground text-sm">
                         {`${
-                          item.unidad_empaque?.nombre
-                            ? item.unidad_empaque?.nombre + '(s)'
+                          itemData.unidad_empaque?.nombre
+                            ? itemData.unidad_empaque?.nombre + '(s)'
                             : 'Unidades'
                         }`}
                       </p>{' '}
                     </div>
                   </FormControl>
                   <FormDescription className="">
-                    {isEditEnabled
+                    {isEditing
                       ? `Cuando se edita un despacho la cantidad debe modificarse
                       seleccionando los seriales manualmente`
                       : `Cantidad disponible: ${totalStock}`}
@@ -189,16 +183,16 @@ export const CardItemDispatch = ({
               }`}
               closeWarning={false}
               className="max-h-[80vh]"
-              disabled={isEmpty ? true : false}
+              disabled={isError ? true : false}
               open={isModalOpen}
               customToogleModal={toogleModal}
             >
               <>
                 <SerialSelector
                   index={index}
-                  id={item.id}
+                  id={itemData.id}
                   dispatchId={dispatchId}
-                  isEditEnabled={isEditEnabled}
+                  isEditEnabled={isEditing}
                 />
                 <Button
                   className="w-[200px] sticky bottom-8 left-8"
@@ -217,8 +211,8 @@ export const CardItemDispatch = ({
           </>
         )}
 
-        <FormDescription className={`${isEmpty ? 'text-red-500' : ''}`}>
-          {isEmpty}
+        <FormDescription className={`${isError ? 'text-red-500' : ''}`}>
+          {isError}
         </FormDescription>
       </CardContent>
     </Card>

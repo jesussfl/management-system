@@ -683,66 +683,7 @@ export const getReceptionForExportGuide = async (id: number) => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const receptionData = await prisma.recepcion.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      destinatario: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      supervisor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      abastecedor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      autorizador: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      renglones: {
-        include: {
-          renglon: {
-            include: {
-              recepciones: true,
-              unidad_empaque: true,
-              clasificacion: true,
-              categoria: true,
-            },
-          },
-          seriales: {
-            select: {
-              serial: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  if (!receptionData) {
-    throw new Error('Despacho no existe')
-  }
+  const receptionData = await getReceptionById(id)
 
   return {
     destinatario_cedula: `${receptionData.destinatario?.tipo_cedula}-${receptionData.cedula_destinatario}`,
@@ -755,7 +696,16 @@ export const getReceptionForExportGuide = async (id: number) => {
     recepcion: receptionData,
     renglones: receptionData.renglones.map((renglon) => ({
       ...renglon,
-      seriales: renglon.seriales.map((serial) => serial.serial),
+      cantidad: renglon.es_recepcion_liquidos
+        ? renglon.seriales.length
+        : renglon.cantidad,
+      seriales: renglon.es_recepcion_liquidos
+        ? renglon.seriales.map((serial) => {
+            return `${serial.serial} - ${
+              serial.peso_recibido
+            } ${renglon.renglon.tipo_medida_unidad.toLowerCase()}`
+          })
+        : renglon.seriales.map((serial) => serial.serial),
     })),
     autorizador: receptionData.autorizador,
     abastecedor: receptionData.abastecedor,

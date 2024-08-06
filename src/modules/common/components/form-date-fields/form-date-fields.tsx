@@ -68,8 +68,8 @@ export const FormDateFields = ({
             <div className="flex flex-col gap-1">
               <FormLabel>Motivo</FormLabel>
               <FormDescription>
-                Redacta el motivo por el cual se está recibiendo el material,
-                renglones, etc...
+                Redacta el motivo por el cual se están registrando los
+                siguientes renglones...
               </FormDescription>
             </div>
             <FormControl>

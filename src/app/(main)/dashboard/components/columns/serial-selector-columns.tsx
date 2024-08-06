@@ -8,7 +8,7 @@ import { Button } from '@/modules/common/components/button'
 import { Checkbox } from '@/modules/common/components/checkbox/checkbox'
 import { Prisma } from '@prisma/client'
 
-export const receptionSerialColumns: ColumnDef<
+export const serialSelectorColumns: ColumnDef<
   Prisma.SerialGetPayload<{ include: { renglon: true } }>
 >[] = [
   {

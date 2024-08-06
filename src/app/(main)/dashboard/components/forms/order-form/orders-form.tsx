@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useTransition } from 'react'
 
-import { orderItemColumns } from './order-item-columns'
 import { cn } from '@/utils/utils'
 import {
   useForm,
@@ -65,6 +64,8 @@ import { FormDateFields } from '@/modules/common/components/form-date-fields/for
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
+import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
+import { itemSelectorColumns } from '../../columns/item-selector-columns'
 
 export type PedidoForm = {
   fecha_solicitud: Date
@@ -780,7 +781,7 @@ export default function OrdersForm({
               </FormDescription>
               <ItemSelector disabled={isEditEnabled}>
                 <DataTable
-                  columns={orderItemColumns}
+                  columns={itemSelectorColumns}
                   data={items}
                   onSelectedRowsChange={handleTableSelect}
                   defaultSelection={rowSelection}
@@ -806,12 +807,20 @@ export default function OrdersForm({
               <div className="grid lg:grid-cols-2 gap-4">
                 {selectedRowsData.map((item, index) => {
                   return (
-                    <CardItemOrder
+                    <SelectedItemCardProvider
                       key={item.id}
-                      item={item}
+                      itemData={item}
                       index={index}
-                      deleteItem={deleteItem}
-                    />
+                      section={servicio}
+                      isEditing={isEditEnabled}
+                      setItemsWithoutSerials={() => {}}
+                      removeCard={() => {
+                        deleteItem(index)
+                      }}
+                      isError={''}
+                    >
+                      <CardItemOrder />
+                    </SelectedItemCardProvider>
                   )
                 })}
               </div>
