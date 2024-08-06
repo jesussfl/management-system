@@ -1,7 +1,7 @@
 import PageForm from '@/modules/layout/components/page-form'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { columns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/serial-columns'
 import { getAllSerialsByItemId } from '@/lib/actions/serials'
+import { inventorySerialColumns } from '@/app/(main)/dashboard/components/columns/serial-columns/inventory-serial-columns'
 export default async function Page({
   params: { id },
 }: {
@@ -13,7 +13,11 @@ export default async function Page({
       title="Ver seriales"
       backLink="/dashboard/abastecimiento/inventario"
     >
-      <DataTable columns={columns} data={serialsData} isStatusEnabled={false} />
+      <DataTable
+        columns={inventorySerialColumns}
+        data={serialsData}
+        isStatusEnabled={false}
+      />
     </PageForm>
   )
 }

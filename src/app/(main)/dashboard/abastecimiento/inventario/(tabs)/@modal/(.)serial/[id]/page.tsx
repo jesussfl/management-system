@@ -7,7 +7,7 @@ import {
 } from '@/modules/common/components/dialog/dialog'
 import { getAllSerialsByItemId } from '@/lib/actions/serials'
 import { DataTable } from '@/modules/common/components/table/data-table'
-import { columns } from '@/app/(main)/dashboard/abastecimiento/inventario/components/columns/serial-columns'
+import { inventorySerialColumns } from '@/app/(main)/dashboard/components/columns/serial-columns/inventory-serial-columns'
 export default async function Page({
   params: { id },
 }: {
@@ -27,7 +27,7 @@ export default async function Page({
         </DialogHeader>
         <CloseButtonDialog />
         <DataTable
-          columns={columns}
+          columns={inventorySerialColumns}
           data={serialsData}
           isStatusEnabled={false}
         />

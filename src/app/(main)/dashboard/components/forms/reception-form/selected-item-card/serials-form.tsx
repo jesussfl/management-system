@@ -16,12 +16,19 @@ import {
 } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { nanoid } from 'nanoid'
-import { useSelectedItemCardContext } from '../../../../../../../lib/context/selected-item-card-context'
+import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
 import ModalForm from '@/modules/common/components/modal-form'
 import { useState } from 'react'
 import { Eye, Plus } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/modules/common/components/select/select'
+import { useToast } from '@/modules/common/components/toast/use-toast'
 export function SerialsForm() {
   const { index: itemIndex, itemData } = useSelectedItemCardContext()
   const { control, watch, setValue, formState, clearErrors } = useFormContext()
@@ -45,6 +52,9 @@ export function SerialsForm() {
                   <Switch
                     checked={field.value}
                     onCheckedChange={(value) => {
+                      if (formState.errors[field.name]) {
+                        clearErrors(field.name)
+                      }
                       if (!value) {
                         Array.from({ length: quantity }).forEach((_, index) => {
                           setValue(
@@ -57,6 +67,7 @@ export function SerialsForm() {
                     }}
                   />
                 </FormControl>
+
                 <FormLabel>Seriales automaticos</FormLabel>
               </FormItem>
             )
@@ -71,7 +82,7 @@ export function SerialsForm() {
           <FormField
             control={control}
             name={`renglones.${itemIndex}.seriales.${index}`}
-            rules={{ required: true }}
+            rules={{ required: 'El serial es requerido' }}
             render={({ field }) => (
               <FormItem className="flex-1 ">
                 <FormLabel>Serial #{index + 1}</FormLabel>
@@ -114,7 +125,7 @@ export function SerialsForm() {
                     }
                   />
                 </FormControl>
-                <FormMessage />
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
@@ -125,9 +136,32 @@ export function SerialsForm() {
             render={({ field }) => (
               <FormItem className="flex-1 ">
                 <FormLabel>Condición</FormLabel>
-                <FormControl>
-                  <Input {...field} value={field.value} />
-                </FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Nuevo">Nuevo</SelectItem>
+                    <SelectItem value="Usado como nuevo">Como nuevo</SelectItem>
+                    <SelectItem value="Bastante usado">
+                      Bastante usado
+                    </SelectItem>
+                    <SelectItem value="Antiguo">antiguo</SelectItem>
+                    <SelectItem value="Dañado sin reparación">
+                      Dañado sin reparación
+                    </SelectItem>
+                    <SelectItem value="Dañado con reparación">
+                      Dañado con reparación
+                    </SelectItem>
+                    <SelectItem value="Restaurado">Restaurado</SelectItem>
+                  </SelectContent>
+                </Select>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -139,13 +173,19 @@ export function SerialsForm() {
 }
 
 export const SerialsFormTrigger = () => {
-  const { watch } = useFormContext()
-  const { itemData, isError, setItemsWithoutSerials, index, isEditing } =
-    useSelectedItemCardContext()
+  const { watch, trigger } = useFormContext()
+  const { toast } = useToast()
+  const {
+    itemData,
+    isError,
+    setItemsWithoutSerials,
+    index: itemIndex,
+    isEditing,
+  } = useSelectedItemCardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const registeredSerials: number =
-    watch(`renglones.${index}.seriales`)?.length || 0
-  const quantity = watch(`renglones.${index}.cantidad`)
+    watch(`renglones.${itemIndex}.seriales`)?.length || 0
+  const quantity = watch(`renglones.${itemIndex}.cantidad`)
   const triggerVariant = registeredSerials > 0 ? 'outline' : 'default'
   const triggerIcon =
     registeredSerials > 0 ? (
@@ -179,6 +219,34 @@ export const SerialsFormTrigger = () => {
                 setItemsWithoutSerials((prev) => {
                   return prev.filter((id) => id !== itemData.id)
                 })
+
+                return
+              }
+              const serials = watch(`renglones.${itemIndex}.seriales`)
+              const isSomeFieldEmpty = serials.some(
+                (selectedSerial: any, index: number) => {
+                  if (!selectedSerial.serial || !selectedSerial.condicion) {
+                    if (!selectedSerial.condicion) {
+                      trigger(
+                        `renglones.${itemIndex}.seriales.${index}.condicion`
+                      )
+                    }
+                    trigger(`renglones.${itemIndex}.seriales.${index}`)
+
+                    return true
+                  }
+
+                  return false
+                }
+              )
+
+              if (isSomeFieldEmpty) {
+                toast({
+                  title:
+                    'Hay campos vacios o incorrectos, por favor revisa los datos',
+                  variant: 'destructive',
+                })
+                return
               }
               toogleModal()
             }}

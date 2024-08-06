@@ -81,6 +81,20 @@ export const serialSelectorColumns: ColumnDef<
     },
   },
   {
+    accessorKey: 'condicion',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Condición
+          <CaretSortIcon className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+  },
+  {
     id: 'actions',
     header: ({ column }) => {
       return <></>
