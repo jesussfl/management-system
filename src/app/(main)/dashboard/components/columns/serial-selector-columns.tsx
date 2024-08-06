@@ -72,6 +72,11 @@ export const serialSelectorColumns: ColumnDef<
     },
     cell: ({ row }) => {
       const measureType = row.original.renglon.tipo_medida_unidad
+      const actual_weight = row.getValue('peso_actual')
+
+      if (!actual_weight && measureType !== 'LITROS')
+        return <div>No asignado</div>
+
       return <div>{row.getValue('peso_actual') + ' ' + measureType}</div>
     },
   },

@@ -22,7 +22,7 @@ import { SerialsFormTrigger } from './serials-form'
 import { Combobox } from '@/modules/common/components/combobox'
 import { NumericFormat } from 'react-number-format'
 export const ReceptionFieldsByQuantity = ({}: {}) => {
-  const { control, setValue, watch } = useFormContext()
+  const { control, setValue, watch, ...form } = useFormContext()
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
   const { itemData, index, isEditing, section } = useSelectedItemCardContext()
   const itemId = itemData.id
@@ -129,9 +129,10 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
             <div className="flex justify-end flex-1 w-full">
               <Combobox
                 name={field.name}
-                form={control}
+                form={{ ...form, control, setValue }}
                 field={field}
                 data={pedidos}
+                isValueString={false}
               />
             </div>
             <FormMessage />

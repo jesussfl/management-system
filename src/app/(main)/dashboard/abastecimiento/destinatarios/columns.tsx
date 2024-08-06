@@ -14,10 +14,7 @@ import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
-  // {
-  //   accessorKey: 'id',
-  //   header: 'ID',
-  // },
+
   {
     accessorKey: 'cedula',
     header: ({ column }) => {
@@ -85,7 +82,8 @@ export const columns: ColumnDef<DestinatarioType>[] = [
   },
 
   {
-    accessorKey: 'cargo_profesional',
+    id: 'cargo',
+    accessorFn: (row) => row.cargo_profesional || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -135,7 +133,8 @@ export const columns: ColumnDef<DestinatarioType>[] = [
     },
   },
   {
-    accessorKey: 'unidad.nombre',
+    id: 'unidad',
+    accessorFn: (row) => row.unidad?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -152,7 +151,8 @@ export const columns: ColumnDef<DestinatarioType>[] = [
   },
 
   {
-    accessorKey: 'categoria.nombre',
+    id: 'categoria',
+    accessorFn: (row) => row.categoria?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -169,7 +169,8 @@ export const columns: ColumnDef<DestinatarioType>[] = [
   },
 
   {
-    accessorKey: 'grado.nombre',
+    id: 'grado',
+    accessorFn: (row) => row.grado?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -186,7 +187,8 @@ export const columns: ColumnDef<DestinatarioType>[] = [
   },
 
   {
-    accessorKey: 'componente.nombre',
+    id: 'componente',
+    accessorFn: (row) => row.componente?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button

@@ -673,6 +673,7 @@ export const getAllOrdersByItemId = async (
   }
   const orders = await prisma.pedido.findMany({
     where: {
+      fecha_eliminacion: null,
       servicio,
       renglones: {
         some: {

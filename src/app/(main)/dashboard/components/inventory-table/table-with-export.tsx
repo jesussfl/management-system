@@ -1,13 +1,13 @@
 'use client'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { useEffect, useState } from 'react'
-import { showNotification } from '../../../../../lib/actions/item'
+import { showNotification } from '@/lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
-import { columns } from '../../armamento/inventario/(tabs)/@tabs/columns'
-import { formatExcelData } from '../../../../../utils/helpers/format-inventory-data-to-excel'
+import { columns } from '../../abastecimiento/inventario/(tabs)/@tabs/columns'
+import ExportExcelButton from '../items-export-button'
+import { formatExcelData } from '@/lib/actions/item/format-function'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 import { Switch } from '@/modules/common/components/switch/switch'
-import ExportExcelButton from '../items-export-button'
 
 export const TableWithExport = ({
   itemsData,
@@ -18,13 +18,12 @@ export const TableWithExport = ({
 }) => {
   const [filteredData, setFilteredData] = useState<any[]>([])
   const [isLowStockEnabled, setIsLowStockEnabled] = useState(false)
-  const [dataToShow, setDataToShow] = useState<any[]>(itemsData)
   const [rowsData, setRowsData] = useState<any[]>([])
   const { toast } = useToast()
 
   useEffect(() => {
     showNotification().then((res) => {
-      if (lowStockItems && res === true) {
+      if (lowStockItems.length > 0 && res === true) {
         const lowStockItemsNames = lowStockItems.map((item) => item.nombre)
         if (lowStockItemsNames.length < 6) {
           toast({
@@ -67,7 +66,6 @@ export const TableWithExport = ({
               checked={isLowStockEnabled}
               onCheckedChange={(value) => {
                 setIsLowStockEnabled(value)
-                setDataToShow(value ? lowStockItems : itemsData)
               }}
             />
           </div>
@@ -76,7 +74,7 @@ export const TableWithExport = ({
       </div>
       <DataTable
         columns={columns}
-        data={dataToShow}
+        data={isLowStockEnabled ? lowStockItems : itemsData}
         onDataChange={setRowsData}
       />
     </>
