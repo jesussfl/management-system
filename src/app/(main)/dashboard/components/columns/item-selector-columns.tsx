@@ -1,6 +1,12 @@
 'use client'
 import { ColumnDef } from '@tanstack/react-table'
-import { AlertCircle, ArrowUpDown, MapPin, Package } from 'lucide-react'
+import {
+  AlertCircle,
+  ArrowUpDown,
+  CheckCircle,
+  MapPin,
+  Package,
+} from 'lucide-react'
 
 import { Button } from '@/modules/common/components/button'
 
@@ -100,18 +106,7 @@ export const itemSelectorColumns: ColumnDef<Renglon>[] = [
   {
     id: 'stock',
     accessorFn: (row) => {
-      const activeReceptions = row.recepciones.filter(
-        (reception) => reception.recepcion.fecha_eliminacion === null
-      )
-
-      return activeReceptions.reduce((total, item) => {
-        const serials = item.seriales.filter(
-          (serial) =>
-            serial.estado === 'Disponible' || serial.estado === 'Devuelto'
-        ).length
-
-        return total + serials
-      }, 0)
+      return row.stock_actual
     },
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
     cell: ({ row }) => {
@@ -132,7 +127,7 @@ export const itemSelectorColumns: ColumnDef<Renglon>[] = [
               {stock < minimumStock ? (
                 <AlertCircle className="w-4 h-4 mr-2" />
               ) : (
-                <div className="w-4 h-4 mr-2" />
+                <CheckCircle className="w-4 h-4 mr-2" />
               )}
 
               {stock}
@@ -151,18 +146,7 @@ export const itemSelectorColumns: ColumnDef<Renglon>[] = [
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
 
-      const activeReceptions = row.recepciones.filter(
-        (reception) => reception.recepcion.fecha_eliminacion === null
-      )
-
-      const stock = activeReceptions.reduce((total, item) => {
-        const serials = item.seriales.filter(
-          (serial) =>
-            (serial.estado === 'Disponible' || serial.estado === 'Devuelto') &&
-            serial.fecha_eliminacion === null
-        ).length
-        return total + serials
-      }, 0)
+      const stock = row.stock_actual
       return `${
         stock * Number(row.peso)
       } ${row.tipo_medida_unidad.toLowerCase()}`

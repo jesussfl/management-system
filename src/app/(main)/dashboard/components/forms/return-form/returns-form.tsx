@@ -185,13 +185,7 @@ export default function ReturnsForm({
               <ItemSelector disabled={isEditEnabled}>
                 <DataTable
                   columns={itemSelectorColumns}
-                  data={renglonesData.filter((item) => {
-                    if (item.despachos.length > 0) {
-                      return true
-                    }
-
-                    return false
-                  })}
+                  data={renglonesData}
                   onSelectedRowsChange={handleTableSelect}
                   defaultSelection={rowSelection}
                   isStatusEnabled={false}

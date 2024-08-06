@@ -215,42 +215,42 @@ export default function DispatchesForm({
               <div className="grid md:grid-cols-2 gap-4">
                 {selectedRowsData.map((item, index) => {
                   // console.log('item', item, item.devoluciones, item.despachos)
-                  const enabledReceptions = item.recepciones.filter(
-                    (reception) =>
-                      reception.recepcion.fecha_eliminacion === null
-                  )
-                  const receptions = enabledReceptions.reduce(
-                    (total, item) => total + item.cantidad,
-                    0
-                  )
+                  // const enabledReceptions = item.recepciones.filter(
+                  //   (reception) =>
+                  //     reception.recepcion.fecha_eliminacion === null
+                  // )
+                  // const receptions = enabledReceptions.reduce(
+                  //   (total, item) => total + item.cantidad,
+                  //   0
+                  // )
 
-                  const enabledDispatches = item.despachos.filter(
-                    (dispatch) => dispatch.despacho.fecha_eliminacion === null
-                  )
+                  // const enabledDispatches = item.despachos.filter(
+                  //   (dispatch) => dispatch.despacho.fecha_eliminacion === null
+                  // )
 
-                  const dispatchedSerials = enabledDispatches.reduce(
-                    (total, item) => total + item.seriales.length,
-                    0
-                  )
+                  // const dispatchedSerials = enabledDispatches.reduce(
+                  //   (total, item) => total + item.seriales.length,
+                  //   0
+                  // )
 
-                  const enabledReturns = item.devoluciones.filter(
-                    (returnItem) =>
-                      returnItem.devolucion.fecha_eliminacion === null
-                  )
-                  const returnedSerials = enabledReturns.reduce(
-                    (total, item) => total + item.seriales.length,
-                    0
-                  )
-                  const currentDispatch = item.despachos.find((item) => {
-                    return item.id_despacho === id
-                  })
-                  const totalStock = isEditEnabled
-                    ? receptions -
-                      dispatchedSerials +
-                      (currentDispatch?.seriales.length ?? 0) +
-                      returnedSerials
-                    : receptions - dispatchedSerials + returnedSerials
-                  const isEmpty = totalStock <= 0
+                  // const enabledReturns = item.devoluciones.filter(
+                  //   (returnItem) =>
+                  //     returnItem.devolucion.fecha_eliminacion === null
+                  // )
+                  // const returnedSerials = enabledReturns.reduce(
+                  //   (total, item) => total + item.seriales.length,
+                  //   0
+                  // )
+                  // const currentDispatch = item.despachos.find((item) => {
+                  //   return item.id_despacho === id
+                  // })
+                  // const totalStock = isEditEnabled
+                  //   ? receptions -
+                  //     dispatchedSerials +
+                  //     (currentDispatch?.seriales.length ?? 0) +
+                  //     returnedSerials
+                  //   : receptions - dispatchedSerials + returnedSerials
+                  const isEmpty = item.stock_actual <= 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
                     <SelectedItemCardProvider
@@ -263,10 +263,7 @@ export default function DispatchesForm({
                       isEditing={isEditEnabled}
                       section={servicio}
                     >
-                      <CardItemDispatch
-                        totalStock={totalStock < 0 ? 0 : totalStock}
-                        dispatchId={id}
-                      />
+                      <CardItemDispatch dispatchId={id} />
                     </SelectedItemCardProvider>
                   )
                 })}

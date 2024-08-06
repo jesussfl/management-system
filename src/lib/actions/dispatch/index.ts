@@ -110,61 +110,80 @@ export const createDispatch = async (
 
     serials.push(...serialsByItem)
   }
+  await prisma.$transaction(async (prisma) => {
+    const dispatch = await prisma.despacho.create({
+      data: {
+        servicio,
+        cedula_destinatario,
+        cedula_abastecedor: data.cedula_abastecedor,
+        cedula_supervisor: data.cedula_supervisor || undefined,
+        cedula_autorizador: data.cedula_autorizador,
+        motivo,
+        fecha_despacho,
+        motivo_fecha: data.motivo_fecha || undefined,
+        renglones: {
+          create: renglones.map((renglon) => ({
+            manualSelection: renglon.manualSelection,
+            observacion: renglon.observacion,
+            id_renglon: renglon.id_renglon,
+            cantidad: serials.filter(
+              (serial) => serial.id_renglon === renglon.id_renglon
+            ).length,
+            seriales: {
+              connect: serials
+                .filter((serial) => serial.id_renglon === renglon.id_renglon)
+                .map((serial) => ({ serial: serial.serial })),
+            },
+          })),
+        },
+      },
+    })
 
-  const dispatch = await prisma.despacho.create({
-    data: {
-      servicio,
-      cedula_destinatario,
-      cedula_abastecedor: data.cedula_abastecedor,
-      cedula_supervisor: data.cedula_supervisor || undefined,
-      cedula_autorizador: data.cedula_autorizador,
-      motivo,
-      fecha_despacho,
-      motivo_fecha: data.motivo_fecha || undefined,
-      renglones: {
-        create: renglones.map((renglon) => ({
-          manualSelection: renglon.manualSelection,
-          observacion: renglon.observacion,
-          id_renglon: renglon.id_renglon,
-          cantidad: serials.filter(
-            (serial) => serial.id_renglon === renglon.id_renglon
-          ).length,
-          seriales: {
-            connect: serials
-              .filter((serial) => serial.id_renglon === renglon.id_renglon)
-              .map((serial) => ({ serial: serial.serial })),
+    await prisma.serial.updateMany({
+      where: {
+        serial: {
+          in: serials.map((serial) => serial.serial),
+        },
+      },
+      data: {
+        estado: 'Despachado',
+      },
+    })
+
+    const dispatchedItems = data.renglones
+
+    dispatchedItems.forEach(async (item) => {
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            decrement: item.manualSelection
+              ? item.seriales.length
+              : item.cantidad,
           },
-        })),
-      },
-    },
-  })
+        },
+      })
+    })
 
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: serials.map((serial) => serial.serial),
-      },
-    },
-    data: {
-      estado: 'Despachado',
-    },
+    await registerAuditAction(
+      'CREAR',
+      `Se realizó un despacho en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El id del despacho es: ${
+        dispatch.id
+      }  ${
+        data.motivo_fecha
+          ? `, la fecha de creación fue: ${format(
+              dispatch.fecha_creacion,
+              'yyyy-MM-dd HH:mm'
+            )}, la fecha de despacho: ${format(
+              dispatch.fecha_despacho,
+              'yyyy-MM-dd HH:mm'
+            )}, motivo de la fecha: ${data.motivo_fecha}`
+          : ''
+      }`
+    )
   })
-  await registerAuditAction(
-    'CREAR',
-    `Se realizó un despacho en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El id del despacho es: ${
-      dispatch.id
-    }  ${
-      data.motivo_fecha
-        ? `, la fecha de creación fue: ${format(
-            dispatch.fecha_creacion,
-            'yyyy-MM-dd HH:mm'
-          )}, la fecha de despacho: ${format(
-            dispatch.fecha_despacho,
-            'yyyy-MM-dd HH:mm'
-          )}, motivo de la fecha: ${data.motivo_fecha}`
-        : ''
-    }`
-  )
 
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
 
@@ -399,48 +418,66 @@ export const deleteDispatch = async (
     return permissionsResponse
   }
 
-  const exist = await prisma.despacho.findUnique({
+  const dispatch = await prisma.despacho.findUnique({
     where: {
       id,
     },
     include: {
       renglones: {
         include: {
+          renglon: true,
           seriales: true,
         },
       },
     },
   })
 
-  if (!exist) {
+  if (!dispatch) {
     return {
       error: 'Despacho no existe',
       success: false,
     }
   }
-
-  await prisma.despacho.delete({
-    where: {
-      id: id,
-    },
-  })
-
-  await prisma.serial.updateMany({
-    where: {
-      id_renglon: {
-        in: exist.renglones.flatMap((renglon) =>
-          renglon.seriales.map((serial) => serial.id_renglon)
-        ),
+  await prisma.$transaction(async (prisma) => {
+    await prisma.despacho.delete({
+      where: {
+        id: id,
       },
-    },
-    data: {
-      estado: 'Disponible',
-    },
+    })
+
+    await prisma.serial.updateMany({
+      where: {
+        id_renglon: {
+          in: dispatch.renglones.flatMap((renglon) =>
+            renglon.seriales.map((serial) => serial.id_renglon)
+          ),
+        },
+      },
+      data: {
+        estado: 'Disponible',
+      },
+    })
+    const dispatchedItems = dispatch.renglones
+
+    dispatchedItems.forEach(async (item) => {
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            decrement: item.manualSelection
+              ? item.seriales.length
+              : item.cantidad,
+          },
+        },
+      })
+    })
+    await registerAuditAction(
+      'ELIMINAR',
+      `Se eliminó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
+    )
   })
-  await registerAuditAction(
-    'ELIMINAR',
-    `Se eliminó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
 
   return {
@@ -471,7 +508,7 @@ export const recoverDispatch = async (
     return permissionsResponse
   }
 
-  const exist = await prisma.despacho.findUnique({
+  const dispatch = await prisma.despacho.findUnique({
     where: {
       id,
     },
@@ -484,38 +521,58 @@ export const recoverDispatch = async (
     },
   })
 
-  if (!exist) {
+  if (!dispatch) {
     return {
       error: 'Despacho no existe',
       success: false,
     }
   }
-
-  await prisma.despacho.update({
-    where: {
-      id: id,
-    },
-    data: {
-      fecha_eliminacion: null,
-    },
-  })
-
-  await prisma.serial.updateMany({
-    where: {
-      id_renglon: {
-        in: exist.renglones.flatMap((renglon) =>
-          renglon.seriales.map((serial) => serial.id_renglon)
-        ),
+  await prisma.$transaction(async (prisma) => {
+    await prisma.despacho.update({
+      where: {
+        id: id,
       },
-    },
-    data: {
-      estado: 'Despachado',
-    },
+      data: {
+        fecha_eliminacion: null,
+      },
+    })
+
+    await prisma.serial.updateMany({
+      where: {
+        id_renglon: {
+          in: dispatch.renglones.flatMap((renglon) =>
+            renglon.seriales.map((serial) => serial.id_renglon)
+          ),
+        },
+      },
+      data: {
+        estado: 'Despachado',
+      },
+    })
+
+    const dispatchedItems = dispatch.renglones
+
+    dispatchedItems.forEach(async (item) => {
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            increment: item.manualSelection
+              ? item.seriales.length
+              : item.cantidad,
+          },
+        },
+      })
+    })
+
+    await registerAuditAction(
+      'RECUPERAR',
+      `Se recuperó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
+    )
   })
-  await registerAuditAction(
-    'RECUPERAR',
-    `Se recuperó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
-  )
+
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
 
   return {

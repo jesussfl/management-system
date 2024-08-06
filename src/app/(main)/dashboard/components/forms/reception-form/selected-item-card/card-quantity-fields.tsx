@@ -51,12 +51,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
             message: 'La cantidad debe ser mayor a 0',
           },
           max: {
-            value:
-              (itemData.stock_maximo || 999) -
-              itemData.recepciones.reduce(
-                (total, item) => total + item.cantidad,
-                0
-              ),
+            value: (itemData.stock_maximo || 999) - itemData.stock_actual,
             message: 'La cantidad no puede ser mayor al stock maximo',
           },
         }}

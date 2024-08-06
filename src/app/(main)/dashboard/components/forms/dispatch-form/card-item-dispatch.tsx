@@ -28,7 +28,6 @@ import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-con
 
 export const CardItemDispatch = ({
   dispatchId,
-  totalStock,
 }: {
   // item: RenglonWithAllRelations
   // isEmpty?: string | boolean
@@ -37,7 +36,6 @@ export const CardItemDispatch = ({
   // isError?: string | boolean
   // isEditEnabled?: boolean
   dispatchId?: number
-  totalStock: number
   // setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }) => {
   const { watch, control } = useFormContext()
@@ -118,7 +116,7 @@ export const CardItemDispatch = ({
               required: 'La cantidad es requerida',
 
               max: {
-                value: totalStock,
+                value: itemData.stock_actual,
                 message: 'La cantidad no puede ser mayor al stock disponible',
               },
 
@@ -160,7 +158,7 @@ export const CardItemDispatch = ({
                     {isEditing
                       ? `Cuando se edita un despacho la cantidad debe modificarse
                       seleccionando los seriales manualmente`
-                      : `Cantidad disponible: ${totalStock}`}
+                      : `Cantidad disponible: ${itemData.stock_actual}`}
                   </FormDescription>
 
                   <FormMessage />
