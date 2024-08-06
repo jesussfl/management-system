@@ -2,7 +2,6 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
@@ -58,56 +57,75 @@ export const createReturn = async (
     continue
   }
 
-  const newReturn = await prisma.devolucion.create({
-    data: {
-      cedula_destinatario,
-      cedula_abastecedor: data.cedula_abastecedor,
-      cedula_autorizador: data.cedula_autorizador,
-      cedula_supervisor: data.cedula_supervisor,
-      motivo,
-      fecha_devolucion,
-      servicio,
-      renglones: {
-        create: renglones.map((renglon) => ({
-          ...renglon,
-          id_renglon: renglon.id_renglon,
+  await prisma.$transaction(async (prisma) => {
+    const newReturn = await prisma.devolucion.create({
+      data: {
+        cedula_destinatario,
+        cedula_abastecedor: data.cedula_abastecedor,
+        cedula_autorizador: data.cedula_autorizador,
+        cedula_supervisor: data.cedula_supervisor,
+        motivo,
+        fecha_devolucion,
+        servicio,
+        renglones: {
+          create: renglones.map((renglon) => ({
+            ...renglon,
+            id_renglon: renglon.id_renglon,
 
-          seriales: {
-            connect: serials
-              .filter((serial) => serial.id_renglon === renglon.id_renglon)
-              .map((serial) => ({ serial: serial.serial })),
+            seriales: {
+              connect: serials
+                .filter((serial) => serial.id_renglon === renglon.id_renglon)
+                .map((serial) => ({ serial: serial.serial })),
+            },
+          })),
+        },
+      },
+    })
+
+    await prisma.serial.updateMany({
+      where: {
+        serial: {
+          in: serials.map((serial) => serial.serial),
+        },
+      },
+      data: {
+        estado: 'Devuelto',
+      },
+    })
+
+    const devolutionItems = data.renglones
+
+    devolutionItems.forEach(async (item) => {
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            increment: item.seriales.length,
           },
-        })),
-      },
-    },
+        },
+      })
+    })
+
+    await registerAuditAction(
+      'CREAR',
+      `Se creó una devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El ID de la devolución es: ${
+        newReturn.id
+      }, ${
+        data.motivo_fecha
+          ? `, la fecha de creación fue: ${format(
+              newReturn.fecha_creacion,
+              'dd-MM-yyyy HH:mm'
+            )}, la fecha de devolucion: ${format(
+              newReturn.fecha_devolucion,
+              'dd-MM-yyyy HH:mm'
+            )}, motivo de la fecha: ${data.motivo_fecha}`
+          : ''
+      } `
+    )
   })
 
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: serials.map((serial) => serial.serial),
-      },
-    },
-    data: {
-      estado: 'Devuelto',
-    },
-  })
-  await registerAuditAction(
-    'CREAR',
-    `Se creó una devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El ID de la devolución es: ${
-      newReturn.id
-    }, ${
-      data.motivo_fecha
-        ? `, la fecha de creación fue: ${format(
-            newReturn.fecha_creacion,
-            'dd-MM-yyyy HH:mm'
-          )}, la fecha de devolucion: ${format(
-            newReturn.fecha_devolucion,
-            'dd-MM-yyyy HH:mm'
-          )}, motivo de la fecha: ${data.motivo_fecha}`
-        : ''
-    } `
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/devoluciones`)
 
   return {
@@ -293,52 +311,70 @@ export const deleteReturn = async (
     return permissionsResponse
   }
 
-  const exist = await prisma.devolucion.findUnique({
+  const devolution = await prisma.devolucion.findUnique({
     where: {
       id,
     },
     include: {
       renglones: {
         include: {
+          renglon: true,
           seriales: true,
         },
       },
     },
   })
 
-  if (!exist) {
+  if (!devolution) {
     throw new Error('Devolucion no existe')
   }
-
-  await prisma.devolucion.delete({
-    where: {
-      id: id,
-    },
-  })
-
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: exist.renglones
-          .flatMap((renglon) => renglon.seriales)
-          .filter(
-            (serial) =>
-              serial.estado === 'Devuelto' || serial.estado === 'Despachado'
-          )
-          .map((serial) => serial.serial),
+  await prisma.$transaction(async (prisma) => {
+    await prisma.devolucion.delete({
+      where: {
+        id: id,
       },
-    },
-    data: {
-      estado: 'Despachado',
-    },
+    })
+
+    await prisma.serial.updateMany({
+      where: {
+        serial: {
+          in: devolution.renglones
+            .flatMap((renglon) => renglon.seriales)
+            .filter(
+              (serial) =>
+                serial.estado === 'Devuelto' || serial.estado === 'Despachado'
+            )
+            .map((serial) => serial.serial),
+        },
+      },
+      data: {
+        estado: 'Despachado',
+      },
+    })
+
+    const devolutionItems = devolution.renglones
+
+    devolutionItems.forEach(async (renglon) => {
+      await prisma.renglon.update({
+        where: {
+          id: renglon.renglon.id,
+        },
+        data: {
+          stock_actual: {
+            decrement: renglon.seriales.length,
+          },
+        },
+      })
+    })
+
+    await registerAuditAction(
+      'ELIMINAR',
+      `Se eliminó la devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${
+        devolution.motivo
+      }. El ID de la devolución es: ${devolution.id} `
+    )
   })
 
-  await registerAuditAction(
-    'ELIMINAR',
-    `Se eliminó la devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${
-      exist.motivo
-    }. El ID de la devolución es: ${exist.id} `
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/devoluciones`)
 
   return {
@@ -369,56 +405,75 @@ export const recoverReturn = async (
     return permissionsResponse
   }
 
-  const exist = await prisma.devolucion.findUnique({
+  const devolution = await prisma.devolucion.findUnique({
     where: {
       id,
     },
     include: {
       renglones: {
         include: {
+          renglon: true,
           seriales: true,
         },
       },
     },
   })
 
-  if (!exist) {
+  if (!devolution) {
     throw new Error('Devolucion no existe')
   }
 
-  await prisma.devolucion.update({
-    where: {
-      id: id,
-    },
-    data: {
-      fecha_eliminacion: null,
-    },
-  })
-
-  //TODO: REVISAR ESTO
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: exist.renglones
-          .flatMap((renglon) => renglon.seriales)
-          .filter(
-            (serial) =>
-              serial.estado === 'Despachado' || serial.estado === 'Devuelto'
-          )
-          .map((serial) => serial.serial),
+  await prisma.$transaction(async (prisma) => {
+    await prisma.devolucion.update({
+      where: {
+        id: id,
       },
-    },
-    data: {
-      estado: 'Devuelto',
-    },
+      data: {
+        fecha_eliminacion: null,
+      },
+    })
+
+    //TODO: REVISAR ESTO
+    await prisma.serial.updateMany({
+      where: {
+        serial: {
+          in: devolution.renglones
+            .flatMap((renglon) => renglon.seriales)
+            .filter(
+              (serial) =>
+                serial.estado === 'Despachado' || serial.estado === 'Devuelto'
+            )
+            .map((serial) => serial.serial),
+        },
+      },
+      data: {
+        estado: 'Devuelto',
+      },
+    })
+
+    const devolutionItems = devolution.renglones
+
+    devolutionItems.forEach(async (renglon) => {
+      await prisma.renglon.update({
+        where: {
+          id: renglon.renglon.id,
+        },
+        data: {
+          stock_actual: {
+            increment: renglon.seriales.length,
+          },
+        },
+      })
+    })
+
+    await registerAuditAction(
+      'RECUPERAR',
+      `Se recuperó la devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${
+        devolution.motivo
+      }. El ID de la devolución es: ${devolution.id} `
+    )
   })
 
-  await registerAuditAction(
-    'RECUPERAR',
-    `Se recuperó la devolución en ${servicio.toLowerCase()} con el siguiente motivo: ${
-      exist.motivo
-    }. El ID de la devolución es: ${exist.id} `
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/devoluciones`)
 
   return {

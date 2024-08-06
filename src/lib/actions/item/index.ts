@@ -18,7 +18,6 @@ export const createItem = async (
   image: FormData | null,
   section: 'Abastecimiento' | 'Armamento'
 ) => {
-  console.log(data)
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -437,36 +436,36 @@ export const getAllItems = async (
       fecha_eliminacion: onlyActives ? null : undefined,
     },
     include: {
-      recepciones: {
-        include: {
-          recepcion: true,
-          seriales: {
-            include: {
-              renglon: true,
-            },
-          },
-        },
-      },
-      despachos: {
-        include: {
-          despacho: true,
-          seriales: {
-            include: {
-              renglon: true,
-            },
-          },
-        },
-      },
-      devoluciones: {
-        include: {
-          devolucion: true,
-          seriales: {
-            include: {
-              renglon: true,
-            },
-          },
-        },
-      },
+      // recepciones: {
+      //   include: {
+      //     recepcion: true,
+      //     seriales: {
+      //       include: {
+      //         renglon: true,
+      //       },
+      //     },
+      //   },
+      // },
+      // despachos: {
+      //   include: {
+      //     despacho: true,
+      //     seriales: {
+      //       include: {
+      //         renglon: true,
+      //       },
+      //     },
+      //   },
+      // },
+      // devoluciones: {
+      //   include: {
+      //     devolucion: true,
+      //     seriales: {
+      //       include: {
+      //         renglon: true,
+      //       },
+      //     },
+      //   },
+      // },
       clasificacion: true,
       unidad_empaque: true,
       almacen: true,

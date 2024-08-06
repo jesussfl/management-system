@@ -144,6 +144,7 @@ model Renglon {
 
   servicio Servicios?
 
+  stock_actual Int     @default(0)
   tipo         String?
   stock_minimo Int     @default(1)
   peso         Float   @default(0)

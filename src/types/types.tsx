@@ -14,24 +14,24 @@ export type SideMenuItem = {
 
 export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
   include: {
-    recepciones: {
-      include: {
-        recepcion: true
-        seriales: true
-      }
-    }
-    despachos: {
-      include: {
-        despacho: true
-        seriales: true
-      }
-    }
-    devoluciones: {
-      include: {
-        devolucion: true
-        seriales: true
-      }
-    }
+    // recepciones: {
+    //   include: {
+    //     recepcion: true
+    //     seriales: true
+    //   }
+    // }
+    // despachos: {
+    //   include: {
+    //     despacho: true
+    //     seriales: true
+    //   }
+    // }
+    // devoluciones: {
+    //   include: {
+    //     devolucion: true
+    //     seriales: true
+    //   }
+    // }
     clasificacion: true
     categoria: true
 

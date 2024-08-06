@@ -194,11 +194,12 @@ export const createReception = async (
         },
       },
     })
+    const receptionItems = data.renglones
 
-    data.renglones.forEach(async (renglon) => {
-      if (!renglon.es_recepcion_liquidos) return
+    receptionItems.forEach(async (item) => {
+      if (!item.es_recepcion_liquidos) return
 
-      const serials = renglon.seriales
+      const serials = item.seriales
 
       serials.forEach(async (serial) => {
         await prisma.serial.update({
@@ -211,6 +212,28 @@ export const createReception = async (
             },
           },
         })
+      })
+    })
+
+    // const quantitiesReceivedByItem = receptionItems.map((item) => {
+    //   return {
+    //     itemId: item.id_renglon,
+    //     quantity: item.es_recepcion_liquidos ? 0 : item.cantidad,
+    //   }
+    // })
+
+    receptionItems.forEach(async (item) => {
+      if (item.es_recepcion_liquidos) return
+
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            increment: item.seriales.length,
+          },
+        },
       })
     })
 
@@ -543,29 +566,53 @@ export const deleteReception = async (id: number, servicio: string) => {
     return permissionsResponse
   }
 
-  const exist = await prisma.recepcion.findUnique({
+  const reception = await prisma.recepcion.findUnique({
     where: {
       id,
     },
+    include: {
+      renglones: {
+        include: {
+          renglon: true,
+          seriales: true,
+        },
+      },
+    },
   })
 
-  if (!exist) {
+  if (!reception) {
     return {
       error: 'La recepción no existe',
       success: null,
     }
   }
+  await prisma.$transaction(async (prisma) => {
+    await prisma.recepcion.delete({
+      where: {
+        id,
+      },
+    })
+    const receptionItems = reception.renglones
 
-  await prisma.recepcion.delete({
-    where: {
-      id,
-    },
+    receptionItems.forEach(async (item) => {
+      if (item.es_recepcion_liquidos) return
+
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            decrement: item.seriales.length,
+          },
+        },
+      })
+    })
+    await registerAuditAction(
+      'ELIMINAR',
+      `Se eliminó la recepción de ${servicio.toLowerCase()} con motivo: ${reception?.motivo} y el id ${id}`
+    )
   })
-
-  await registerAuditAction(
-    'ELIMINAR',
-    `Se eliminó la recepción de ${servicio.toLowerCase()} con motivo: ${exist?.motivo} y el id ${id}`
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/recepciones`)
 
   return {
@@ -593,32 +640,57 @@ export const recoverReception = async (id: number, servicio: string) => {
     return permissionsResponse
   }
 
-  const exist = await prisma.recepcion.findUnique({
+  const reception = await prisma.recepcion.findUnique({
     where: {
       id,
     },
+    include: {
+      renglones: {
+        include: {
+          renglon: true,
+          seriales: true,
+        },
+      },
+    },
   })
 
-  if (!exist) {
+  if (!reception) {
     return {
       error: 'La recepción no existe',
       success: null,
     }
   }
+  await prisma.$transaction(async (prisma) => {
+    await prisma.recepcion.update({
+      where: {
+        id,
+      },
+      data: {
+        fecha_eliminacion: null,
+      },
+    })
+    const receptionItems = reception.renglones
 
-  await prisma.recepcion.update({
-    where: {
-      id,
-    },
-    data: {
-      fecha_eliminacion: null,
-    },
+    receptionItems.forEach(async (item) => {
+      if (item.es_recepcion_liquidos) return
+
+      await prisma.renglon.update({
+        where: {
+          id: item.id_renglon,
+        },
+        data: {
+          stock_actual: {
+            increment: item.seriales.length,
+          },
+        },
+      })
+    })
+    await registerAuditAction(
+      'RECUPERAR',
+      `Se recuperó la recepción de ${servicio.toLowerCase()} con motivo: ${reception?.motivo} y el id ${id}`
+    )
   })
 
-  await registerAuditAction(
-    'RECUPERAR',
-    `Se recuperó la recepción de ${servicio.toLowerCase()} con motivo: ${exist?.motivo} y el id ${id}`
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/recepciones`)
 
   return {
