@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/components/dispatch-form/dispatches-form'
+import DispatchesForm from '@/app/(main)/dashboard/components/forms/dispatch-form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,

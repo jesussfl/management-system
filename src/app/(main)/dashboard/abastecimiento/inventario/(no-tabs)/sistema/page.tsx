@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import SystemForm from '../../../../components/system-form'
+import SystemForm from '../../../../components/forms/system-form'
 
 export default async function Page() {
   return (

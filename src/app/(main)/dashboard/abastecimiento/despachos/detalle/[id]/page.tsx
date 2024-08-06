@@ -1,32 +1,35 @@
 import PageForm from '@/modules/layout/components/page-form'
-import { getDispatchById } from '../../../../../../../lib/actions/dispatch'
+import { getDispatchById } from '@/lib/actions/dispatch'
 
 export default async function Page({
   params: { id },
 }: {
   params: { id: string }
 }) {
-  const reception = await getDispatchById(Number(id))
-  const renglones = reception?.renglones
+  const dispatch = await getDispatchById(Number(id))
+  const dispatchDetails = dispatch?.renglones
 
   return (
     <PageForm
       title="Ver detalle de despachos realizados"
       backLink="/dashboard/abastecimiento/despachos"
     >
-      {renglones.map((renglon, index) => (
+      {dispatchDetails.map((detail, index) => (
         <div key={index}>
           <h2>Renglón {index + 1}</h2>
 
-          <p>Nombre: {renglon.renglon.nombre}</p>
-          <p>Cantidad: {`${renglon.cantidad}`}</p>
+          <p>Nombre: {detail.renglon.nombre}</p>
+          <p>Cantidad: {`${detail.cantidad}`}</p>
 
-          <p>Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}</p>
+          <p className="text-sm text-foreground">
+            Unidad de Empaque:
+            {detail?.renglon.unidad_empaque?.nombre || 'Sin Empaque'}
+          </p>
 
           <p className="text-sm text-foreground">
             Seriales despachados:
             <ul className="list-disc ml-4">
-              {renglon.seriales.map((serial, index) => (
+              {detail.seriales.map((serial, index) => (
                 <li key={index}>{serial}</li>
               ))}
             </ul>

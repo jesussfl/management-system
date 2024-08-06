@@ -17,51 +17,11 @@ import 'dayjs/plugin/utc'
 import 'dayjs/plugin/duration'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import {
-  deleteReception,
-  recoverReception,
-} from '../../../../../lib/actions/reception'
+import { deleteReception, recoverReception } from '@/lib/actions/reception'
+import { RecepcionType } from '@/lib/types/reception-types'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))
-
-type RecepcionType = Prisma.RecepcionGetPayload<{
-  include: {
-    destinatario: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    supervisor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    abastecedor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    autorizador: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    renglones: { include: { renglon: true } }
-  }
-}>
 
 export const columns: ColumnDef<RecepcionType>[] = [
   SELECT_COLUMN,

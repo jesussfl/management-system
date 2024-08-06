@@ -11,7 +11,7 @@ import { PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
 import { getAllProfessionals } from '../../../../profesionales/lib/actions/professionals'
-import OrdersForm from '../../../../components/order-form/orders-form'
+import OrdersForm from '../../../../components/forms/order-form/orders-form'
 import { getAllUnits } from '../../../../unidades/lib/actions/units'
 import { getAllSuppliers } from '../../(tabs)/lib/actions/suppliers'
 
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems(true)
-  const receivers = await getAllReceivers(true)
+  const itemsData = await getAllItems(true, 'Armamento')
+  const receivers = await getAllReceivers(true, 'Armamento')
   const suppliers = await getAllSuppliers(true)
 
   const comboBoxSuppliers = suppliers.map((supplier) => {

@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import ItemsForm from '../../../../components/item-form'
+import ItemsForm from '../../../../components/forms/item-form'
 
 export default async function Page() {
   return (

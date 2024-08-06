@@ -7,7 +7,7 @@ import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
-import { PedidoFormValues } from '../../../app/(main)/dashboard/components/order-form/orders-form'
+import { PedidoFormValues } from '../../../app/(main)/dashboard/components/forms/order-form/orders-form'
 import { Estados_Pedidos } from '@prisma/client'
 import { format } from 'date-fns'
 

@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import DispatchesForm from '@/app/(main)/dashboard/components/dispatch-form/dispatches-form'
+import DispatchesForm from '@/app/(main)/dashboard/components/forms/dispatch-form/dispatches-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -13,7 +13,7 @@ import { ArrowLeft, PackageMinus } from 'lucide-react'
 import Link from 'next/link'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import { getDispatchById } from '../../../../../../lib/actions/dispatch'
+import { getDispatchById } from '@/lib/actions/dispatch'
 
 export const metadata: Metadata = {
   title: 'Despachos',
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Abastecimiento')
   const dispatch = await getDispatchById(Number(params.id))
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()

@@ -17,8 +17,10 @@ export const getLowStockItems = (items: RenglonWithAllRelations[]) => {
 
     const totalStock = stock - dispatchedSerials + returnedSerials
 
-    return totalStock <= item.stock_minimo
+    return totalStock < item.stock_minimo
   })
 
-  return lowStockItems as RenglonWithAllRelations[]
+  return lowStockItems.filter(
+    (item) => item.fecha_eliminacion === null
+  ) as RenglonWithAllRelations[]
 }

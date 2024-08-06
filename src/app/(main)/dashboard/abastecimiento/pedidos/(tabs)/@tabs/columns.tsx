@@ -6,14 +6,10 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
-import {
-  deleteOrder,
-  recoverOrder,
-} from '../../../../../../../lib/actions/order'
+import { deleteOrder, recoverOrder } from '@/lib/actions/order'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import 'dayjs/plugin/utc'
@@ -25,49 +21,10 @@ import {
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
 import { HoverCardContent } from '@radix-ui/react-hover-card'
+import { PedidoType } from '@/lib/types/order-types'
 
 dayjs.extend(require('dayjs/plugin/utc'))
 dayjs.extend(require('dayjs/plugin/duration'))
-
-type PedidoType = Prisma.PedidoGetPayload<{
-  include: {
-    unidad: true
-    proveedor: true
-    destinatario: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    supervisor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    abastecedor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    autorizador: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    renglones: { include: { renglon: true } }
-  }
-}>
 
 export const columns: ColumnDef<PedidoType>[] = [
   SELECT_COLUMN,

@@ -10,9 +10,9 @@ import {
   CardHeader,
 } from '@/modules/common/components/card/card'
 import { Box, PackageCheck, PackageMinus } from 'lucide-react'
-import { TableWithExport } from './table-with-export'
+import { TableWithExport } from '../../../../components/inventory-table/table-with-export'
 
-import { getStatistics } from '../../../../../../../lib/actions/statistics'
+import { getStatistics } from '@/lib/actions/statistics'
 import StatisticCard from '@/modules/common/components/statistic-card'
 import { getLowStockItems } from '@/utils/helpers/get-low-stock-items'
 

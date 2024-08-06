@@ -12,7 +12,7 @@ import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
-import { deleteReturn, recoverReturn } from '../../../../../lib/actions/return'
+import { deleteReturn, recoverReturn } from '@/lib/actions/return'
 
 type ReturnType = Prisma.DevolucionGetPayload<{
   include: { renglones: { include: { renglon: true } } }

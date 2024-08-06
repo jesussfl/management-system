@@ -181,3 +181,29 @@ export const getSerialsCountByItemId = async (id: number) => {
 
   return serials
 }
+
+export const getSerialsByItemEnabled = async (id: number) => {
+  const session = await auth()
+
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+
+  const serials = await prisma.serial.findMany({
+    where: {
+      renglon: {
+        id,
+      },
+      AND: {
+        estado: {
+          in: ['Disponible', 'Devuelto'],
+        },
+      },
+    },
+    include: {
+      renglon: true,
+    },
+  })
+
+  return serials
+}

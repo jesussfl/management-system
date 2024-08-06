@@ -12,8 +12,14 @@ import { format } from 'date-fns'
 import {
   Recepcion_RenglonesFormValues,
   ReceptionFormValues,
-} from '../../../app/(main)/dashboard/abastecimiento/recepciones/lib/types/types'
+} from '../../types/reception-types'
 
+export type ServerActionResponse = {
+  success: boolean | string
+  error: boolean | string
+  session?: any
+  fields: any[]
+}
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {
@@ -68,17 +74,9 @@ export type RecepcionType = Prisma.RecepcionGetPayload<{
   }
 }>
 
-const allSerialsAreValid = (renglones: Recepcion_RenglonesFormValues[]) => {
-  return renglones.some(
-    (renglon, index) =>
-      renglon.seriales.length === 0 ||
-      renglon.seriales.some(
-        (serial) =>
-          !serial.serial || serial.serial === '' || serial.serial === undefined
-      )
-  )
-}
-const getAffectedFields = (renglones: Recepcion_RenglonesFormValues[]) => {
+const getItemsWithEmptySerials = (
+  renglones: Recepcion_RenglonesFormValues[]
+) => {
   const fields = renglones
     .filter(
       (renglon) =>
@@ -90,7 +88,7 @@ const getAffectedFields = (renglones: Recepcion_RenglonesFormValues[]) => {
             serial.serial === undefined
         )
     )
-    .map((renglon, index) => renglon.id_renglon)
+    .map((renglon) => renglon.id_renglon)
 
   return fields
 }
@@ -101,7 +99,10 @@ export const createReception = async (
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
-    return sessionResponse
+    return {
+      ...sessionResponse,
+      fields: [],
+    }
   }
 
   const permissionsResponse = validateUserPermissions({
@@ -114,7 +115,10 @@ export const createReception = async (
   })
 
   if (!permissionsResponse.success) {
-    return permissionsResponse
+    return {
+      ...sessionResponse,
+      fields: [],
+    }
   }
 
   const { motivo, fecha_recepcion, renglones } = data
@@ -127,70 +131,107 @@ export const createReception = async (
     }
   }
 
-  if (allSerialsAreValid(renglones)) {
-    const fields = getAffectedFields(renglones)
-
+  const itemsWithEmptySerials = getItemsWithEmptySerials(renglones)
+  if (itemsWithEmptySerials.length > 0) {
     return {
       error: 'Hay algunos renglones sin seriales',
-      fields: fields,
+      fields: itemsWithEmptySerials,
       success: false,
     }
   }
 
-  const recepcion = await prisma.recepcion.create({
-    data: {
-      ...data,
-      motivo,
-      servicio,
-      fecha_recepcion,
-      renglones: {
-        create: renglones.map((renglon) => ({
-          ...renglon,
-          id_renglon: undefined,
-          codigo_solicitud: undefined,
-          pedido: renglon.codigo_solicitud
-            ? {
-                connect: {
-                  id: renglon.codigo_solicitud,
+  await prisma.$transaction(async (prisma) => {
+    const recepcion = await prisma.recepcion.create({
+      data: {
+        ...data,
+        motivo,
+        servicio,
+        fecha_recepcion,
+        renglones: {
+          // @ts-ignore TODO: types need to be fixed
+          create: data.renglones.map((renglon) => ({
+            ...renglon,
+            id_renglon: undefined,
+            codigo_solicitud: undefined,
+            pedido: renglon.codigo_solicitud
+              ? {
+                  connect: {
+                    id: renglon.codigo_solicitud,
+                  },
+                }
+              : undefined,
+            renglon: {
+              connect: {
+                id: renglon.id_renglon,
+              },
+            },
+            recepciones_Seriales: renglon.es_recepcion_liquidos
+              ? {
+                  create: renglon.seriales.map((serial) => ({
+                    peso_recibido: serial.peso_recibido as number,
+                    serial: {
+                      connect: {
+                        id: serial.id,
+                      },
+                    },
+                  })),
+                }
+              : undefined,
+            seriales: renglon.es_recepcion_liquidos
+              ? undefined
+              : {
+                  create: renglon.seriales.map((serial) => ({
+                    serial: serial.serial,
+                    condicion: serial.condicion || undefined,
+                    renglon: {
+                      connect: {
+                        id: serial.id_renglon,
+                      },
+                    },
+                  })),
                 },
-              }
-            : undefined,
-          renglon: {
-            connect: {
-              id: renglon.id_renglon,
+          })),
+        },
+      },
+    })
+
+    data.renglones.forEach(async (renglon) => {
+      if (!renglon.es_recepcion_liquidos) return
+
+      const serials = renglon.seriales
+
+      serials.forEach(async (serial) => {
+        await prisma.serial.update({
+          where: {
+            id: serial.id as number,
+          },
+          data: {
+            peso_actual: {
+              increment: serial.peso_recibido as number,
             },
           },
-          seriales: {
-            create: renglon.seriales.map((serial) => ({
-              serial: serial.serial,
-              renglon: {
-                connect: {
-                  id: renglon.id_renglon,
-                },
-              },
-            })),
-          },
-        })),
-      },
-    },
+        })
+      })
+    })
+
+    await registerAuditAction(
+      'CREAR',
+      `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
+        data.motivo
+      } y id ${recepcion.id} ${
+        data.motivo_fecha
+          ? `, la fecha de creación fue: ${format(
+              recepcion.fecha_creacion,
+              'dd-MM-yyyy HH:mm'
+            )}, la fecha de recepción: ${format(
+              recepcion.fecha_recepcion,
+              'dd-MM-yyyy HH:mm'
+            )}, motivo de la fecha: ${data.motivo_fecha}`
+          : ''
+      }`
+    )
   })
 
-  await registerAuditAction(
-    'CREAR',
-    `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
-      data.motivo
-    } y id ${recepcion.id} ${
-      data.motivo_fecha
-        ? `, la fecha de creación fue: ${format(
-            recepcion.fecha_creacion,
-            'dd-MM-yyyy HH:mm'
-          )}, la fecha de recepción: ${format(
-            recepcion.fecha_recepcion,
-            'dd-MM-yyyy HH:mm'
-          )}, motivo de la fecha: ${data.motivo_fecha}`
-        : ''
-    }`
-  )
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/recepciones`)
 
   return {
@@ -236,13 +277,13 @@ export const updateReception = async (
       success: false,
     }
   }
-  if (allSerialsAreValid(data.renglones)) {
-    const fields = getAffectedFields(data.renglones)
 
+  const itemsWithEmptySerials = getItemsWithEmptySerials(data.renglones)
+  if (itemsWithEmptySerials.length > 0) {
     return {
       error: 'Hay algunos renglones sin seriales',
       success: false,
-      fields: fields,
+      fields: itemsWithEmptySerials,
     }
   }
 
@@ -420,6 +461,11 @@ export const getReceptionById = async (id: number) => {
       },
       renglones: {
         include: {
+          recepciones_Seriales: {
+            include: {
+              serial: true,
+            },
+          },
           renglon: {
             include: {
               recepciones: true,
@@ -432,6 +478,8 @@ export const getReceptionById = async (id: number) => {
             select: {
               serial: true,
               id_renglon: true,
+              condicion: true,
+              peso_actual: true,
             },
           },
         },
@@ -443,7 +491,36 @@ export const getReceptionById = async (id: number) => {
     throw new Error('Recepcion no existe')
   }
 
-  return reception
+  return {
+    ...reception,
+    renglones: reception.renglones.map((renglon) => ({
+      ...renglon,
+      recepciones_Seriales: undefined,
+      seriales: renglon.es_recepcion_liquidos
+        ? renglon.recepciones_Seriales.map((serial) => {
+            return {
+              id: serial.serial.id,
+              peso_recibido: serial.peso_recibido,
+              serial: serial.serial.serial,
+              id_renglon: renglon.id_renglon,
+              condicion: '',
+              peso_actual: renglon.seriales.find(
+                (s) => s.serial === serial.serial.serial
+              )?.peso_actual,
+            }
+          })
+        : renglon.seriales.map((serial) => {
+            return {
+              serial: serial.serial,
+              id_renglon: renglon.id_renglon,
+              condicion: serial.condicion,
+              id: undefined,
+              peso_recibido: undefined,
+              peso_actual: undefined,
+            }
+          }),
+    })),
+  }
 }
 
 export const deleteReception = async (id: number, servicio: string) => {
@@ -596,6 +673,7 @@ export const getAllOrdersByItemId = async (
   }
   const orders = await prisma.pedido.findMany({
     where: {
+      fecha_eliminacion: null,
       servicio,
       renglones: {
         some: {
@@ -612,66 +690,7 @@ export const getReceptionForExportGuide = async (id: number) => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const receptionData = await prisma.recepcion.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      destinatario: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      supervisor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      abastecedor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      autorizador: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      renglones: {
-        include: {
-          renglon: {
-            include: {
-              recepciones: true,
-              unidad_empaque: true,
-              clasificacion: true,
-              categoria: true,
-            },
-          },
-          seriales: {
-            select: {
-              serial: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  if (!receptionData) {
-    throw new Error('Despacho no existe')
-  }
+  const receptionData = await getReceptionById(id)
 
   return {
     destinatario_cedula: `${receptionData.destinatario?.tipo_cedula}-${receptionData.cedula_destinatario}`,
@@ -684,7 +703,16 @@ export const getReceptionForExportGuide = async (id: number) => {
     recepcion: receptionData,
     renglones: receptionData.renglones.map((renglon) => ({
       ...renglon,
-      seriales: renglon.seriales.map((serial) => serial.serial),
+      cantidad: renglon.es_recepcion_liquidos
+        ? renglon.seriales.length
+        : renglon.cantidad,
+      seriales: renglon.es_recepcion_liquidos
+        ? renglon.seriales.map((serial) => {
+            return `${serial.serial} - ${
+              serial.peso_recibido
+            } ${renglon.renglon.tipo_medida_unidad.toLowerCase()}`
+          })
+        : renglon.seriales.map((serial) => serial.serial),
     })),
     autorizador: receptionData.autorizador,
     abastecedor: receptionData.abastecedor,

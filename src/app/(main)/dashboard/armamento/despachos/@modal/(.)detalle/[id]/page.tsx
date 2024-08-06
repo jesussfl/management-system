@@ -51,7 +51,9 @@ export default async function Page({
                 </p>
 
                 <p className="text-sm text-foreground">
-                  Unidad de medida: {renglon.renglon.unidad_empaque.nombre}
+                  Unidad de medida:{' '}
+                  {renglon.renglon.unidad_empaque?.nombre ||
+                    'Sin unidad de empaque'}
                 </p>
 
                 <p className="text-sm text-foreground">

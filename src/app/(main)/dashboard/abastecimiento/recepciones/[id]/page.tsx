@@ -10,37 +10,21 @@ import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import ReceptionsForm from '@/app/(main)/dashboard/components/reception-form/receptions-form'
+import ReceptionsForm from '@/app/(main)/dashboard/components/forms/reception-form/receptions-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
-import { ReceptionFormValues } from '../lib/types/types'
-import { getReceptionById } from '../../../../../../lib/actions/reception'
+import { getReceptionById } from '@/lib/actions/reception'
 
 export const metadata: Metadata = {
   title: 'Recepciones',
   description: 'Desde aquí puedes administrar las entradas del inventario',
 }
 
-function formatReceptionDataToForm(
-  reception: Awaited<ReturnType<typeof getReceptionById>>
-): ReceptionFormValues {
-  return {
-    ...reception,
-
-    renglones: reception.renglones.map((renglon) => ({
-      ...renglon,
-      seriales: renglon.seriales.map((serial) => ({
-        serial: serial.serial,
-        id_renglon: renglon.id_renglon,
-      })),
-    })),
-  }
-}
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems()
+  const itemsData = await getAllItems(true, 'Abastecimiento')
+  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const reception = await getReceptionById(Number(params.id))
 
-  const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox()
 
   return (
@@ -70,7 +54,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           servicio="Abastecimiento"
           renglonesData={itemsData}
           id={Number(params.id)}
-          defaultValues={formatReceptionDataToForm(reception)}
+          defaultValues={reception}
           receivers={receivers}
           professionals={professionals}
         />

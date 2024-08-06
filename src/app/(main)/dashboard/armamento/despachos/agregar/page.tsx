@@ -10,8 +10,8 @@ import { PackageMinus, PackagePlus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
 import { getAllReceiversToCombobox } from '../../../armamento/destinatarios/lib/actions/receivers'
-import DispatchesForm from '../../../components/dispatch-form/dispatches-form'
-import { getAllItems } from '../../../../../../lib/actions/item'
+import DispatchesForm from '../../../components/forms/dispatch-form/dispatches-form'
+import { getAllItems } from '@/lib/actions/item'
 
 export const metadata: Metadata = {
   title: 'Despachos',

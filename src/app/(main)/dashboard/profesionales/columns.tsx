@@ -138,7 +138,8 @@ export const columns: ColumnDef<ProfesionalType>[] = [
   },
 
   {
-    accessorKey: 'unidad.nombre',
+    id: 'unidad',
+    accessorFn: (row) => row.unidad?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -155,7 +156,8 @@ export const columns: ColumnDef<ProfesionalType>[] = [
   },
 
   {
-    accessorKey: 'categoria.nombre',
+    id: 'categoria',
+    accessorFn: (row) => row.categoria?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -172,7 +174,8 @@ export const columns: ColumnDef<ProfesionalType>[] = [
   },
 
   {
-    accessorKey: 'grado.nombre',
+    id: 'grado',
+    accessorFn: (row) => row.grado?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button
@@ -189,7 +192,8 @@ export const columns: ColumnDef<ProfesionalType>[] = [
   },
 
   {
-    accessorKey: 'componente.nombre',
+    id: 'componente',
+    accessorFn: (row) => row.componente?.nombre || 'No Aplica',
     header: ({ column }) => {
       return (
         <Button

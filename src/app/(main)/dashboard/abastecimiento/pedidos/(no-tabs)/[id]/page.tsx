@@ -10,11 +10,11 @@ import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
 import { ArrowLeft, PackagePlus } from 'lucide-react'
 import Link from 'next/link'
-import OrdersForm from '../../../../components/order-form/orders-form'
+import OrdersForm from '../../../../components/forms/order-form/orders-form'
 import { getAllUnits } from '../../../../unidades/lib/actions/units'
 import { getAllProfessionals } from '../../../../profesionales/lib/actions/professionals'
 import { getAllReceivers } from '../../../destinatarios/lib/actions/receivers'
-import { getOrderById } from '../../../../../../../lib/actions/order'
+import { getOrderById } from '@/lib/actions/order'
 import { getAllSuppliers } from '../../(tabs)/lib/actions/suppliers'
 
 export const metadata: Metadata = {
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
 
 export default async function Page({ params }: { params: { id: string } }) {
   const order = await getOrderById(Number(params.id))
-  const itemsData = await getAllItems(true)
-  const receivers = await getAllReceivers(true)
+  const itemsData = await getAllItems(true, 'Abastecimiento')
+  const receivers = await getAllReceivers(true, 'Abastecimiento')
   const suppliers = await getAllSuppliers(true)
 
   const comboBoxSuppliers = suppliers.map((supplier) => {

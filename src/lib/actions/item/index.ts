@@ -18,6 +18,7 @@ export const createItem = async (
   image: FormData | null,
   section: 'Abastecimiento' | 'Armamento'
 ) => {
+  console.log(data)
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -36,8 +37,15 @@ export const createItem = async (
   if (!permissionsResponse.success) {
     return permissionsResponse
   }
-  const { nombre, imagen } = data
-
+  const { nombre, tipo_medida_unidad } = data
+  console.log(tipo_medida_unidad)
+  if (!tipo_medida_unidad) {
+    return {
+      success: false,
+      error:
+        'Debe seleccionar un tipo de medida o seleccionar una unidad de empaque',
+    }
+  }
   const exist = await prisma.renglon.findUnique({
     where: {
       nombre,
@@ -140,7 +148,7 @@ export const updateItem = async (
   section: 'Abastecimiento' | 'Armamento'
 ) => {
   const sessionResponse = await validateUserSession()
-
+  console.log(data)
   if (sessionResponse.error || !sessionResponse.session) {
     return sessionResponse
   }

@@ -1,7 +1,6 @@
 'use server'
-import { RenglonWithAllRelations } from '@/types/types'
+import { RenglonColumns, RenglonWithAllRelations } from '@/types/types'
 import { Serial } from '@prisma/client'
-import { RenglonColumns } from '../../app/(main)/dashboard/abastecimiento/inventario/(tabs)/@tabs/columns'
 
 export const formatExcelData = (rowsData: any) => {
   const rows = rowsData.map((row: any) => {
@@ -36,7 +35,7 @@ export const formatExcelData = (rowsData: any) => {
 
       clasificacion: cells.clasificacion.nombre,
       categoria: cells.categoria.nombre,
-      unidad_empaque: cells.unidad_empaque.nombre,
+      unidad_empaque: cells.unidad_empaque?.nombre || 'Sin Empaque',
       subsistema: cells.subsistema?.nombre || 'Sin subsistema',
       almacen: cells.almacen?.nombre || 'Sin Almacen',
 

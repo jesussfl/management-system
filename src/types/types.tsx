@@ -42,7 +42,34 @@ export type RenglonWithAllRelations = Prisma.RenglonGetPayload<{
     seriales: true
   }
 }>
+export type RenglonColumns = {
+  id: number
+  nombre: string
+  descripcion: string
+  imagen?: string | null
 
+  stock_minimo: number
+  stock_maximo?: number
+  stock: number
+  seriales?: string
+
+  numero_parte?: string
+  peso_total: number
+
+  estado: string
+
+  unidad_empaque: string
+  clasificacion: string
+  categoria: string
+  tipo?: string
+
+  almacen: string
+
+  subsistema?: string
+  ubicacion?: string
+  creado: Date
+  editado: Date
+}
 export type CategoriaType = Prisma.CategoriaGetPayload<{
   include: {
     clasificacion: true

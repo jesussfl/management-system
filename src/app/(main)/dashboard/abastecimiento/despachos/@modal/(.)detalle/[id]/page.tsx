@@ -12,14 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { getDispatchById } from '../../../../../../../../lib/actions/dispatch'
+import { getDispatchById } from '@/lib/actions/dispatch'
 export default async function Page({
   params: { id },
 }: {
   params: { id: string }
 }) {
   const dispatch = await getDispatchById(Number(id))
-  const renglones = dispatch.renglones
+  const dispatchDetails = dispatch.renglones
   return (
     <Dialog open={true}>
       <DialogContent
@@ -35,7 +35,7 @@ export default async function Page({
         </DialogHeader>
         <CloseButtonDialog />
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {renglones.map((renglon, index) => (
+          {dispatchDetails.map((detail, index) => (
             <Card key={index} className="min-w-[200px]">
               <CardHeader>
                 <CardTitle className="text-sm font-semibold text-foreground">
@@ -44,26 +44,26 @@ export default async function Page({
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-foreground">
-                  Nombre: {`${renglon.renglon.nombre}`}
+                  Nombre: {`${detail.renglon.nombre}`}
                 </p>
                 <p className="text-sm text-foreground">
-                  Cantidad: {`${renglon.cantidad}`}
+                  Cantidad: {`${detail.cantidad}`}
                 </p>
 
                 <p className="text-sm text-foreground">
-                  Unidad de medida: {renglon.renglon.unidad_empaque.nombre}
+                  Unidad de Empaque:
+                  {detail?.renglon.unidad_empaque?.nombre || 'Sin Empaque'}
                 </p>
 
                 <p className="text-sm text-foreground">
                   Seriales despachados:
                   <ul className="list-disc ml-4">
-                    {renglon.seriales.map((serial, index) => (
+                    {detail.seriales.map((serial, index) => (
                       <li key={index}>{serial}</li>
                     ))}
                   </ul>
                 </p>
               </CardContent>
-              {/* Puedes agregar más información aquí */}
             </Card>
           ))}
         </div>

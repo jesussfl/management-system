@@ -68,8 +68,8 @@ export const FormDateFields = ({
             <div className="flex flex-col gap-1">
               <FormLabel>Motivo</FormLabel>
               <FormDescription>
-                Redacta el motivo por el cual se está recibiendo el material,
-                renglones, etc...
+                Redacta el motivo por el cual se están registrando los
+                siguientes renglones...
               </FormDescription>
             </div>
             <FormControl>
@@ -118,16 +118,8 @@ export const FormDateFields = ({
                   dateFormat="d MMMM, yyyy h:mm aa"
                   dropdownMode="select"
                   maxDate={new Date()}
+                  className="rounded-md border-1 border-border text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                <Button
-                  variant={'secondary'}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    form.resetField(config.dateName)
-                  }}
-                >
-                  <TrashIcon className="h-5 w-5" />
-                </Button>
               </div>
               <FormMessage />
             </div>

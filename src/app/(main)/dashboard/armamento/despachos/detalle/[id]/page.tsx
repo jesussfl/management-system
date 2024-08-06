@@ -21,7 +21,10 @@ export default async function Page({
           <p>Nombre: {renglon.renglon.nombre}</p>
           <p>Cantidad: {`${renglon.cantidad}`}</p>
 
-          <p>Unidad de empaque: {renglon.renglon.unidad_empaque.nombre}</p>
+          <p>
+            Unidad de empaque:{' '}
+            {renglon.renglon.unidad_empaque?.nombre || 'Sin unidad de empaque'}
+          </p>
 
           <p className="text-sm text-foreground">
             Seriales despachados:

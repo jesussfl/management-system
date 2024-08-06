@@ -6,54 +6,14 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
 import Link from 'next/link'
 import { cn } from '@/utils/utils'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
-import {
-  deleteDispatch,
-  recoverDispatch,
-} from '../../../../../lib/actions/dispatch'
-export type DespachoType = Prisma.DespachoGetPayload<{
-  include: {
-    destinatario: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    supervisor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    abastecedor: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    autorizador: {
-      include: {
-        grado: true
-        categoria: true
-        componente: true
-        unidad: true
-      }
-    }
-    renglones: { include: { renglon: true; seriales: true } }
-  }
-}>
+import { deleteDispatch, recoverDispatch } from '@/lib/actions/dispatch'
+import { DespachoType } from '@/lib/types/dispatch-types'
 
 export const columns: ColumnDef<DespachoType>[] = [
   SELECT_COLUMN,

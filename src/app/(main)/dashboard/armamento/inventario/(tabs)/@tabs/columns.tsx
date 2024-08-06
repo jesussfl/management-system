@@ -1,7 +1,7 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown } from 'lucide-react'
+import { AlertCircle, ArrowUpDown, MapPin, Package } from 'lucide-react'
 
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
@@ -31,87 +31,60 @@ import {
   HoverCardTrigger,
 } from '@/modules/common/components/hover-card'
 
-export type RenglonColumns = {
-  id: number
-  nombre: string
-  descripcion: string
-  imagen?: string | null
-
-  stock_minimo: number
-  stock_maximo?: number
-  stock: number
-  seriales?: string
-
-  numero_parte?: string
-  peso_total: number
-
-  estado: string
-
-  unidad_empaque: string
-  clasificacion: string
-  categoria: string
-  tipo?: string
-
-  almacen: string
-
-  subsistema?: string
-  ubicacion?: string
-  creado: Date
-  editado: Date
-}
-
 export const columns: ColumnDef<RenglonWithAllRelations>[] = [
-  SELECT_COLUMN,
-  // {
-  //   accessorKey: 'id',
-  //   header: 'ID',
-  // },
   {
     accessorKey: 'nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Nombre" />,
-  },
-  {
-    accessorKey: 'descripcion',
-    header: ({ column }) => <HeaderCell column={column} value="Descripción" />,
-  },
-  {
-    accessorKey: 'imagen',
-    header: ({ column }) => <HeaderCell column={column} value="Imagen" />,
+    header: ({ column }) => <HeaderCell column={column} value="Renglón" />,
     cell: ({ row }) => {
+      const description = row.original?.descripcion
       const image = row.original.imagen
-
-      if (!image) return 'Sin imágen'
-
       return (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Image
-              src={row.original.imagen || ''}
-              alt={row.original.imagen || ''}
-              width={50}
-              height={50}
-            />
-          </AlertDialogTrigger>
-          <AlertDialogContent className="max-h-[90vh]">
-            <AlertDialogHeader>
-              <AlertDialogTitle>Imágen del Renglón</AlertDialogTitle>
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <div className="flex items-center">
+              {!image ? (
+                <Package className="w-12 h-8" />
+              ) : (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Image
+                      src={row.original.imagen || ''}
+                      alt={row.original.imagen || ''}
+                      width={50}
+                      height={50}
+                    />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="max-h-[90vh]">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Imágen del Renglón</AlertDialogTitle>
 
-              <Image
-                src={row.original.imagen || ''}
-                alt={row.original.imagen || ''}
-                width={500}
-                height={500}
-              />
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cerrar</AlertDialogCancel>
-              {/* <AlertDialogAction>Continue</AlertDialogAction> */}
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                      <Image
+                        src={row.original.imagen || ''}
+                        alt={row.original.imagen || ''}
+                        width={500}
+                        height={500}
+                      />
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cerrar</AlertDialogCancel>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              <Button variant="ghost" className="mr-4">
+                {row.getValue<string>('nombre')}
+              </Button>
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <p className="text-sm">{description}</p>
+          </HoverCardContent>
+        </HoverCard>
       )
     },
   },
+
   {
     id: 'stock',
     accessorFn: (row) => {
@@ -129,12 +102,43 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       }, 0)
     },
     header: ({ column }) => <HeaderCell column={column} value="Stock" />,
+    cell: ({ row }) => {
+      const minimumStock = row.original.stock_minimo
+      const maximumStock = row.original.stock_maximo
+      const stock = row.getValue<number>('stock')
+
+      return (
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <Button
+              variant={'link'}
+              className={cn(
+                'flex items-center',
+                stock < minimumStock ? 'text-red-500' : ''
+              )}
+            >
+              {stock < minimumStock ? (
+                <AlertCircle className="w-4 h-4 mr-2" />
+              ) : (
+                <div className="w-4 h-4 mr-2" />
+              )}
+
+              {stock}
+            </Button>
+          </HoverCardTrigger>
+          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+            <p className="text-sm">Stock Minimo: {minimumStock}</p>
+            <p className="text-sm">Stock Maximo: {maximumStock}</p>
+          </HoverCardContent>
+        </HoverCard>
+      )
+    },
   },
   {
     id: 'peso_total',
-    // accessorKey: 'peso_total',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
+
       const activeReceptions = row.recepciones.filter(
         (reception) => reception.recepcion.fecha_eliminacion === null
       )
@@ -147,27 +151,57 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
         ).length
         return total + serials
       }, 0)
-      return `${stock * Number(row.peso)} ${row.unidad_empaque.tipo_medida}`
+      return `${
+        stock * Number(row.peso)
+      } ${row.tipo_medida_unidad.toLowerCase()}`
     },
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Peso/Unidades Totales" />
-    ),
+    header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
   },
   {
     id: 'peso',
     accessorFn: (row) => {
       if (!row.peso) return 'Sin definir'
-      return `${row.peso || 0} ${row.unidad_empaque.abreviacion}`
+
+      return `${row.peso || 0} ${row.tipo_medida_unidad.toLowerCase()}`
     },
     header: ({ column }) => (
-      <HeaderCell column={column} value="Peso del Renglón" />
+      <HeaderCell column={column} value="Peso Unitario" />
     ),
+  },
 
-    // cell: ({ row }) => {
-    //   return (
-    //     <div>{`${row.original.peso} ${row.original.unidad_empaque.abreviacion}`}</div>
-    //   )
-    // },
+  {
+    id: 'clasificacion',
+    accessorFn: (row) => row.clasificacion.nombre,
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Clasificación" />
+    ),
+  },
+  {
+    id: 'categoria',
+    accessorFn: (row) => row.categoria.nombre,
+    header: ({ column }) => <HeaderCell column={column} value="Categoría" />,
+  },
+  {
+    accessorKey: 'tipo',
+    accessorFn: (row) => row.tipo || 'Sin definir',
+    header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
+  },
+  {
+    id: 'unidad_empaque',
+    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin empaque',
+    header: ({ column }) => <HeaderCell column={column} value="Empaque" />,
+  },
+  {
+    id: 'subsistema',
+    accessorFn: (row) => row.subsistema?.nombre || 'Sin subsistema',
+    header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
+  },
+
+  {
+    accessorKey: 'numero_parte',
+    header: ({ column }) => (
+      <HeaderCell column={column} value="Número de parte" />
+    ),
   },
   {
     id: 'ubicacion',
@@ -176,8 +210,10 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       const peldano = row.peldano
       const pasillo = row.pasillo
       const estante = row.estante
-
-      return `${referencia} - ${peldano} - ${pasillo} - ${estante}`
+      const almacen = row.almacen?.nombre
+      return `${referencia} - ${peldano} - ${pasillo} - ${estante} - ${
+        almacen || ''
+      }`
     },
 
     header: ({ column }) => {
@@ -198,14 +234,18 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
       const peldano = row.original.peldano || 'Sin definir'
       const pasillo = row.original.pasillo || 'Sin definir'
       const estante = row.original.estante || 'Sin definir'
+      const almacen = row.original.almacen?.nombre || 'Sin definir'
       return (
         <HoverCard>
           <HoverCardTrigger asChild>
-            <Button variant="link">Ver ubicación</Button>
+            <Button variant="link">
+              <MapPin className="w-4 h-4 mr-2" /> Ver ubicación
+            </Button>
           </HoverCardTrigger>
           <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
             <div className="space-y-1">
               <div>
+                <div className="text-sm font-semibold">Almacén: {almacen}</div>
                 <div className="text-sm font-semibold">Pasillo: {pasillo}</div>
                 <div className="text-sm font-semibold">Estante: {estante}</div>
                 <div className="text-sm font-semibold">Peldaño: {peldano}</div>
@@ -218,51 +258,6 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
         </HoverCard>
       )
     },
-  },
-  {
-    accessorKey: 'clasificacion.nombre',
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Clasificación" />
-    ),
-  },
-  {
-    accessorKey: 'categoria.nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Categoría" />,
-  },
-  {
-    accessorKey: 'tipo',
-    accessorFn: (row) => row.tipo || 'Sin definir',
-    header: ({ column }) => <HeaderCell column={column} value="Tipo" />,
-  },
-  {
-    id: 'unidad_empaque',
-    accessorFn: (row) => row.unidad_empaque?.nombre || 'Sin unidad de empaque',
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Unidad de empaque" />
-    ),
-  },
-  {
-    id: 'subsistema',
-    accessorFn: (row) => row.subsistema?.nombre || 'Sin subsistema',
-    header: ({ column }) => <HeaderCell column={column} value="Subsistema" />,
-  },
-  {
-    accessorKey: 'almacen.nombre',
-    header: ({ column }) => <HeaderCell column={column} value="Almacén" />,
-  },
-  {
-    accessorKey: 'numero_parte',
-    header: ({ column }) => (
-      <HeaderCell column={column} value="Número de parte" />
-    ),
-  },
-  {
-    accessorKey: 'stock_minimo',
-    header: ({ column }) => <HeaderCell column={column} value="Stock Mínimo" />,
-  },
-  {
-    accessorKey: 'stock_maximo',
-    header: ({ column }) => <HeaderCell column={column} value="Stock Máximo" />,
   },
   {
     id: 'seriales',
