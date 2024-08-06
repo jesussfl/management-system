@@ -1,5 +1,5 @@
 import PageForm from '@/modules/layout/components/page-form'
-import { getDispatchForExportGuide } from '../../../../../../../lib/actions/dispatch'
+import { getDispatchForExportGuide } from '@/lib/actions/dispatch'
 import FormatSelector from '@/modules/common/components/format-selector'
 
 export default async function Page({

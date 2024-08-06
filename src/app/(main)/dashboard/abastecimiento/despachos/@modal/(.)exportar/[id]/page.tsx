@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getDispatchForExportGuide } from '../../../../../../../../lib/actions/dispatch'
+import { getDispatchForExportGuide } from '@/lib/actions/dispatch'
 import FormatSelector from '@/modules/common/components/format-selector'
 
 export default async function Page({

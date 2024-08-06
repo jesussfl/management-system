@@ -28,7 +28,7 @@ import { NumericFormat } from 'react-number-format'
 import { getSerialsByItemEnabled } from '@/lib/actions/serials'
 import { Separator } from '@/modules/common/components/separator/separator'
 import { useToast } from '@/modules/common/components/toast/use-toast'
-import { SelectedSerial } from '@/app/(main)/dashboard/abastecimiento/recepciones/lib/types/types'
+import { SelectedSerial } from '@/lib/types/reception-types'
 
 export const SerialSelectorTrigger = () => {
   const { itemData, index: itemIndex, isEditing } = useSelectedItemCardContext()

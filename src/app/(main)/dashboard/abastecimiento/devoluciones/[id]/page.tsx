@@ -8,7 +8,7 @@ import {
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/lib/actions/item'
 import { buttonVariants } from '@/modules/common/components/button'
-import { ArrowLeft, IterationCcw, PackagePlus } from 'lucide-react'
+import { ArrowLeft, IterationCcw } from 'lucide-react'
 import Link from 'next/link'
 import { getReturnById } from '../../../../../../lib/actions/return'
 import ReturnsForm from '../../../components/forms/return-form/returns-form'
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Abastecimiento')
   const devolution = await getReturnById(Number(params.id))
   const receiver = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox(true)

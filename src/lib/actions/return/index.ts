@@ -8,7 +8,7 @@ import { validateUserPermissions } from '@/utils/helpers/validate-user-permissio
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { format } from 'date-fns'
-import { ReturnFormValues } from '../../../app/(main)/dashboard/abastecimiento/devoluciones/lib/types/types'
+import { ReturnFormValues } from '../../types/return-types'
 
 export const createReturn = async (
   data: ReturnFormValues,

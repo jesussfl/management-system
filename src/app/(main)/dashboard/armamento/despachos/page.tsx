@@ -19,7 +19,7 @@ import {
   CardHeader,
 } from '@/modules/common/components/card/card'
 import { Overview } from '@/modules/common/components/overview/overview'
-import { getAllDispatches } from '../../../../../lib/actions/dispatch'
+import { getAllDispatches } from '@/lib/actions/dispatch'
 
 export const metadata: Metadata = {
   title: 'Despachos',

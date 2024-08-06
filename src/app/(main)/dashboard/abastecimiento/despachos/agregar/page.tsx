@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/lib/actions/item'
-import { PackageMinus, PackagePlus } from 'lucide-react'
+import { PackageMinus } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
 import { getAllProfessionalsToCombobox } from '../../../profesionales/lib/actions/professionals'
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Abastecimiento')
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox(true)
   return (

@@ -20,7 +20,6 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { CardItemDispatch } from './card-item-dispatch'
 
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
-import { DispatchFormValues } from '../../../abastecimiento/despachos/lib/types/types'
 import { ItemsWithAllRelations } from '@/lib/actions/item'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
@@ -30,6 +29,7 @@ import { createDispatch, updateDispatch } from '@/lib/actions/dispatch'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
 import { itemSelectorColumns } from '../../columns/item-selector-columns'
+import { DispatchFormValues } from '@/lib/types/dispatch-types'
 
 type ComboboxData = {
   value: string

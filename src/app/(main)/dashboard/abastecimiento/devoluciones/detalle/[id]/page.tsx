@@ -1,6 +1,6 @@
 import PageForm from '@/modules/layout/components/page-form'
 
-import { getReturnById } from '../../../../../../../lib/actions/return'
+import { getReturnById } from '@/lib/actions/return'
 
 export default async function Page({
   params: { id },

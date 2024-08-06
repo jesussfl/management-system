@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import ReceptionsForm from '@/app/(main)/dashboard/components/forms/reception-form/receptions-form'
 import {
   HeaderLeftSide,
   PageContent,
@@ -8,7 +7,7 @@ import {
   PageHeaderTitle,
 } from '@/modules/layout/templates/page'
 import { getAllItems } from '@/lib/actions/item'
-import { IterationCcw, PackagePlus } from 'lucide-react'
+import { IterationCcw } from 'lucide-react'
 import { BackLinkButton } from '@/app/(auth)/components/back-button'
 import ReturnsForm from '../../../components/forms/return-form/returns-form'
 import { getAllReceiversToCombobox } from '../../destinatarios/lib/actions/receivers'
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const itemsData = await getAllItems(true)
+  const itemsData = await getAllItems(true, 'Abastecimiento')
   const receivers = await getAllReceiversToCombobox('Abastecimiento')
   const professionals = await getAllProfessionalsToCombobox(true)
   return (
