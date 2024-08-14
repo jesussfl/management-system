@@ -23,7 +23,7 @@ import { NumericFormat } from 'react-number-format'
 import { Combobox } from '@/modules/common/components/combobox'
 
 import { getAllWarehouses } from '@/app/(main)/dashboard/almacenes/lib/actions/warehouse'
-import usePackageInfo from '../../../../../../lib/hooks/use-package-info'
+import usePackageInfo from '@/lib/hooks/use-package-info'
 import { getAllSubsystems } from '@/lib/actions/subsystems'
 import { MEDIDAS } from '../packaging-units-form'
 
@@ -62,7 +62,7 @@ export const Step3 = ({
   }, [])
 
   return (
-    <div className="flex flex-col gap-8 mb-8">
+    <div className="mb-8 flex flex-col gap-8">
       <FormInstructions>
         <FormInstructionsTitle>
           Solo faltan algunos detalles adicionales
@@ -77,7 +77,7 @@ export const Step3 = ({
         name="id_almacen"
         rules={{ required: 'Este campo es requerido' }}
         render={({ field }) => (
-          <FormItem className="flex flex-col w-full ">
+          <FormItem className="flex w-full flex-col">
             <FormLabel>En qué almacen se encuentra:</FormLabel>
 
             <Combobox
@@ -100,7 +100,7 @@ export const Step3 = ({
         )}
       />
       <FormLabel>¿Este renglón pertenece a un subsistema?</FormLabel>
-      <div className="flex gap-4 items-center">
+      <div className="flex items-center gap-4">
         <FormDescription>No</FormDescription>
         <Switch
           checked={hasSubsystem}
@@ -121,7 +121,7 @@ export const Step3 = ({
             control={form.control}
             name="id_subsistema"
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <FormLabel>Subsistema:</FormLabel>
                 <Combobox
                   name={field.name}
@@ -330,7 +330,7 @@ export const Step3 = ({
       </div>
 
       {!isPackageForLiquids ? (
-        <div className="flex gap-4 items-start">
+        <div className="flex items-start gap-4">
           <FormField
             control={form.control}
             name="tipo_medida_unidad"
@@ -338,7 +338,7 @@ export const Step3 = ({
               required: 'Este campo es requerido',
             }}
             render={({ field }) => (
-              <FormItem className="flex-1 flex flex-col gap-2">
+              <FormItem className="flex flex-1 flex-col gap-2">
                 <FormLabel>Unidad de Medida</FormLabel>
 
                 <Combobox
@@ -369,7 +369,7 @@ export const Step3 = ({
                 <FormControl>
                   <div className="flex items-center gap-2">
                     <NumericFormat
-                      className="w-[100px] rounded-md border-1 border-border p-1.5 text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      className="border-1 w-[100px] rounded-md border-border bg-background p-1.5 text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       allowNegative={false}
                       thousandSeparator=""
                       decimalSeparator="."

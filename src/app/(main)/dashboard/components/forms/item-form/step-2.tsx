@@ -15,24 +15,17 @@ import { Combobox } from '@/modules/common/components/combobox'
 
 import { Loader2 } from 'lucide-react'
 
-import useItemCreationData from '../../../../../../lib/hooks/useItemCreationData'
+import useItemCreationData from '@/lib/hooks/useItemCreationData'
 import { Switch } from '@/modules/common/components/switch/switch'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export const Step2 = () => {
   const form = useFormContext()
   const { categories, classifications, packagingUnits } = useItemCreationData()
   const [hasPackagingUnit, setHasPackagingUnit] = useState(false)
-  const packageUnitId = form.watch('unidadEmpaqueId')
-  useEffect(() => {
-    if (packageUnitId) {
-      setHasPackagingUnit(true)
-    } else {
-      setHasPackagingUnit(false)
-    }
-  }, [packageUnitId])
+
   return (
-    <div className="flex flex-col gap-5 mb-8">
+    <div className="mb-8 flex flex-col gap-5">
       <FormInstructions>
         <FormInstructionsTitle>
           Mejora la búsqueda del renglón
@@ -50,7 +43,7 @@ export const Step2 = () => {
           required: 'Este campo es requerido',
         }}
         render={({ field }) => (
-          <FormItem className="flex flex-col w-full ">
+          <FormItem className="flex w-full flex-col">
             <FormLabel>Clasificación</FormLabel>
             <Combobox
               name={field.name}
@@ -72,10 +65,10 @@ export const Step2 = () => {
           }}
           render={({ field }) => {
             if (categories.isLoading)
-              return <Loader2 className="w-6 h-6 animate-spin" />
+              return <Loader2 className="h-6 w-6 animate-spin" />
 
             return (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <FormLabel>Categoría</FormLabel>
 
                 <Combobox
@@ -85,18 +78,7 @@ export const Step2 = () => {
                   field={field}
                   disabled={form.watch('clasificacionId') === undefined}
                 />
-                {/* <FormDescription>
-                  Si no encuentras la categoría que buscas, puedes crearla
-                  <Link
-                    href="/dashboard/abastecimiento/inventario/categoria"
-                    className={cn(
-                      buttonVariants({ variant: 'link' }),
-                      'h-[1px]'
-                    )}
-                  >
-                    Crear categoría
-                  </Link>
-                </FormDescription> */}
+
                 <FormMessage />
               </FormItem>
             )
@@ -107,7 +89,7 @@ export const Step2 = () => {
         <FormLabel>
           ¿Este renglón se recibe en alguna unidad de empaque?
         </FormLabel>
-        <div className="flex gap-4 items-center">
+        <div className="flex items-center gap-4">
           <FormDescription>No. Se recibe en unidades</FormDescription>
           <Switch
             checked={hasPackagingUnit}
@@ -116,7 +98,9 @@ export const Step2 = () => {
                 setHasPackagingUnit(true)
               } else {
                 setHasPackagingUnit(false)
-                form.resetField('unidadEmpaqueId')
+                form.setValue('unidadEmpaqueId', null, { shouldDirty: true })
+                form.setValue('peso', 0, { shouldDirty: true })
+                form.setValue('tipo_medida_unidad', null, { shouldDirty: true })
               }
             }}
           />
@@ -132,9 +116,9 @@ export const Step2 = () => {
           }}
           render={({ field }) => {
             if (packagingUnits.isLoading)
-              return <Loader2 className="w-6 h-6 animate-spin" />
+              return <Loader2 className="h-6 w-6 animate-spin" />
             return (
-              <FormItem className="flex flex-col w-full">
+              <FormItem className="flex w-full flex-col">
                 <FormLabel>Seleccione la unidad de empaque</FormLabel>
                 <Combobox
                   name={field.name}

@@ -12,12 +12,12 @@ import { buttonVariants } from '@/modules/common/components/button'
 import ChangeAdminPasswordForm from './change-password-form'
 export default function Page() {
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
-      <Card className="flex flex-col  shadow-md overflow-y-auto">
+    <div className="flex h-screen flex-col items-center justify-center">
+      <Card className="flex flex-col overflow-y-auto shadow-md">
         <CardHeader>
           <CardTitle>Cambiar Contraseña de Administrador</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-1 gap-8 justify-between">
+        <CardContent className="flex flex-1 justify-between gap-8">
           <ChangeAdminPasswordForm />
         </CardContent>
         <CardFooter>
