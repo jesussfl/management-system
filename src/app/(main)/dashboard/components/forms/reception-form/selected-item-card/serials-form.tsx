@@ -16,7 +16,7 @@ import {
 } from '@/modules/common/components/card/card'
 import { Switch } from '@/modules/common/components/switch/switch'
 import { nanoid } from 'nanoid'
-import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 import ModalForm from '@/modules/common/components/modal-form'
 import { useState } from 'react'
 import { Eye, Plus } from 'lucide-react'
@@ -30,7 +30,7 @@ import {
 } from '@/modules/common/components/select/select'
 import { useToast } from '@/modules/common/components/toast/use-toast'
 export function SerialsForm() {
-  const { index: itemIndex, itemData } = useSelectedItemCardContext()
+  const { index: itemIndex, itemData } = useItemCardContext()
   const { control, watch, setValue, formState, clearErrors } = useFormContext()
   const quantity = watch(`renglones.${itemIndex}.cantidad`)
   const itemId = itemData.id
@@ -38,7 +38,7 @@ export function SerialsForm() {
     `renglones.${itemIndex}.seriales_automaticos`
   )
   return (
-    <div className="flex flex-col gap-0 p-8 overflow-y-auto">
+    <div className="flex flex-col gap-0 overflow-y-auto p-8">
       <CardHeader className="flex items-center justify-between gap-4">
         <CardTitle>Seriales</CardTitle>
         <CardDescription>Ingresa los seriales de la recepción</CardDescription>
@@ -47,7 +47,7 @@ export function SerialsForm() {
           name={`renglones.${itemIndex}.seriales_automaticos`}
           render={({ field }) => {
             return (
-              <FormItem className="flex flex-row justify-center items-center gap-4">
+              <FormItem className="flex flex-row items-center justify-center gap-4">
                 <FormControl>
                   <Switch
                     checked={field.value}
@@ -77,14 +77,14 @@ export function SerialsForm() {
       {Array.from({ length: quantity }).map((_, index) => (
         <div
           key={`renglon-${itemIndex}-serial-${index}`}
-          className="flex flex-row gap-8 mb-4"
+          className="mb-4 flex flex-row gap-8"
         >
           <FormField
             control={control}
             name={`renglones.${itemIndex}.seriales.${index}`}
             rules={{ required: 'El serial es requerido' }}
             render={({ field }) => (
-              <FormItem className="flex-1 ">
+              <FormItem className="flex-1">
                 <FormLabel>Serial #{index + 1}</FormLabel>
                 <FormControl>
                   <Input
@@ -134,7 +134,7 @@ export function SerialsForm() {
             name={`renglones.${itemIndex}.seriales.${index}.condicion`}
             rules={{ required: true }}
             render={({ field }) => (
-              <FormItem className="flex-1 ">
+              <FormItem className="flex-1">
                 <FormLabel>Condición</FormLabel>
                 <Select
                   onValueChange={field.onChange}
@@ -181,7 +181,7 @@ export const SerialsFormTrigger = () => {
     setItemsWithoutSerials,
     index: itemIndex,
     isEditing,
-  } = useSelectedItemCardContext()
+  } = useItemCardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const registeredSerials: number =
     watch(`renglones.${itemIndex}.seriales`)?.length || 0
@@ -212,7 +212,7 @@ export const SerialsFormTrigger = () => {
         <>
           <SerialsForm />
           <Button
-            className="w-[200px] sticky bottom-8 left-8"
+            className="sticky bottom-8 left-8 w-[200px]"
             variant={'default'}
             onClick={() => {
               if (isError) {

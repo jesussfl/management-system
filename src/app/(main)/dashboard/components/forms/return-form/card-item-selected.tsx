@@ -16,12 +16,12 @@ import { SerialsFormNew } from './serials-form'
 import { Input } from '@/modules/common/components/input/input'
 import { Button } from '@/modules/common/components/button'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
-import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 
 export const SelectedItemCard = () => {
   const { watch, control } = useFormContext()
   const { itemData, isError, isEditing, index, setItemsWithoutSerials } =
-    useSelectedItemCardContext()
+    useItemCardContext()
   const serialsLength = watch(`renglones.${index}.seriales`).length
   const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
@@ -39,7 +39,7 @@ export const SelectedItemCard = () => {
       className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}
     >
       <SelectedItemCardHeader />
-      <CardContent className="flex flex-col flex-1 justify-start gap-4">
+      <CardContent className="flex flex-1 flex-col justify-start gap-4">
         <FormField
           control={control}
           name={`renglones.${index}.observacion`}
@@ -51,10 +51,10 @@ export const SelectedItemCard = () => {
             },
           }}
           render={({ field }) => (
-            <FormItem className="flex flex-col flex-1 gap-2">
+            <FormItem className="flex flex-1 flex-col gap-2">
               <FormLabel className="w-[12rem]">{`Observación:`}</FormLabel>
 
-              <div className="flex-1 w-full">
+              <div className="w-full flex-1">
                 <FormControl>
                   <Input type="text" {...field} />
                 </FormControl>
@@ -90,7 +90,7 @@ export const SelectedItemCard = () => {
               isEditEnabled={isEditing}
             />
             <Button
-              className="w-[200px] sticky bottom-8 left-8"
+              className="sticky bottom-8 left-8 w-[200px]"
               variant={'default'}
               onClick={() => setIsModalOpen(false)}
             >

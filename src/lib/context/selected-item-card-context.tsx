@@ -8,6 +8,7 @@ interface SelectedItemCardContextProps {
   isError: string | boolean
   itemData: Renglon
   section: 'Abastecimiento' | 'Armamento'
+  isPackageForLiquids?: boolean
   removeCard: () => void
   setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
 }
@@ -31,6 +32,9 @@ export const SelectedItemCardProvider: React.FC<
   removeCard,
   setItemsWithoutSerials,
 }) => {
+  const isPackageForLiquids =
+    itemData.unidad_empaque?.tipo_medida === 'LITROS' ||
+    itemData.unidad_empaque?.tipo_medida === 'MILILITROS'
   return (
     <SelectedItemCardContext.Provider
       value={{
@@ -39,6 +43,7 @@ export const SelectedItemCardProvider: React.FC<
         isError,
         section,
         itemData,
+        isPackageForLiquids,
         removeCard,
         setItemsWithoutSerials,
       }}
@@ -49,7 +54,7 @@ export const SelectedItemCardProvider: React.FC<
 }
 
 // Hook personalizado para usar el contexto
-export const useSelectedItemCardContext = () => {
+export const useItemCardContext = () => {
   const context = useContext(SelectedItemCardContext)
   if (context === undefined) {
     throw new Error('useCardContext must be used within a CardProvider')

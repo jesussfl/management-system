@@ -17,14 +17,14 @@ import DatePicker, { registerLocale } from 'react-datepicker'
 import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
-import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialsFormTrigger } from './serials-form'
 import { Combobox } from '@/modules/common/components/combobox'
 import { NumericFormat } from 'react-number-format'
 export const ReceptionFieldsByQuantity = ({}: {}) => {
   const { control, setValue, watch, ...form } = useFormContext()
   const [pedidos, setPedidos] = useState<ComboboxData[]>([])
-  const { itemData, index, isEditing, section } = useSelectedItemCardContext()
+  const { itemData, index, isEditing, section } = useItemCardContext()
   const itemId = itemData.id
   const packageName = itemData.unidad_empaque?.nombre
 
@@ -56,13 +56,13 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
           },
         }}
         render={({ field: { value, onChange, ref, ...field } }) => (
-          <FormItem className="flex flex-1 justify-between items-center gap-2">
+          <FormItem className="flex flex-1 items-center justify-between gap-2">
             <FormLabel className="w-[12rem]">Cantidad recibida:</FormLabel>
 
-            <div className="flex flex-col w-[150px]">
+            <div className="flex w-[150px] flex-col">
               <FormControl>
                 <NumericFormat
-                  className="rounded-md border-1 border-border text-foreground bg-background  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...field}
                   allowNegative={false}
                   thousandSeparator=""
@@ -85,16 +85,16 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
         control={control}
         name={`renglones.${index}.precio`}
         render={({ field: { value, onChange, ref, ...field } }) => (
-          <FormItem className="items-center flex flex-1 justify-between gap-2">
+          <FormItem className="flex flex-1 items-center justify-between gap-2">
             <FormLabel className="w-[12rem]">
               Precio en Bs.
               <p className="text-sm text-gray-500">(opcional):</p>
             </FormLabel>
 
-            <div className="flex flex-col w-[150px]">
+            <div className="flex w-[150px] flex-col">
               <FormControl>
                 <NumericFormat
-                  className="rounded-md border-1 border-border text-foreground bg-background  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   {...field}
                   allowNegative={false}
                   thousandSeparator=""
@@ -116,12 +116,12 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
         control={control}
         name={`renglones.${index}.codigo_solicitud`}
         render={({ field }) => (
-          <FormItem className="flex justify-between items-center">
+          <FormItem className="flex items-center justify-between">
             <FormLabel className="w-[12rem]">
               Código de Solicitud:
               <p className="text-sm text-gray-500">(opcional):</p>
             </FormLabel>
-            <div className="flex justify-end flex-1 w-full">
+            <div className="flex w-full flex-1 justify-end">
               <Combobox
                 name={field.name}
                 form={{ ...form, control, setValue }}
@@ -151,12 +151,12 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
           },
         }}
         render={({ field }) => (
-          <FormItem className="items-center flex flex-1 justify-between gap-2">
+          <FormItem className="flex flex-1 items-center justify-between gap-2">
             <FormLabel className="w-[12rem] leading-5">
               Fecha de fabricación
               <p className="text-sm text-gray-500">(opcional):</p>
             </FormLabel>
-            <div className="flex justify-end flex-1">
+            <div className="flex flex-1 justify-end">
               <DatePicker
                 placeholderText="Seleccionar fecha"
                 onChange={(date) => field.onChange(date)}
@@ -168,7 +168,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                 dropdownMode="select"
                 dateFormat="d MMMM, yyyy"
                 maxDate={new Date()}
-                className="w-[150px] rounded-md border-1 border-border text-foreground bg-background   placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="border-1 w-[150px] rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
 
               <FormMessage />
@@ -186,12 +186,12 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
           },
         }}
         render={({ field }) => (
-          <FormItem className=" items-center flex  justify-between gap-2">
+          <FormItem className="flex items-center justify-between gap-2">
             <FormLabel className="w-[12rem] leading-5">
               Fecha de vencimiento
               <p className="text-sm text-gray-500">(opcional):</p>
             </FormLabel>
-            <div className="flex justify-end flex-1">
+            <div className="flex flex-1 justify-end">
               <DatePicker
                 placeholderText="Seleccionar fecha"
                 onChange={(date) => field.onChange(date)}
@@ -203,7 +203,7 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
                 dropdownMode="select"
                 dateFormat="d MMMM, yyyy"
                 minDate={watch(`renglones.${index}.fecha_fabricacion`)}
-                className="w-[150px] rounded-md border-1 border-border text-foreground bg-background  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="border-1 w-[150px] rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
 
               <FormMessage />
@@ -215,13 +215,13 @@ export const ReceptionFieldsByQuantity = ({}: {}) => {
         control={control}
         name={`renglones.${index}.fabricante`}
         render={({ field }) => (
-          <FormItem className="items-center flex flex-1 justify-between gap-2">
+          <FormItem className="flex flex-1 items-center justify-between gap-2">
             <FormLabel className="w-[12rem]">
               Fabricante
               <p className="text-sm text-gray-500">(opcional):</p>
             </FormLabel>
 
-            <div className="flex-1 w-full">
+            <div className="w-full flex-1">
               <FormControl>
                 <Input
                   type="text"

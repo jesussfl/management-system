@@ -20,7 +20,7 @@ import ModalForm from '@/modules/common/components/modal-form'
 import { useCallback, useEffect, useState, useTransition } from 'react'
 import { Loader2, MousePointerClickIcon } from 'lucide-react'
 import { Button } from '@/modules/common/components/button'
-import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 import { SerialWithRenglon } from '@/types/types'
 import { DataTable } from '@/modules/common/components/table/data-table'
 import { serialSelectorColumns } from '../../../columns/serial-selector-columns'
@@ -31,7 +31,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { SelectedSerial } from '@/lib/types/reception-types'
 
 export const SerialSelectorTrigger = () => {
-  const { itemData, index: itemIndex, isEditing } = useSelectedItemCardContext()
+  const { itemData, index: itemIndex, isEditing } = useItemCardContext()
   const [isPending, startTransition] = useTransition()
   const { watch, ...form } = useFormContext()
   const { toast } = useToast()
@@ -54,16 +54,16 @@ export const SerialSelectorTrigger = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-foreground font-semibold">
+      <p className="text-sm font-semibold text-foreground">
         Seleccionados: {selectedSerials?.length}
       </p>
       {selectedSerials?.map((serial, index) => (
         <div key={serial.id} className="flex flex-col gap-2">
-          <div className="flex flex-row justify-between gap-1 flex-1">
-            <p className="text-sm text-foreground font-semibold">
+          <div className="flex flex-1 flex-row justify-between gap-1">
+            <p className="text-sm font-semibold text-foreground">
               Serial: {serial.serial}
             </p>
-            <p className="text-sm text-foreground font-semibold">
+            <p className="text-sm font-semibold text-foreground">
               Peso agregado: {serial.peso_recibido}{' '}
               {itemData.unidad_empaque?.tipo_medida}
             </p>
@@ -83,7 +83,7 @@ export const SerialSelectorTrigger = () => {
           customToogleModal={toogleModal}
         >
           <div className="p-24">
-            <p className="text-xl text-foreground font-semibold">
+            <p className="text-xl font-semibold text-foreground">
               Selecciona los seriales de {itemData.nombre}
             </p>
             <p className="text-sm text-foreground">
@@ -100,7 +100,7 @@ export const SerialSelectorTrigger = () => {
             )}
 
             <Button
-              className="w-[200px] sticky bottom-8 left-8"
+              className="sticky bottom-8 left-8 w-[200px]"
               variant={'default'}
               onClick={() => {
                 const isSomeFieldEmpty = selectedSerials.some(
@@ -147,7 +147,7 @@ export const SerialSelector = ({
 }) => {
   const { control, setValue, ...form } = useFormContext()
 
-  const { itemData, index: itemIndex } = useSelectedItemCardContext()
+  const { itemData, index: itemIndex } = useItemCardContext()
   const [isLoading, setIsLoading] = useState(false)
   const [displaySerials, setDisplaySerials] =
     useState<SelectedSerial[]>(selectedSerials)
@@ -198,7 +198,7 @@ export const SerialSelector = ({
   }, [isLoading, selectedSerials])
 
   return (
-    <div className="flex gap-12 ">
+    <div className="flex gap-12">
       <div className="max-h-[600px] flex-1 overflow-x-auto">
         <DataTable
           columns={serialSelectorColumns}
@@ -220,7 +220,7 @@ export const SerialSelector = ({
         />
       </div>
 
-      <div className="grid xl:grid-cols-2 gap-4 flex-1 mb-8">
+      <div className="mb-8 grid flex-1 gap-4 xl:grid-cols-2">
         {isTimerActive ? (
           <Loader2 className="h-8 w-8 animate-spin" />
         ) : (
@@ -249,7 +249,7 @@ export const SerialSelector = ({
                   }}
                   render={({ field: { value, onChange, ref, ...field } }) => {
                     return (
-                      <FormItem className="flex flex-col rounded-lg border p-3 shadow-sm mb-4">
+                      <FormItem className="mb-4 flex flex-col rounded-lg border p-3 shadow-sm">
                         <div className="space-y-0.5">
                           <FormLabel className="text-sm text-foreground">
                             Peso a registrar
@@ -262,7 +262,7 @@ export const SerialSelector = ({
                         </div>
                         <FormControl>
                           <NumericFormat
-                            className="rounded-md border-1 border-border text-foreground bg-background  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             {...field}
                             allowNegative={false}
                             thousandSeparator=""

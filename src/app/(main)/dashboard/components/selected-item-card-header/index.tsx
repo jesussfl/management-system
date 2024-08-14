@@ -19,16 +19,15 @@ import {
   AlertDialogTrigger,
 } from '@/modules/common/components/alert-dialog'
 import { AlertDialogImage } from '@/modules/common/components/alert-dialog/alert-dialog-image'
-import { useSelectedItemCardContext } from '../../../../../lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 
 export const SelectedItemCardHeader = () => {
-  const { itemData, removeCard, isEditing } = useSelectedItemCardContext()
-  const description = `Descripción: ${itemData?.descripcion} `
+  const { itemData, removeCard, isEditing } = useItemCardContext()
   return (
     <CardHeader className="flex flex-row items-center justify-between">
       <div className="flex items-center gap-4">
         {!itemData.imagen ? (
-          <Package className="w-12 h-8" />
+          <Package className="h-8 w-12" />
         ) : (
           <AlertDialogImage imageUrl={itemData.imagen} />
         )}
@@ -36,14 +35,14 @@ export const SelectedItemCardHeader = () => {
           <CardTitle className="text-md font-medium text-foreground">
             {itemData.nombre}
           </CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardDescription>{itemData?.descripcion}</CardDescription>
         </div>
       </div>
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="outline" size="sm" disabled={isEditing}>
-            <Trash className="h-5 w-5 text-red-800 cursor-pointer" />
+            <Trash className="h-5 w-5 cursor-pointer text-red-800" />
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent className="max-h-[90vh]">

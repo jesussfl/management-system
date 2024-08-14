@@ -51,7 +51,7 @@ export const createRol = async (data: CreateRolesWithPermissions) => {
         : undefined,
     },
   })
-  revalidatePath('/dashboard/abastecimiento/usuarios')
+  revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
     'CREAR',
     `Se creó un nuevo rol con el siguiente nombre: ${rol}`
@@ -80,21 +80,25 @@ export const updateRol = async (
         deleteMany: {},
         create: data.permisos.map((permiso) => {
           return {
-            permiso_key: permiso,
+            permiso: {
+              connectOrCreate: {
+                where: {
+                  key: permiso,
+                },
+                create: {
+                  permiso: permiso,
+                  descripcion: 'Permiso creado por: ' + session.user.name,
+                  key: permiso,
+                },
+              },
+            },
           }
         }),
       },
     },
   })
 
-  // if user has the same rol update the session
-
-  // if (session?.user.rol.rol === data.rol) {
-  //   update({ user: { ...session.user, rol: data } }).catch(console.error)
-  //   console.log('updated session', data.permisos)
-  // }
-
-  revalidatePath('/dashboard/abastecimiento/usuarios')
+  revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
     'ACTUALIZAR',
     `Se editó el rol con el siguiente nombre: ${rol.rol}`
@@ -117,7 +121,7 @@ export const deleteRol = async (id: number) => {
     },
   })
 
-  revalidatePath('/dashboard/abastecimiento/usuarios')
+  revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
     'ELIMINAR',
     `Se eliminó el rol con el siguiente nombre: ${rol.rol}`
@@ -143,7 +147,7 @@ export const recoverRol = async (id: number) => {
     },
   })
 
-  revalidatePath('/dashboard/abastecimiento/usuarios')
+  revalidatePath('/dashboard/usuarios')
   await registerAuditAction(
     'RECUPERAR',
     `Se recuperó el rol con el siguiente nombre: ${rol.rol}`

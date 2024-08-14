@@ -12,18 +12,18 @@ import {
 
 import { Card, CardContent } from '@/modules/common/components/card/card'
 import { SelectedItemCardHeader } from '../../selected-item-card-header'
-import { useSelectedItemCardContext } from '@/lib/context/selected-item-card-context'
+import { useItemCardContext } from '@/lib/context/selected-item-card-context'
 
 export const CardItemOrder = ({}: {}) => {
   const { control } = useFormContext()
-  const { itemData, isError, index } = useSelectedItemCardContext()
+  const { itemData, isError, index } = useItemCardContext()
   return (
     <Card
       key={itemData.id}
       className={`flex flex-col gap-4 ${isError ? 'border-red-400' : ''}`}
     >
       <SelectedItemCardHeader />
-      <CardContent className="flex flex-col flex-1 justify-end">
+      <CardContent className="flex flex-1 flex-col justify-end">
         <FormField
           control={control}
           name={`renglones.${index}.cantidad`}
@@ -39,12 +39,12 @@ export const CardItemOrder = ({}: {}) => {
             },
           }}
           render={({ field }) => (
-            <FormItem className="items-center flex flex-1 justify-between gap-2">
+            <FormItem className="flex flex-1 items-center justify-between gap-2">
               <FormLabel className="w-[12rem]">Cantidad:</FormLabel>
 
-              <div className="flex-1 w-full">
+              <div className="w-full flex-1">
                 <FormControl>
-                  <div className="flex flex-row gap-2 items-center">
+                  <div className="flex flex-row items-center gap-2">
                     <Input
                       type="number"
                       {...field}
@@ -52,7 +52,7 @@ export const CardItemOrder = ({}: {}) => {
                         field.onChange(parseInt(event.target.value))
                       }}
                     />
-                    <p className="text-foreground text-sm">
+                    <p className="text-sm text-foreground">
                       {`${
                         itemData.unidad_empaque?.nombre
                           ? itemData.unidad_empaque?.nombre + '(s)'
@@ -77,10 +77,10 @@ export const CardItemOrder = ({}: {}) => {
             },
           }}
           render={({ field }) => (
-            <FormItem className="flex flex-col flex-1 gap-2">
+            <FormItem className="flex flex-1 flex-col gap-2">
               <FormLabel className="w-[12rem]">{`Observación (opcional):`}</FormLabel>
 
-              <div className="flex-1 w-full">
+              <div className="w-full flex-1">
                 <FormControl>
                   <Input type="text" {...field} />
                 </FormControl>

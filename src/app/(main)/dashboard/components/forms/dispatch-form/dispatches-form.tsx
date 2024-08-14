@@ -148,7 +148,7 @@ export default function DispatchesForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" space-y-10 mb-[8rem] "
+        className="mb-[8rem] space-y-10"
       >
         <Card>
           <CardHeader>
@@ -183,7 +183,7 @@ export default function DispatchesForm({
             />
             <Separator />
 
-            <div className="flex flex-1 flex-row gap-8 items-center justify-between">
+            <div className="flex flex-1 flex-row items-center justify-between gap-8">
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han despachado
               </FormDescription>
@@ -212,44 +212,8 @@ export default function DispatchesForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 {selectedRowsData.map((item, index) => {
-                  // console.log('item', item, item.devoluciones, item.despachos)
-                  // const enabledReceptions = item.recepciones.filter(
-                  //   (reception) =>
-                  //     reception.recepcion.fecha_eliminacion === null
-                  // )
-                  // const receptions = enabledReceptions.reduce(
-                  //   (total, item) => total + item.cantidad,
-                  //   0
-                  // )
-
-                  // const enabledDispatches = item.despachos.filter(
-                  //   (dispatch) => dispatch.despacho.fecha_eliminacion === null
-                  // )
-
-                  // const dispatchedSerials = enabledDispatches.reduce(
-                  //   (total, item) => total + item.seriales.length,
-                  //   0
-                  // )
-
-                  // const enabledReturns = item.devoluciones.filter(
-                  //   (returnItem) =>
-                  //     returnItem.devolucion.fecha_eliminacion === null
-                  // )
-                  // const returnedSerials = enabledReturns.reduce(
-                  //   (total, item) => total + item.seriales.length,
-                  //   0
-                  // )
-                  // const currentDispatch = item.despachos.find((item) => {
-                  //   return item.id_despacho === id
-                  // })
-                  // const totalStock = isEditEnabled
-                  //   ? receptions -
-                  //     dispatchedSerials +
-                  //     (currentDispatch?.seriales.length ?? 0) +
-                  //     returnedSerials
-                  //   : receptions - dispatchedSerials + returnedSerials
                   const isEmpty = item.stock_actual <= 0
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
@@ -263,7 +227,7 @@ export default function DispatchesForm({
                       isEditing={isEditEnabled}
                       section={servicio}
                     >
-                      <CardItemDispatch dispatchId={id} />
+                      <CardItemDispatch />
                     </SelectedItemCardProvider>
                   )
                 })}
@@ -271,7 +235,7 @@ export default function DispatchesForm({
             </CardContent>
           </Card>
         )}
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-4 pt-4">
           {isEditEnabled && (
             <p className="text-sm text-foreground">
               Algunos campos están deshabilitados para la edición
