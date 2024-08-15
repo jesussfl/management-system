@@ -215,7 +215,7 @@ export const SerialsFormTrigger = () => {
             className="sticky bottom-8 left-8 w-[200px]"
             variant={'default'}
             onClick={() => {
-              if (isError) {
+              if (isError && setItemsWithoutSerials) {
                 setItemsWithoutSerials((prev) => {
                   return prev.filter((id) => id !== itemData.id)
                 })

@@ -346,8 +346,8 @@ model Serial {
   peso_actual Float?  @default(0)
 
   id_renglon    Int
-  id_despacho   Int?
   id_recepcion  Int
+  id_despacho   Int?
   id_devolucion Int?
 
   renglon    Renglon                 @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -359,6 +359,7 @@ model Serial {
   ultima_actualizacion DateTime               @updatedAt
   fecha_eliminacion    DateTime?
   recepciones_Seriales Recepciones_Seriales[]
+  despachos_Seriales   Despachos_Seriales[]
 }
 
 model Devolucion {
@@ -418,17 +419,35 @@ model Despacho {
 model Despachos_Renglones {
   id Int @id @default(autoincrement())
 
-  id_renglon           Int
-  renglon              Renglon   @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  id_despacho          Int
-  despacho             Despacho  @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  seriales             Serial[]
-  observacion          String?   @default("s/o")
-  manualSelection      Boolean
-  cantidad             Int
+  id_renglon  Int
+  id_despacho Int
+
+  observacion String? @default("s/o")
+
+  manualSelection      Boolean @default(false)
+  es_despacho_liquidos Boolean @default(false)
+
+  cantidad Int
+
+  renglon  Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  despacho Despacho @relation(fields: [id_despacho], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  seriales           Serial[]
+  despachos_Seriales Despachos_Seriales[]
+
   fecha_creacion       DateTime  @default(now())
   ultima_actualizacion DateTime  @updatedAt
   fecha_eliminacion    DateTime?
+}
+
+model Despachos_Seriales {
+  id                   Int                 @id @default(autoincrement())
+  id_serial            Int
+  serial               Serial              @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_despacho Int
+  detalles_despacho    Despachos_Renglones @relation(fields: [id_detalles_despacho], references: [id])
+  peso_despachado      Float
+  fecha_creacion       DateTime            @default(now())
 }
 
 model Pedidos_Renglones {

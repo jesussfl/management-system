@@ -8,7 +8,10 @@ import { validateUserPermissions } from '@/utils/helpers/validate-user-permissio
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
-import { DispatchFormValues } from '@/lib/types/dispatch-types'
+import {
+  DispatchFormValues,
+  SelectedSerialForDispatch,
+} from '@/lib/types/dispatch-types'
 
 export const createDispatch = async (
   data: DispatchFormValues,
@@ -68,22 +71,28 @@ export const createDispatch = async (
   }
 
   const items = data.renglones
-  const serials: { id_renglon: number; serial: string }[] = []
+  const serials: SelectedSerialForDispatch[] = []
   for (const item of items) {
     console.log(item)
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
-        serial,
+        serial: serial.serial,
+        id: 0,
+        peso_despachado: 0,
+        peso_actual: 0,
       }))
       serials.push(...serialsByItem)
+
       continue
     }
     const serialsByItem = await prisma.serial.findMany({
       where: {
         id_renglon: item.id_renglon,
         AND: {
-          estado: 'Disponible',
+          estado: {
+            in: ['Disponible', 'Devuelto'],
+          },
         },
       },
       select: {
@@ -108,7 +117,15 @@ export const createDispatch = async (
       }
     }
 
-    serials.push(...serialsByItem)
+    serials.push(
+      ...serialsByItem.map((serial) => ({
+        id_renglon: item.id_renglon,
+        serial: serial.serial,
+        id: 0,
+        peso_despachado: 0,
+        peso_actual: 0,
+      }))
+    )
   }
   await prisma.$transaction(async (prisma) => {
     const dispatch = await prisma.despacho.create({
@@ -124,16 +141,29 @@ export const createDispatch = async (
         renglones: {
           create: renglones.map((renglon) => ({
             manualSelection: renglon.manualSelection,
+            es_despacho_liquidos: renglon.es_despacho_liquidos,
             observacion: renglon.observacion,
             id_renglon: renglon.id_renglon,
             cantidad: serials.filter(
               (serial) => serial.id_renglon === renglon.id_renglon
             ).length,
-            seriales: {
-              connect: serials
-                .filter((serial) => serial.id_renglon === renglon.id_renglon)
-                .map((serial) => ({ serial: serial.serial })),
-            },
+            despachos_Seriales: renglon.es_despacho_liquidos
+              ? {
+                  create: renglon.seriales.map((serial) => ({
+                    peso_despachado: serial.peso_despachado,
+                    serial: { connect: { serial: serial.serial } },
+                  })),
+                }
+              : undefined,
+            seriales: renglon.es_despacho_liquidos
+              ? undefined
+              : {
+                  connect: serials
+                    .filter(
+                      (serial) => serial.id_renglon === renglon.id_renglon
+                    )
+                    .map((serial) => ({ serial: serial.serial })),
+                },
           })),
         },
       },
@@ -151,7 +181,24 @@ export const createDispatch = async (
     })
 
     const dispatchedItems = data.renglones
+    dispatchedItems.forEach(async (item) => {
+      if (!item.es_despacho_liquidos) return
 
+      const serials = item.seriales
+
+      serials.forEach(async (serial) => {
+        await prisma.serial.update({
+          where: {
+            id: serial.id as number,
+          },
+          data: {
+            peso_actual: {
+              decrement: serial.peso_despachado as number,
+            },
+          },
+        })
+      })
+    })
     dispatchedItems.forEach(async (item) => {
       await prisma.renglon.update({
         where: {
@@ -252,31 +299,17 @@ export const updateDispatch = async (
   }
 
   const items = data.renglones
-  const currentDispatch = await prisma.despacho.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      renglones: {
-        include: {
-          seriales: true,
-        },
-      },
-    },
-  })
-  const currentDispatchedSerials = currentDispatch?.renglones
-    .flatMap((renglon) => renglon.seriales)
-    .map((serial) => ({
-      id_renglon: serial.id_renglon,
-      serial: serial.serial,
-    }))
-  const serials: { id_renglon: number; serial: string }[] = []
+
+  const serials: SelectedSerialForDispatch[] = []
   for (const item of items) {
     console.log(item)
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
-        serial,
+        serial: serial.serial,
+        id: 0,
+        peso_despachado: 0,
+        peso_actual: 0,
       }))
       serials.push(...serialsByItem)
       continue
@@ -312,7 +345,15 @@ export const updateDispatch = async (
       }
     }
 
-    serials.push(...serialsByItem)
+    serials.push(
+      ...serialsByItem.map((serial) => ({
+        id_renglon: item.id_renglon,
+        serial: serial.serial,
+        id: 0,
+        peso_despachado: 0,
+        peso_actual: 0,
+      }))
+    )
   }
 
   renglones.forEach((renglon) => {
@@ -332,44 +373,6 @@ export const updateDispatch = async (
       motivo,
       fecha_despacho,
       motivo_fecha: data.motivo_fecha || null,
-      renglones: {
-        deleteMany: {},
-        create: renglones.map((renglon) => ({
-          manualSelection: renglon.manualSelection,
-          observacion: renglon.observacion,
-          id_renglon: renglon.id_renglon,
-          cantidad: serials.filter(
-            (serial) => serial.id_renglon === renglon.id_renglon
-          ).length,
-          seriales: {
-            connect: serials
-              .filter((serial) => serial.id_renglon === renglon.id_renglon)
-              .map((serial) => ({ serial: serial.serial })),
-          },
-        })),
-      },
-    },
-  })
-
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: currentDispatchedSerials?.map((serial) => serial.serial),
-      },
-    },
-    data: {
-      estado: 'Disponible',
-    },
-  })
-
-  await prisma.serial.updateMany({
-    where: {
-      serial: {
-        in: serials.map((serial) => serial.serial),
-      },
-    },
-    data: {
-      estado: 'Despachado',
     },
   })
 
@@ -686,6 +689,11 @@ export const getDispatchById = async (id: number) => {
       },
       renglones: {
         include: {
+          despachos_Seriales: {
+            include: {
+              serial: true,
+            },
+          },
           renglon: {
             include: {
               unidad_empaque: true,
@@ -701,6 +709,9 @@ export const getDispatchById = async (id: number) => {
           seriales: {
             select: {
               serial: true,
+              id_renglon: true,
+              condicion: true,
+              peso_actual: true,
             },
           },
         },
@@ -717,7 +728,27 @@ export const getDispatchById = async (id: number) => {
 
     renglones: dispatch.renglones.map((renglon) => ({
       ...renglon,
-      seriales: renglon.seriales.map((serial) => serial.serial),
+      seriales: renglon.es_despacho_liquidos
+        ? renglon.despachos_Seriales.map((serial) => {
+            return {
+              id: serial.serial.id,
+              peso_despachado: serial.peso_despachado,
+              serial: serial.serial.serial,
+              id_renglon: renglon.id_renglon,
+              peso_actual:
+                renglon.seriales.find((s) => s.serial === serial.serial.serial)
+                  ?.peso_actual || 0,
+            }
+          })
+        : renglon.seriales.map((serial) => {
+            return {
+              id: 0,
+              peso_despachado: 0,
+              serial: serial.serial,
+              id_renglon: renglon.id_renglon,
+              peso_actual: 0,
+            }
+          }),
     })),
   }
 }
@@ -727,66 +758,7 @@ export const getDispatchForExportGuide = async (id: number) => {
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const dispatchData = await prisma.despacho.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      destinatario: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      supervisor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      abastecedor: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      autorizador: {
-        include: {
-          grado: true,
-          categoria: true,
-          componente: true,
-          unidad: true,
-        },
-      },
-      renglones: {
-        include: {
-          renglon: {
-            include: {
-              unidad_empaque: true,
-              recepciones: true,
-              clasificacion: true,
-              despachos: {
-                include: {
-                  seriales: true,
-                },
-              },
-            },
-          },
-          seriales: {
-            select: {
-              serial: true,
-            },
-          },
-        },
-      },
-    },
-  })
+  const dispatchData = await getDispatchById(id)
 
   if (!dispatchData) {
     throw new Error('Despacho no existe')
@@ -802,7 +774,16 @@ export const getDispatchForExportGuide = async (id: number) => {
     despacho: dispatchData,
     renglones: dispatchData.renglones.map((renglon) => ({
       ...renglon,
-      seriales: renglon.seriales.map((serial) => serial.serial),
+      cantidad: renglon.es_despacho_liquidos
+        ? renglon.seriales.length
+        : renglon.cantidad,
+      seriales: renglon.es_despacho_liquidos
+        ? renglon.seriales.map((serial) => {
+            return `${serial.serial} - ${
+              serial.peso_despachado
+            } ${renglon.renglon.tipo_medida_unidad.toLowerCase()}`
+          })
+        : renglon.seriales.map((serial) => serial.serial),
     })),
     autorizador: dispatchData.autorizador,
     abastecedor: dispatchData.abastecedor,

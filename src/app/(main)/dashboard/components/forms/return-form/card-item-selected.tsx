@@ -26,7 +26,7 @@ export const SelectedItemCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
   useEffect(() => {
-    if (serialsLength > 0) {
+    if (serialsLength > 0 && setItemsWithoutSerials) {
       setItemsWithoutSerials((prev) => {
         return prev.filter((id) => id !== itemData.id)
       })

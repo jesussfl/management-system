@@ -81,8 +81,6 @@ export default function DispatchesForm({
       },
     })
 
-  const [itemsWithoutSerials, setItemsWithoutSerials] = useState<number[]>([])
-
   const onSubmit: SubmitHandler<DispatchFormValues> = async (data) => {
     if (data.renglones.length === 0) {
       toast({
@@ -92,15 +90,15 @@ export default function DispatchesForm({
       return
     }
 
-    data.renglones.map((item) => {
-      item.seriales.length === 0 && item.manualSelection
-        ? setItemsWithoutSerials((prev) => [...prev, item.id_renglon])
-        : null
-    })
+    // data.renglones.map((item) => {
+    //   item.seriales.length === 0 && item.manualSelection
+    //     ? setItemsWithoutSerials((prev) => [...prev, item.id_renglon])
+    //     : null
+    // })
 
-    if (itemsWithoutSerials.length > 0) {
-      return
-    }
+    // if (itemsWithoutSerials.length > 0) {
+    //   return
+    // }
 
     if (!id) {
       startTransition(() => {
@@ -215,15 +213,13 @@ export default function DispatchesForm({
               <div className="grid gap-4 md:grid-cols-2">
                 {selectedRowsData.map((item, index) => {
                   const isEmpty = item.stock_actual <= 0
-                  const isError = itemsWithoutSerials.includes(item.id)
                   return (
                     <SelectedItemCardProvider
                       key={item.id}
                       itemData={item}
                       index={index}
                       removeCard={() => deleteItem(index)}
-                      isError={isError || isEmpty}
-                      setItemsWithoutSerials={setItemsWithoutSerials}
+                      isError={isEmpty}
                       isEditing={isEditEnabled}
                       section={servicio}
                     >

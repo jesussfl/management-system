@@ -6,13 +6,8 @@ import {
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/modules/common/components/card/card'
 import { getDispatchById } from '@/lib/actions/dispatch'
+import { DispatchedItemDetails } from '@/app/(main)/dashboard/components/received-item-details/received-item-details'
 export default async function Page({
   params: { id },
 }: {
@@ -25,46 +20,18 @@ export default async function Page({
       <DialogContent
         customClose
         className={
-          'w-[80vw] md:w-[60vw] lg:w-[60vw] overflow-y-auto max-h-[90vh]'
+          'max-h-[90vh] w-[80vw] overflow-y-auto md:w-[60vw] lg:w-[60vw]'
         }
       >
-        <DialogHeader className="p-5 mb-8 border-b border-border">
+        <DialogHeader className="mb-8 border-b border-border p-5">
           <DialogTitle className="text-sm font-semibold text-foreground">
             Detalles del despacho
           </DialogTitle>
         </DialogHeader>
         <CloseButtonDialog />
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {dispatchDetails.map((detail, index) => (
-            <Card key={index} className="min-w-[200px]">
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold text-foreground">
-                  Renglón {index + 1}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-foreground">
-                  Nombre: {`${detail.renglon.nombre}`}
-                </p>
-                <p className="text-sm text-foreground">
-                  Cantidad: {`${detail.cantidad}`}
-                </p>
-
-                <p className="text-sm text-foreground">
-                  Unidad de Empaque:
-                  {detail?.renglon.unidad_empaque?.nombre || 'Sin Empaque'}
-                </p>
-
-                <p className="text-sm text-foreground">
-                  Seriales despachados:
-                  <ul className="list-disc ml-4">
-                    {detail.seriales.map((serial, index) => (
-                      <li key={index}>{serial}</li>
-                    ))}
-                  </ul>
-                </p>
-              </CardContent>
-            </Card>
+            <DispatchedItemDetails key={index} data={detail} />
           ))}
         </div>
       </DialogContent>

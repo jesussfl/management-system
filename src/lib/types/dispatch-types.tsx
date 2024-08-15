@@ -53,5 +53,14 @@ export interface Despacho_RenglonesFormValues {
   cantidad: number
   manualSelection: boolean
   observacion?: string | null
-  seriales: string[]
+  es_despacho_liquidos: boolean
+  seriales: SelectedSerialForDispatch[]
+}
+
+export type SelectedSerialForDispatch = {
+  id: number
+  serial: string
+  id_renglon: number
+  peso_despachado: number
+  peso_actual: number
 }

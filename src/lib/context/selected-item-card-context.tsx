@@ -10,7 +10,7 @@ interface SelectedItemCardContextProps {
   section: 'Abastecimiento' | 'Armamento'
   isPackageForLiquids?: boolean
   removeCard: () => void
-  setItemsWithoutSerials: React.Dispatch<React.SetStateAction<number[]>>
+  setItemsWithoutSerials?: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 // Crea el contexto con un valor por defecto
