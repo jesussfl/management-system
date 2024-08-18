@@ -767,7 +767,7 @@ export const getReceptionForExportGuide = async (id: number) => {
     autorizador: receptionData.autorizador,
     abastecedor: receptionData.abastecedor,
     supervisor: receptionData.supervisor,
-    unidad: receptionData?.destinatario?.unidad?.nombre || 's/u',
+    unidad: receptionData?.destinatario?.unidad?.nombre.toUpperCase() || 's/u',
     codigo: getGuideCode(receptionData.id),
     motivo: receptionData.motivo || 's/m',
   }

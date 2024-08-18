@@ -788,7 +788,7 @@ export const getDispatchForExportGuide = async (id: number) => {
     autorizador: dispatchData.autorizador,
     abastecedor: dispatchData.abastecedor,
     supervisor: dispatchData.supervisor,
-    unidad: dispatchData?.destinatario?.unidad?.nombre || 's/u',
+    unidad: dispatchData?.destinatario?.unidad?.nombre.toUpperCase() || 's/u',
     codigo: getGuideCode(dispatchData.id),
     motivo: dispatchData.motivo || 's/m',
   }
