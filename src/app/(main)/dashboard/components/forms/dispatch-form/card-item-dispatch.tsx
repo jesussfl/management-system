@@ -56,7 +56,6 @@ const DefaultItemContent = () => {
   const { itemData, ...item } = useItemCardContext()
   const showSerialSelector = watch(`renglones.${item.index}.manualSelection`)
   const packageName = itemData.unidad_empaque?.nombre
-
   return (
     <CardContent className="flex flex-1 flex-col justify-start gap-8">
       <FormField
@@ -182,6 +181,10 @@ const ConsumableItemContent = () => {
                 Despacho por:{' '}
                 {itemData.unidad_empaque?.tipo_medida.toLowerCase()}
               </FormLabel>
+              <FormDescription>
+                Si esta opción está deshabilitada, se despachará el renglón
+                completo
+              </FormDescription>
             </div>
             <FormControl>
               <Switch

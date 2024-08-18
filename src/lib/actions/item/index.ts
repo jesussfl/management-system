@@ -183,7 +183,11 @@ export const updateItem = async (
       where: {
         id,
       },
-      data,
+      data: {
+        ...data,
+        peso:
+          data.peso === undefined || data.peso === null ? undefined : data.peso,
+      },
     })
 
     await registerAuditAction(

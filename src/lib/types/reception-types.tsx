@@ -16,16 +16,15 @@ export interface Recepcion_RenglonesFormValues {
   observacion?: string | null
   es_recepcion_liquidos: boolean
   seriales_automaticos: boolean
-  seriales:
-    | {
-        serial: string
-        id_renglon: number
-        condicion: string
-        id?: number | null
-        peso_recibido?: number | null
-        peso_actual?: number | null
-      }[]
-    | SelectedSerial[]
+  seriales: {
+    serial: string
+    id_renglon: number
+    condicion: string
+    id?: number | null
+    peso_recibido?: number | null
+    peso_actual?: number | null
+  }[]
+
   fabricante?: string | null
 
   codigo_solicitud?: number | null
@@ -34,14 +33,14 @@ export interface Recepcion_RenglonesFormValues {
   precio?: number | null
 }
 
-export type SelectedSerial = {
-  id: number
-  serial: string
-  id_renglon: number
-  peso_recibido: number
-  peso_actual: number
-  condicion?: undefined
-}
+// export type SelectedSerial = {
+//   id: number
+//   serial: string
+//   id_renglon: number
+//   peso_recibido: number
+//   peso_actual: number
+//   condicion?: undefined
+// }
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {

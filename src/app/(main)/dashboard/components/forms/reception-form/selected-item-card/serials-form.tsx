@@ -3,6 +3,7 @@ import { Input } from '@/modules/common/components/input/input'
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,8 +30,13 @@ import {
   SelectValue,
 } from '@/modules/common/components/select/select'
 import { useToast } from '@/modules/common/components/toast/use-toast'
+import { NumericFormat } from 'react-number-format'
 export function SerialsForm() {
-  const { index: itemIndex, itemData } = useItemCardContext()
+  const {
+    index: itemIndex,
+    itemData,
+    isPackageForLiquids,
+  } = useItemCardContext()
   const { control, watch, setValue, formState, clearErrors } = useFormContext()
   const quantity = watch(`renglones.${itemIndex}.cantidad`)
   const itemId = itemData.id
@@ -166,6 +172,49 @@ export function SerialsForm() {
               </FormItem>
             )}
           />
+          {isPackageForLiquids && (
+            <FormField
+              control={control}
+              name={`renglones.${itemIndex}.seriales.${index}.peso_actual`}
+              rules={{
+                required: 'Peso requerido',
+                max: {
+                  value: itemData.peso,
+                  message: `Maximo ${
+                    itemData.peso
+                  } ${itemData.tipo_medida_unidad.toLowerCase()}`,
+                },
+              }}
+              render={({ field: { value, onChange, ref, ...field } }) => {
+                return (
+                  <FormItem className="flex flex-col gap-1.5">
+                    <FormLabel>
+                      {itemData.tipo_medida_unidad.toLowerCase()} actuales{' '}
+                      {` (Máximo. ${itemData.peso})`}{' '}
+                    </FormLabel>
+
+                    <FormControl>
+                      <NumericFormat
+                        className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        {...field}
+                        allowNegative={false}
+                        thousandSeparator=""
+                        suffix={` ${itemData.tipo_medida_unidad.toLowerCase()}`}
+                        decimalScale={2}
+                        getInputRef={ref}
+                        value={value}
+                        onValueChange={({ floatValue }) => {
+                          onChange(floatValue || '')
+                          clearErrors(field.name)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
+            />
+          )}
         </div>
       ))}
     </div>
@@ -181,6 +230,7 @@ export const SerialsFormTrigger = () => {
     setItemsWithoutSerials,
     index: itemIndex,
     isEditing,
+    isPackageForLiquids,
   } = useItemCardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const registeredSerials: number =
@@ -225,13 +275,23 @@ export const SerialsFormTrigger = () => {
               const serials = watch(`renglones.${itemIndex}.seriales`)
               const isSomeFieldEmpty = serials.some(
                 (selectedSerial: any, index: number) => {
-                  if (!selectedSerial.serial || !selectedSerial.condicion) {
+                  if (
+                    !selectedSerial.serial ||
+                    !selectedSerial.condicion ||
+                    (!selectedSerial.peso_actual && isPackageForLiquids)
+                  ) {
                     if (!selectedSerial.condicion) {
                       trigger(
                         `renglones.${itemIndex}.seriales.${index}.condicion`
                       )
                     }
-                    trigger(`renglones.${itemIndex}.seriales.${index}`)
+
+                    if (!selectedSerial.peso_actual) {
+                      trigger(
+                        `renglones.${itemIndex}.seriales.${index}.peso_actual`
+                      )
+                    }
+                    trigger(`renglones.${itemIndex}.seriales.${index}.serial`)
 
                     return true
                   }

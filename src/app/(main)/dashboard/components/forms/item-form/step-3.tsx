@@ -376,7 +376,7 @@ export const Step3 = ({
                       prefix=""
                       decimalScale={2}
                       getInputRef={ref}
-                      value={weight || ''}
+                      value={value || ''}
                       onValueChange={({ floatValue }) => {
                         onChange(floatValue)
                       }}

@@ -148,7 +148,6 @@ export const createReception = async (
         servicio,
         fecha_recepcion,
         renglones: {
-          // @ts-ignore TODO: types need to be fixed
           create: data.renglones.map((renglon) => ({
             ...renglon,
             id_renglon: undefined,
@@ -165,31 +164,19 @@ export const createReception = async (
                 id: renglon.id_renglon,
               },
             },
-            recepciones_Seriales: renglon.es_recepcion_liquidos
-              ? {
-                  create: renglon.seriales.map((serial) => ({
-                    peso_recibido: serial.peso_recibido as number,
-                    serial: {
-                      connect: {
-                        id: serial.id,
-                      },
-                    },
-                  })),
-                }
-              : undefined,
-            seriales: renglon.es_recepcion_liquidos
-              ? undefined
-              : {
-                  create: renglon.seriales.map((serial) => ({
-                    serial: serial.serial,
-                    condicion: serial.condicion || undefined,
-                    renglon: {
-                      connect: {
-                        id: serial.id_renglon,
-                      },
-                    },
-                  })),
+
+            seriales: {
+              create: renglon.seriales.map((serial) => ({
+                serial: serial.serial,
+                condicion: serial.condicion || undefined,
+                peso_actual: serial.peso_actual || 0,
+                renglon: {
+                  connect: {
+                    id: renglon.id_renglon,
+                  },
                 },
+              })),
+            },
           })),
         },
       },
@@ -343,16 +330,7 @@ export const updateReception = async (
               id: renglon.id_renglon,
             },
           },
-          seriales: {
-            create: renglon.seriales.map((serial) => ({
-              serial: serial.serial,
-              renglon: {
-                connect: {
-                  id: renglon.id_renglon,
-                },
-              },
-            })),
-          },
+          seriales: undefined,
         })),
       },
     },
