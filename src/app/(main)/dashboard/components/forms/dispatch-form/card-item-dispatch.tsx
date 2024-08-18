@@ -234,7 +234,7 @@ const ConsumableItemContent = () => {
 const SerialSelectorTrigger = () => {
   const { itemData, index: itemIndex, isEditing } = useItemCardContext()
   const [isPending, startTransition] = useTransition()
-  const { watch } = useFormContext()
+  const { watch, trigger } = useFormContext()
   const { toast } = useToast()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -310,6 +310,32 @@ const SerialSelectorTrigger = () => {
               className="sticky bottom-8 left-8 w-[200px]"
               variant={'default'}
               onClick={() => {
+                const isSomeFieldEmpty = selectedSerials.some(
+                  (selectedSerial, index) => {
+                    const max = selectedSerial.peso_actual
+                    if (selectedSerial.peso_despachado > max) {
+                      trigger(
+                        `renglones.${itemIndex}.seriales.${index}.peso_despachado`
+                      )
+
+                      return true
+                    }
+
+                    return !selectedSerial.peso_despachado
+                  }
+                )
+
+                if (
+                  isSomeFieldEmpty &&
+                  watch(`renglones.${itemIndex}.es_despacho_liquidos`)
+                ) {
+                  toast({
+                    title:
+                      'Hay campos vacios o incorrectos, por favor revisa los datos',
+                    variant: 'destructive',
+                  })
+                  return
+                }
                 toogleModal()
               }}
             >
