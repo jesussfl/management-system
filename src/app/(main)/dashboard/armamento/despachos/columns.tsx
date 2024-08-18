@@ -47,8 +47,9 @@ export const columns: ColumnDef<DespachoType>[] = [
   {
     id: 'destinatario',
     accessorFn: (row: DespachoType) =>
-      `${row.destinatario?.grado?.abreviatura || ''} ${row.destinatario
-        ?.nombres} ${row.destinatario?.apellidos}`,
+      `${row.destinatario?.grado?.abreviatura || ''} ${
+        row.destinatario?.nombres
+      } ${row.destinatario?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -71,8 +72,9 @@ export const columns: ColumnDef<DespachoType>[] = [
   {
     id: 'supervisor',
     accessorFn: (row: DespachoType) => {
-      const name = `${row.supervisor?.grado?.abreviatura || ''} ${row.supervisor
-        ?.nombres} ${row.supervisor?.apellidos}`
+      const name = `${row.supervisor?.grado?.abreviatura || ''} ${
+        row.supervisor?.nombres
+      } ${row.supervisor?.apellidos}`
 
       if (!row.supervisor) return 'No asignado'
 
@@ -102,8 +104,9 @@ export const columns: ColumnDef<DespachoType>[] = [
   {
     id: 'autorizador',
     accessorFn: (row: DespachoType) =>
-      `${row.autorizador?.grado?.abreviatura || ''} ${row.autorizador
-        ?.nombres} ${row.autorizador?.apellidos}`,
+      `${row.autorizador?.grado?.abreviatura || ''} ${
+        row.autorizador?.nombres
+      } ${row.autorizador?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -128,8 +131,9 @@ export const columns: ColumnDef<DespachoType>[] = [
   {
     id: 'abastecedor',
     accessorFn: (row: DespachoType) => {
-      return `${row.abastecedor?.grado?.abreviatura || ''} ${row.abastecedor
-        ?.nombres} ${row.abastecedor?.apellidos}`
+      return `${row.abastecedor?.grado?.abreviatura || ''} ${
+        row.abastecedor?.nombres
+      } ${row.abastecedor?.apellidos}`
     },
     header: ({ column }) => {
       return (
@@ -244,8 +248,8 @@ export const columns: ColumnDef<DespachoType>[] = [
           editConfig={{
             href: `/dashboard/armamento/despachos/${data.id}`,
           }}
-          // disableDelete
-          disableEdit
+          disableDelete
+          // disableEdit
           deleteConfig={{
             isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este despacho?',

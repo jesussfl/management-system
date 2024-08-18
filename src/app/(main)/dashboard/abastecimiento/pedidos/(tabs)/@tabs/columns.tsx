@@ -81,9 +81,9 @@ export const columns: ColumnDef<PedidoType>[] = [
         Cancelado: 'bg-red-500',
       }
       return (
-        <div className="w-32 flex gap-2 items-center">
+        <div className="flex w-32 items-center gap-2">
           <div
-            className={` rounded-full w-2 h-2 ${COLORS[estado || 'Pendiente']}`}
+            className={`h-2 w-2 rounded-full ${COLORS[estado || 'Pendiente']}`}
           />{' '}
           {estado === 'En_proceso' ? 'En Proceso' : estado || 'Pendiente'}
         </div>
@@ -154,8 +154,9 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'supervisor',
     accessorFn: (row: PedidoType) =>
-      `${row?.supervisor?.grado?.abreviatura || ''} ${row?.supervisor
-        ?.nombres} ${row?.supervisor?.apellidos}`,
+      `${row?.supervisor?.grado?.abreviatura || ''} ${
+        row?.supervisor?.nombres
+      } ${row?.supervisor?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -180,8 +181,9 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'autorizador',
     accessorFn: (row: PedidoType) =>
-      `${row?.autorizador?.grado?.abreviatura || ''} ${row?.autorizador
-        ?.nombres} ${row?.autorizador?.apellidos}`,
+      `${row?.autorizador?.grado?.abreviatura || ''} ${
+        row?.autorizador?.nombres
+      } ${row?.autorizador?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -206,8 +208,9 @@ export const columns: ColumnDef<PedidoType>[] = [
   {
     id: 'abastecedor',
     accessorFn: (row: PedidoType) => {
-      return `${row?.abastecedor?.grado?.abreviatura || ''} ${row?.abastecedor
-        ?.nombres} ${row?.abastecedor?.apellidos}`
+      return `${row?.abastecedor?.grado?.abreviatura || ''} ${
+        row?.abastecedor?.nombres
+      } ${row?.abastecedor?.apellidos}`
     },
     header: ({ column }) => {
       return (
@@ -255,7 +258,7 @@ export const columns: ColumnDef<PedidoType>[] = [
           <HoverCardTrigger asChild>
             <Button variant="link">Ver renglones pedidos</Button>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+          <HoverCardContent className="w-80 rounded-sm border border-border bg-background p-5">
             <div className="space-y-1">
               {renglones.map((renglon) => (
                 <div key={renglon.id}>
@@ -320,6 +323,7 @@ export const columns: ColumnDef<PedidoType>[] = [
           editConfig={{
             href: `/dashboard/abastecimiento/pedidos/${data.id}`,
           }}
+          disableDelete
           deleteConfig={{
             isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este pedido?',

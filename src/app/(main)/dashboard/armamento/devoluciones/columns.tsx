@@ -136,8 +136,8 @@ export const columns: ColumnDef<ReturnType>[] = [
       return (
         <ProtectedTableActions
           sectionName={SECTION_NAMES.DESPACHOS_ARMAMENTO}
-          // disableDelete
-          disableEdit
+          disableDelete
+          // disableEdit
           editConfig={{
             href: `/dashboard/armamento/devoluciones/${data.id}`,
           }}

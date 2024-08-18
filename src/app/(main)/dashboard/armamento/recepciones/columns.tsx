@@ -55,8 +55,9 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'destinatario',
     accessorFn: (row: RecepcionType) =>
-      `${row.destinatario?.grado?.abreviatura || ''} ${row.destinatario
-        ?.nombres} ${row.destinatario?.apellidos}`,
+      `${row.destinatario?.grado?.abreviatura || ''} ${
+        row.destinatario?.nombres
+      } ${row.destinatario?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -79,8 +80,9 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'supervisor',
     accessorFn: (row: RecepcionType) => {
-      const name = `${row.supervisor?.grado?.abreviatura || ''} ${row.supervisor
-        ?.nombres} ${row.supervisor?.apellidos}`
+      const name = `${row.supervisor?.grado?.abreviatura || ''} ${
+        row.supervisor?.nombres
+      } ${row.supervisor?.apellidos}`
 
       if (!row.supervisor) return 'No asignado'
 
@@ -110,8 +112,9 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'autorizador',
     accessorFn: (row: RecepcionType) =>
-      `${row.autorizador?.grado?.abreviatura || ''} ${row.autorizador
-        ?.nombres} ${row.autorizador?.apellidos}`,
+      `${row.autorizador?.grado?.abreviatura || ''} ${
+        row.autorizador?.nombres
+      } ${row.autorizador?.apellidos}`,
     header: ({ column }) => {
       return (
         <Button
@@ -136,8 +139,9 @@ export const columns: ColumnDef<RecepcionType>[] = [
   {
     id: 'abastecedor',
     accessorFn: (row: RecepcionType) => {
-      return `${row.abastecedor?.grado?.abreviatura || ''} ${row.abastecedor
-        ?.nombres} ${row.abastecedor?.apellidos}`
+      return `${row.abastecedor?.grado?.abreviatura || ''} ${
+        row.abastecedor?.nombres
+      } ${row.abastecedor?.apellidos}`
     },
     header: ({ column }) => {
       return (
@@ -252,8 +256,7 @@ export const columns: ColumnDef<RecepcionType>[] = [
           editConfig={{
             href: `/dashboard/armamento/recepciones/${data.id}`,
           }}
-          // disableDelete
-          disableEdit
+          disableDelete
           deleteConfig={{
             isDeleted: data.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar esta recepción?',
