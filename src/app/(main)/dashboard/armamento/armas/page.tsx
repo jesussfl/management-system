@@ -12,7 +12,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@/modules/common/components/tabs/tabs'
+} from '@/modules/common/components/tabs/basic-tabs'
 
 import {
   HeaderLeftSide,
@@ -27,7 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/modules/common/components/card/card'
-import { Bomb, Boxes, PackageMinus, PackagePlus, Plus } from 'lucide-react'
+import { Bomb, Plus } from 'lucide-react'
 import { buttonVariants } from '@/modules/common/components/button'
 import Link from 'next/link'
 
@@ -37,7 +37,6 @@ import { getAllGunModels } from './lib/actions/model-actions'
 import { getAllGunBrands } from './lib/actions/brand'
 import { getAllGunParts } from './lib/actions/parts'
 import { getAllAccesories } from './lib/actions/accesories'
-import { getAllGunComponents } from './lib/actions/component-actions'
 import { gunModelColumns } from './components/columns/gun-model-columns'
 import { gunTypeColumns } from './components/columns/gun-type-columns'
 import { gunBrandColumns } from './components/columns/gun-brand-columns'
@@ -92,9 +91,9 @@ export default async function Page() {
         <TabsContent value="guns">
           <PageContent>
             <Card>
-              <CardHeader className="flex flex-row items-center gap-8 ">
+              <CardHeader className="flex flex-row items-center gap-8">
                 <StatisticCard
-                  className="flex-1 h-[116px]"
+                  className="h-[116px] flex-1"
                   title="Armas Totales"
                   number={guns.length}
                   Icon={<Bomb size={24} />}
