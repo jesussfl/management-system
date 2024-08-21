@@ -180,6 +180,7 @@ model Renglon {
   devoluciones Devoluciones_Renglones[]
   seriales     Serial[]
   pedidos      Pedidos_Renglones[]
+  prestamos    Prestamos_Renglones[]
 }
 
 enum Medidas {
@@ -355,11 +356,14 @@ model Serial {
   despacho   Despachos_Renglones?    @relation(fields: [id_despacho], references: [id], onUpdate: Cascade)
   devolucion Devoluciones_Renglones? @relation(fields: [id_devolucion], references: [id], onUpdate: Cascade)
 
-  fecha_creacion       DateTime               @default(now())
-  ultima_actualizacion DateTime               @updatedAt
-  fecha_eliminacion    DateTime?
-  recepciones_Seriales Recepciones_Seriales[]
-  despachos_Seriales   Despachos_Seriales[]
+  fecha_creacion        DateTime               @default(now())
+  ultima_actualizacion  DateTime               @updatedAt
+  fecha_eliminacion     DateTime?
+  recepciones_Seriales  Recepciones_Seriales[]
+  despachos_Seriales    Despachos_Seriales[]
+  Prestamos_Renglones   Prestamos_Renglones?   @relation(fields: [prestamos_RenglonesId], references: [id])
+  prestamos_RenglonesId Int?
+  Prestamos_Seriales    Prestamos_Seriales[]
 }
 
 model Devolucion {
@@ -450,6 +454,58 @@ model Despachos_Seriales {
   fecha_creacion       DateTime            @default(now())
 }
 
+model Prestamo {
+  id                   Int                         @id @default(autoincrement())
+  fecha_prestamo       DateTime
+  motivo               String?
+  renglones            Prestamos_Renglones[]
+  cedula_destinatario  String
+  cedula_autorizador   String
+  cedula_abastecedor   String
+  cedula_supervisor    String?
+  estado               Estados_Prestamos?
+  servicio             Servicios?
+  destinatario         Destinatario                @relation(fields: [cedula_destinatario], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  autorizador          Profesional_Abastecimiento  @relation(name: "autorizador_prestamo", fields: [cedula_autorizador], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  abastecedor          Profesional_Abastecimiento  @relation(name: "abastecedor_prestamo", fields: [cedula_abastecedor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  supervisor           Profesional_Abastecimiento? @relation(name: "supervisor_prestamo", fields: [cedula_supervisor], references: [cedula], onDelete: Cascade, onUpdate: Cascade)
+  motivo_fecha         String?
+  fecha_creacion       DateTime                    @default(now())
+  ultima_actualizacion DateTime                    @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Prestamos_Renglones {
+  id Int @id @default(autoincrement())
+
+  id_renglon  Int
+  id_prestamo Int
+
+  observacion String? @default("s/o")
+
+  cantidad        Int
+  manualSelection Boolean
+  renglon         Renglon  @relation(fields: [id_renglon], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  prestamo        Prestamo @relation(fields: [id_prestamo], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  seriales           Serial[]
+  prestamos_Seriales Prestamos_Seriales[]
+
+  fecha_creacion       DateTime  @default(now())
+  ultima_actualizacion DateTime  @updatedAt
+  fecha_eliminacion    DateTime?
+}
+
+model Prestamos_Seriales {
+  id                   Int                 @id @default(autoincrement())
+  id_serial            Int
+  serial               Serial              @relation(fields: [id_serial], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id_detalles_prestamo Int
+  detalles_prestamo    Prestamos_Renglones @relation(fields: [id_detalles_prestamo], references: [id])
+  peso_despachado      Float
+  fecha_creacion       DateTime            @default(now())
+}
+
 model Pedidos_Renglones {
   id          Int     @id @default(autoincrement())
   cantidad    Int
@@ -468,6 +524,12 @@ enum Estados_Pedidos {
   Cancelado
   En_proceso
   Recibido
+  Pendiente
+}
+
+enum Estados_Prestamos {
+  Devuelto
+  Prestado
   Pendiente
 }
 
@@ -574,6 +636,7 @@ model Destinatario {
   Recepcion            Recepcion[]
   Pedido               Pedido[]
   fecha_eliminacion    DateTime?
+  Prestamo             Prestamo[]
 }
 
 model Profesional_Abastecimiento {
@@ -611,10 +674,13 @@ model Profesional_Abastecimiento {
   autorizador_devolucion Devolucion[] @relation("autorizador_devolucion")
   supervisor_devolucion  Devolucion[] @relation("supervisor_devolucion")
 
-  abastecedor_pedido Pedido[]  @relation("abastecedor_pedido")
-  autorizador_pedido Pedido[]  @relation("autorizador_pedido")
-  supervisor_pedido  Pedido[]  @relation("supervisor_pedido")
-  fecha_eliminacion  DateTime?
+  abastecedor_pedido   Pedido[]   @relation("abastecedor_pedido")
+  autorizador_pedido   Pedido[]   @relation("autorizador_pedido")
+  supervisor_pedido    Pedido[]   @relation("supervisor_pedido")
+  abastecedor_prestamo Prestamo[] @relation("abastecedor_prestamo")
+  autorizador_prestamo Prestamo[] @relation("autorizador_prestamo")
+  supervisor_prestamo  Prestamo[] @relation("supervisor_prestamo")
+  fecha_eliminacion    DateTime?
 }
 
 model Componente_Militar {

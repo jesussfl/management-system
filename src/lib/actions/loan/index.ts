@@ -8,13 +8,11 @@ import { validateUserPermissions } from '@/utils/helpers/validate-user-permissio
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
-import {
-  DispatchFormValues,
-  SelectedSerialForDispatch,
-} from '@/lib/types/dispatch-types'
+import { LoanFormValues, SelectedSerialForLoan } from '@/lib/types/loan-types'
+import { Estados_Prestamos } from '@prisma/client'
 
-export const createDispatch = async (
-  data: DispatchFormValues,
+export const createLoan = async (
+  data: LoanFormValues,
   servicio: 'Abastecimiento' | 'Armamento'
 ) => {
   const sessionResponse = await validateUserSession()
@@ -24,10 +22,7 @@ export const createDispatch = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName:
-      servicio === 'Abastecimiento'
-        ? SECTION_NAMES.DESPACHOS_ABASTECIMIENTO
-        : SECTION_NAMES.DESPACHOS_ARMAMENTO,
+    sectionName: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
     actionName: 'CREAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -36,9 +31,9 @@ export const createDispatch = async (
     return permissionsResponse
   }
 
-  const { motivo, fecha_despacho, cedula_destinatario, renglones } = data
+  const { motivo, fecha_prestamo, cedula_destinatario, renglones } = data
 
-  if (!fecha_despacho || !renglones) {
+  if (!fecha_prestamo || !renglones) {
     return {
       error: 'Missing Fields',
       success: false,
@@ -71,7 +66,7 @@ export const createDispatch = async (
   }
 
   const items = data.renglones
-  const serials: SelectedSerialForDispatch[] = []
+  const serials: SelectedSerialForLoan[] = []
   for (const item of items) {
     console.log(item)
     if (item.manualSelection) {
@@ -128,7 +123,7 @@ export const createDispatch = async (
     )
   }
   await prisma.$transaction(async (prisma) => {
-    const dispatch = await prisma.despacho.create({
+    const loan = await prisma.prestamo.create({
       data: {
         servicio,
         cedula_destinatario,
@@ -136,34 +131,24 @@ export const createDispatch = async (
         cedula_supervisor: data.cedula_supervisor || undefined,
         cedula_autorizador: data.cedula_autorizador,
         motivo,
-        fecha_despacho,
+        estado: 'Prestado',
+        fecha_prestamo,
         motivo_fecha: data.motivo_fecha || undefined,
         renglones: {
           create: renglones.map((renglon) => ({
             manualSelection: renglon.manualSelection,
-            es_despacho_liquidos: renglon.es_despacho_liquidos,
+
             observacion: renglon.observacion,
             id_renglon: renglon.id_renglon,
             cantidad: serials.filter(
               (serial) => serial.id_renglon === renglon.id_renglon
             ).length,
-            despachos_Seriales: renglon.es_despacho_liquidos
-              ? {
-                  create: renglon.seriales.map((serial) => ({
-                    peso_despachado: serial.peso_despachado,
-                    serial: { connect: { serial: serial.serial } },
-                  })),
-                }
-              : undefined,
-            seriales: renglon.es_despacho_liquidos
-              ? undefined
-              : {
-                  connect: serials
-                    .filter(
-                      (serial) => serial.id_renglon === renglon.id_renglon
-                    )
-                    .map((serial) => ({ serial: serial.serial })),
-                },
+            prestamos_Seriales: undefined,
+            seriales: {
+              connect: serials
+                .filter((serial) => serial.id_renglon === renglon.id_renglon)
+                .map((serial) => ({ serial: serial.serial })),
+            },
           })),
         },
       },
@@ -176,31 +161,12 @@ export const createDispatch = async (
         },
       },
       data: {
-        estado: 'Despachado',
+        estado: 'Prestado',
       },
     })
+    const loanedItems = data.renglones
 
-    const dispatchedItems = data.renglones
-    dispatchedItems.forEach(async (item) => {
-      if (!item.es_despacho_liquidos) return
-
-      const serials = item.seriales
-
-      serials.forEach(async (serial) => {
-        await prisma.serial.update({
-          where: {
-            id: serial.id as number,
-          },
-          data: {
-            peso_actual: {
-              decrement: serial.peso_despachado as number,
-            },
-          },
-        })
-      })
-    })
-    dispatchedItems.forEach(async (item) => {
-      if (item.es_despacho_liquidos) return
+    loanedItems.forEach(async (item) => {
       await prisma.renglon.update({
         where: {
           id: item.id_renglon,
@@ -217,15 +183,15 @@ export const createDispatch = async (
 
     await registerAuditAction(
       'CREAR',
-      `Se realizó un despacho en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El id del despacho es: ${
-        dispatch.id
+      `Se realizó un prestamo en ${servicio.toLowerCase()} con el siguiente motivo: ${motivo}. El id del prestamo es: ${
+        loan.id
       }  ${
         data.motivo_fecha
           ? `, la fecha de creación fue: ${format(
-              dispatch.fecha_creacion,
+              loan.fecha_creacion,
               'yyyy-MM-dd HH:mm'
-            )}, la fecha de despacho: ${format(
-              dispatch.fecha_despacho,
+            )}, la fecha de prestamo: ${format(
+              loan.fecha_prestamo,
               'yyyy-MM-dd HH:mm'
             )}, motivo de la fecha: ${data.motivo_fecha}`
           : ''
@@ -233,17 +199,18 @@ export const createDispatch = async (
     )
   })
 
-  revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/prestamos`)
 
   return {
     success: true,
     error: false,
   }
 }
-
-export const updateDispatch = async (
+export const updateLoanStatus = async (
   id: number,
-  data: DispatchFormValues,
+  data: {
+    estado: Estados_Prestamos | null | undefined
+  },
   servicio: 'Abastecimiento' | 'Armamento'
 ) => {
   const sessionResponse = await validateUserSession()
@@ -253,10 +220,187 @@ export const updateDispatch = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName:
-      servicio === 'Abastecimiento'
-        ? SECTION_NAMES.DESPACHOS_ABASTECIMIENTO
-        : SECTION_NAMES.DESPACHOS_ARMAMENTO,
+    sectionName: SECTION_NAMES.PEDIDOS_ABASTECIMIENTO,
+    actionName: 'ACTUALIZAR',
+    userPermissions: sessionResponse.session?.user.rol.permisos,
+  })
+
+  if (!permissionsResponse.success) {
+    return permissionsResponse
+  }
+  const loan = await prisma.prestamo.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      renglones: {
+        include: {
+          renglon: true,
+          seriales: true,
+        },
+      },
+    },
+  })
+
+  if (!loan) {
+    return {
+      error: 'El pedido no existe',
+      success: false,
+    }
+  }
+  await prisma.$transaction(async (prisma) => {
+    await prisma.prestamo.update({
+      where: {
+        id,
+      },
+      data: {
+        estado: data.estado,
+      },
+    })
+    const loanedItems = loan.renglones
+
+    const serials: SelectedSerialForLoan[] = []
+    for (const item of loanedItems) {
+      console.log(item)
+      if (item.manualSelection) {
+        const serialsByItem = item.seriales.map((serial) => ({
+          id_renglon: item.id_renglon,
+          serial: serial.serial,
+          id: 0,
+          peso_despachado: 0,
+          peso_actual: 0,
+        }))
+        serials.push(...serialsByItem)
+        continue
+      }
+      const serialsByItem = await prisma.serial.findMany({
+        where: {
+          id_renglon: item.id_renglon,
+          AND: {
+            estado: {
+              in: ['Prestado'],
+            },
+          },
+        },
+        select: {
+          id_renglon: true,
+          renglon: true,
+          serial: true,
+        },
+        take: item.cantidad,
+      })
+      console.log(serialsByItem.length, item.cantidad, item.id_renglon)
+      if (serialsByItem.length < item.cantidad) {
+        return {
+          error:
+            'No hay suficientes seriales en el renglon' +
+            item.id_renglon +
+            ' ' +
+            ' Cantidad a despachar:' +
+            item.cantidad,
+          success: false,
+
+          fields: [item.id_renglon],
+        }
+      }
+
+      serials.push(
+        ...serialsByItem.map((serial) => ({
+          id_renglon: item.id_renglon,
+          serial: serial.serial,
+          id: 0,
+          peso_despachado: 0,
+          peso_actual: 0,
+        }))
+      )
+    }
+
+    loanedItems.forEach((renglon) => {
+      // @ts-ignore
+      delete renglon.id
+    })
+
+    loanedItems.forEach(async (item) => {
+      switch (data.estado) {
+        case 'Devuelto':
+          await prisma.renglon.update({
+            where: {
+              id: item.id_renglon,
+            },
+            data: {
+              stock_actual: {
+                increment: item.manualSelection
+                  ? item.seriales.length
+                  : item.cantidad,
+              },
+            },
+          })
+          await prisma.serial.updateMany({
+            where: {
+              serial: {
+                in: serials.map((serial) => serial.serial),
+              },
+            },
+            data: {
+              estado: 'Disponible',
+            },
+          })
+          break
+        case 'Prestado':
+          await prisma.renglon.update({
+            where: {
+              id: item.id_renglon,
+            },
+            data: {
+              stock_actual: {
+                decrement: item.manualSelection
+                  ? item.seriales.length
+                  : item.cantidad,
+              },
+            },
+          })
+          await prisma.serial.updateMany({
+            where: {
+              serial: {
+                in: serials.map((serial) => serial.serial),
+              },
+            },
+            data: {
+              estado: 'Prestado',
+            },
+          })
+          break
+      }
+    })
+
+    await registerAuditAction(
+      'ACTUALIZAR',
+      `Se actualizó el estado del préstamo de ${servicio.toLowerCase()} con el id: ${id} a: ${
+        data.estado
+      }`
+    )
+  })
+
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/prestamos`)
+
+  return {
+    success: 'Recepcion actualizada exitosamente',
+    error: false,
+  }
+}
+export const updateLoan = async (
+  id: number,
+  data: LoanFormValues,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
+  const sessionResponse = await validateUserSession()
+
+  if (sessionResponse.error || !sessionResponse.session) {
+    return sessionResponse
+  }
+
+  const permissionsResponse = validateUserPermissions({
+    sectionName: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
     actionName: 'ACTUALIZAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -265,9 +409,9 @@ export const updateDispatch = async (
     return permissionsResponse
   }
 
-  const { motivo, fecha_despacho, cedula_destinatario, renglones } = data
+  const { motivo, fecha_prestamo, cedula_destinatario, renglones } = data
 
-  if (!fecha_despacho || !renglones) {
+  if (!fecha_prestamo || !renglones) {
     return {
       error: 'Missing Fields',
       success: false,
@@ -301,7 +445,7 @@ export const updateDispatch = async (
 
   const items = data.renglones
 
-  const serials: SelectedSerialForDispatch[] = []
+  const serials: SelectedSerialForLoan[] = []
   for (const item of items) {
     console.log(item)
     if (item.manualSelection) {
@@ -362,7 +506,7 @@ export const updateDispatch = async (
     delete renglon.id
   })
 
-  const dispatch = await prisma.despacho.update({
+  const loan = await prisma.prestamo.update({
     where: {
       id,
     },
@@ -372,34 +516,34 @@ export const updateDispatch = async (
       cedula_supervisor: data?.cedula_supervisor || null,
       cedula_autorizador: data.cedula_autorizador,
       motivo,
-      fecha_despacho,
+      fecha_prestamo,
       motivo_fecha: data.motivo_fecha || null,
     },
   })
 
   await registerAuditAction(
     'ACTUALIZAR',
-    `Se actualizó el despacho en ${servicio.toLowerCase()} con el id ${id} ${
+    `Se actualizó el prestamo en ${servicio.toLowerCase()} con el id ${id} ${
       data.motivo_fecha
         ? `, la fecha de creación fue: ${format(
-            dispatch.fecha_creacion,
+            loan.fecha_creacion,
             'dd-MM-yyyy HH:mm'
-          )}, fecha de despacho: ${format(
-            dispatch.fecha_despacho,
+          )}, fecha de prestamo: ${format(
+            loan.fecha_prestamo,
             'dd-MM-yyyy HH:mm'
           )}, motivo de la fecha: ${data.motivo_fecha}`
         : ''
     }`
   )
 
-  revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/prestamos`)
 
   return {
     success: true,
     error: false,
   }
 }
-export const deleteDispatch = async (
+export const deleteLoan = async (
   id: number,
   servicio: 'Abastecimiento' | 'Armamento'
 ) => {
@@ -410,10 +554,7 @@ export const deleteDispatch = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName:
-      servicio === 'Abastecimiento'
-        ? SECTION_NAMES.DESPACHOS_ABASTECIMIENTO
-        : SECTION_NAMES.DESPACHOS_ARMAMENTO,
+    sectionName: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -422,7 +563,7 @@ export const deleteDispatch = async (
     return permissionsResponse
   }
 
-  const dispatch = await prisma.despacho.findUnique({
+  const loan = await prisma.prestamo.findUnique({
     where: {
       id,
     },
@@ -436,14 +577,14 @@ export const deleteDispatch = async (
     },
   })
 
-  if (!dispatch) {
+  if (!loan) {
     return {
       error: 'Despacho no existe',
       success: false,
     }
   }
   await prisma.$transaction(async (prisma) => {
-    await prisma.despacho.delete({
+    await prisma.prestamo.delete({
       where: {
         id: id,
       },
@@ -452,7 +593,7 @@ export const deleteDispatch = async (
     await prisma.serial.updateMany({
       where: {
         id_renglon: {
-          in: dispatch.renglones.flatMap((renglon) =>
+          in: loan.renglones.flatMap((renglon) =>
             renglon.seriales.map((serial) => serial.id_renglon)
           ),
         },
@@ -461,35 +602,33 @@ export const deleteDispatch = async (
         estado: 'Disponible',
       },
     })
-    const dispatchedItems = dispatch.renglones
+    const loanedItems = loan.renglones
 
-    dispatchedItems.forEach(async (item) => {
+    loanedItems.forEach(async (item) => {
       await prisma.renglon.update({
         where: {
           id: item.id_renglon,
         },
         data: {
           stock_actual: {
-            decrement: item.manualSelection
-              ? item.seriales.length
-              : item.cantidad,
+            decrement: item.seriales.length,
           },
         },
       })
     })
     await registerAuditAction(
       'ELIMINAR',
-      `Se eliminó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
+      `Se eliminó el prestamo en ${servicio.toLowerCase()} con el id: ${id}`
     )
   })
-  revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/prestamos`)
 
   return {
     success: 'Despacho eliminado exitosamente',
     error: false,
   }
 }
-export const recoverDispatch = async (
+export const recoverLoan = async (
   id: number,
   servicio: 'Abastecimiento' | 'Armamento'
 ) => {
@@ -500,10 +639,7 @@ export const recoverDispatch = async (
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName:
-      servicio === 'Abastecimiento'
-        ? SECTION_NAMES.DESPACHOS_ABASTECIMIENTO
-        : SECTION_NAMES.DESPACHOS_ARMAMENTO,
+    sectionName: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -512,7 +648,7 @@ export const recoverDispatch = async (
     return permissionsResponse
   }
 
-  const dispatch = await prisma.despacho.findUnique({
+  const loan = await prisma.prestamo.findUnique({
     where: {
       id,
     },
@@ -525,14 +661,14 @@ export const recoverDispatch = async (
     },
   })
 
-  if (!dispatch) {
+  if (!loan) {
     return {
       error: 'Despacho no existe',
       success: false,
     }
   }
   await prisma.$transaction(async (prisma) => {
-    await prisma.despacho.update({
+    await prisma.prestamo.update({
       where: {
         id: id,
       },
@@ -544,7 +680,7 @@ export const recoverDispatch = async (
     await prisma.serial.updateMany({
       where: {
         id_renglon: {
-          in: dispatch.renglones.flatMap((renglon) =>
+          in: loan.renglones.flatMap((renglon) =>
             renglon.seriales.map((serial) => serial.id_renglon)
           ),
         },
@@ -554,18 +690,16 @@ export const recoverDispatch = async (
       },
     })
 
-    const dispatchedItems = dispatch.renglones
+    const loanedItems = loan.renglones
 
-    dispatchedItems.forEach(async (item) => {
+    loanedItems.forEach(async (item) => {
       await prisma.renglon.update({
         where: {
           id: item.id_renglon,
         },
         data: {
           stock_actual: {
-            increment: item.manualSelection
-              ? item.seriales.length
-              : item.cantidad,
+            increment: item.seriales.length,
           },
         },
       })
@@ -573,25 +707,23 @@ export const recoverDispatch = async (
 
     await registerAuditAction(
       'RECUPERAR',
-      `Se recuperó el despacho en ${servicio.toLowerCase()} con el id: ${id}`
+      `Se recuperó el prestamo en ${servicio.toLowerCase()} con el id: ${id}`
     )
   })
 
-  revalidatePath(`/dashboard/${servicio.toLowerCase()}/despachos`)
+  revalidatePath(`/dashboard/${servicio.toLowerCase()}/prestamos`)
 
   return {
     success: 'Despacho recuperado exitosamente',
     error: false,
   }
 }
-export const getAllDispatches = async (
-  servicio: 'Abastecimiento' | 'Armamento'
-) => {
+export const getAllLoans = async (servicio: 'Abastecimiento' | 'Armamento') => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const dispatch = await prisma.despacho.findMany({
+  const loan = await prisma.prestamo.findMany({
     orderBy: {
       ultima_actualizacion: 'desc',
     },
@@ -643,15 +775,15 @@ export const getAllDispatches = async (
       },
     },
   })
-  return dispatch
+  return loan
 }
 
-export const getDispatchById = async (id: number) => {
+export const getLoanById = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const dispatch = await prisma.despacho.findUnique({
+  const loan = await prisma.prestamo.findUnique({
     where: {
       id,
     },
@@ -690,7 +822,7 @@ export const getDispatchById = async (id: number) => {
       },
       renglones: {
         include: {
-          despachos_Seriales: {
+          prestamos_Seriales: {
             include: {
               serial: true,
             },
@@ -700,7 +832,7 @@ export const getDispatchById = async (id: number) => {
               unidad_empaque: true,
               recepciones: true,
               clasificacion: true,
-              despachos: {
+              prestamos: {
                 include: {
                   seriales: true,
                 },
@@ -720,82 +852,62 @@ export const getDispatchById = async (id: number) => {
     },
   })
 
-  if (!dispatch) {
+  if (!loan) {
     throw new Error('Despacho no existe')
   }
 
   return {
-    ...dispatch,
+    ...loan,
 
-    renglones: dispatch.renglones.map((renglon) => ({
+    renglones: loan.renglones.map((renglon) => ({
       ...renglon,
-      seriales: renglon.es_despacho_liquidos
-        ? renglon.despachos_Seriales.map((serial) => {
-            return {
-              id: serial.serial.id,
-              peso_despachado: serial.peso_despachado,
-              serial: serial.serial.serial,
-              id_renglon: renglon.id_renglon,
-              peso_actual:
-                renglon.seriales.find((s) => s.serial === serial.serial.serial)
-                  ?.peso_actual || 0,
-            }
-          })
-        : renglon.seriales.map((serial) => {
-            return {
-              id: 0,
-              peso_despachado: 0,
-              serial: serial.serial,
-              id_renglon: renglon.id_renglon,
-              peso_actual: 0,
-            }
-          }),
+      seriales: renglon.seriales.map((serial) => {
+        return {
+          id: 0,
+          peso_despachado: 0,
+          serial: serial.serial,
+          id_renglon: renglon.id_renglon,
+          peso_actual: 0,
+        }
+      }),
     })),
   }
 }
 
-export const getDispatchForExportGuide = async (id: number) => {
+export const getLoanForExportGuide = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
     throw new Error('You must be signed in to perform this action')
   }
-  const dispatchData = await getDispatchById(id)
+  const loanData = await getLoanById(id)
 
-  if (!dispatchData) {
+  if (!loanData) {
     throw new Error('Despacho no existe')
   }
 
   return {
-    destinatario_cedula: `${dispatchData.destinatario.tipo_cedula}-${dispatchData.cedula_destinatario}`,
-    destinatario_nombres: dispatchData.destinatario.nombres,
-    destinatario_apellidos: dispatchData.destinatario.apellidos,
-    destinatario_grado: dispatchData?.destinatario?.grado?.nombre || 's/c',
-    destinatario_cargo: dispatchData.destinatario.cargo_profesional || 's/c',
-    destinatario_telefono: dispatchData.destinatario.telefono,
-    despacho: dispatchData,
-    renglones: dispatchData.renglones.map((renglon) => ({
+    destinatario_cedula: `${loanData.destinatario.tipo_cedula}-${loanData.cedula_destinatario}`,
+    destinatario_nombres: loanData.destinatario.nombres,
+    destinatario_apellidos: loanData.destinatario.apellidos,
+    destinatario_grado: loanData?.destinatario?.grado?.nombre || 's/c',
+    destinatario_cargo: loanData.destinatario.cargo_profesional || 's/c',
+    destinatario_telefono: loanData.destinatario.telefono,
+    prestamo: loanData,
+    renglones: loanData.renglones.map((renglon) => ({
       ...renglon,
-      cantidad: renglon.es_despacho_liquidos
-        ? renglon.seriales.length
-        : renglon.cantidad,
-      seriales: renglon.es_despacho_liquidos
-        ? renglon.seriales.map((serial) => {
-            return `${serial.serial} - ${
-              serial.peso_despachado
-            } ${renglon.renglon.tipo_medida_unidad.toLowerCase()}`
-          })
-        : renglon.seriales.map((serial) => serial.serial),
+      cantidad: renglon.seriales.length,
+      seriales: renglon.seriales.map((serial) => serial.serial),
     })),
-    autorizador: dispatchData.autorizador,
-    abastecedor: dispatchData.abastecedor,
-    supervisor: dispatchData.supervisor,
-    unidad: dispatchData?.destinatario?.unidad?.nombre.toUpperCase() || 's/u',
-    codigo: getGuideCode(dispatchData.id),
-    motivo: dispatchData.motivo || 's/m',
+    autorizador: loanData.autorizador,
+    abastecedor: loanData.abastecedor,
+    supervisor: loanData.supervisor,
+    unidad: loanData?.destinatario?.unidad?.nombre.toUpperCase() || 's/u',
+    codigo: getGuideCode(loanData.id),
+    motivo: loanData.motivo || 's/m',
   }
 }
 
-export const deleteMultipleDispatches = async (ids: number[]) => {
+export const deleteMultipleLoans = async (ids: number[]) => {
   const sessionResponse = await validateUserSession()
 
   if (sessionResponse.error || !sessionResponse.session) {
@@ -803,7 +915,7 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
   }
 
   const permissionsResponse = validateUserPermissions({
-    sectionName: SECTION_NAMES.DESPACHOS_ABASTECIMIENTO,
+    sectionName: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
     actionName: 'ELIMINAR',
     userPermissions: sessionResponse.session?.user.rol.permisos,
   })
@@ -812,7 +924,7 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
     return permissionsResponse
   }
 
-  await prisma.despacho.deleteMany({
+  await prisma.prestamo.deleteMany({
     where: {
       id: {
         in: ids,
@@ -822,12 +934,34 @@ export const deleteMultipleDispatches = async (ids: number[]) => {
 
   await registerAuditAction(
     'ELIMINAR',
-    `Se han eliminado despachos en abastecimiento con los siguientes ids: ${ids}`
+    `Se han eliminado prestamos en abastecimiento con los siguientes ids: ${ids}`
   )
-  revalidatePath('/dashboard/abastecimiento/despachos')
+  revalidatePath('/dashboard/abastecimiento/prestamos')
 
   return {
-    success: 'Se han eliminado los despachos correctamente',
+    success: 'Se han eliminado los prestamos correctamente',
     error: false,
   }
+}
+
+export const getAllLoansByItemId = async (
+  itemId: number,
+  servicio: 'Abastecimiento' | 'Armamento'
+) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const orders = await prisma.pedido.findMany({
+    where: {
+      fecha_eliminacion: null,
+      servicio,
+      renglones: {
+        some: {
+          id_renglon: itemId,
+        },
+      },
+    },
+  })
+  return orders
 }

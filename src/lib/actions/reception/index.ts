@@ -33,7 +33,7 @@ export const createReception = async (
       success: false,
     }
   }
-
+  console.log('receptionItems', receptionItems)
   await prisma.$transaction(async (prisma) => {
     const reception = await prisma.recepcion.create({
       data: {
@@ -75,7 +75,7 @@ export const createReception = async (
     })
 
     receptionItems.forEach(async (item) => {
-      if (!item.es_recepcion_liquidos) return
+      if (item.es_recepcion_liquidos) return
       await prisma.renglon.update({
         where: {
           id: item.id_renglon,

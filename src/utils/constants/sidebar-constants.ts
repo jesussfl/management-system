@@ -21,6 +21,7 @@ import {
   PackageCheck,
   DatabaseBackup,
   Shield,
+  FileBoxIcon,
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
@@ -56,7 +57,7 @@ export enum SECTION_NAMES {
   DESPACHOS_ABASTECIMIENTO = 'DESPACHOS_ABASTECIMIENTO',
   DEVOLUCIONES_ABASTECIMIENTO = 'DEVOLUCIONES_ABASTECIMIENTO',
   DESTINATARIOS_ABASTECIMIENTO = 'DESTINATARIOS_ABASTECIMIENTO',
-
+  PRESTAMOS_ABASTECIMIENTO = 'PRESTAMOS_ABASTECIMIENTO',
   ARMAMENTO = 'ARMAMENTO',
   ARMAS_ARMAMENTO = 'ARMAS_ARMAMENTO',
   INVENTARIO_ARMAMENTO = 'INVENTARIO_ARMAMENTO',
@@ -154,7 +155,17 @@ export const SIDE_MENU_ITEMS: SideMenuItem[] = [
           SECTION_NAMES.ABASTECIMIENTO,
         ],
       },
-
+      {
+        title: 'Prestamos',
+        identifier: SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
+        path: '/dashboard/abastecimiento/prestamos',
+        icon: FileBoxIcon,
+        requiredPermissions: [
+          SECTION_NAMES.PRESTAMOS_ABASTECIMIENTO,
+          SECTION_NAMES.TODAS,
+          SECTION_NAMES.ABASTECIMIENTO,
+        ],
+      },
       {
         title: 'Destinatarios',
         identifier: SECTION_NAMES.DESTINATARIOS_ABASTECIMIENTO,

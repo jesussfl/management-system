@@ -19,7 +19,7 @@ export default function FormatSelector({
   type,
 }: {
   data: any
-  type: 'despacho' | 'recepcion' | 'solicitud' | 'devolucion'
+  type: 'despacho' | 'recepcion' | 'solicitud' | 'devolucion' | 'prestamo'
 }) {
   const { toast } = useToast()
   const [format, setFormat] = useState<string>('PDF')
