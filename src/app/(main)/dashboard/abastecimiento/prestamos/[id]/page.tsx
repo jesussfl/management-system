@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import LoansForm from '@/app/(main)/dashboard/components/forms/loan-form/loanes-form'
+import LoansForm from '@/app/(main)/dashboard/components/forms/loan-form/loans-form'
 import {
   HeaderLeftSide,
   PageContent,
