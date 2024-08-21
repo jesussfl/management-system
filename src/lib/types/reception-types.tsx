@@ -21,7 +21,6 @@ export interface Recepcion_RenglonesFormValues {
     id_renglon: number
     condicion: string
     id?: number | null
-    peso_recibido?: number | null
     peso_actual?: number | null
   }[]
 
@@ -33,14 +32,6 @@ export interface Recepcion_RenglonesFormValues {
   precio?: number | null
 }
 
-// export type SelectedSerial = {
-//   id: number
-//   serial: string
-//   id_renglon: number
-//   peso_recibido: number
-//   peso_actual: number
-//   condicion?: undefined
-// }
 export type RecepcionType = Prisma.RecepcionGetPayload<{
   include: {
     destinatario: {

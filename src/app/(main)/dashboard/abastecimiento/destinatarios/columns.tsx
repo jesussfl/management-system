@@ -261,8 +261,6 @@ export const columns: ColumnDef<DestinatarioType>[] = [
           editConfig={{
             href: `/dashboard/abastecimiento/destinatarios/${receiver.id}`,
           }}
-          disableDelete
-          disableEdit
           deleteConfig={{
             isDeleted: receiver.fecha_eliminacion ? true : false,
             alertTitle: '¿Estás seguro de eliminar este destinatario?',

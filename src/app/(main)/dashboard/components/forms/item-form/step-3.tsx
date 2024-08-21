@@ -129,7 +129,7 @@ export const Step3 = ({
                   form={form}
                   field={field}
                 />
-                <FormDescription>
+                {/* <FormDescription>
                   Si no encuentras el subsistema, puedes crearlo
                   <Link
                     href="/dashboard/abastecimiento/inventario/subsistema"
@@ -140,7 +140,7 @@ export const Step3 = ({
                   >
                     Crear Subsistema
                   </Link>
-                </FormDescription>
+                </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}

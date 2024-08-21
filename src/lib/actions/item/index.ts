@@ -440,36 +440,6 @@ export const getAllItems = async (
       fecha_eliminacion: onlyActives ? null : undefined,
     },
     include: {
-      // recepciones: {
-      //   include: {
-      //     recepcion: true,
-      //     seriales: {
-      //       include: {
-      //         renglon: true,
-      //       },
-      //     },
-      //   },
-      // },
-      // despachos: {
-      //   include: {
-      //     despacho: true,
-      //     seriales: {
-      //       include: {
-      //         renglon: true,
-      //       },
-      //     },
-      //   },
-      // },
-      // devoluciones: {
-      //   include: {
-      //     devolucion: true,
-      //     seriales: {
-      //       include: {
-      //         renglon: true,
-      //       },
-      //     },
-      //   },
-      // },
       clasificacion: true,
       unidad_empaque: true,
       almacen: true,
@@ -493,8 +463,11 @@ export const getItemById = async (id: number) => {
     },
     include: {
       clasificacion: true,
-      categoria: true,
       unidad_empaque: true,
+      almacen: true,
+      categoria: true,
+      subsistema: true,
+      seriales: true,
     },
   })
 

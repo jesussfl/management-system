@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/modules/common/components/dialog/dialog'
-import { getSubsystemById } from '../../../../../../../../../lib/actions/subsystems'
+import { getSubsystemById } from '@/lib/actions/subsystems'
 import SubsystemForm from '../../../../../../components/forms/subsystem-form'
 
 export default async function Page({
@@ -18,9 +18,9 @@ export default async function Page({
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-hidden'}
+        className={'overflow-hidden lg:max-w-screen-lg'}
       >
-        <DialogHeader className="p-5 mb-8 border-b border-border">
+        <DialogHeader className="mb-8 border-b border-border p-5">
           <DialogTitle className="text-sm font-semibold text-foreground">
             Editar Subsistema
           </DialogTitle>

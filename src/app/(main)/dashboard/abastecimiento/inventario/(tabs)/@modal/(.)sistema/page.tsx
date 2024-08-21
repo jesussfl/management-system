@@ -13,9 +13,9 @@ export default async function Page() {
     <Dialog open={true}>
       <DialogContent
         customClose
-        className={'lg:max-w-screen-lg overflow-hidden p-0 h-[90vh]'}
+        className={'h-[90vh] overflow-hidden p-0 lg:max-w-screen-lg'}
       >
-        <DialogHeader className="p-5 mb-8 border-b border-border">
+        <DialogHeader className="mb-8 border-b border-border p-5">
           <DialogTitle className="text-sm font-semibold text-foreground">
             Crear Sistema
           </DialogTitle>

@@ -20,11 +20,8 @@ import { Combobox } from '@/modules/common/components/combobox'
 import { useRouter } from 'next/navigation'
 import { getDirtyValues } from '@/utils/helpers/get-dirty-values'
 import { Loader2 } from 'lucide-react'
-import { getAllSystems } from '../../../../../../lib/actions/systems'
-import {
-  createSubsystem,
-  updateSubsystem,
-} from '../../../../../../lib/actions/subsystems'
+import { getAllSystems } from '@/lib/actions/systems'
+import { createSubsystem, updateSubsystem } from '@/lib/actions/subsystems'
 
 interface Props {
   defaultValues?: Subsistema
@@ -79,6 +76,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
             })
 
             router.back()
+            router.refresh()
           }
         })
 
@@ -113,7 +111,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
         style={{
           scrollbarGutter: 'stable both-edges',
         }}
-        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
+        className="mb-36 flex-1 gap-8 overflow-y-auto p-6"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
@@ -124,7 +122,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
               required: 'Es necesario seleccionar un sistema',
             }}
             render={({ field }) => (
-              <FormItem className="flex flex-col w-full ">
+              <FormItem className="flex w-full flex-col">
                 <FormLabel>¿A qué sistema pertenece?</FormLabel>
                 <Combobox
                   name={field.name}
@@ -195,7 +193,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
                   <textarea
                     id="description"
                     rows={3}
-                    className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="w-full rounded-md border-0 bg-background p-1.5 text-foreground ring-1 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     {...field}
                     onChange={(e) => {
                       if (form.formState.errors[field.name]) {
@@ -217,7 +215,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
           />
         </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-8 pt-4">
           {form.formState.errors.descripcion && (
             <p className="text-sm font-medium text-destructive">
               Corrige los campos en rojo
@@ -226,7 +224,7 @@ export default function SubsystemForm({ defaultValues }: Props) {
 
           <Button variant="default" type="submit" disabled={isPending}>
             {isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               'Guardar'
             )}

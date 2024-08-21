@@ -19,8 +19,8 @@ export const ItemSelector = ({
   disabled?: boolean
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-
   const toogleModal = () => setIsModalOpen(!isModalOpen)
+
   return (
     <ModalForm
       triggerName="Seleccionar Renglones"
@@ -33,7 +33,7 @@ export const ItemSelector = ({
         <CardTitle>Selecciona los Renglones</CardTitle>
         {children}
         <Button
-          className="w-[200px] sticky bottom-8 left-8"
+          className="sticky bottom-8 left-8 w-[200px]"
           variant={'default'}
           onClick={() => setIsModalOpen(false)}
         >
@@ -60,7 +60,7 @@ export const SelectedItemsContainer = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-8 pt-4">
-        <div className="grid xl:grid-cols-2 gap-4">{children}</div>
+        <div className="grid gap-4 xl:grid-cols-2">{children}</div>
       </CardContent>
     </Card>
   )
