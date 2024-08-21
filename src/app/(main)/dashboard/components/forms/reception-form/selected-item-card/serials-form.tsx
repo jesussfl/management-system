@@ -144,7 +144,7 @@ export function SerialsForm() {
                 <FormLabel>Condición</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value || 'Nuevo'}
                 >
                   <FormControl>
                     <SelectTrigger>
