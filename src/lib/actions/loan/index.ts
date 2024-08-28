@@ -13,6 +13,7 @@ import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
 import { LoanFormValues, SelectedSerialForLoan } from '@/lib/types/loan-types'
 import { Estados_Prestamos } from '@prisma/client'
+import { getPackageUnit } from '../dispatch'
 
 export const createLoan = async (
   data: LoanFormValues,
@@ -902,11 +903,7 @@ export const getLoanForExportGuide = async (id: number) => {
         ...renglon.renglon,
         unidad_empaque: {
           ...renglon.renglon.unidad_empaque,
-          abreviacion:
-            Abreviations[
-              renglon.renglon.unidad_empaque?.tipo_medida ||
-                renglon.renglon.tipo_medida_unidad
-            ] || 's/u',
+          abreviacion: getPackageUnit(renglon.renglon.unidad_empaque),
         },
       },
       cantidad: renglon.seriales.length,

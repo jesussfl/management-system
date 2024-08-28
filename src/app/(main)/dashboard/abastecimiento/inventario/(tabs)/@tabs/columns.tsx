@@ -12,7 +12,7 @@ import {
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import Link from 'next/link'
-import { deleteItem, recoverItem } from '../../../../../../../lib/actions/item'
+import { deleteItem, recoverItem } from '@/lib/actions/item'
 import { RenglonWithAllRelations } from '@/types/types'
 
 import { cn } from '@/utils/utils'
@@ -47,7 +47,7 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
           <HoverCardTrigger asChild>
             <div className="flex items-center">
               {!image ? (
-                <Package className="w-12 h-8" />
+                <Package className="h-8 w-12" />
               ) : (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -76,12 +76,18 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
                 </AlertDialog>
               )}
 
-              <Button variant="ghost" className="mr-4">
-                {row.getValue<string>('nombre')}
+              <Button
+                variant="ghost"
+                className="mr-4 flex flex-col items-start"
+              >
+                <p>{row.getValue<string>('nombre')}</p>
+                <p className="text-xs text-gray-600">
+                  {row.getValue<string>('numero_parte') || 'S/N'}
+                </p>
               </Button>
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+          <HoverCardContent className="w-80 rounded-sm border border-border bg-background p-5">
             <p className="text-sm">{description}</p>
           </HoverCardContent>
         </HoverCard>
@@ -111,15 +117,15 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
               )}
             >
               {stock < minimumStock ? (
-                <AlertCircle className="w-4 h-4 mr-2" />
+                <AlertCircle className="mr-2 h-4 w-4" />
               ) : (
-                <CheckCircle className="w-4 h-4 mr-2" />
+                <CheckCircle className="mr-2 h-4 w-4" />
               )}
 
               {stock}
             </Button>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+          <HoverCardContent className="w-80 rounded-sm border border-border bg-background p-5">
             <p className="text-sm">Stock Minimo: {minimumStock}</p>
             <p className="text-sm">Stock Maximo: {maximumStock}</p>
           </HoverCardContent>
@@ -221,10 +227,10 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
         <HoverCard>
           <HoverCardTrigger asChild>
             <Button variant="link">
-              <MapPin className="w-4 h-4 mr-2" /> Ver ubicación
+              <MapPin className="mr-2 h-4 w-4" /> Ver ubicación
             </Button>
           </HoverCardTrigger>
-          <HoverCardContent className="w-80 bg-background p-5 border border-border rounded-sm">
+          <HoverCardContent className="w-80 rounded-sm border border-border bg-background p-5">
             <div className="space-y-1">
               <div>
                 <div className="text-sm font-semibold">Almacén: {almacen}</div>

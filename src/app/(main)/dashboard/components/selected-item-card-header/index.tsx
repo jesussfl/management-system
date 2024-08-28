@@ -33,7 +33,7 @@ export const SelectedItemCardHeader = () => {
         )}
         <div className="flex flex-col">
           <CardTitle className="text-md font-medium text-foreground">
-            {itemData.nombre}
+            {`${itemData?.nombre} - ${itemData.numero_parte || 'S/U'}`}
           </CardTitle>
           <CardDescription>{itemData?.descripcion}</CardDescription>
         </div>

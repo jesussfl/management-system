@@ -154,7 +154,20 @@ export function SerialsForm() {
             <FormField
               control={control}
               name={`renglones.${itemIndex}.seriales.${index}.serial`}
-              rules={{ required: 'El serial es requerido' }}
+              rules={{
+                required: 'El serial es requerido',
+                validate: (value) => {
+                  const serials = watch(`renglones.${itemIndex}.seriales`)
+                    .map((serial: any) => serial.serial)
+                    .filter((serial: any) => serial === value)
+
+                  if (serials.length > 1) {
+                    return 'No puedes tener dos o más seriales iguales'
+                  }
+
+                  return true
+                },
+              }}
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <FormLabel>Serial #{index + 1}</FormLabel>
@@ -171,6 +184,7 @@ export function SerialsForm() {
                       value={field.value}
                     />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -267,7 +281,7 @@ export function SerialsForm() {
 }
 
 export const SerialsFormTrigger = () => {
-  const { watch, trigger } = useFormContext()
+  const { watch, trigger, formState } = useFormContext()
   const { toast } = useToast()
   const {
     itemData,
@@ -278,20 +292,88 @@ export const SerialsFormTrigger = () => {
     isPackageForLiquids,
   } = useItemCardContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
   const registeredSerials: number =
     watch(`renglones.${itemIndex}.seriales`)?.length || 0
   const quantity = watch(`renglones.${itemIndex}.cantidad`)
-  const triggerVariant = registeredSerials > 0 ? 'outline' : 'default'
-  const triggerIcon =
-    registeredSerials > 0 ? (
-      <Eye className="h-4 w-4" />
-    ) : (
-      <Plus className="h-4 w-4" />
-    )
-  const triggerName =
-    registeredSerials > 0 ? 'Ver Seriales' : 'Asociar Seriales'
+  const triggerVariant = getTriggerVariant(registeredSerials)
+  const triggerIcon = getTriggerIcon(registeredSerials)
+  const triggerName = getTriggerName(registeredSerials)
 
-  const toogleModal = () => setIsModalOpen(!isModalOpen)
+  const toggleModal = () => setIsModalOpen(!isModalOpen)
+
+  const handleButtonClick = () => {
+    if (isError && setItemsWithoutSerials) {
+      updateItemsWithoutSerials()
+      return
+    }
+
+    if (validateSerials()) {
+      toggleModal()
+    }
+  }
+
+  const updateItemsWithoutSerials = () => {
+    setItemsWithoutSerials &&
+      setItemsWithoutSerials((prev) => prev.filter((id) => id !== itemData.id))
+  }
+
+  const validateSerials = () => {
+    const serials = watch(`renglones.${itemIndex}.seriales`)
+    const isSomeFieldEmpty = serials.some(
+      (selectedSerial: any, index: number) =>
+        checkSerialFields(selectedSerial, index)
+    )
+
+    if (isSomeFieldEmpty) {
+      toast({
+        title: 'Hay campos vacios o incorrectos, por favor revisa los datos',
+        variant: 'destructive',
+      })
+      return false
+    }
+
+    return true
+  }
+
+  const checkSerialFields = (serial: any, index: number) => {
+    const itemErrors = formState.errors[`renglones`] as any
+    const serialErrors = itemErrors?.[itemIndex]?.seriales || []
+
+    if (serialErrors.length > 0) {
+      toast({
+        title: 'Hay campos con errores, por favor revisa los datos',
+        variant: 'destructive',
+      })
+      return true
+    }
+
+    if (isFieldEmpty(serial)) {
+      triggerFields(serial, index)
+      return true
+    }
+
+    return false
+  }
+
+  const isFieldEmpty = (serial: any) => {
+    return (
+      !serial.serial ||
+      !serial.condicion ||
+      (!serial.peso_actual && isPackageForLiquids)
+    )
+  }
+
+  const triggerFields = (serial: any, index: number) => {
+    if (!serial.condicion) {
+      trigger(`renglones.${itemIndex}.seriales.${index}.condicion`)
+    }
+    if (!serial.peso_actual && isPackageForLiquids) {
+      trigger(`renglones.${itemIndex}.seriales.${index}.peso_actual`)
+    }
+    trigger(`renglones.${itemIndex}.seriales.${index}.serial`)
+  }
+
   return (
     <div className="mt-4">
       <ModalForm
@@ -302,59 +384,14 @@ export const SerialsFormTrigger = () => {
         className="max-h-[80vh]"
         disabled={!quantity || isEditing}
         open={isModalOpen}
-        customToogleModal={toogleModal}
+        customToogleModal={toggleModal}
       >
         <>
           <SerialsForm />
           <Button
             className="sticky bottom-8 left-8 w-[200px]"
-            variant={'default'}
-            onClick={() => {
-              if (isError && setItemsWithoutSerials) {
-                setItemsWithoutSerials((prev) => {
-                  return prev.filter((id) => id !== itemData.id)
-                })
-
-                return
-              }
-              const serials = watch(`renglones.${itemIndex}.seriales`)
-              const isSomeFieldEmpty = serials.some(
-                (selectedSerial: any, index: number) => {
-                  if (
-                    !selectedSerial.serial ||
-                    !selectedSerial.condicion ||
-                    (!selectedSerial.peso_actual && isPackageForLiquids)
-                  ) {
-                    if (!selectedSerial.condicion) {
-                      trigger(
-                        `renglones.${itemIndex}.seriales.${index}.condicion`
-                      )
-                    }
-
-                    if (!selectedSerial.peso_actual) {
-                      trigger(
-                        `renglones.${itemIndex}.seriales.${index}.peso_actual`
-                      )
-                    }
-                    trigger(`renglones.${itemIndex}.seriales.${index}.serial`)
-
-                    return true
-                  }
-
-                  return false
-                }
-              )
-
-              if (isSomeFieldEmpty) {
-                toast({
-                  title:
-                    'Hay campos vacios o incorrectos, por favor revisa los datos',
-                  variant: 'destructive',
-                })
-                return
-              }
-              toogleModal()
-            }}
+            variant="default"
+            onClick={handleButtonClick}
           >
             Listo
           </Button>
@@ -363,3 +400,16 @@ export const SerialsFormTrigger = () => {
     </div>
   )
 }
+
+const getTriggerVariant = (registeredSerials: number) =>
+  registeredSerials > 0 ? 'outline' : 'default'
+
+const getTriggerIcon = (registeredSerials: number) =>
+  registeredSerials > 0 ? (
+    <Eye className="h-4 w-4" />
+  ) : (
+    <Plus className="h-4 w-4" />
+  )
+
+const getTriggerName = (registeredSerials: number) =>
+  registeredSerials > 0 ? 'Ver Seriales' : 'Asociar Seriales'

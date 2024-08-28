@@ -15,6 +15,7 @@ import {
   DispatchFormValues,
   SelectedSerialForDispatch,
 } from '@/lib/types/dispatch-types'
+import { UnidadEmpaque } from '@prisma/client'
 
 export const createDispatch = async (
   data: DispatchFormValues,
@@ -757,6 +758,13 @@ export const getDispatchById = async (id: number) => {
   }
 }
 
+export const getPackageUnit = (
+  packageUnit: UnidadEmpaque | undefined | null
+) => {
+  return packageUnit
+    ? `${Abreviations[packageUnit?.tipo_medida].toUpperCase() || packageUnit.abreviacion}/${packageUnit.nombre.toUpperCase()}`
+    : 'UND'
+}
 export const getDispatchForExportGuide = async (id: number) => {
   const session = await auth()
   if (!session?.user) {
@@ -782,11 +790,7 @@ export const getDispatchForExportGuide = async (id: number) => {
         ...renglon.renglon,
         unidad_empaque: {
           ...renglon.renglon.unidad_empaque,
-          abreviacion:
-            Abreviations[
-              renglon.renglon.unidad_empaque?.tipo_medida ||
-                renglon.renglon.tipo_medida_unidad
-            ] || 's/u',
+          abreviacion: getPackageUnit(renglon.renglon.unidad_empaque),
         },
       },
       cantidad: renglon.es_despacho_liquidos

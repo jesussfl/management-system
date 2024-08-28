@@ -2,10 +2,7 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import {
-  Abreviations,
-  SECTION_NAMES,
-} from '@/utils/constants/sidebar-constants'
+import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
@@ -14,6 +11,7 @@ import {
   ReceptionFormValues,
 } from '../../types/reception-types'
 import { validateUserAndPermissions } from '@/utils/helpers/validate-user-and-permissions'
+import { getPackageUnit } from '../dispatch'
 
 export const createReception = async (
   data: ReceptionFormValues,
@@ -36,78 +34,91 @@ export const createReception = async (
       success: false,
     }
   }
-  console.log('receptionItems', receptionItems)
-  await prisma.$transaction(async (prisma) => {
-    const reception = await prisma.recepcion.create({
-      data: {
-        ...data,
-        servicio,
-        renglones: {
-          create: receptionItems.map((item) => ({
-            ...item,
-            id_renglon: undefined,
-            codigo_solicitud: undefined,
-            pedido: item.codigo_solicitud
-              ? {
-                  connect: {
-                    id: item.codigo_solicitud,
-                  },
-                }
-              : undefined,
-            renglon: {
-              connect: {
-                id: item.id_renglon,
-              },
-            },
-
-            seriales: {
-              create: item.seriales.map((serial) => ({
-                serial: serial.serial,
-                condicion: serial.condicion || undefined,
-                peso_actual: serial.peso_actual || 0,
-                renglon: {
-                  connect: {
-                    id: item.id_renglon,
-                  },
-                },
-              })),
-            },
-          })),
-        },
-      },
-    })
-
-    receptionItems.forEach(async (item) => {
-      if (item.es_recepcion_liquidos) return
-      await prisma.renglon.update({
-        where: {
-          id: item.id_renglon,
-        },
+  try {
+    await prisma.$transaction(async (prisma) => {
+      const reception = await prisma.recepcion.create({
         data: {
-          stock_actual: {
-            increment: item.seriales.length,
+          ...data,
+          servicio,
+          renglones: {
+            create: receptionItems.map((item) => ({
+              ...item,
+              id_renglon: undefined,
+              codigo_solicitud: undefined,
+              pedido: item.codigo_solicitud
+                ? {
+                    connect: {
+                      id: item.codigo_solicitud,
+                    },
+                  }
+                : undefined,
+              renglon: {
+                connect: {
+                  id: item.id_renglon,
+                },
+              },
+
+              seriales: {
+                create: item.seriales.map((serial) => ({
+                  serial: serial.serial,
+                  condicion: serial.condicion || undefined,
+                  peso_actual: serial.peso_actual || 0,
+                  renglon: {
+                    connect: {
+                      id: item.id_renglon,
+                    },
+                  },
+                })),
+              },
+            })),
           },
         },
       })
-    })
 
-    await registerAuditAction(
-      'CREAR',
-      `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
-        data.motivo
-      } y id: ${reception.id} ${
-        data.motivo_fecha
-          ? `, la fecha de creación fue: ${format(
-              reception.fecha_creacion,
-              'dd-MM-yyyy HH:mm'
-            )}, la fecha de recepción: ${format(
-              reception.fecha_recepcion,
-              'dd-MM-yyyy HH:mm'
-            )}, motivo de la fecha: ${data.motivo_fecha}`
-          : ''
-      }`
+      receptionItems.forEach(async (item) => {
+        if (item.es_recepcion_liquidos) return
+        await prisma.renglon.update({
+          where: {
+            id: item.id_renglon,
+          },
+          data: {
+            stock_actual: {
+              increment: item.seriales.length,
+            },
+          },
+        })
+      })
+
+      await registerAuditAction(
+        'CREAR',
+        `Se creó una recepción de ${servicio.toLowerCase()} con motivo: ${
+          data.motivo
+        } y id: ${reception.id} ${
+          data.motivo_fecha
+            ? `, la fecha de creación fue: ${format(
+                reception.fecha_creacion,
+                'dd-MM-yyyy HH:mm'
+              )}, la fecha de recepción: ${format(
+                reception.fecha_recepcion,
+                'dd-MM-yyyy HH:mm'
+              )}, motivo de la fecha: ${data.motivo_fecha}`
+            : ''
+        }`
+      )
+    })
+  } catch (error: any) {
+    const isUniqueConstraintError = error.message.includes(
+      'Unique constraint failed'
     )
-  })
+    return {
+      success: false,
+      error: isUniqueConstraintError
+        ? 'Ya existe un serial repetido, introduzca otro serial'
+        : 'Parece que hubo un problema, verifique los datos',
+      fields: [],
+    }
+  }
+  // console.log('receptionItems', receptionItems)
 
   revalidatePath(`/dashboard/${servicio.toLowerCase()}/recepciones`)
 
@@ -552,11 +563,7 @@ export const getReceptionForExportGuide = async (id: number) => {
         ...renglon.renglon,
         unidad_empaque: {
           ...renglon.renglon.unidad_empaque,
-          abreviacion:
-            Abreviations[
-              renglon.renglon.unidad_empaque?.tipo_medida ||
-                renglon.renglon.tipo_medida_unidad
-            ] || 's/u',
+          abreviacion: getPackageUnit(renglon.renglon.unidad_empaque),
         },
       },
       cantidad: renglon.es_recepcion_liquidos
@@ -582,16 +589,16 @@ const getItemsWithEmptySerials = (
 ) => {
   const fields = renglones
     .filter(
-      (renglon) =>
-        renglon.seriales.length === 0 ||
-        renglon.seriales.some(
+      (item) =>
+        item.seriales.length === 0 ||
+        item.seriales.some(
           (serial) =>
             !serial.serial ||
             serial.serial === '' ||
             serial.serial === undefined
         )
     )
-    .map((renglon) => renglon.id_renglon)
+    .map((item) => item.id_renglon)
 
   return fields
 }
