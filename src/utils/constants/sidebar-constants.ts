@@ -25,7 +25,16 @@ import {
 } from 'lucide-react'
 import { SideMenuItem } from '@/types/types'
 
-const DEFAULT_ICON_SIZE = 20
+export enum Abreviations {
+  MILILITROS = 'ML',
+  LITROS = 'LTS',
+  ONZAS = 'ONZ',
+  LIBRAS = 'LB',
+  TONELADAS = 'TON',
+  KILOGRAMOS = 'KG',
+  GRAMOS = 'G',
+  UNIDADES = 'UN',
+}
 
 /**
  * Object array which represents the items in a side menu.

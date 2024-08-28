@@ -15,7 +15,7 @@ import { useToast } from '@/modules/common/components/toast/use-toast'
 import { DialogFooter } from '@/modules/common/components/dialog/dialog'
 
 import { ItemsWithAllRelations } from '@/lib/actions/item'
-import { ReceptionFormValues } from '../../../../../../lib/types/reception-types'
+import { ReceptionFormValues } from '@/lib/types/reception-types'
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { Separator } from '@/modules/common/components/separator/separator'
 import {
@@ -153,7 +153,7 @@ export default function ReceptionsForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" space-y-10 mb-[8rem] "
+        className="mb-[8rem] space-y-10"
       >
         <Card>
           <CardHeader>
@@ -187,7 +187,7 @@ export default function ReceptionsForm({
             />
             <Separator />
 
-            <div className="flex flex-1 flex-row gap-8 items-center justify-between">
+            <div className="flex flex-1 flex-row items-center justify-between gap-8">
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han recibido
               </FormDescription>
@@ -229,7 +229,7 @@ export default function ReceptionsForm({
           </SelectedItemsContainer>
         )}
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white border-t border-border gap-4 items-center w-full p-4">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-4">
           {isEditing && (
             <p className="text-sm text-foreground">
               Algunos campos están deshabilitados para la edición

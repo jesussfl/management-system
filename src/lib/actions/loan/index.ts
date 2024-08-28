@@ -5,7 +5,10 @@ import { revalidatePath } from 'next/cache'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  Abreviations,
+  SECTION_NAMES,
+} from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
 import { LoanFormValues, SelectedSerialForLoan } from '@/lib/types/loan-types'
@@ -895,6 +898,17 @@ export const getLoanForExportGuide = async (id: number) => {
     prestamo: loanData,
     renglones: loanData.renglones.map((renglon) => ({
       ...renglon,
+      renglon: {
+        ...renglon.renglon,
+        unidad_empaque: {
+          ...renglon.renglon.unidad_empaque,
+          abreviacion:
+            Abreviations[
+              renglon.renglon.unidad_empaque?.tipo_medida ||
+                renglon.renglon.tipo_medida_unidad
+            ] || 's/u',
+        },
+      },
       cantidad: renglon.seriales.length,
       seriales: renglon.seriales.map((serial) => serial.serial),
     })),

@@ -306,6 +306,7 @@ model Recepciones_Renglones {
   cantidad              Int     @default(0)
   seriales_automaticos  Boolean @default(false)
   es_recepcion_liquidos Boolean @default(false)
+  condicion_automatica  Boolean @default(false)
   fabricante            String?
   precio                Float?
 

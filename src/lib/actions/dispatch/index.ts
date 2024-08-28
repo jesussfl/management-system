@@ -5,7 +5,10 @@ import { revalidatePath } from 'next/cache'
 import { validateUserSession } from '@/utils/helpers/validate-user-session'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { validateUserPermissions } from '@/utils/helpers/validate-user-permissions'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  Abreviations,
+  SECTION_NAMES,
+} from '@/utils/constants/sidebar-constants'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
 import {
@@ -775,6 +778,17 @@ export const getDispatchForExportGuide = async (id: number) => {
     despacho: dispatchData,
     renglones: dispatchData.renglones.map((renglon) => ({
       ...renglon,
+      renglon: {
+        ...renglon.renglon,
+        unidad_empaque: {
+          ...renglon.renglon.unidad_empaque,
+          abreviacion:
+            Abreviations[
+              renglon.renglon.unidad_empaque?.tipo_medida ||
+                renglon.renglon.tipo_medida_unidad
+            ] || 's/u',
+        },
+      },
       cantidad: renglon.es_despacho_liquidos
         ? renglon.seriales.length
         : renglon.cantidad,

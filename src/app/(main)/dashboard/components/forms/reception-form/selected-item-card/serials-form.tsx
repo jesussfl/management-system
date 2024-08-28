@@ -3,7 +3,6 @@ import { Input } from '@/modules/common/components/input/input'
 import { useFormContext } from 'react-hook-form'
 import {
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -11,6 +10,7 @@ import {
 } from '@/modules/common/components/form'
 
 import {
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -39,33 +39,36 @@ export function SerialsForm() {
   } = useItemCardContext()
   const { control, watch, setValue, formState, clearErrors } = useFormContext()
   const quantity = watch(`renglones.${itemIndex}.cantidad`)
-  const itemId = itemData.id
-  const autoSerialsEnabled = watch(
-    `renglones.${itemIndex}.seriales_automaticos`
+
+  const conditionsPerSerial = !watch(
+    `renglones.${itemIndex}.condicion_automatica`
   )
+  const [generalCondition, setGeneralCondition] = useState<string>('')
+
   return (
     <div className="flex flex-col gap-0 overflow-y-auto p-8">
-      <CardHeader className="flex items-center justify-between gap-4">
+      <CardHeader>
         <CardTitle>Seriales</CardTitle>
         <CardDescription>Ingresa los seriales de la recepción</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-8">
         <FormField
           control={control}
           name={`renglones.${itemIndex}.seriales_automaticos`}
           render={({ field }) => {
             return (
-              <FormItem className="flex flex-row items-center justify-center gap-4">
+              <FormItem className="flex w-[50%] flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <FormLabel>Rellenar seriales automaticamente</FormLabel>
+
                 <FormControl>
                   <Switch
                     checked={field.value}
                     onCheckedChange={(value) => {
-                      if (formState.errors[field.name]) {
-                        clearErrors(field.name)
-                      }
-                      if (!value) {
+                      if (value) {
                         Array.from({ length: quantity }).forEach((_, index) => {
                           setValue(
-                            `renglones.${itemIndex}.seriales.${index}`,
-                            {}
+                            `renglones.${itemIndex}.seriales.${index}.serial`,
+                            nanoid(11)
                           )
                         })
                       }
@@ -73,150 +76,192 @@ export function SerialsForm() {
                     }}
                   />
                 </FormControl>
-
-                <FormLabel>Seriales automaticos</FormLabel>
               </FormItem>
             )
           }}
         />
-      </CardHeader>
-      {Array.from({ length: quantity }).map((_, index) => (
-        <div
-          key={`renglon-${itemIndex}-serial-${index}`}
-          className="mb-4 flex flex-row gap-8"
-        >
-          <FormField
-            control={control}
-            name={`renglones.${itemIndex}.seriales.${index}`}
-            rules={{ required: 'El serial es requerido' }}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Serial #{index + 1}</FormLabel>
+        <FormField
+          control={control}
+          name={`renglones.${itemIndex}.condicion_automatica`}
+          render={({ field }) => {
+            return (
+              <FormItem className="flex w-[50%] flex-row items-center justify-between gap-4 rounded-lg border p-3 shadow-sm">
+                <FormLabel>
+                  Agregar misma condición para todos los seriales{' '}
+                </FormLabel>
+
                 <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (formState.errors[field.name]) {
-                        clearErrors(field.name)
-                      }
-                      const { value } = e.target
-                      const currentValue = field.value
-                      setValue(
-                        field.name,
-                        {
-                          ...currentValue,
-                          serial: value,
-                        },
-                        {
-                          shouldDirty: true,
-                        }
-                      )
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={(value) => {
+                      setGeneralCondition('')
+                      Array.from({ length: quantity }).forEach((_, index) => {
+                        setValue(
+                          `renglones.${itemIndex}.seriales.${index}.condicion`,
+                          ''
+                        )
+                      })
+                      field.onChange(value)
                     }}
-                    value={
-                      field.value?.serial ||
-                      (autoSerialsEnabled
-                        ? setValue(
-                            field.name,
-                            {
-                              serial: nanoid(11),
-                              id_renglon: itemId,
-                              condicion: null,
-                            },
-                            {
-                              shouldDirty: true,
-                            }
-                          )
-                        : '') ||
-                      ''
-                    }
                   />
                 </FormControl>
-                {/* <FormMessage /> */}
               </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name={`renglones.${itemIndex}.seriales.${index}.condicion`}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Condición</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value || 'Nuevo'}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Nuevo">Nuevo</SelectItem>
-                    <SelectItem value="Usado como nuevo">Como nuevo</SelectItem>
-                    <SelectItem value="Bastante usado">
-                      Bastante usado
-                    </SelectItem>
-                    <SelectItem value="Antiguo">antiguo</SelectItem>
-                    <SelectItem value="Dañado sin reparación">
-                      Dañado sin reparación
-                    </SelectItem>
-                    <SelectItem value="Dañado con reparación">
-                      Dañado con reparación
-                    </SelectItem>
-                    <SelectItem value="Restaurado">Restaurado</SelectItem>
-                  </SelectContent>
-                </Select>
+            )
+          }}
+        />
+        {!conditionsPerSerial && (
+          <div className="flex w-[50%] flex-row items-center justify-between gap-4 rounded-lg border p-3 shadow-sm">
+            <FormLabel>Selecciona la condición</FormLabel>
+            <Select
+              onValueChange={(value) => {
+                Array.from({ length: quantity }).forEach((_, index) => {
+                  setValue(
+                    `renglones.${itemIndex}.seriales.${index}.condicion`,
+                    value
+                  )
+                })
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {isPackageForLiquids && (
+                setGeneralCondition(value)
+              }}
+              defaultValue={generalCondition}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar" />
+              </SelectTrigger>
+              <SelectContent className="flex-1">
+                <SelectItem value="Nuevo">Nuevo</SelectItem>
+                <SelectItem value="Usado Como nuevo">
+                  Usado como nuevo
+                </SelectItem>
+                <SelectItem value="Bastante usado">Bastante usado</SelectItem>
+                <SelectItem value="Antiguo">Antiguo</SelectItem>
+                <SelectItem value="Dañado sin reparación">
+                  Dañado sin reparación
+                </SelectItem>
+                <SelectItem value="Dañado con reparación">
+                  Dañado con reparación
+                </SelectItem>
+                <SelectItem value="Restaurado">Restaurado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        {Array.from({ length: quantity }).map((_, index) => (
+          <div
+            key={`renglon-${itemIndex}-serial-${index}`}
+            className="mb-4 flex flex-row gap-8"
+          >
             <FormField
               control={control}
-              name={`renglones.${itemIndex}.seriales.${index}.peso_actual`}
-              rules={{
-                required: 'Peso requerido',
-                max: {
-                  value: itemData.peso,
-                  message: `Maximo ${
-                    itemData.peso
-                  } ${itemData.tipo_medida_unidad.toLowerCase()}`,
-                },
-              }}
-              render={({ field: { value, onChange, ref, ...field } }) => {
-                return (
-                  <FormItem className="flex flex-col gap-1.5">
-                    <FormLabel>
-                      {itemData.tipo_medida_unidad.toLowerCase()} actuales{' '}
-                      {` (Máximo. ${itemData.peso})`}{' '}
-                    </FormLabel>
-
-                    <FormControl>
-                      <NumericFormat
-                        className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        {...field}
-                        allowNegative={false}
-                        thousandSeparator=""
-                        suffix={` ${itemData.tipo_medida_unidad.toLowerCase()}`}
-                        decimalScale={2}
-                        getInputRef={ref}
-                        value={value}
-                        onValueChange={({ floatValue }) => {
-                          onChange(floatValue || '')
+              name={`renglones.${itemIndex}.seriales.${index}.serial`}
+              rules={{ required: 'El serial es requerido' }}
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Serial #{index + 1}</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        if (formState.errors[field.name]) {
                           clearErrors(field.name)
-                        }}
-                      />
-                    </FormControl>
+                        }
+
+                        field.onChange(e)
+                      }}
+                      value={field.value}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {conditionsPerSerial && (
+              <FormField
+                control={control}
+                name={`renglones.${itemIndex}.seriales.${index}.condicion`}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Condición</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Nuevo">Nuevo</SelectItem>
+                        <SelectItem value="Usado Como nuevo">
+                          Usado como nuevo
+                        </SelectItem>
+                        <SelectItem value="Bastante usado">
+                          Bastante usado
+                        </SelectItem>
+                        <SelectItem value="Antiguo">Antiguo</SelectItem>
+                        <SelectItem value="Dañado sin reparación">
+                          Dañado sin reparación
+                        </SelectItem>
+                        <SelectItem value="Dañado con reparación">
+                          Dañado con reparación
+                        </SelectItem>
+                        <SelectItem value="Restaurado">Restaurado</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     <FormMessage />
                   </FormItem>
-                )
-              }}
-            />
-          )}
-        </div>
-      ))}
+                )}
+              />
+            )}
+
+            {isPackageForLiquids && (
+              <FormField
+                control={control}
+                name={`renglones.${itemIndex}.seriales.${index}.peso_actual`}
+                rules={{
+                  required: 'Peso requerido',
+                  max: {
+                    value: itemData.peso,
+                    message: `Maximo ${
+                      itemData.peso
+                    } ${itemData.tipo_medida_unidad.toLowerCase()}`,
+                  },
+                }}
+                render={({ field: { value, onChange, ref, ...field } }) => {
+                  return (
+                    <FormItem className="flex flex-col gap-1.5">
+                      <FormLabel>
+                        {itemData.tipo_medida_unidad.toLowerCase()} actuales{' '}
+                        {` (Máximo. ${itemData.peso})`}{' '}
+                      </FormLabel>
+
+                      <FormControl>
+                        <NumericFormat
+                          className="border-1 rounded-md border-border bg-background text-foreground placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          {...field}
+                          allowNegative={false}
+                          thousandSeparator=""
+                          suffix={` ${itemData.tipo_medida_unidad.toLowerCase()}`}
+                          decimalScale={2}
+                          getInputRef={ref}
+                          value={value}
+                          onValueChange={({ floatValue }) => {
+                            onChange(floatValue || '')
+                            clearErrors(field.name)
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )
+                }}
+              />
+            )}
+          </div>
+        ))}
+      </CardContent>
     </div>
   )
 }

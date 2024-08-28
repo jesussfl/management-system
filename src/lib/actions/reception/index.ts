@@ -2,7 +2,10 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { revalidatePath } from 'next/cache'
-import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
+import {
+  Abreviations,
+  SECTION_NAMES,
+} from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import getGuideCode from '@/utils/helpers/get-guide-code'
 import { format } from 'date-fns'
@@ -545,9 +548,21 @@ export const getReceptionForExportGuide = async (id: number) => {
     recepcion: receptionData,
     renglones: receptionData.renglones.map((renglon) => ({
       ...renglon,
+      renglon: {
+        ...renglon.renglon,
+        unidad_empaque: {
+          ...renglon.renglon.unidad_empaque,
+          abreviacion:
+            Abreviations[
+              renglon.renglon.unidad_empaque?.tipo_medida ||
+                renglon.renglon.tipo_medida_unidad
+            ] || 's/u',
+        },
+      },
       cantidad: renglon.es_recepcion_liquidos
         ? renglon.seriales.length
         : renglon.cantidad,
+
       seriales: renglon.seriales.map(
         (serial) =>
           `${serial.serial} ${serial.peso_actual ? `(${serial.peso_actual})` : ''}`
