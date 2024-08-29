@@ -13,11 +13,45 @@ import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
 import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteReturn, recoverReturn } from '@/lib/actions/return'
+import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 
-type ReturnType = Prisma.DevolucionGetPayload<{
-  include: { renglones: { include: { renglon: true } } }
+export type ReturnType = Prisma.DevolucionGetPayload<{
+  include: {
+    destinatario: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    supervisor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    abastecedor: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    autorizador: {
+      include: {
+        grado: true
+        categoria: true
+        componente: true
+        unidad: true
+      }
+    }
+    renglones: { include: { renglon: true; seriales: true } }
+  }
 }>
-
 export const columns: ColumnDef<ReturnType>[] = [
   SELECT_COLUMN,
   {
@@ -46,6 +80,126 @@ export const columns: ColumnDef<ReturnType>[] = [
           {row.getValue<string>('motivo')}
         </div>
       )
+    },
+  },
+  {
+    id: 'destinatario',
+    accessorFn: (row: ReturnType) =>
+      `${row.destinatario?.grado?.abreviatura || ''} ${
+        row.destinatario?.nombres
+      } ${row.destinatario?.apellidos}`,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Destinatario
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const data = row.getValue<string>('destinatario')
+      const receiverId = row.original.destinatario.id
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/destinatarios/estadisticas/${receiverId}`}
+        >
+          {data}
+        </Link>
+      )
+    },
+  },
+  {
+    id: 'supervisor',
+    accessorFn: (row: ReturnType) => {
+      const name = `${row.supervisor?.grado?.abreviatura || ''} ${
+        row.supervisor?.nombres
+      } ${row.supervisor?.apellidos}`
+
+      if (!row.supervisor) return 'No asignado'
+
+      return name
+    },
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Supervisor
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const data = row.getValue<string>('supervisor')
+
+      if (!data) return <div>No asignado</div>
+
+      return <div>{data}</div>
+    },
+  },
+  {
+    id: 'autorizador',
+
+    accessorFn: (row: ReturnType) =>
+      `${row.autorizador?.grado?.abreviatura || ''} ${
+        row.autorizador?.nombres
+      } ${row.autorizador?.apellidos}`,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Autorizador
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const data = row.getValue<string>('autorizador')
+
+      if (!data) return <div>No asignado</div>
+
+      return <div>{data}</div>
+    },
+  },
+  {
+    id: 'abastecedor',
+    accessorFn: (row: ReturnType) => {
+      return `${row.abastecedor?.grado?.abreviatura || ''} ${
+        row.abastecedor?.nombres
+      } ${row.abastecedor?.apellidos}`
+    },
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          size={'sm'}
+          className="text-xs"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Abastecedor
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const data = row.getValue<string>('abastecedor')
+
+      if (!data) return <div>No asignado</div>
+
+      return <div>{data}</div>
     },
   },
 
@@ -151,7 +305,15 @@ export const columns: ColumnDef<ReturnType>[] = [
               return deleteReturn(data.id, 'Abastecimiento')
             },
           }}
-        />
+        >
+          <Link
+            href={`/dashboard/abastecimiento/devoluciones/exportar/${String(
+              data.id
+            )}`}
+          >
+            <DropdownMenuItem>Exportar</DropdownMenuItem>
+          </Link>
+        </ProtectedTableActions>
       )
     },
   },

@@ -6,7 +6,6 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button, buttonVariants } from '@/modules/common/components/button'
 
 import { SELECT_COLUMN } from '@/utils/constants/columns'
-import { Prisma } from '@prisma/client'
 
 import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 import Link from 'next/link'
@@ -74,8 +73,15 @@ export const columns: ColumnDef<RecepcionType>[] = [
     },
     cell: ({ row }) => {
       const data = row.getValue<string>('destinatario')
-
-      return <div>{data}</div>
+      const receiverId = row.original.destinatario.id
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/destinatarios/estadisticas/${receiverId}`}
+        >
+          {data}
+        </Link>
+      )
     },
   },
   {

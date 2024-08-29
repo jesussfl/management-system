@@ -53,8 +53,6 @@ export default async function Page() {
       <PageContent>
         <Card>
           <CardContent>
-            {/* <Overview servicio="Abastecimiento" /> */}
-
             <DataTable columns={columns} data={loansData} />
           </CardContent>
         </Card>

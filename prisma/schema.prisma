@@ -629,15 +629,16 @@ model Destinatario {
   id_componente     Int?
   componente        Componente_Militar? @relation(fields: [id_componente], references: [id])
 
-  despachos Despacho[]
+  fecha_creacion       DateTime @default(now())
+  ultima_actualizacion DateTime @updatedAt
 
-  fecha_creacion       DateTime     @default(now())
-  ultima_actualizacion DateTime     @updatedAt
-  Devolucion           Devolucion[]
-  Recepcion            Recepcion[]
-  Pedido               Pedido[]
-  fecha_eliminacion    DateTime?
-  Prestamo             Prestamo[]
+  devoluciones Devolucion[]
+  recepciones  Recepcion[]
+  pedidos      Pedido[]
+  despachos    Despacho[]
+  prestamos    Prestamo[]
+
+  fecha_eliminacion DateTime?
 }
 
 model Profesional_Abastecimiento {

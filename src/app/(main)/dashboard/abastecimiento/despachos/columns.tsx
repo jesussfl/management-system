@@ -65,8 +65,15 @@ export const columns: ColumnDef<DespachoType>[] = [
     },
     cell: ({ row }) => {
       const data = row.getValue<string>('destinatario')
-
-      return <div>{data}</div>
+      const receiverId = row.original.destinatario.id
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/destinatarios/estadisticas/${receiverId}`}
+        >
+          {data}
+        </Link>
+      )
     },
   },
   {

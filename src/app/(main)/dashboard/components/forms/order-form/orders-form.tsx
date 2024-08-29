@@ -47,7 +47,7 @@ import {
   CommandInput,
   CommandItem,
 } from '@/modules/common/components/command/command'
-import { createOrder, updateOrder } from '../../../../../../lib/actions/order'
+import { createOrder, updateOrder } from '@/lib/actions/order'
 import { ComboboxData } from '@/types/types'
 import {
   Select,
@@ -56,14 +56,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/modules/common/components/select/select'
-import { registerLocale } from 'react-datepicker'
-import es from 'date-fns/locale/es'
-registerLocale('es', es)
-import 'react-datepicker/dist/react-datepicker.css'
+
 import { FormDateFields } from '@/modules/common/components/form-date-fields/form-date-fields'
 import { ItemSelector } from '@/modules/common/components/item-selector'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
-import { ItemsWithAllRelations } from '../../../../../../lib/actions/item'
+import { ItemsWithAllRelations } from '@/lib/actions/item'
 import { SelectedItemCardProvider } from '@/lib/context/selected-item-card-context'
 import { itemSelectorColumns } from '../../columns/item-selector-columns'
 
@@ -244,7 +241,7 @@ export default function OrdersForm({
     >
       <form
         onSubmit={rest.handleSubmit(onSubmit)}
-        className=" space-y-10 mb-[8rem] "
+        className="mb-[8rem] space-y-10"
       >
         <Card>
           <CardHeader>
@@ -288,7 +285,7 @@ export default function OrdersForm({
                 name="id_destinatario"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className="flex-1 ">
+                  <FormItem className="flex-1">
                     <FormLabel>Proveedor/Persona:</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -351,7 +348,7 @@ export default function OrdersForm({
                         href="/dashboard/abastecimiento/destinatarios/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
+                          'h-[30px] text-sm'
                         )}
                       >
                         <Plus className="mr-2 h-4 w-4" />
@@ -370,7 +367,7 @@ export default function OrdersForm({
                 name="id_unidad"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className="flex-1 ">
+                  <FormItem className="flex-1">
                     <FormLabel>Unidad:</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -433,7 +430,7 @@ export default function OrdersForm({
                         href="/dashboard/abastecimiento/destinatarios/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
+                          'h-[30px] text-sm'
                         )}
                       >
                         <Plus className="mr-2 h-4 w-4" />
@@ -451,7 +448,7 @@ export default function OrdersForm({
                 name="id_proveedor"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className="flex-1 ">
+                  <FormItem className="flex-1">
                     <FormLabel>Proveedor/Empresa:</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -514,7 +511,7 @@ export default function OrdersForm({
                         href="/dashboard/abastecimiento/pedidos/proveedor/nuevo"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
+                          'h-[30px] text-sm'
                         )}
                       >
                         <Plus className="mr-2 h-4 w-4" />
@@ -532,7 +529,7 @@ export default function OrdersForm({
                 name="id_abastecedor"
                 rules={{ required: 'Este campo es obligatorio' }}
                 render={({ field }) => (
-                  <FormItem className=" flex-1 ">
+                  <FormItem className="flex-1">
                     <FormLabel>Profesional que abastecerá:</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -598,7 +595,7 @@ export default function OrdersForm({
                         href="/dashboard/profesionales/agregar"
                         className={cn(
                           buttonVariants({ variant: 'link' }),
-                          'text-sm h-[30px]'
+                          'h-[30px] text-sm'
                         )}
                       >
                         <Plus className="mr-2 h-4 w-4" />
@@ -717,7 +714,7 @@ export default function OrdersForm({
                           <div className="flex items-center gap-2">
                             <CommandInput
                               placeholder="Buscar profesional..."
-                              className="flex-1 h-9"
+                              className="h-9 flex-1"
                             />
                             <Button
                               className="px-2"
@@ -775,7 +772,7 @@ export default function OrdersForm({
               }}
             />
 
-            <div className="flex flex-1 flex-row gap-8 items-center justify-between">
+            <div className="flex flex-1 flex-row items-center justify-between gap-8">
               <FormDescription className="w-[20rem]">
                 Selecciona el material que deseas solicitar
               </FormDescription>
@@ -804,7 +801,7 @@ export default function OrdersForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid lg:grid-cols-2 gap-4">
+              <div className="grid gap-4 lg:grid-cols-2">
                 {selectedRowsData.map((item, index) => {
                   return (
                     <SelectedItemCardProvider
@@ -828,7 +825,7 @@ export default function OrdersForm({
           </Card>
         )}
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-4 pt-4">
           <Button
             disabled={isPending}
             variant="default"

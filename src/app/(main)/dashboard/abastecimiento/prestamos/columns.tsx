@@ -98,8 +98,15 @@ export const columns: ColumnDef<PrestamoType>[] = [
     },
     cell: ({ row }) => {
       const data = row.getValue<string>('destinatario')
-
-      return <div>{data}</div>
+      const receiverId = row.original.destinatario.id
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/destinatarios/estadisticas/${receiverId}`}
+        >
+          {data}
+        </Link>
+      )
     },
   },
   {
@@ -300,13 +307,13 @@ export const columns: ColumnDef<PrestamoType>[] = [
             )}`}
           >
             <DropdownMenuItem>Exportar</DropdownMenuItem>
-            <Link
-              href={`/dashboard/abastecimiento/prestamos/${String(
-                data.id
-              )}/editar-estado`}
-            >
-              <DropdownMenuItem>Editar estado</DropdownMenuItem>
-            </Link>
+          </Link>
+          <Link
+            href={`/dashboard/abastecimiento/prestamos/${String(
+              data.id
+            )}/editar-estado`}
+          >
+            <DropdownMenuItem>Editar estado</DropdownMenuItem>
           </Link>
         </ProtectedTableActions>
       )

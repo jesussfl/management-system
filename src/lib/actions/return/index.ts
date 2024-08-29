@@ -8,6 +8,8 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { registerAuditAction } from '@/lib/actions/audit'
 import { format } from 'date-fns'
 import { ReturnFormValues } from '../../types/return-types'
+import { getPackageUnit } from '../dispatch'
+import getGuideCode from '@/utils/helpers/get-guide-code'
 
 export const createReturn = async (
   data: ReturnFormValues,
@@ -506,7 +508,38 @@ export const getAllReturns = async (
           seriales: true,
         },
       },
-      destinatario: true,
+      destinatario: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      supervisor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      abastecedor: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
+      autorizador: {
+        include: {
+          grado: true,
+          categoria: true,
+          componente: true,
+          unidad: true,
+        },
+      },
     },
   })
   return devolution
@@ -589,5 +622,44 @@ export const getReturnById = async (id: number) => {
       ...renglon,
       seriales: renglon.seriales.map((serial) => serial.serial),
     })),
+  }
+}
+export const getReturnForExportGuide = async (id: number) => {
+  const session = await auth()
+  if (!session?.user) {
+    throw new Error('You must be signed in to perform this action')
+  }
+  const returnData = await getReturnById(id)
+
+  if (!returnData) {
+    throw new Error('Despacho no existe')
+  }
+
+  return {
+    destinatario_cedula: `${returnData.destinatario.tipo_cedula}-${returnData.cedula_destinatario}`,
+    destinatario_nombres: returnData.destinatario.nombres,
+    destinatario_apellidos: returnData.destinatario.apellidos,
+    destinatario_grado: returnData?.destinatario?.grado?.nombre || 's/c',
+    destinatario_cargo: returnData.destinatario.cargo_profesional || 's/c',
+    destinatario_telefono: returnData.destinatario.telefono,
+    prestamo: returnData,
+    renglones: returnData.renglones.map((renglon) => ({
+      ...renglon,
+      renglon: {
+        ...renglon.renglon,
+        unidad_empaque: {
+          ...renglon.renglon.unidad_empaque,
+          abreviacion: getPackageUnit(renglon.renglon.unidad_empaque),
+        },
+      },
+      cantidad: renglon.seriales.length,
+      seriales: renglon.seriales.map((serial) => serial),
+    })),
+    autorizador: returnData.autorizador,
+    abastecedor: returnData.abastecedor,
+    supervisor: returnData.supervisor,
+    unidad: returnData?.destinatario?.unidad?.nombre.toUpperCase() || 's/u',
+    codigo: getGuideCode(returnData.id),
+    motivo: returnData.motivo || 's/m',
   }
 }

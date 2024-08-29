@@ -12,6 +12,8 @@ import { SECTION_NAMES } from '@/utils/constants/sidebar-constants'
 import { deleteReceiver, recoverReceiver } from './lib/actions/receivers'
 import { format } from 'date-fns'
 import ProtectedTableActions from '@/modules/common/components/table-actions'
+import Link from 'next/link'
+import { DropdownMenuItem } from '@/modules/common/components/dropdown-menu/dropdown-menu'
 export const columns: ColumnDef<DestinatarioType>[] = [
   SELECT_COLUMN,
 
@@ -272,7 +274,15 @@ export const columns: ColumnDef<DestinatarioType>[] = [
               return deleteReceiver(receiver.id)
             },
           }}
-        />
+        >
+          <Link
+            href={`/dashboard/abastecimiento/destinatarios/estadisticas/${String(
+              receiver.id
+            )}`}
+          >
+            <DropdownMenuItem>Ver estadísticas</DropdownMenuItem>
+          </Link>
+        </ProtectedTableActions>
       )
     },
   },
