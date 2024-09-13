@@ -39,7 +39,7 @@ export const FormPeopleFields = ({
           name="cedula_destinatario"
           rules={{ required: 'Este campo es obligatorio' }}
           render={({ field }) => (
-            <FormItem className="flex flex-col flex-1 ">
+            <FormItem className="flex flex-1 flex-col">
               <FormLabel>{config.destinatario_label}</FormLabel>
               <Combobox
                 name={field.name}
@@ -54,7 +54,7 @@ export const FormPeopleFields = ({
                   href={`/dashboard/${config.servicio.toLowerCase()}/destinatarios/agregar`}
                   className={cn(
                     buttonVariants({ variant: 'link' }),
-                    'text-sm h-[30px]'
+                    'h-[30px] text-sm'
                   )}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -70,7 +70,7 @@ export const FormPeopleFields = ({
           name="cedula_abastecedor"
           rules={{ required: 'Este campo es obligatorio' }}
           render={({ field }) => (
-            <FormItem className=" flex flex-col flex-1">
+            <FormItem className="flex flex-1 flex-col">
               <FormLabel>{config.abastecedor_label}</FormLabel>
               <Combobox
                 name={field.name}
@@ -85,7 +85,7 @@ export const FormPeopleFields = ({
                   href="/dashboard/profesionales/agregar"
                   className={cn(
                     buttonVariants({ variant: 'link' }),
-                    'text-sm h-[30px]'
+                    'h-[30px] text-sm'
                   )}
                 >
                   <Plus className="mr-2 h-4 w-4" />
@@ -100,11 +100,11 @@ export const FormPeopleFields = ({
       <div className="flex gap-4">
         <FormField
           control={form.control}
-          name="cedula_autorizador"
-          rules={{ required: 'Este campo es obligatorio' }}
+          name="cedula_supervisor"
           render={({ field }) => (
-            <FormItem className="flex flex-col flex-1">
-              <FormLabel>Profesional que autoriza:</FormLabel>
+            <FormItem className="flex flex-1 flex-col">
+              <FormLabel>Profesional que supervisa:</FormLabel>
+
               <Combobox
                 name={field.name}
                 form={form}
@@ -119,11 +119,11 @@ export const FormPeopleFields = ({
         />
         <FormField
           control={form.control}
-          name="cedula_supervisor"
+          name="cedula_autorizador"
+          rules={{ required: 'Este campo es obligatorio' }}
           render={({ field }) => (
-            <FormItem className="flex flex-col flex-1">
-              <FormLabel>Profesional que supervisa:</FormLabel>
-
+            <FormItem className="flex flex-1 flex-col">
+              <FormLabel>Profesional que autoriza:</FormLabel>
               <Combobox
                 name={field.name}
                 form={form}
