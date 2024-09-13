@@ -49,7 +49,7 @@ export default function Layout({
   }, [])
 
   if (isLoading)
-    <div className="flex justify-center items-center fixed inset-0 bg-black/60">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/60">
       <Loader2 className="animate-spin" size={88} color="white" />
     </div>
 
@@ -68,15 +68,15 @@ export default function Layout({
             Unidades Militares
           </PageHeaderTitle>
           <PageHeaderDescription>
-            Registra las unidades y dividelas en Redis y Zodis
+            Registra las unidades y dividelas en Redi y Zodi
           </PageHeaderDescription>
         </HeaderLeftSide>
       </PageHeader>
       <Tabs defaultValue="unidades" defaultSection="unidades">
         <TabsList className="mx-5">
           <TabsTrigger value="unidades">Unidades</TabsTrigger>
-          <TabsTrigger value="redis">Redis</TabsTrigger>
-          <TabsTrigger value="zodis">Zodis</TabsTrigger>
+          <TabsTrigger value="redis">Redi</TabsTrigger>
+          <TabsTrigger value="zodis">Zodi</TabsTrigger>
         </TabsList>
 
         <TabsContent value={currentSection}>{tabs}</TabsContent>

@@ -77,7 +77,7 @@ export const createDispatch = async (
   const items = data.renglones
   const serials: SelectedSerialForDispatch[] = []
   for (const item of items) {
-    console.log(item)
+    console.log(item, 'item')
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,

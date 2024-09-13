@@ -37,14 +37,15 @@ export function SerialsForm() {
     itemData,
     isPackageForLiquids,
   } = useItemCardContext()
-  const { control, watch, setValue, formState, clearErrors } = useFormContext()
+  const { control, watch, setValue, formState, clearErrors, ...form } =
+    useFormContext()
   const quantity = watch(`renglones.${itemIndex}.cantidad`)
 
   const conditionsPerSerial = !watch(
     `renglones.${itemIndex}.condicion_automatica`
   )
   const [generalCondition, setGeneralCondition] = useState<string>('')
-
+  console.log(watch(`renglones.${itemIndex}.seriales`))
   return (
     <div className="flex flex-col gap-0 overflow-y-auto p-8">
       <CardHeader>
@@ -94,11 +95,13 @@ export function SerialsForm() {
                   <Switch
                     checked={field.value}
                     onCheckedChange={(value) => {
+                      // if (value) {
+                      //   form.unregister(`renglones.${itemIndex}.seriales`)
+                      // }
                       setGeneralCondition('')
                       Array.from({ length: quantity }).forEach((_, index) => {
-                        setValue(
-                          `renglones.${itemIndex}.seriales.${index}.condicion`,
-                          ''
+                        form.unregister(
+                          `renglones.${itemIndex}.seriales.${index}.condicion`
                         )
                       })
                       field.onChange(value)

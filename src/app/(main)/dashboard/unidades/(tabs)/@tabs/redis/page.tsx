@@ -24,7 +24,7 @@ export default async function Page() {
     <PageContent>
       <Card>
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle>Lista de Redis</CardTitle>
+          <CardTitle>Lista de Redi</CardTitle>
           <Link
             href="/dashboard/unidades/redi"
             className={buttonVariants({ variant: 'secondary' })}

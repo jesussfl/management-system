@@ -28,22 +28,17 @@ interface Props {
   close?: () => void
 }
 
-type FormValues = {
-  nombre: string
-  descripcion: string
-}
-
 export default function ClassificationsForm({ defaultValues, close }: Props) {
   const { toast } = useToast()
   const router = useRouter()
-  const form = useForm<FormValues>({
+  const form = useForm<Clasificacion>({
     defaultValues,
   })
   const isEditEnabled = !!defaultValues
   const { isDirty, dirtyFields } = useFormState({ control: form.control })
   const [isPending, startTransition] = React.useTransition()
 
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const onSubmit: SubmitHandler<Clasificacion> = async (values) => {
     startTransition(() => {
       if (!isEditEnabled) {
         createClassification(values).then((data) => {
@@ -75,7 +70,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
         })
         return
       }
-      const dirtyValues = getDirtyValues(dirtyFields, values) as FormValues
+      const dirtyValues = getDirtyValues(dirtyFields, values) as Clasificacion
       updateClassification(defaultValues.id, dirtyValues).then((data) => {
         if (data?.success) {
           toast({
@@ -92,48 +87,85 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
   return (
     <Form {...form}>
       <form
-        className="flex-1 overflow-y-auto p-6 gap-8 mb-36"
+        className="mb-36 flex-1 gap-8 overflow-y-auto p-6"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="px-24">
-          <FormField
-            control={form.control}
-            name="nombre"
-            rules={{
-              required: 'Este campo es necesario',
-              minLength: {
-                value: 3,
-                message: 'Debe tener al menos 3 caracteres',
-              },
-              maxLength: {
-                value: 100,
-                message: 'Debe tener un maximo de 100 caracteres',
-              },
-            }}
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>Nombre</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      if (form.formState.errors[field.name]) {
-                        form.clearErrors(field.name)
-                      }
-                      form.setValue(field.name, e.target.value, {
-                        shouldDirty: true,
-                      })
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Se recomienda que el nombre sea descriptivo
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-row gap-4">
+            <FormField
+              control={form.control}
+              name="nombre"
+              rules={{
+                required: 'Este campo es necesario',
+                minLength: {
+                  value: 3,
+                  message: 'Debe tener al menos 3 caracteres',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Nombre</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        if (form.formState.errors[field.name]) {
+                          form.clearErrors(field.name)
+                        }
+                        form.setValue(field.name, e.target.value, {
+                          shouldDirty: true,
+                        })
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Se recomienda que el nombre sea descriptivo
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="abreviacion"
+              rules={{
+                required: 'Este campo es necesario',
+                minLength: {
+                  value: 3,
+                  message: 'Debe tener al menos 3 caracteres',
+                },
+                maxLength: {
+                  value: 100,
+                  message: 'Debe tener un maximo de 100 caracteres',
+                },
+              }}
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>Abreviación</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        if (form.formState.errors[field.name]) {
+                          form.clearErrors(field.name)
+                        }
+                        form.setValue(field.name, e.target.value, {
+                          shouldDirty: true,
+                        })
+                      }}
+                      value={field.value || ''}
+                    />
+                  </FormControl>
 
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="descripcion"
@@ -155,7 +187,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
                   <textarea
                     id="description"
                     rows={3}
-                    className=" w-full rounded-md border-0 p-1.5 text-foreground bg-background ring-1  placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="w-full rounded-md border-0 bg-background p-1.5 text-foreground ring-1 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     {...field}
                     onChange={(e) => {
                       if (form.formState.errors[field.name]) {
@@ -177,7 +209,7 @@ export default function ClassificationsForm({ defaultValues, close }: Props) {
           />
         </div>
 
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-8">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-8 pt-4">
           {form.formState.errors.descripcion && (
             <p className="text-sm font-medium text-destructive">
               Corrige los campos en rojo

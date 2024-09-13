@@ -230,6 +230,7 @@ model Clasificacion {
   fecha_creacion       DateTime    @default(now())
   ultima_actualizacion DateTime    @updatedAt
   fecha_eliminacion    DateTime?
+  abreviacion          String?
 }
 
 model Sistema {

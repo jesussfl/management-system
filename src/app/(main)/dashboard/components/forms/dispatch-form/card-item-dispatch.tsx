@@ -191,6 +191,9 @@ const ConsumableItemContent = () => {
                 checked={field.value}
                 onCheckedChange={(value) => {
                   field.onChange(value)
+                  if (!value) {
+                    setValue(`renglones.${item.index}.manualSelection`, true)
+                  }
                   setValue(`renglones.${item.index}.seriales`, [])
                 }}
                 disabled={item.isEditing}
@@ -246,7 +249,7 @@ const SerialSelectorTrigger = () => {
   const selectedSerials: SelectedSerialForDispatch[] = watch(
     `renglones.${itemIndex}.seriales`
   )
-
+  console.log('serials', serials)
   const isDispatchByUnit = !watch(`renglones.${itemIndex}.es_despacho_liquidos`)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 

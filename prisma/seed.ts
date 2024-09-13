@@ -35,6 +35,17 @@ async function main() {
     },
   })
 
+  const loans = await prisma.prestamo.findMany({
+    include: {
+      renglones: {
+        include: {
+          renglon: true,
+          seriales: true,
+        },
+      },
+    },
+  })
+
   const quantitiesDispatchedByDispatches = dispatches.map((dispatch) => {
     const dispatchDetails = dispatch.renglones
     const dispatchItems = dispatchDetails.map((detail) => {
@@ -77,6 +88,21 @@ async function main() {
     return {
       receptionId: reception.id,
       items: receptionItems,
+    }
+  })
+
+  const quantitiesLoanedByLoans = loans.map((loan) => {
+    const loanDetails = loan.renglones
+    const loanItems = loanDetails.map((detail) => {
+      return {
+        itemId: detail.renglon.id,
+        quantity: detail.seriales.length,
+      }
+    })
+
+    return {
+      loanId: loan.id,
+      items: loanItems,
     }
   })
 
@@ -130,6 +156,19 @@ async function main() {
     }
   })
 
+  const quantityLoanedByItems = items.map((item) => {
+    const quantityLoaned = quantitiesLoanedByLoans.reduce((acc, loan) => {
+      const itemQuantity =
+        loan.items.find((loanItem) => loanItem.itemId === item.id)?.quantity ||
+        0
+      return acc + itemQuantity
+    }, 0)
+    return {
+      itemId: item.id,
+      quantityLoaned,
+    }
+  })
+
   const currentStockByItems = items.map((item) => {
     const quantityDevolutions =
       quantityDevolutionsByItems.find(
@@ -143,8 +182,17 @@ async function main() {
       quantityReceivedByItems.find(
         (itemQuantity) => itemQuantity.itemId === item.id
       )?.quantityReceived || 0
+
+    const quantityLoaned =
+      quantityLoanedByItems.find(
+        (itemQuantity) => itemQuantity.itemId === item.id
+      )?.quantityLoaned || 0
+
     const currentStock =
-      quantityDevolutions - quantityDispatched + quantityReceived
+      quantityDevolutions -
+      quantityDispatched +
+      quantityReceived -
+      quantityLoaned
     return {
       itemId: item.id,
       currentStock,
