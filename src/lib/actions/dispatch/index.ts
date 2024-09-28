@@ -82,7 +82,7 @@ export const createDispatch = async (
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
         serial: serial.serial,
-        id: 0,
+        id: serial.id,
         peso_despachado: 0,
         peso_actual: 0,
       }))
@@ -100,6 +100,7 @@ export const createDispatch = async (
         },
       },
       select: {
+        id: true,
         id_renglon: true,
         renglon: true,
         serial: true,
@@ -125,7 +126,7 @@ export const createDispatch = async (
       ...serialsByItem.map((serial) => ({
         id_renglon: item.id_renglon,
         serial: serial.serial,
-        id: 0,
+        id: serial.id,
         peso_despachado: 0,
         peso_actual: 0,
       }))
@@ -155,7 +156,7 @@ export const createDispatch = async (
               ? {
                   create: renglon.seriales.map((serial) => ({
                     peso_despachado: serial.peso_despachado,
-                    serial: { connect: { serial: serial.serial } },
+                    serial: { connect: { id: serial.id } },
                   })),
                 }
               : undefined,
@@ -166,7 +167,7 @@ export const createDispatch = async (
                     .filter(
                       (serial) => serial.id_renglon === renglon.id_renglon
                     )
-                    .map((serial) => ({ serial: serial.serial })),
+                    .map((serial) => ({ id: serial.id })),
                 },
           })),
         },
@@ -175,8 +176,8 @@ export const createDispatch = async (
 
     await prisma.serial.updateMany({
       where: {
-        serial: {
-          in: serials.map((serial) => serial.serial),
+        id: {
+          in: serials.map((serial) => serial.id),
         },
       },
       data: {
