@@ -169,6 +169,10 @@ const ConsumableItemContent = () => {
   const { control, setValue } = useFormContext()
   const { itemData, setItemsWithoutSerials, ...item } = useItemCardContext()
 
+  useEffect(() => {
+    setValue(`renglones.${item.index}.manualSelection`, true)
+  }, [setValue, item.index])
+
   return (
     <CardContent className="flex flex-1 flex-col justify-start gap-8">
       <FormField

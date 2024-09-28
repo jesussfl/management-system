@@ -175,30 +175,6 @@ export const updateReception = async (
       cedula_autorizador: data.cedula_autorizador,
       cedula_destinatario: data.cedula_destinatario,
       cedula_supervisor: data.cedula_supervisor,
-      renglones: {
-        deleteMany: {},
-        create: data.renglones.map((renglon) => ({
-          ...renglon,
-
-          id: undefined,
-          id_recepcion: undefined,
-          id_renglon: undefined,
-          codigo_solicitud: undefined,
-          pedido: renglon.codigo_solicitud
-            ? {
-                connect: {
-                  id: renglon.codigo_solicitud,
-                },
-              }
-            : undefined,
-          renglon: {
-            connect: {
-              id: renglon.id_renglon,
-            },
-          },
-          seriales: undefined,
-        })),
-      },
     },
   })
   await registerAuditAction(

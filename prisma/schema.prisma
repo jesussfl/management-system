@@ -343,7 +343,7 @@ model Recepciones_Seriales {
 
 model Serial {
   id          Int     @id @default(autoincrement())
-  serial      String  @unique
+  serial      String
   estado      String? @default("Disponible")
   condicion   String  @default("Nuevo")
   peso_actual Float?  @default(0)

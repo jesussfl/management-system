@@ -77,7 +77,7 @@ export const createLoan = async (
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
         serial: serial.serial,
-        id: 0,
+        id: serial.id,
         peso_despachado: 0,
         peso_actual: 0,
       }))
@@ -95,6 +95,7 @@ export const createLoan = async (
         },
       },
       select: {
+        id: true,
         id_renglon: true,
         renglon: true,
         serial: true,
@@ -120,7 +121,7 @@ export const createLoan = async (
       ...serialsByItem.map((serial) => ({
         id_renglon: item.id_renglon,
         serial: serial.serial,
-        id: 0,
+        id: serial.id,
         peso_despachado: 0,
         peso_actual: 0,
       }))
@@ -151,7 +152,7 @@ export const createLoan = async (
             seriales: {
               connect: serials
                 .filter((serial) => serial.id_renglon === renglon.id_renglon)
-                .map((serial) => ({ serial: serial.serial })),
+                .map((serial) => ({ id: serial.id })),
             },
           })),
         },
@@ -160,8 +161,8 @@ export const createLoan = async (
 
     await prisma.serial.updateMany({
       where: {
-        serial: {
-          in: serials.map((serial) => serial.serial),
+        id: {
+          in: serials.map((serial) => serial.id),
         },
       },
       data: {

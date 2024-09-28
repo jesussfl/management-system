@@ -207,3 +207,111 @@ export const getSerialsByItemEnabled = async (id: number) => {
 
   return serials
 }
+
+export const checkSerialExistanceByItemId = async ({
+  id,
+  serial,
+}: {
+  id: number
+  serial: string
+}) => {
+  try {
+    await validateUserSessionV2()
+
+    const existance = await prisma.serial.findFirst({
+      where: {
+        id_renglon: id,
+        AND: {
+          serial,
+        },
+      },
+    })
+
+    if (existance) {
+      return true
+    }
+
+    return false
+  } catch (error) {
+    return false
+  }
+}
+
+export const validateUserSessionV2 = async () => {
+  try {
+    const session = await auth()
+
+    if (!session?.user) {
+      throw new Error('Necesitas iniciar sesión para realizar esta acción')
+    }
+
+    if (!session?.user.rol.permisos) {
+      throw new Error('No tienes permisos para realizar esta acción')
+    }
+  } catch (error) {
+    return catchError(error)
+  }
+}
+
+export const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return 'Ocurrio un error inesperado, por favor intenta de nuevo'
+}
+
+export const catchError = (error: unknown) => {
+  return {
+    data: null,
+    error: getErrorMessage(error),
+  }
+}
+
+// export const getAllItems = async ({
+//   page = 1,
+//   pageSize = 10,
+//   onlyActives,
+//   section,
+// }: GetAllItemsProps) => {
+//   const skip = (page - 1) * pageSize
+
+//   try {
+//     await validateUserSessionV2()
+//     const total = await prisma.renglon.count({
+//       where: {
+//         fecha_eliminacion: onlyActives ? null : undefined,
+//         servicio: section,
+//       },
+//     })
+//     const renglones = await prisma.renglon.findMany({
+//       skip,
+//       take: pageSize,
+//       orderBy: {
+//         ultima_actualizacion: 'desc',
+//       },
+//       where: {
+//         servicio: section,
+//         fecha_eliminacion: onlyActives ? null : undefined,
+//       },
+//       include: {
+//         clasificacion: true,
+//         unidad_empaque: true,
+//         almacen: true,
+//         categoria: true,
+//         subsistema: true,
+//         seriales: true,
+//       },
+//     })
+
+//     const noOfPages = Math.ceil(total / pageSize)
+//     const returnedData = {
+//       data: renglones,
+//       total,
+//       noOfPages,
+//     }
+//     return returnedData
+//   } catch (error) {
+//     return catchError(error)
+//   }
+// }
