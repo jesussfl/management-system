@@ -24,7 +24,7 @@ export default async function Page() {
     <PageContent>
       <Card>
         <CardHeader className="flex flex-row justify-between">
-          <CardTitle>Lista de Zodis</CardTitle>
+          <CardTitle>Lista de Zodi</CardTitle>
           <Link
             href="/dashboard/unidades/zodi"
             className={buttonVariants({ variant: 'secondary' })}
