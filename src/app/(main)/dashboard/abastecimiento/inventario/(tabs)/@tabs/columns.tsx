@@ -135,15 +135,19 @@ export const columns: ColumnDef<RenglonWithAllRelations>[] = [
   },
   {
     id: 'peso_total',
-    accessorFn: (row) => {
-      if (!row.peso) return 'Sin definir'
 
-      const stock = row.stock_actual
-      return `${
-        stock * Number(row.peso)
-      } ${row.tipo_medida_unidad.toLowerCase()}`
-    },
     header: ({ column }) => <HeaderCell column={column} value="Peso Total" />,
+    cell: ({ row }) => {
+      if (!row.original.stock_actual) return 'Sin stock'
+      return (
+        <Link
+          className={cn(buttonVariants({ variant: 'outline' }))}
+          href={`/dashboard/abastecimiento/inventario/renglon/${row.original.id}/peso`}
+        >
+          Consultar peso total
+        </Link>
+      )
+    },
   },
   {
     id: 'peso',

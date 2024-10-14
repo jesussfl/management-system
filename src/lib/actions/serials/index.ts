@@ -236,7 +236,27 @@ export const checkSerialExistanceByItemId = async ({
     return false
   }
 }
+export const getTotalWeightByItemId = async (id: number) => {
+  try {
+    await validateUserSessionV2()
 
+    const totalWeight = await prisma.serial.aggregate({
+      _sum: {
+        peso_actual: true,
+      },
+      where: {
+        id_renglon: id,
+        estado: {
+          in: ['Disponible', 'Devuelto'],
+        },
+      },
+    })
+
+    return totalWeight._sum.peso_actual
+  } catch (error) {
+    return false
+  }
+}
 export const validateUserSessionV2 = async () => {
   try {
     const session = await auth()
