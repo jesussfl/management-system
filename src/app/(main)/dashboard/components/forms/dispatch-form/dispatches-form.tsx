@@ -185,7 +185,7 @@ export default function DispatchesForm({
           </CardContent>
         </Card>
 
-        {fields.length > 0 && (
+        {fields.length > 0 && isEditEnabled && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -196,6 +196,7 @@ export default function DispatchesForm({
                 correspondiente
               </CardDescription>
             </CardHeader>
+
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid gap-4 md:grid-cols-2">
                 {fields.map((field, index) => {

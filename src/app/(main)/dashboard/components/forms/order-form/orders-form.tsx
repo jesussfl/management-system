@@ -800,34 +800,36 @@ export default function OrdersForm({
                 correspondiente
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid gap-4 lg:grid-cols-2">
-                {fields.map((field, index) => {
-                  const item = selectedRowsData.find(
-                    (item) => item.id === field.id_renglon
-                  )
+            {isEditEnabled && (
+              <CardContent className="flex flex-col gap-8 pt-4">
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {fields.map((field, index) => {
+                    const item = selectedRowsData.find(
+                      (item) => item.id === field.id_renglon
+                    )
 
-                  if (!item) return null
+                    if (!item) return null
 
-                  return (
-                    <SelectedItemCardProvider
-                      key={item.id}
-                      itemData={item}
-                      index={index}
-                      section={servicio}
-                      isEditing={isEditEnabled}
-                      setItemsWithoutSerials={() => {}}
-                      removeCard={() => {
-                        deleteItem(index, field.id_renglon)
-                      }}
-                      isError={''}
-                    >
-                      <CardItemOrder />
-                    </SelectedItemCardProvider>
-                  )
-                })}
-              </div>
-            </CardContent>
+                    return (
+                      <SelectedItemCardProvider
+                        key={item.id}
+                        itemData={item}
+                        index={index}
+                        section={servicio}
+                        isEditing={isEditEnabled}
+                        setItemsWithoutSerials={() => {}}
+                        removeCard={() => {
+                          deleteItem(index, field.id_renglon)
+                        }}
+                        isError={''}
+                      >
+                        <CardItemOrder />
+                      </SelectedItemCardProvider>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            )}
           </Card>
         )}
 

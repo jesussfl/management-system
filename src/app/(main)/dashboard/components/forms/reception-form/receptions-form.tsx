@@ -204,7 +204,7 @@ export default function ReceptionsForm({
           </CardContent>
         </Card>
 
-        {fields.length > 0 && (
+        {fields.length > 0 && !isEditing && (
           <SelectedItemsContainer>
             {fields.map((field, index) => {
               const item = selectedRowsData.find(
