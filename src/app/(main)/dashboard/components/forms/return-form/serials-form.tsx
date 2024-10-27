@@ -35,7 +35,7 @@ export function SerialsFormNew({
 
         if (selectedSerials.length > 0) {
           const filteredSerials = serials.filter((serial) =>
-            selectedSerials.includes(serial.serial)
+            selectedSerials.includes(serial.id)
           )
 
           const selectedItems = filteredSerials.reduce(
@@ -56,7 +56,7 @@ export function SerialsFormNew({
   useEffect(() => {
     setValue(
       `renglones.${indexForm}.seriales`,
-      selectedData.map((item) => item.serial),
+      selectedData.map((item) => item.id),
       {
         shouldDirty: true,
       }
@@ -67,7 +67,7 @@ export function SerialsFormNew({
     return <div>Loading...</div>
   }
   return (
-    <div className="flex flex-col gap-0 p-8 overflow-y-auto">
+    <div className="flex flex-col gap-0 overflow-y-auto p-8">
       <div className="flex flex-col gap-4 p-8">
         <CardTitle>Selecciona los seriales</CardTitle>
 

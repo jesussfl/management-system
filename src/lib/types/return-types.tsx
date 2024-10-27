@@ -11,5 +11,5 @@ export interface ReturnFormValues {
 export interface Devolucion_RenglonesFormValues {
   id_renglon: number
   observacion?: string | null
-  seriales: string[]
+  seriales: number[]
 }

@@ -49,7 +49,7 @@ export const createReturn = async (
   }
 
   const items = data.renglones
-  const serials: { id_renglon: number; serial: string }[] = []
+  const serials: { id_renglon: number; serial: number }[] = []
   for (const item of items) {
     const serialsByItem = item.seriales.map((serial) => ({
       id_renglon: item.id_renglon,
@@ -73,11 +73,15 @@ export const createReturn = async (
           create: renglones.map((renglon) => ({
             ...renglon,
             id_renglon: renglon.id_renglon,
-
+            // renglon: {
+            //   connect: {
+            //     id: renglon.id_renglon,
+            //   },
+            // },
             seriales: {
               connect: serials
                 .filter((serial) => serial.id_renglon === renglon.id_renglon)
-                .map((serial) => ({ serial: serial.serial })),
+                .map((serial) => ({ id: serial.serial })),
             },
           })),
         },
@@ -86,7 +90,7 @@ export const createReturn = async (
 
     await prisma.serial.updateMany({
       where: {
-        serial: {
+        id: {
           in: serials.map((serial) => serial.serial),
         },
       },
@@ -200,9 +204,9 @@ export const updateReturn = async (
 
   const serialsByReturn = currentReturn.renglones
     .flatMap((renglon) => renglon.seriales)
-    .map((serial) => ({ id_renglon: serial.id_renglon, serial: serial.serial }))
+    .map((serial) => ({ id_renglon: serial.id_renglon, serial: serial.id }))
 
-  const serials: { id_renglon: number; serial: string }[] = []
+  const serials: { id_renglon: number; serial: number }[] = []
   for (const item of items) {
     const serialsByItem = item.seriales.map((serial) => ({
       id_renglon: item.id_renglon,
@@ -239,7 +243,7 @@ export const updateReturn = async (
           seriales: {
             connect: serials
               .filter((serial) => serial.id_renglon === renglon.id_renglon)
-              .map((serial) => ({ serial: serial.serial })),
+              .map((serial) => ({ id: serial.serial })),
           },
         })),
       },
@@ -247,7 +251,7 @@ export const updateReturn = async (
   })
   await prisma.serial.updateMany({
     where: {
-      serial: {
+      id: {
         in: serialsByReturn?.map((serial) => serial.serial),
       },
     },
@@ -257,7 +261,7 @@ export const updateReturn = async (
   })
   await prisma.serial.updateMany({
     where: {
-      serial: {
+      id: {
         in: serials.map((serial) => serial.serial),
       },
     },
