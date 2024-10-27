@@ -205,7 +205,7 @@ export function DataTable<TData extends { id: any }, TValue>({
   }, [rows])
 
   return (
-    <div className="flex flex-col px-2 gap-2">
+    <div className="flex flex-col gap-2 px-2">
       {isMultipleDeleteEnabled ? (
         <DataTableFilters
           table={table}
@@ -225,7 +225,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           isMultipleDeleteEnabled={false}
         />
       )}
-      <div className="bg-background rounded-md border">
+      <div className="rounded-md border bg-background">
         <TableContainer>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -318,7 +318,7 @@ export function DataTable<TData extends { id: any }, TValue>({
           </TableBody>
         </TableContainer>
       </div>
-      <div className=" flex flex-row justify-between items-center bg-background p-5">
+      <div className="flex flex-row items-center justify-between bg-background p-5">
         <DataTableRowsCounter
           selectedRows={table.getSelectedRowModel().rows.length}
           totalRows={table.getFilteredRowModel().rows.length}
@@ -415,7 +415,7 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [value, old?.[1]])
           }
           placeholder={`Min.`}
-          className="flex-1 border rounded text-xs"
+          className="flex-1 rounded border text-xs"
         />
 
         <DebouncedInput
@@ -427,7 +427,7 @@ function Filter({
             column.setFilterValue((old: [number, number]) => [old?.[0], value])
           }
           placeholder={`Max.`}
-          className="flex-1 border rounded text-xs"
+          className="flex-1 rounded border text-xs"
         />
       </div>
     </div>
@@ -443,7 +443,7 @@ function Filter({
         value={(columnFilterValue ?? '') as string}
         onChange={(value) => column.setFilterValue(value)}
         placeholder={`Buscar...`}
-        className="flex-1 border rounded text-xs"
+        className="flex-1 rounded border text-xs"
         list={column.id + 'list'}
       />
     </>

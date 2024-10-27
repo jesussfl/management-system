@@ -37,7 +37,7 @@ export const createItem = async (
     return permissionsResponse
   }
   const { nombre, tipo_medida_unidad } = data
-  console.log(tipo_medida_unidad)
+  // console.log(tipo_medida_unidad)
   if (!tipo_medida_unidad) {
     return {
       success: false,
@@ -147,7 +147,7 @@ export const updateItem = async (
   section: 'Abastecimiento' | 'Armamento'
 ) => {
   const sessionResponse = await validateUserSession()
-  console.log(data)
+  // console.log(data)
   if (sessionResponse.error || !sessionResponse.session) {
     return sessionResponse
   }

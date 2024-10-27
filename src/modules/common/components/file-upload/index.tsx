@@ -140,7 +140,7 @@ export default function ImageUpload({
         source: null,
       })
       const formData = new FormData()
-      console.log('fileee', file)
+      // console.log('fileee', file)
       formData.append('image', file)
       setFile(formData)
     }
@@ -173,10 +173,10 @@ export default function ImageUpload({
       <div>
         <label
           {...getRootProps()}
-          className="relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
+          className="relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 hover:bg-gray-100"
         >
-          <div className=" text-center">
-            <div className=" border p-2 rounded-md max-w-min mx-auto">
+          <div className="text-center">
+            <div className="mx-auto max-w-min rounded-md border p-2">
               <UploadCloud size={20} />
             </div>
 
@@ -202,23 +202,23 @@ export default function ImageUpload({
       {fileToUpload && (
         <div>
           <ScrollArea className="h-40">
-            <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
+            <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
               Archivos para subir
             </p>
             <div className="space-y-2 pr-3">
               {fileToUpload && (
                 <div
                   key={fileToUpload.File.lastModified}
-                  className="flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2"
+                  className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 hover:pr-0"
                 >
-                  <div className="flex items-center flex-1 p-2">
+                  <div className="flex flex-1 items-center p-2">
                     <div className="text-white">
                       {getFileIconAndColor(fileToUpload.File).icon}
                     </div>
 
-                    <div className="w-full ml-2 space-y-1">
-                      <div className="text-sm flex justify-between">
-                        <p className="text-muted-foreground ">
+                    <div className="ml-2 w-full space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <p className="text-muted-foreground">
                           {fileToUpload.File.name.slice(0, 25)}
                         </p>
                         <span className="text-xs">
@@ -237,7 +237,7 @@ export default function ImageUpload({
                         fileToUpload.source.cancel('Upload cancelled')
                       removeFile(fileToUpload.File)
                     }}
-                    className="bg-red-500 text-white transition-all items-center justify-center cursor-pointer px-2 hidden group-hover:flex"
+                    className="hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
                   >
                     <X size={20} />
                   </button>
@@ -250,21 +250,21 @@ export default function ImageUpload({
 
       {uploadedFile && (
         <div>
-          <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
+          <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
             Archivos subidos
           </p>
           <div className="space-y-2 pr-3">
             <div
               key={uploadedFile.lastModified}
-              className="flex justify-between gap-2 rounded-lg overflow-hidden border border-slate-100 group hover:pr-0 pr-2 hover:border-slate-300 transition-all"
+              className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0"
             >
-              <div className="flex items-center flex-1 p-2">
+              <div className="flex flex-1 items-center p-2">
                 <div className="text-white">
                   {getFileIconAndColor(uploadedFile).icon}
                 </div>
-                <div className="w-full ml-2 space-y-1">
-                  <div className="text-sm flex justify-between">
-                    <p className="text-muted-foreground ">
+                <div className="ml-2 w-full space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <p className="text-muted-foreground">
                       {uploadedFile.name.slice(0, 25)}
                     </p>
                   </div>
@@ -272,7 +272,7 @@ export default function ImageUpload({
               </div>
               <button
                 onClick={() => removeFile(uploadedFile)}
-                className="bg-red-500 text-white transition-all items-center justify-center px-2 hidden group-hover:flex"
+                className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
               >
                 <X size={20} />
               </button>

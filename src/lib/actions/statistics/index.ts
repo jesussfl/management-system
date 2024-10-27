@@ -67,7 +67,7 @@ export const getDispatchesStats = async ({
   to,
   servicio,
 }: DispatchesParams) => {
-  console.log(from, to)
+  // console.log(from, to)
   const dispatches = await prisma.despacho.findMany({
     where: {
       servicio,

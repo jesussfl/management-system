@@ -253,7 +253,7 @@ const SerialSelectorTrigger = () => {
   const selectedSerials: SelectedSerialForDispatch[] = watch(
     `renglones.${itemIndex}.seriales`
   )
-  console.log('serials', serials)
+  // console.log('serials', serials)
   const isDispatchByUnit = !watch(`renglones.${itemIndex}.es_despacho_liquidos`)
   const toogleModal = () => setIsModalOpen(!isModalOpen)
 

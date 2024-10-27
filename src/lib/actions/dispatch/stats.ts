@@ -80,6 +80,6 @@ export const getDispatchesByReceiver = async ({
     []
   )
 
-  console.log(itemsDispatchedWithQuantity)
+  // console.log(itemsDispatchedWithQuantity)
   return itemsDispatchedWithQuantity
 }

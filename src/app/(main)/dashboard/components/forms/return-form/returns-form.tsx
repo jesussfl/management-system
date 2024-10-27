@@ -1,7 +1,6 @@
 'use client'
 import { useState, useTransition } from 'react'
 
-import { columns } from './columns'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { Button } from '@/modules/common/components/button'
 import { useRouter } from 'next/navigation'
@@ -23,7 +22,7 @@ import es from 'date-fns/locale/es'
 registerLocale('es', es)
 import 'react-datepicker/dist/react-datepicker.css'
 import { ItemsWithAllRelations } from '@/lib/actions/item'
-import { ReturnFormValues } from '../../../../../../lib/types/return-types'
+import { ReturnFormValues } from '@/lib/types/return-types'
 import { FormPeopleFields } from '@/modules/common/components/form-people-fields'
 import { useItemSelector } from '@/lib/hooks/use-item-selector'
 import { ItemSelector } from '@/modules/common/components/item-selector'
@@ -142,7 +141,7 @@ export default function ReturnsForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" space-y-10 mb-[8rem] "
+        className="mb-[8rem] space-y-10"
       >
         <Card>
           <CardHeader>
@@ -178,7 +177,7 @@ export default function ReturnsForm({
             />
             <Separator />
 
-            <div className="flex flex-1 flex-row gap-8 items-center justify-between">
+            <div className="flex flex-1 flex-row items-center justify-between gap-8">
               <FormDescription className="w-[20rem]">
                 Selecciona los materiales o renglones que se han devuelto
               </FormDescription>
@@ -195,7 +194,7 @@ export default function ReturnsForm({
           </CardContent>
         </Card>
 
-        {selectedRowsData.length > 0 && (
+        {fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -207,15 +206,23 @@ export default function ReturnsForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                {selectedRowsData.map((item, index) => {
+              <div className="grid gap-4 md:grid-cols-2">
+                {fields.map((field, index) => {
+                  const item = selectedRowsData.find(
+                    (item) => item.id === field.id_renglon
+                  )
+
+                  if (!item) {
+                    return null
+                  }
+
                   const isError = itemsWithoutSerials.includes(item.id)
                   return (
                     <SelectedItemCardProvider
                       key={item.id}
                       section={servicio}
                       isEditing={isEditEnabled}
-                      removeCard={() => deleteItem(index)}
+                      removeCard={() => deleteItem(index, item.id)}
                       itemData={item}
                       isError={isError}
                       index={index}
@@ -229,7 +236,7 @@ export default function ReturnsForm({
             </CardContent>
           </Card>
         )}
-        <DialogFooter className="fixed right-0 bottom-0 bg-white pt-4 border-t border-border gap-4 items-center w-full p-4">
+        <DialogFooter className="fixed bottom-0 right-0 w-full items-center gap-4 border-t border-border bg-white p-4 pt-4">
           {isEditEnabled && (
             <p className="text-sm text-foreground">
               Algunos campos están deshabilitados para la edición

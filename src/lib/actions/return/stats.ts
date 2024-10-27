@@ -75,6 +75,6 @@ export const getReturnsByReceiver = async ({
     []
   )
 
-  console.log(itemsReturnedWithQuantity)
+  // console.log(itemsReturnedWithQuantity)
   return itemsReturnedWithQuantity
 }

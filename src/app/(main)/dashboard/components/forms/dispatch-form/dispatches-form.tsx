@@ -89,17 +89,6 @@ export default function DispatchesForm({
       })
       return
     }
-
-    // data.renglones.map((item) => {
-    //   item.seriales.length === 0 && item.manualSelection
-    //     ? setItemsWithoutSerials((prev) => [...prev, item.id_renglon])
-    //     : null
-    // })
-
-    // if (itemsWithoutSerials.length > 0) {
-    //   return
-    // }
-
     if (!id) {
       startTransition(() => {
         createDispatch(data, servicio).then((res) => {
@@ -119,10 +108,8 @@ export default function DispatchesForm({
           router.replace(`/dashboard/${servicio.toLowerCase()}/despachos`)
         })
       })
-
       return
     }
-
     startTransition(() => {
       updateDispatch(id, data, servicio).then((res) => {
         if (res?.error) {
@@ -198,7 +185,7 @@ export default function DispatchesForm({
           </CardContent>
         </Card>
 
-        {selectedRowsData.length > 0 && (
+        {fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -211,14 +198,22 @@ export default function DispatchesForm({
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid gap-4 md:grid-cols-2">
-                {selectedRowsData.map((item, index) => {
+                {fields.map((field, index) => {
+                  const item = selectedRowsData.find(
+                    (item) => item.id === field.id_renglon
+                  )
+
+                  if (!item) {
+                    return null
+                  }
+
                   const isEmpty = item.stock_actual <= 0
                   return (
                     <SelectedItemCardProvider
                       key={item.id}
                       itemData={item}
                       index={index}
-                      removeCard={() => deleteItem(index)}
+                      removeCard={() => deleteItem(index, item.id)}
                       isError={isEmpty}
                       isEditing={isEditEnabled}
                       section={servicio}

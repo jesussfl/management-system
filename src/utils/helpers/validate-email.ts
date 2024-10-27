@@ -17,7 +17,7 @@ export const isValidEmail = (email: string) =>
  * @return {boolean | string} - Returns true if the email is valid, otherwise returns an error message.
  */
 export const handleEmailValidation = (email: string): boolean | string => {
-  console.log('ValidateEmail was called with', email)
+  // console.log('ValidateEmail was called with', email)
 
   const isValid = isValidEmail(email)
 

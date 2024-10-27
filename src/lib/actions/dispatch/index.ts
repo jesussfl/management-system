@@ -77,7 +77,7 @@ export const createDispatch = async (
   const items = data.renglones
   const serials: SelectedSerialForDispatch[] = []
   for (const item of items) {
-    console.log(item, 'item')
+    // console.log(item, 'item')
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
@@ -107,7 +107,7 @@ export const createDispatch = async (
       },
       take: item.cantidad,
     })
-    console.log(serialsByItem.length, item.cantidad, item.id_renglon)
+    // console.log(serialsByItem.length, item.cantidad, item.id_renglon)
     if (serialsByItem.length < item.cantidad) {
       return {
         error:
@@ -309,7 +309,7 @@ export const updateDispatch = async (
 
   const serials: SelectedSerialForDispatch[] = []
   for (const item of items) {
-    console.log(item)
+    // console.log(item)
     if (item.manualSelection) {
       const serialsByItem = item.seriales.map((serial) => ({
         id_renglon: item.id_renglon,
@@ -337,7 +337,7 @@ export const updateDispatch = async (
       },
       take: item.cantidad,
     })
-    console.log(serialsByItem.length, item.cantidad, item.id_renglon)
+    // console.log(serialsByItem.length, item.cantidad, item.id_renglon)
     if (serialsByItem.length < item.cantidad) {
       return {
         error:

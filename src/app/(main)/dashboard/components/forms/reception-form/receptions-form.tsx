@@ -206,7 +206,13 @@ export default function ReceptionsForm({
 
         {fields.length > 0 && (
           <SelectedItemsContainer>
-            {selectedRowsData.map((item, index) => {
+            {fields.map((field, index) => {
+              const item = selectedRowsData.find(
+                (item) => item.id === field.id_renglon
+              )
+
+              if (!item) return null
+
               const isEmpty = itemsWithoutSerials.includes(item.id)
                 ? 'Este renglón no tiene seriales asociados'
                 : false
@@ -216,7 +222,7 @@ export default function ReceptionsForm({
                   key={item.id}
                   itemData={item}
                   index={index}
-                  removeCard={() => deleteItem(index)}
+                  removeCard={() => deleteItem(index, item.id)}
                   isError={isEmpty}
                   setItemsWithoutSerials={setItemsWithoutSerials}
                   isEditing={isEditing}

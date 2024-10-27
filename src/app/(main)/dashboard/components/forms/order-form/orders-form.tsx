@@ -789,7 +789,7 @@ export default function OrdersForm({
           </CardContent>
         </Card>
 
-        {selectedRowsData.length > 0 && (
+        {fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -802,7 +802,13 @@ export default function OrdersForm({
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid gap-4 lg:grid-cols-2">
-                {selectedRowsData.map((item, index) => {
+                {fields.map((field, index) => {
+                  const item = selectedRowsData.find(
+                    (item) => item.id === field.id_renglon
+                  )
+
+                  if (!item) return null
+
                   return (
                     <SelectedItemCardProvider
                       key={item.id}
@@ -812,7 +818,7 @@ export default function OrdersForm({
                       isEditing={isEditEnabled}
                       setItemsWithoutSerials={() => {}}
                       removeCard={() => {
-                        deleteItem(index)
+                        deleteItem(index, field.id_renglon)
                       }}
                       isError={''}
                     >

@@ -188,7 +188,7 @@ export default function LoanesForm({
           </CardContent>
         </Card>
 
-        {selectedRowsData.length > 0 && (
+        {fields.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
@@ -201,14 +201,23 @@ export default function LoanesForm({
             </CardHeader>
             <CardContent className="flex flex-col gap-8 pt-4">
               <div className="grid gap-4 md:grid-cols-2">
-                {selectedRowsData.map((item, index) => {
+                {fields.map((field, index) => {
+                  const item = selectedRowsData.find(
+                    (item) => item.id === field.id_renglon
+                  )
+
+                  if (!item) {
+                    return null
+                  }
+
                   const isEmpty = item.stock_actual <= 0
+
                   return (
                     <SelectedItemCardProvider
                       key={item.id}
                       itemData={item}
                       index={index}
-                      removeCard={() => deleteItem(index)}
+                      removeCard={() => deleteItem(index, item.id)}
                       isError={isEmpty}
                       isEditing={isEditEnabled}
                       section={servicio}
