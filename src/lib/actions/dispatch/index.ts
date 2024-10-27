@@ -200,7 +200,9 @@ export const createDispatch = async (
             peso_actual: {
               decrement: serial.peso_despachado as number,
             },
+
             estado: 'Disponible',
+
           },
         })
       })
