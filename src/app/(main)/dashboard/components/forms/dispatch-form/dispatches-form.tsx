@@ -185,7 +185,7 @@ export default function DispatchesForm({
           </CardContent>
         </Card>
 
-        {fields.length > 0 && isEditEnabled && (
+        {fields.length > 0 && !isEditEnabled && (
           <Card>
             <CardHeader>
               <CardTitle className="text-xl">
